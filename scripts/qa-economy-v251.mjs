@@ -7,8 +7,9 @@ import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 const require = createRequire(new URL('../art-factory/avatar-3d-v1-20260907/package.json', import.meta.url));
 const { chromium } = require('playwright');
-const guideMode = process.env.ECONOMY_QA_GUIDE === '1';
-const root = new URL('../', import.meta.url).pathname, out = path.join(root, guideMode ? 'art-factory/guide-purchase-v252' : 'art-factory/economy-v251');
+const fullMode = process.env.FEATURE_QA_V253 === '1';
+const guideMode = fullMode || process.env.ECONOMY_QA_GUIDE === '1';
+const root = new URL('../', import.meta.url).pathname, out = path.join(root, fullMode ? 'art-factory/feature-writes-v253' : guideMode ? 'art-factory/guide-purchase-v252' : 'art-factory/economy-v251');
 const dir = await mkdtemp(path.join(tmpdir(), 'satoru-economy-ui-')), base = 'http://127.0.0.1:4197';
 await mkdir(out, { recursive: true });
 const server = spawn(process.execPath, ['server.js'], { cwd: root, env: { ...process.env, DATA_DIR: dir, PORT: '4197', HOST: '127.0.0.1', PUSH_SCHED: 'off' }, stdio: 'ignore' });
@@ -37,6 +38,10 @@ try {
     document.querySelectorAll('.modal-overlay').forEach(e => e.remove()); document.querySelector('#app')?.removeAttribute('inert');
     State.view = 'rewards'; render();
   });
+  if (fullMode) {
+    const { featureChecks } = await import('./qa-feature-writes-v253.mjs');
+    await featureChecks({ page, base, out, report, disk: async n => JSON.parse(await readFile(path.join(dir, 'users', user.id, n + '.json'), 'utf8')) });
+  }
   if (guideMode) {
     await page.evaluate(async () => {
       State.rewards = [{ id: 'guide-qa-reward', name: 'Чай на балконе', cost: 10, icon: '🍵' }];

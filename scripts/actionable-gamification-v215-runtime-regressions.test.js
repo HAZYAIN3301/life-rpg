@@ -195,8 +195,8 @@ test('dedicated commits remember settings/tasks only for the current account wri
 
 test('every dedicated settings/tasks client transaction advances the commitment CAS base after HTTP success', () => {
   const names = [
-    'commitmentDataCommit', 'economyCommit', 'goalDataCommit', 'habitDataCommit',
-    'commitBoardV2Transaction', 'commitBoardState', 'guideV3FeatureCommit',
+    'commitmentDataCommit', 'economyCommit', 'goalDataCommit', 'featureSnapshotCommit',
+    'commitBoardV2Transaction', 'commitBoardState',
   ];
   for (const name of names) {
     const source = functionSource(APP, name);
@@ -209,6 +209,8 @@ test('every dedicated settings/tasks client transaction advances the commitment 
     assert.match(source.slice(remember), /accountId|storeAccountId/, `${name} does not pass the captured account id`);
   }
   const goals = functionSource(APP, 'goalDataCommit');
+  assert.match(functionSource(APP, 'habitDataCommit'), /featureSnapshotCommit\('habits', data, applyCommitted\)/);
+  assert.match(functionSource(APP, 'guideV3FeatureCommit'), /featureSnapshotCommit\('guide', attempt.data\)/);
   assert.match(goals, /data\s*=\s*\{\s*goals\s*:\s*nextGoals\s*,\s*tasks\s*:\s*nextTasks/, 'goal commit does not remember the exact task candidate sent to the server');
 });
 
@@ -250,8 +252,8 @@ test('ordinary protected settings/tasks writes use the paired commitment endpoin
 
 test('every dedicated graph writer attaches the same base and locks both graph slots', () => {
   for (const name of [
-    'economyCommit', 'goalDataCommit', 'habitDataCommit',
-    'commitBoardV2Transaction', 'commitBoardState', 'guideV3FeatureCommit',
+    'economyCommit', 'goalDataCommit', 'featureSnapshotCommit',
+    'commitBoardV2Transaction', 'commitBoardState',
   ]) {
     const source = functionSource(APP, name);
     assert.match(source, /dedicatedCommitPayload\s*\(/, `${name} omits the shared graph envelope`);
@@ -312,7 +314,8 @@ test('fresh registration primes both absent-file revisions before its first prot
 });
 
 test('a confirmed habit transaction advances the CAS base before optional UI application', () => {
-  const source = functionSource(APP, 'habitDataCommit');
+  assert.match(functionSource(APP, 'habitDataCommit'), /featureSnapshotCommit\('habits', data, applyCommitted\)/);
+  const source = functionSource(APP, 'featureSnapshotCommit');
   const remember = source.indexOf('rememberDedicatedCommitSlots');
   const apply = source.indexOf('await applyCommitted');
   assert.ok(remember >= 0 && apply > remember,

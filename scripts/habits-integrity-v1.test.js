@@ -33,8 +33,8 @@ test('Habits v126 uses checked load, global write fences and one atomic client t
   assert.match(APP, /Store\.loadChecked\('habitlog', \{\}, validateHabitlogPayload\)/);
   assert.match(APP, /Store\.loadChecked\('antihabits', \[\], validateAntihabitsPayload\)/);
   assert.match(APP, /\['habits', 'habitlog', 'antihabits'\]\.includes\(name\).*habitWriteAllowed\('_put'/s);
-  assert.match(APP, /fetch\('\/api\/habits\/commit'/);
-  assert.match(APP, /habitDataCommit\(\{ habitlog: nextLog \},\s*\(\)\s*=>\s*\{ State\.habitlog = nextLog; \}\)/);
+  assert.match(APP, /featureSnapshotCommit\('habits', data, applyCommitted\)/);
+  assert.match(APP, /habitDataCommit\(payload,\s*\(\)\s*=>\s*\{ State\.habitlog = nextLog; \}\)/);
   // v161: шкала энергии удалена, и транзакция привычки от этого стала ЧИЩЕ — раньше она
   // правила settings.energy и требовала защиты от NaN→null. Теперь настройки в этой
   // транзакции не меняются вовсе: неизменённый settings больше не пишется и

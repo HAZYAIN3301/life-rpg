@@ -58,6 +58,9 @@ test('Rewards v124 economy commit is authenticated, allowlisted and account-owne
   const beta = await api(base, '/api/auth/register', { method: 'POST', body: { name: 'Beta', email: 'reward-beta@example.test', password: 'beta-reward-123' } });
   assert.equal(alpha.response.status, 200); assert.equal(beta.response.status, 200);
   const rewards = [{ id: 'r_walk', name: 'Walk', cost: 80 }];
+  for (const [slot, value] of Object.entries({ rewards, tasks: [{ id: 'earned', title: 'Earned fixture', done: true, goldAwarded: 100 }] })) {
+    assert.equal((await api(base, '/api/data/' + slot, { method: 'PUT', cookie: alpha.cookie, body: value })).response.status, 200);
+  }
   const purchases = [{ id: 'p_walk', rewardId: 'r_walk', name: 'Walk', cost: 80, at: '2026-08-10T00:00:00.000Z' }];
   const committed = await api(base, '/api/economy/commit', { method: 'POST', cookie: alpha.cookie, body: { data: { rewards, purchases } } });
   assert.equal(committed.response.status, 200); assert.deepEqual(new Set(committed.data.files), new Set(['rewards', 'purchases']));
@@ -75,7 +78,8 @@ test('daily rewards keep an earned, disclosed and power-free surprise', () => {
   // честность, обязано пережить эту замену — иначе «больше драмы» превратилось бы в казино.
   assert.match(APP, /CHEST_RARITY_WEIGHTS = Object\.freeze\(\{ common: 60, rare: 28, epic: 10, legendary: 2 \}\)/);
   assert.match(APP, /CHEST_TYPE_WEIGHTS = Object\.freeze\(\{ gold: 55, cosmetic: 30, voucher: 15 \}\)/);
-  assert.match(APP, /COSMETIC_PRICES = Object\.freeze\(\{ common: 200, rare: 450, epic: 900, legendary: 1800 \}\)/);
+  assert.deepEqual(require('../public/shop-catalog-v1').COSMETIC_PRICES, { common: 200, rare: 450, epic: 900, legendary: 1800 });
+  assert.match(APP, /COSMETIC_PRICES = window.ShopCatalogV1.COSMETIC_PRICES/);
   assert.match(functionBody('rewardActivityCountForDate'), /!x\.entry/);
   assert.doesNotMatch(functionBody('lootTierCap'), /isPro/);
   assert.match(functionBody('cosmeticCapsulePool'), /!ownsCosmetic\(item\.id\)/);

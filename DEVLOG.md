@@ -1,5 +1,45 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-09] v253 — общий пакет сохранения Guide/привычек, покупок и Логова
+
+Владелец попросил не дробить связанную работу на мелкие остановки. Закрыт один пакет
+по [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md): Notes/Calendar/Habits Guide и
+обычные habit writes используют тот же account WAL и точную базу изменяемых файлов.
+Повтор после потерянного ответа сохраняет candidate/ID/даты, прогресс главы и feature
+восстанавливаются вместе после SIGKILL. Заметка/привычка не появляются второй раз.
+GuideV3 reducer не переписан. Старый клиент без version сохраняет совместимость/WAL,
+но не получает современную exact-CAS гарантию.
+
+ShopCatalogV1 вынес неизменённые каталоги из app.js: цены/названия/арт/редкости совпадают
+с прежними. PurchasePolicyV1 на economy/Guide endpoints сверяет сохранённый баланс,
+цену, уникальность новой покупки, ownership в том же candidate и неизменность истории.
+Подмена цены/нового начисления в purchase payload и повторное списание отклоняются.
+Это НЕ immutable wallet: generic/import и источники начислений пока клиентские;
+полная миграция баланса/entitlements остаётся P0, отдельные level/Pro gates не закрыты.
+
+Свет, ambient, количество питомцев, очистка/сброс обстановки и звание коллекции переведены
+на существующий подтверждённый транспорт экипировки. Успех, внешний вид и звук — после
+receipt; при отказе сохраняется прежнее состояние. Панели/цены/вероятности/арт не менялись,
+compare.html byte-identical прежнему; аватар и внешние пакеты №2/№3/№4 не тронуты.
+
+Финальный suite: **1971/1971 PASS**, без skip, 48 с, /private/tmp/satoru-v253-verified.log.
+16 новых behavioral/integration tests, включая real-server SIGKILL по каждому feature
+slot, committed recovery, replay, concurrent conflict, auth/corrupt WAL и purchase
+negatives. Существующие тесты адаптированы к общему модулю/транспорту и текущим pins;
+assertions вероятностей, цен и сохранения не удалялись. node --check/diff --check PASS.
+
+Chrome + isolated DATA_DIR, синтетический аккаунт: **15/15 групп, errors=[]**,
+09.09 18:46 UTC. Реальные формы Notes/Calendar/Habits, потерянный ПОСЛЕ записи ответ,
+идентичный повтор, habit Undo, Den light/reset, reload и весь v251/v252 economy QA;
+RU/EN/DE, desktop/mobile, light/dark, reduced motion. Receipt и финальные screenshots:
+art-factory/feature-writes-v253/receipt.json. Узкая прежняя форма Notes и стопка toast-ов
+записаны как UX-долг, не выданы за полный visual PASS приложения.
+
+App/SW v253, новый каталог в SHELL и index, неизменённые CSS pins сохранены.
+Кандидат проверен локально; запись о фактической публикации будет добавлена после
+проверки Railway и live-файлов. Следующий шаг — единый личный wallet/entitlement
+контракт с миграцией, не обход CAS прямым PUT и не ещё один независимый транспорт.
+
 ## [2026-09-09] v251 опубликован; v252 — подтверждённая покупка внутри обучения
 
 Владелец ответил «Делай дальше. Все разрешаю» на точный вопрос про v251 в

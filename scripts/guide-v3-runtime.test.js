@@ -112,7 +112,7 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
 });
 
 test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v252';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v253';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -254,9 +254,10 @@ test('Habits form and Guide completion share one rollback-safe account transacti
   const serverCommit = between(SERVER, 'const HABIT_COMMIT_TYPES', '\nfunction goalRecordValid');
   sourceMatches(serverCommit, /habits:\s*['"]array['"][\s\S]{0,100}settings:\s*['"]object['"]/,
     'the endpoint must explicitly allow the two files in one transaction');
-  sourceMatches(serverCommit,
-    /snapshots[\s\S]{0,300}for\s*\(const name of names\)[\s\S]{0,360}catch[\s\S]{0,220}restoreSnapshot/,
-    'a partial disk write must restore every previously written file');
+  sourceMatches(serverCommit, /return commitFeatureSnapshotData\(uid, payload, 'habits'\)/,
+    'habit writes must use the shared durable account transaction');
+  sourceMatches(SERVER, /function commitFeatureSnapshotData[\s\S]*commitCommitmentGraphDurable\(uid/,
+    'all files must join the crash-recoverable WAL; SIGKILL behavior is exercised in feature-writes-v253.test.js');
 });
 
 test('Guide and account writes are ordered, fenced and leave no stale Habits form', () => {
@@ -284,10 +285,11 @@ test('Guide and account writes are ordered, fenced and leave no stale Habits for
   sourceMatches(store, /const base = pairedSlot \? commitmentWriteBase\(\) : null[\s\S]{0,1600}\/api\/commitments\/commit/,
     'protected queued writes must carry their persisted CAS base to the commitment endpoint');
   const habitCommit = between(APP, 'async function habitDataCommit(data, applyCommitted = null)', '\nasync function reloadHabitData');
-  sourceMatches(habitCommit,
-    /const touchesGraph = names\.some\(\(name\) => name === 'settings' \|\| name === 'tasks'\)[\s\S]{0,220}Store\.runExclusive\(touchesGraph \? \[\.\.\.names, 'settings', 'tasks'\] : names/,
+  sourceMatches(habitCommit, /featureSnapshotCommit\('habits', data, applyCommitted\)/, 'habits must delegate to the shared transport');
+  const transport = between(APP, 'async function featureSnapshotCommit', '\nasync function habitDataCommit');
+  sourceMatches(transport, /Store\.runExclusive\(\[\.\.\.names, 'settings', 'tasks'\]/,
     'a Habits transaction that touches the commitment graph must reserve settings and tasks in the same shared mutex');
-  sourceMatches(habitCommit, /const payload = dedicatedCommitPayload\(data\)[\s\S]{0,260}\/api\/habits\/commit/,
+  sourceMatches(transport, /dedicatedCommitPayload\(candidate, \{ version: 3, featureBase \}\)/,
     'the Habits endpoint must receive the based graph envelope');
 
   const skip = actionSection(APP, 'guide-skip');
@@ -559,7 +561,7 @@ test('Context pack v205 explicitly releases exact Guide copy and chapter version
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*design-v252(?:-|$)/, 'the changed app shell needs the v252 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*design-v253(?:-|$)/, 'the changed app shell needs the v253 cache-busting pin');
   sourceMatches(INDEX, /styles\.css\?v=[^"']*design-v248(?:-|["'])/,
     'the current application CSS needs the v248 cache-busting pin');
 });

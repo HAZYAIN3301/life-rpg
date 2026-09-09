@@ -11764,30 +11764,11 @@ const RARITY = {
   legendary: { label: 'Легендарное', color: '#e0a23e' },
 };
 // Косметика-рамки аватара (кольцо по краю)
-const FRAMES = [
-  { id: 'fr_bronze',   name: 'Бронза',    rarity: 'common',    ring: '#a9744a' },
-  { id: 'fr_leaf',     name: 'Листва',    rarity: 'common',    ring: '#5fbf7a' },
-  { id: 'fr_silver',   name: 'Серебро',   rarity: 'rare',      ring: '#c7cee6' },
-  { id: 'fr_azure',    name: 'Лазурь',    rarity: 'rare',      ring: '#4f9ff7' },
-  { id: 'fr_gold',     name: 'Золото',    rarity: 'epic',      ring: '#e0a23e' },
-  { id: 'fr_amethyst', name: 'Аметист',   rarity: 'epic',      ring: '#b06ff0' },
-  { id: 'fr_flame',    name: 'Пламя',     rarity: 'epic',      ring: '#e0526a' },
-  { id: 'fr_eclipse',  name: 'Затмение',  rarity: 'legendary', ring: '#7c6cff', glow: true },
-  { id: 'fr_phoenix',  name: 'Феникс',    rarity: 'legendary', ring: '#ff8a3d', glow: true },
-];
+const FRAMES = window.ShopCatalogV1.FRAMES;
 // Косметика-фоны аватара (заливка позади)
-const BACKGROUNDS = [
-  { id: 'bg_slate',  name: 'Сланец',     rarity: 'common',    fill: '#2a3150' },
-  { id: 'bg_moss',   name: 'Мох',        rarity: 'common',    fill: '#23402f' },
-  { id: 'bg_ocean',  name: 'Океан',      rarity: 'rare',      fill: '#163a4a' },
-  { id: 'bg_wine',   name: 'Вино',       rarity: 'rare',      fill: '#3a1630' },
-  { id: 'bg_nebula', name: 'Туманность', rarity: 'epic',      fill: '#2c1a4a' },
-  { id: 'bg_ember',  name: 'Тлен',       rarity: 'epic',      fill: '#4a2018' },
-  { id: 'bg_aurora', name: 'Аврора',     rarity: 'legendary', fill: '#0f3a3a' },
-  { id: 'bg_void',   name: 'Бездна',     rarity: 'legendary', fill: '#160f2e' },
-];
+const BACKGROUNDS = window.ShopCatalogV1.BACKGROUNDS;
 const COSMETICS = FRAMES.concat(BACKGROUNDS); // единый каталог для коллекции
-const COSMETIC_PRICES = Object.freeze({ common: 200, rare: 450, epic: 900, legendary: 1800 });
+const COSMETIC_PRICES = window.ShopCatalogV1.COSMETIC_PRICES;
 function cosmeticById(id) { return COSMETICS.find((c) => c.id === id) || null; }
 function cosmeticCost(item) { return COSMETIC_PRICES[(item && item.rarity) || 'common']; }
 function frameById(id) { return FRAMES.find((c) => c.id === id) || null; }
@@ -12469,26 +12450,44 @@ function localDayOrdinal(day) {
   return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000);
 }
 function localDayDistance(from, to) { return localDayOrdinal(to) - localDayOrdinal(from); }
-async function habitDataCommit(data, applyCommitted = null) {
-  if (!habitWriteAllowed('habitDataCommit', true)) return false;
-  const names = Object.keys(data);
-  const touchesGraph = names.some((name) => name === 'settings' || name === 'tasks');
-  return Store.runExclusive(touchesGraph ? [...names, 'settings', 'tasks'] : names, async ({ writeEpoch, accountId }) => {
-    if (!habitWriteAllowed('habitDataCommit', true)) return false;
-    const payload = dedicatedCommitPayload(data);
-    if (!payload) return false;
+const featureSnapshotRequests = new WeakMap();
+async function featureSnapshotCommit(kind, data, applyCommitted = null) {
+  const policy = window.EconomyWriteV1?.[kind], names = Object.keys(data || {});
+  if (!policy || !names.length || names.some(n => !policy.valueValid(n, data[n]))
+    || !pwaWriteAllowed('featureSnapshotCommit', true)) return false;
+  if (names.includes('settings') && (!settingsWriteAllowed('featureSnapshotCommit', true) || !validateSettingsPayload(data.settings))) return false;
+  return Store.runExclusive([...names, 'settings', 'tasks'], async ({ writeEpoch, accountId }) => {
+    let request = featureSnapshotRequests.get(data);
+    if (request && (request.kind !== kind || request.accountId !== accountId || request.writeEpoch !== writeEpoch)) return false;
+    if (!request) {
+      const featureBase = Object.fromEntries(names.map(n => [n, Store._persisted?.[n]]));
+      if (names.some(n => !policy.snapshotValid(n, featureBase[n]))) return false;
+      const candidate = structuredClone(data);
+      const payload = dedicatedCommitPayload(candidate, { version: 3, featureBase });
+      if (!payload) return false;
+      request = { kind, accountId, writeEpoch, candidate, body: JSON.stringify(payload) };
+      featureSnapshotRequests.set(data, request);
+    }
     try {
-      const response = await fetch('/api/habits/commit', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
+      const response = await fetch('/api/' + kind + '/commit', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: request.body, signal: AbortSignal.timeout(15000),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
       if (await commitmentBoundaryRejected(response)) return false;
       if (!response.ok || writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
-      if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
-      if (typeof applyCommitted === 'function' && await applyCommitted() === false) return false;
-      return true;
-    } catch (error) { console.error('habit commit', error); return false; }
+      const receipt = await response.json();
+      if (!receipt.ok || policy.decide(receipt.snapshots, request.candidate) !== 'replay'
+        || writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
+      if (!rememberDedicatedCommitSlots(request.candidate, { writeEpoch, accountId })) return false;
+      for (const n of names) Store._persisted[n] = structuredClone(receipt.snapshots[n]);
+      if (typeof applyCommitted === 'function' && await applyCommitted(request.candidate) === false) return false;
+      return writeEpoch === Store._writeEpoch && accountId === String(State.me?.id || '');
+    } catch (error) { console.error('feature commit', kind, error); return false; }
   });
+}
+async function habitDataCommit(data, applyCommitted = null) {
+  if (!habitWriteAllowed('habitDataCommit', true)) return false;
+  return featureSnapshotCommit('habits', data, applyCommitted);
 }
 async function reloadHabitData(focusSelector = '#habits-title') {
   if (State._habitsLoadBusy) return false;
@@ -14008,7 +14007,7 @@ async function transactHabitCompletion(h, { twoMinute = false } = {}) {
   const key = `habit:${h.id}`; if (State._habitTxnBusy || State._habitsLoadError) return;
   const day = habitDayKey(), wasDone = !!(State.habitlog[day] && State.habitlog[day][h.id]);
   const beforeLog = structuredClone(State.habitlog);
-  const nextLog = structuredClone(beforeLog);
+  let nextLog = structuredClone(beforeLog);
   nextLog[day] = nextLog[day] || {};
   if (wasDone) {
     delete nextLog[day][h.id]; if (!Object.keys(nextLog[day]).length) delete nextLog[day];
@@ -14018,13 +14017,19 @@ async function transactHabitCompletion(h, { twoMinute = false } = {}) {
       ? T.recordFor({ xp: itemXp(h), gold: itemGold(h), at: new Date().toISOString() })
       : { xp: itemXp(h), gold: itemGold(h), min: Number(h.estimateMin) || 0, at: new Date().toISOString() };
   }
+  const attemptKey = JSON.stringify([State.me?.id, Store._writeEpoch, day, h.id, wasDone, twoMinute]);
+  let payload = { habitlog: nextLog };
+  if (State._habitCompletionAttempt?.key === attemptKey) {
+    payload = State._habitCompletionAttempt.payload; nextLog = payload.habitlog;
+  } else State._habitCompletionAttempt = { key: attemptKey, payload };
   State._habitTxnBusy = key; State._habitError = ''; render();
-  const saved = await habitDataCommit({ habitlog: nextLog }, () => { State.habitlog = nextLog; });
+  const saved = await habitDataCommit(payload, () => { State.habitlog = nextLog; });
   State._habitTxnBusy = '';
   if (!saved) {
-    State._habitError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.');
+    State._habitError = economySaveUnconfirmed();
     State._habitsFocusAfterCommit = `[data-action="toggle-habit"][data-id="${CSS.escape(h.id)}"]`; render(); return;
   }
+  State._habitCompletionAttempt = null;
   setHabitUndo({ beforeLog, afterLog: structuredClone(nextLog), label: wasDone ? 'Отметка возвращена' : 'Привычка отмечена' });
   State._habitsFocusAfterCommit = '[data-action="habit-undo"]';
   if (!wasDone) {
@@ -14259,7 +14264,7 @@ async function moveCalendarTask(command, { makeUndo = true, renderAfter = true }
       toast(t('Квест перенесён, прежняя граница снята. Новую можно выбрать в его день.'));
     }
   } else {
-    const nextTasks = guideOwns ? structuredClone(State.tasks) : State.tasks;
+    let nextTasks = guideOwns ? structuredClone(State.tasks) : State.tasks;
     const workingTask = guideOwns ? nextTasks.find((item) => item.id === task.id) : task;
     if (!workingTask) return false;
     // Считается ДО присваивания: notePostpone читает текущую task.date, чтобы
@@ -14269,6 +14274,11 @@ async function moveCalendarTask(command, { makeUndo = true, renderAfter = true }
     workingTask.startTime = nextTime;
     workingTask.estimateMin = nextDuration;
     if (postponeNote) Object.assign(workingTask, postponeNote);
+    if (guideOwns) {
+      const key = JSON.stringify([State.me?.id, Store._writeEpoch, _guideV3WriteEpoch, task.id, nextDate, nextTime, nextDuration]);
+      if (State._guideCalendarAttempt?.key === key) nextTasks = State._guideCalendarAttempt.tasks;
+      else State._guideCalendarAttempt = { key, tasks: nextTasks };
+    }
     saved = guideOwns
       ? await guideV3FeatureCommit('calendar', 'task-date-persisted', task.id, { tasks: nextTasks }, (data) => { State.tasks = data.tasks; })
       : await Store.saveNow('tasks', State.tasks);
@@ -14278,6 +14288,7 @@ async function moveCalendarTask(command, { makeUndo = true, renderAfter = true }
     toast(t('Не удалось сохранить перенос'));
     return false;
   }
+  if (guideOwns) State._guideCalendarAttempt = null;
   if (makeUndo) {
     if (State._calendarUndoTimer) clearTimeout(State._calendarUndoTimer);
     const receipt = { taskId: task.id, before, unscheduled: !nextTime, expiresAt: Date.now() + 12000 };
@@ -18125,16 +18136,7 @@ function renderPets() {
 //  Комната собирается из независимых cut-paper SVG-слоёв. Состояние хранится в
 //  settings.den: тема, свет, число питомцев, купленные предметы и предмет в каждом слоте.
 // ============================================================
-const DEN_THEMES = [
-  { id: 'workshop', name: 'Тихая мастерская', tag: 'тёплый старт', access: 'starter', level: 0, cost: 0,
-    wall: '#29283b', wall2: '#343047', floor: '#3b3549', trim: '#b47a52', glow: '#ffd28a', sky: '#8bb9d5' },
-  { id: 'moon-tower', name: 'Лунная башня', tag: 'ночная обсерватория', access: 'level', level: 5, cost: 420,
-    wall: '#20243b', wall2: '#30395c', floor: '#29334e', trim: '#8795c7', glow: '#d8dcff', sky: '#19254c' },
-  { id: 'voxel-hearth', name: 'Кубический очаг', tag: 'бумажный voxel-home', access: 'pro', level: 0, cost: 0,
-    wall: '#2e3b36', wall2: '#435342', floor: '#574336', trim: '#8caf72', glow: '#ffca6b', sky: '#76acd0' },
-  { id: 'spirit-house', name: 'Дом духов', tag: 'тихий аниме-санктуарий', access: 'pro', level: 0, cost: 0,
-    wall: '#342739', wall2: '#4a3446', floor: '#46353d', trim: '#c0766e', glow: '#ffd5a3', sky: '#a17fa0' },
-];
+const DEN_THEMES = window.ShopCatalogV1.DEN_THEMES;
 const DEN_SLOT_META = {
   wall: { name: 'Стена', empty: 'Чистая стена' },
   seat: { name: 'Место отдыха', empty: 'Без кресла' },
@@ -18153,29 +18155,7 @@ const DEN_V3_ITEM_FILES = {
   'keepsake-blades': 'keepsake-blades.png',
   'floor-traveller': 'floor-traveller.png',
 };
-const DEN_ITEMS = [
-  { id: 'wall-map', slot: 'wall', name: 'Карта странника', access: 'starter', level: 0, cost: 0, motion: 'drift' },
-  { id: 'wall-moon', slot: 'wall', name: 'Лунный рыбак', access: 'level', level: 4, cost: 180, motion: 'glint' },
-  { id: 'wall-eyes', slot: 'wall', name: 'Шестиглазая печать', access: 'pro', level: 0, cost: 0, motion: 'watch' },
-  { id: 'seat-cushion', slot: 'seat', name: 'Подушка привала', access: 'starter', level: 0, cost: 0, motion: 'breathe' },
-  { id: 'seat-forest', slot: 'seat', name: 'Лесное кресло', access: 'level', level: 5, cost: 260, motion: 'breathe' },
-  { id: 'seat-cloud', slot: 'seat', name: 'Облачное кресло', access: 'pro', level: 0, cost: 0, motion: 'float' },
-  { id: 'surface-crate', slot: 'surface', name: 'Складной стол', access: 'starter', level: 0, cost: 0, motion: 'still' },
-  { id: 'surface-alchemy', slot: 'surface', name: 'Алхимический стол', access: 'level', level: 6, cost: 340, motion: 'bubble' },
-  { id: 'surface-ramen', slot: 'surface', name: 'Рамэн-стол', access: 'pro', level: 0, cost: 0, motion: 'steam' },
-  { id: 'comfort-bonsai', slot: 'comfort', name: 'Бонсай пути', access: 'starter', level: 0, cost: 0, motion: 'leaf' },
-  { id: 'comfort-cat-tower', slot: 'comfort', name: 'Башня манэки', access: 'level', level: 3, cost: 160, motion: 'breathe' },
-  { id: 'comfort-voxel', slot: 'comfort', name: 'Кубический очаг', access: 'pro', level: 0, cost: 0, motion: 'fire' },
-  { id: 'light-lantern', slot: 'light', name: 'Фонарь странника', access: 'starter', level: 0, cost: 0, motion: 'lantern' },
-  { id: 'light-six', slot: 'light', name: 'Лампа шести огней', access: 'level', level: 7, cost: 480, motion: 'glint' },
-  { id: 'light-soot', slot: 'light', name: 'Духи-копотушки', access: 'pro', level: 0, cost: 0, motion: 'soot' },
-  { id: 'keepsake-blades', slot: 'keepsake', name: 'Стойка клинков', access: 'starter', level: 0, cost: 0, motion: 'glint' },
-  { id: 'keepsake-cape', slot: 'keepsake', name: 'Плащ надежды', access: 'level', level: 5, cost: 300, motion: 'cape' },
-  { id: 'keepsake-campfire', slot: 'keepsake', name: 'Костёр племени', access: 'pro', level: 0, cost: 0, motion: 'fire' },
-  { id: 'floor-traveller', slot: 'floor', name: 'Ковёр путника', access: 'starter', level: 0, cost: 0, motion: 'still' },
-  { id: 'floor-yin', slot: 'floor', name: 'Ковёр равновесия', access: 'level', level: 4, cost: 220, motion: 'drift' },
-  { id: 'floor-pixel', slot: 'floor', name: 'Кубическая поляна', access: 'pro', level: 0, cost: 0, motion: 'glint' },
-].map((item) => {
+const DEN_ITEMS = window.ShopCatalogV1.DEN_ITEMS.map((item) => {
   const v3File = DEN_V3_ITEM_FILES[item.id];
   return {
     ...item,
@@ -23177,24 +23157,7 @@ function showGuide() {
 //  Снаряжение / гир (Habitica/LifeUp) — предметы, бустящие XP/золото сверх косметики.
 //  Покупка за золото, открытие по уровню, по 1 предмету на слот. JJK-референсы.
 // ============================================================
-const GEAR = [
-  { id: 'w1', slot: 'weapon', name: 'Тренировочный клинок', icon: '🗡', rarity: 'common', xpPct: 3, cost: 120, lvl: 1 },
-  { id: 'w2', slot: 'weapon', name: 'Клинок Фокуса', icon: '⚔️', rarity: 'rare', xpPct: 6, cost: 450, lvl: 5 },
-  { id: 'w3', slot: 'weapon', name: 'Катана Бесконечности', icon: '🗡️', rarity: 'epic', xpPct: 11, cost: 1400, lvl: 12 },
-  { id: 'a1', slot: 'armor', name: 'Лёгкая броня', icon: '🦺', rarity: 'common', hardXpPct: 5, cost: 120, lvl: 2 },
-  { id: 'a2', slot: 'armor', name: 'Эгида Стойкости', icon: '🛡', rarity: 'rare', hardXpPct: 10, cost: 450, lvl: 6 },
-  { id: 'a3', slot: 'armor', name: 'Латы Несокрушимости', icon: '🛡️', rarity: 'epic', hardXpPct: 18, cost: 1400, lvl: 14 },
-  { id: 'm1', slot: 'amulet', name: 'Медный амулет', icon: '🔸', rarity: 'common', goldPct: 6, cost: 100, lvl: 1 },
-  { id: 'm2', slot: 'amulet', name: 'Амулет Знаний', icon: '📿', rarity: 'rare', goldPct: 12, cost: 380, lvl: 5 },
-  { id: 'm3', slot: 'amulet', name: 'Реликвия Шести Глаз', icon: '🔮', rarity: 'epic', goldPct: 20, cost: 1100, lvl: 13 },
-  // расширение арсенала: альтернативные билды (голд-оружие, XP-броня) + легендарки позднего этапа
-  { id: 'w2b', slot: 'weapon', name: 'Кинжал Наживы', icon: '🔪', rarity: 'rare', goldPct: 10, cost: 420, lvl: 4 },
-  { id: 'a2b', slot: 'armor', name: 'Мантия Потока', icon: '🥋', rarity: 'rare', xpPct: 5, cost: 420, lvl: 4 },
-  { id: 'm2b', slot: 'amulet', name: 'Кулон Испытаний', icon: '🧿', rarity: 'rare', hardXpPct: 8, cost: 400, lvl: 6 },
-  { id: 'w4', slot: 'weapon', name: 'Клинок Рассветной Клятвы', icon: '⚡', rarity: 'legendary', xpPct: 15, goldPct: 6, cost: 3200, lvl: 18 },
-  { id: 'a4', slot: 'armor', name: 'Доспех Несгибаемого', icon: '🐉', rarity: 'legendary', hardXpPct: 24, xpPct: 5, cost: 3200, lvl: 19 },
-  { id: 'm4', slot: 'amulet', name: 'Сердце Десятиборца', icon: '💠', rarity: 'legendary', goldPct: 24, xpPct: 6, cost: 3000, lvl: 20 },
-];
+const GEAR = window.ShopCatalogV1.GEAR;
 const GEAR_SLOTS = [
   { k: 'weapon', label: 'Оружие', iconId: 'gear.w1' },
   { k: 'armor', label: 'Броня', iconId: 'gear.a2' },
@@ -27881,8 +27844,13 @@ async function onSubmit(e) {
     controls.forEach((control) => { control.disabled = true; }); if (status) status.textContent = t('Сохраняю…');
     const guideNotes = guideV3ContextActive('notes', 'note-persisted');
     if (guideNotes && !State._guideV3NoteDraftId) State._guideV3NoteDraftId = uid();
-    const item = { id: guideNotes ? State._guideV3NoteDraftId : uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() };
-    const nextInbox = [item, ...(State.inbox || []).filter((note) => !guideNotes || note.id !== item.id)];
+    let item = { id: guideNotes ? State._guideV3NoteDraftId : uid(), kind: 'text', text, file: null, type: null, at: new Date().toISOString() };
+    let nextInbox = [item, ...(State.inbox || []).filter((note) => !guideNotes || note.id !== item.id)];
+    if (guideNotes) {
+      const key = JSON.stringify([State.me?.id, Store._writeEpoch, _guideV3WriteEpoch, item.id, text]);
+      if (State._guideNoteAttempt?.key === key) ({ item, nextInbox } = State._guideNoteAttempt);
+      else State._guideNoteAttempt = { key, item, nextInbox };
+    }
     let saved;
     if (guideNotes) State._inboxBusy = true;
     try {
@@ -27892,10 +27860,10 @@ async function onSubmit(e) {
     } finally { if (guideNotes) State._inboxBusy = false; }
     if (!saved) {
       controls.forEach((control) => { control.disabled = false; });
-      if (status) { status.textContent = t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); }
+      if (status) { status.textContent = economySaveUnconfirmed(); status.setAttribute('role', 'alert'); }
       focusPathChoiceTarget(f.text); return;
     }
-    if (guideNotes) State._guideV3NoteDraftId = '';
+    if (guideNotes) { State._guideV3NoteDraftId = ''; State._guideNoteAttempt = null; }
     State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast(t('📝 В Заметках')); render();
     return;
   }
@@ -27994,7 +27962,7 @@ async function onSubmit(e) {
     if (status) { status.textContent = t('Сохраняю…'); status.setAttribute('role', 'status'); }
     const busyKey = `habit:${selectedId !== 'new' ? selectedId : draftId}`;
     State._habitTxnBusy = busyKey; State._habitError = '';
-    const failLiveForm = (message = t('Не удалось сохранить. Ничего не изменено — повтори попытку.')) => {
+    const failLiveForm = (message = economySaveUnconfirmed()) => {
       if (State._habitTxnBusy === busyKey) State._habitTxnBusy = '';
       controls.forEach((control) => { control.disabled = false; });
       if (status) { status.textContent = message; status.setAttribute('role', 'alert'); }
@@ -28004,7 +27972,7 @@ async function onSubmit(e) {
     const persistHabit = async ({ epoch = _guideV3WriteEpoch, accountId = String(State.me?.id || '') } = {}) => {
       const liveGuideCompose = guideCompose && guideV3HabitsStep('compose');
       if (guideCompose && !liveGuideCompose) return failLiveForm(t('Гайд не смог подтвердить сохранение. Ничего не изменено — повтори попытку.'));
-      const source = structuredClone(State.habits || []);
+      let source = structuredClone(State.habits || []);
       const original = selectedId !== 'new'
         ? source.find((item) => String(item.id) === selectedId && !item.archived) || null
         : null;
@@ -28031,7 +27999,11 @@ async function onSubmit(e) {
         if (!guideResult?.accepted) return failLiveForm(t('Гайд не смог подтвердить сохранение. Ничего не изменено — повтори попытку.'));
         nextSettings = structuredClone(State.settings); nextSettings.guideV3 = guideResult.state;
       }
-      const payload = nextSettings ? { habits: source, settings: nextSettings } : { habits: source };
+      let payload = nextSettings ? { habits: source, settings: nextSettings } : { habits: source };
+      const attemptKey = JSON.stringify([accountId, Store._writeEpoch, epoch, habitId, title, skillId, estimateMin, days, twoMin, liveGuideCompose]);
+      if (f._habitSaveAttempt?.key === attemptKey) {
+        ({ payload, guideResult, nextSettings } = f._habitSaveAttempt); source = payload.habits;
+      } else f._habitSaveAttempt = { key: attemptKey, payload, guideResult, nextSettings };
       const saved = await habitDataCommit(payload, () => {
         if (liveGuideCompose && (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '') || !State.settings)) return false;
         State.habits = source;
@@ -28399,49 +28371,38 @@ async function guideV3PurchaseCommit(completion, itemId, purchases, applyFeature
   if (attempt.metric) track(attempt.metric);
   return true;
 }
+const guideV3FeatureAttempts = new WeakMap();
 async function guideV3FeatureCommit(chapter, completion, itemId, featureData, applyFeature, targetId = '') {
   return guideV3Exclusive(async ({ epoch, accountId }) => {
     const model = window.GuideV3, names = Object.keys(featureData || {});
-    if (!model || !State.settings || !names.length || !guideV3ContextActive(chapter, completion)) return false;
-    if (chapter === 'rewards' && completion === 'purchase-persisted' && names.length === 1 && names[0] === 'purchases') {
+    if (!model || !State.settings || names.length !== 1 || !guideV3ContextActive(chapter, completion)) return false;
+    if (chapter === 'rewards' && completion === 'purchase-persisted' && names[0] === 'purchases') {
       return guideV3PurchaseCommit(completion, itemId, featureData.purchases, applyFeature, targetId, { epoch, accountId });
     }
-    return Store.runExclusive([...names, 'settings', 'tasks'], async ({ writeEpoch, accountId: storeAccountId }) => {
-      if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
-        || writeEpoch !== Store._writeEpoch || storeAccountId !== accountId) return false;
-      const result = model.reduce(State.settings.guideV3, {
-        type: 'guide:context-complete', completion, persisted: true,
-        itemId: itemId || undefined, targetId: targetId || undefined, at: Date.now(),
-      });
+    const name = names[0], candidate = featureData[name];
+    if (name === 'tasks' ? (!taskWriteAllowed('guideV3FeatureCommit', true) || !validateTasksPayload(candidate))
+      : name === 'inbox' ? (!inboxWriteAllowed(true) || !validateInboxPayload(candidate)) : true) return false;
+    let attempt = guideV3FeatureAttempts.get(candidate);
+    if (attempt && (attempt.epoch !== epoch || attempt.accountId !== accountId || attempt.writeEpoch !== Store._writeEpoch
+      || attempt.chapter !== chapter || attempt.completion !== completion || attempt.itemId !== itemId || attempt.targetId !== targetId)) return false;
+    if (!attempt) {
+      const result = model.reduce(State.settings.guideV3, { type: 'guide:context-complete', completion, persisted: true,
+        itemId: itemId || undefined, targetId: targetId || undefined, at: Date.now() });
       if (!result.accepted) return false;
-      const nextSettings = structuredClone(State.settings); nextSettings.guideV3 = result.state;
-      const data = { ...featureData, settings: nextSettings };
-      if (!pwaWriteAllowed('guideV3FeatureCommit', true) || !validateSettingsPayload(nextSettings)
-        || !settingsWriteAllowed('guideV3FeatureCommit', true)) return false;
-      for (const [name, value] of Object.entries(featureData)) {
-        if (name === 'tasks' && (!taskWriteAllowed('guideV3FeatureCommit', true) || !validateTasksPayload(value))) return false;
-        if (name === 'inbox' && (!inboxWriteAllowed(true) || !validateInboxPayload(value))) return false;
-        if (name === 'purchases' && (!accountDataWriteAllowed(name, 'guideV3FeatureCommit', true) || !validateAccountDataPayload(name, value))) return false;
-        if (!['tasks', 'inbox', 'purchases'].includes(name)) return false;
-      }
-      try {
-        const payload = dedicatedCommitPayload(data);
-        if (!payload) return false;
-        const response = await fetch('/api/guide/commit', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
-        });
-        if (response.status === 401) { handleAccountSessionExpired(); return false; }
-        if (await commitmentBoundaryRejected(response)) return false;
-        if (!response.ok || epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
-          || writeEpoch !== Store._writeEpoch || storeAccountId !== String(State.me?.id || '')) return false;
-        if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId: storeAccountId })) return false;
-        if (data.purchases) Store._persisted.purchases = { exists: true, value: structuredClone(data.purchases) };
-        if (typeof applyFeature === 'function' && await applyFeature(data) === false) return false;
-        State.settings = nextSettings; State._guideV3Error = '';
-        if (result.metric) track(result.metric);
-        return true;
-      } catch (error) { console.error('guide feature commit', error); State._guideV3Error = 'persist'; return false; }
-    });
+      const settings = structuredClone(State.settings); settings.guideV3 = result.state;
+      attempt = { epoch, accountId, writeEpoch: Store._writeEpoch, chapter, completion, itemId, targetId,
+        data: { settings, [name]: structuredClone(candidate) }, metric: result.metric };
+      guideV3FeatureAttempts.set(candidate, attempt);
+    }
+    const saved = await featureSnapshotCommit('guide', attempt.data);
+    const current = () => epoch === _guideV3WriteEpoch && accountId === String(State.me?.id || '') && attempt.writeEpoch === Store._writeEpoch;
+    if (!current()) return false;
+    if (!saved) { State._guideV3Error = 'persist'; return false; }
+    if (typeof applyFeature === 'function' && await applyFeature(attempt.data) === false) return false;
+    if (!current()) return false;
+    State.settings = attempt.data.settings; State._guideV3Error = '';
+    if (attempt.metric) track(attempt.metric);
+    return true;
   });
 }
 
@@ -29574,18 +29535,9 @@ async function onClick(e) {
   if (action === 'equip-title') {
     const selected = el.dataset.title || null;
     if (selected && !earnedTitles().includes(selected)) return;
-    await Store.updateNow('settings', (current) => {
-      const next = structuredClone(current);
-      next.equipped = next.equipped && typeof next.equipped === 'object'
-        ? { ...next.equipped } : { frame: null, background: null, title: null };
-      next.equipped.title = (!selected || next.equipped.title === selected) ? null : selected;
-      return next;
-    }, (committed) => {
-      if (!State.settings) return false;
-      State.settings.equipped = committed.equipped;
-      return true;
-    });
-    render(); return;
+    ensureCosmetics(); const next = structuredClone(State.settings);
+    next.equipped.title = (!selected || next.equipped.title === selected) ? null : selected;
+    await commitEquipment({ settings: next }, el); return;
   }
   if (action === 'equip-cosmetic') {
     if (!ownsCosmetic(el.dataset.id)) return;
@@ -29632,10 +29584,8 @@ async function onClick(e) {
   }
   if (action === 'toggle-tts') { State.settings.tts = !!el.checked; autosaveSettings(); ttsStop(); render(); return; }
   if (action === 'set-ambient') {
-    if (!State.settings.ambient) State.settings.ambient = {};
-    State.settings.ambient.mode = el.dataset.mode;
-    Store.save('settings', State.settings);
-    applyAmbient(); syncDenAmbientVisual(State.settings.ambient.mode); return;
+    const next = structuredClone(State.settings); next.ambient = { ...next.ambient, mode: el.dataset.mode };
+    await commitEquipment({ settings: next }, el, () => { applyAmbient(); syncDenAmbientVisual(next.ambient.mode); }); return;
   }
   if (action === 'den-toggle-edit') {
     State._denEdit = !State._denEdit;
@@ -29645,37 +29595,31 @@ async function onClick(e) {
     return;
   }
   if (action === 'den-ambient-cycle') {
-    if (!State.settings.ambient) State.settings.ambient = {};
-    const now = State.settings.ambient.mode || 'off';
-    State.settings.ambient.mode = nextAmbientMode(now);
-    Store.save('settings', State.settings);
-    applyAmbient(); syncDenAmbientVisual(State.settings.ambient.mode); return;
+    const next = structuredClone(State.settings), mode = nextAmbientMode(next.ambient?.mode || 'off');
+    next.ambient = { ...next.ambient, mode };
+    await commitEquipment({ settings: next }, el, () => { applyAmbient(); syncDenAmbientVisual(mode); }); return;
   }
   if (action === 'den-light') {
-    const den = ensureDen(), value = el.dataset.value;
-    if (['auto', 'morning', 'day', 'sunset', 'night'].includes(value)) den.light = value;
-    Store.save('settings', State.settings);
-    syncDenLightVisual(den.light); return;
+    if (!['auto', 'morning', 'day', 'sunset', 'night'].includes(el.dataset.value)) return;
+    ensureDen(); const next = structuredClone(State.settings); next.den.light = el.dataset.value;
+    await commitEquipment({ settings: next }, el, () => syncDenLightVisual(next.den.light)); return;
   }
   if (action === 'den-pet-count') {
-    const den = ensureDen();
-    den.petCount = Math.max(0, Math.min(3, Number(el.dataset.value) || 0));
-    Store.save('settings', State.settings);
-    render(); return;
+    ensureDen(); const next = structuredClone(State.settings);
+    next.den.petCount = Math.max(0, Math.min(3, Number(el.dataset.value) || 0));
+    await commitEquipment({ settings: next }, el); return;
   }
   if (action === 'den-clear') {
-    const den = ensureDen(), slot = el.dataset.slot;
-    if (DEN_SLOT_META[slot]) den.slots[slot] = '';
-    Store.save('settings', State.settings);
-    render(); return;
+    if (!DEN_SLOT_META[el.dataset.slot]) return;
+    ensureDen(); const next = structuredClone(State.settings); next.den.slots[el.dataset.slot] = '';
+    await commitEquipment({ settings: next }, el); return;
   }
   if (action === 'den-reset') {
-    const den = ensureDen();
-    den.theme = 'workshop'; den.light = 'auto'; den.petCount = 3; den.slots = { ...DEN_STARTER_SLOTS };
-    Store.save('settings', State.settings);
-    try { sfx('complete'); } catch {}
-    toast(t('Логово вернулось к стартовой обстановке'));
-    render(); return;
+    ensureDen(); const next = structuredClone(State.settings);
+    Object.assign(next.den, { theme: 'workshop', light: 'auto', petCount: 3, slots: { ...DEN_STARTER_SLOTS } });
+    await commitEquipment({ settings: next }, el, () => {
+      sfx('complete'); toast(t('Логово вернулось к стартовой обстановке'));
+    }); return;
   }
   if (action === 'den-theme') {
     const theme = DEN_THEMES.find((x) => x.id === id);
@@ -31808,6 +31752,7 @@ function clearAllData() {
   State._guideV3ChooseOther = false; State._guideV3FocusPending = ''; State._guideV3VoiceActive = false;
   State._guideV3ForceOpen = false; State._guideV3ShowTeaser = false; State._guideV3HabitCandidateId = null; State._guideV3HabitDraftId = '';
   State._guideV3SessionStartedAt = Date.now(); State._guideV3CalendarTaskId = ''; State._guideV3NoteDraftId = ''; State._guideV3RewardId = '';
+  State._guideNoteAttempt = null; State._guideCalendarAttempt = null; State._habitCompletionAttempt = null;
   State._guideV3AssistantRequestId = ''; State._guideV3AssistantResponseId = ''; State._guideV3AssistantCompleting = false;
   State._guideV3ReconcileBusy = false;
   _guideV3WriteEpoch += 1; _guideV3WriteQueue = Promise.resolve();
@@ -32827,7 +32772,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v252';
+const PWA_CACHE_VERSION = 'satoru-v253';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

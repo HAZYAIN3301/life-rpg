@@ -46,6 +46,7 @@ function realRewardCatalog() {
 
 function buildSandbox({ ownedCosmetics = [] } = {}) {
   const sandbox = {
+    COSMETIC_PRICES: require('../public/shop-catalog-v1').COSMETIC_PRICES,
     COSMETICS: [
       { id: 'c1', name: 'Рамка А', rarity: 'common', ring: '#111' },
       { id: 'c2', name: 'Рамка Б', rarity: 'common', ring: '#222' },
@@ -62,7 +63,6 @@ function buildSandbox({ ownedCosmetics = [] } = {}) {
   };
   vm.createContext(sandbox);
   const code = [
-    constOf('COSMETIC_PRICES'),
     constOf('CHEST_RARITY_WEIGHTS'),
     constOf('CHEST_TYPE_WEIGHTS'),
     constOf('CHEST_GOLD_BY_RARITY'),

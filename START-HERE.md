@@ -3,6 +3,12 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
+**Крупный пакет 09.09 — v253:** [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md).
+Notes/Calendar/Habits Guide и обычные habit writes используют общий WAL/exact-CAS;
+сервер проверяет покупки по общему каталогу и сохранённому балансу; настройки Логова
+и звания показывают результат после записи. Проверки/статус публикации — верх DEVLOG.
+Это НЕ закрытие всего P0/авторитетного кошелька; точный остаток в контракте и BACKLOG.
+
 **Продолжение 09.09 — v251:** [ECONOMY-WRITES-V251.md](./ECONOMY-WRITES-V251.md).
 **v251 опубликован:** runtime `5b14150`, release `8fd19ec`. Владелец прямо разрешил
 этот destination/payload ответом «Делай дальше. Все разрешаю»; прежний gate закрыт.
@@ -111,16 +117,16 @@ Site public, обновление явно разрешено.
 - Канонический код — `origin/master`. Перед работой обязательно сверить
   `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
   источником истины.
-- Новый runtime — **структурный v247 + полировка v248 + дуо v249 + награды v250**,
-  PWA cache `satoru-v250`, app pin `20260909-design-v250-1`;
-  неизменённые base/design CSS сохраняют pin `20260908-design-v248-1`.
-  Runtime `d412482` опубликован, Railway app/TTS success; 8 production SHA-256 и
-  read-only auth/bootstrap checks — `art-factory/party-rewards-v250/release-receipt.json`.
-  Границы UI-аудита всех вкладок остаются в `PRODUCT-UX-AUDIT-V248.md`; v250 не выдаёт
-  проверку затронутого рейда за новый полный визуальный аудит приложения.
+- Новый runtime — **структурный v247 + полировка v248 + дуо/награды v249/v250 +
+  подтверждённые записи v251–v253**. PWA cache `satoru-v253`,
+  app pin `20260909-design-v253-1`; CSS pins не менялись с последнего релиза.
+  Актуальный статус master/Railway и live-проверки — верх DEVLOG; старый receipt v250
+  не доказывает публикацию нового кандидата. Контракт — FEATURE-WRITES-V253.md.
+  Границы UI-аудита всех вкладок остаются в `PRODUCT-UX-AUDIT-V248.md`; v253 не выдаёт
+  профильный browser QA за новый полный визуальный аудит приложения.
   Прежний runtime v244 сохранён из `74a97dd` в `/compare.html` (synthetic, read-only).
   Actionable Foundations UI и Commitment v2 не заменены новой моделью хранения.
-- Полная проверка v250: **1948/1948 PASS**; browser/save/failure receipts отдельно в контракте.
+- Полная проверка v253: **1971/1971 PASS**; 15 browser-групп и crash/retry — в контракте.
   Перед следующей правкой начать с `git fetch`, `git status --short --branch` и
   `git log -5 --oneline`; обязательный процесс —
   [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md).

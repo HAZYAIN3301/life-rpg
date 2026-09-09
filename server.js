@@ -2588,6 +2588,19 @@ function importPortableAccountData(uid, payload) {
 }
 
 const EconomyWriteV1 = require('./public/economy-write-v1.js');
+const PurchasePolicyV1 = require('./public/purchase-policy-v1.js');
+function assertPurchaseTransition(uid, data) {
+  if (!Object.hasOwn(data, 'purchases')) return;
+  const files = commitmentActualFiles(uid, ['settings', 'tasks', 'goals', 'purchases', 'rewards', 'lootbox', 'habitlog']);
+  const value = (name, fallback) => files[name].exists ? files[name].value : fallback;
+  const user = loadUsers().find(u => u.id === uid);
+  const context = { settings: value('settings', {}), purchases: value('purchases', []), rewards: value('rewards', []),
+    tasks: value('tasks', []), goals: value('goals', []), habitlog: value('habitlog', {}), lootbox: value('lootbox', {}),
+    adminGold: user?.isAdmin ? adminGoldBalance(uid) : 0, partyGold: PartyRewardPolicyV1.gold(partyRewards.snapshot(uid)) };
+  context.earnedGold = PurchasePolicyV1.earnedGold(context);
+  const result = PurchasePolicyV1.validate(context, data);
+  if (!result.ok) throw commitmentBoundaryError(result.reason, 409);
+}
 const ECONOMY_COMMIT_TYPES = Object.freeze({ ...EconomyWriteV1.TYPES });
 function economyValueValid(name, value) {
   const type = ECONOMY_COMMIT_TYPES[name];
@@ -2610,6 +2623,7 @@ function commitEconomyData(uid, payload) {
   if (decision === 'conflict') throw commitmentBoundaryError('economy_revision_conflict', 409);
   if (decision !== 'replay') {
     const graph = assertAccountGraphTransition(uid, payload);
+    assertPurchaseTransition(uid, payload.data);
     const data = Object.fromEntries(allNames.map((n) => [n, Object.hasOwn(payload.data, n) ? payload.data[n]
       : actual[n].exists ? actual[n].value : n === 'tasks' ? [] : {}]));
     if (graph.protected) Object.assign(data, graph.pair);
@@ -2650,25 +2664,31 @@ function guideCommitPayloadValid(data) {
 function commitGuideData(uid, payload) {
   if (!payload || !guideCommitPayloadValid(payload.data)) throw new Error('invalid_guide_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('guide_commit_too_large');
-  if (Object.hasOwn(payload.data, 'purchases')) return commitEconomyData(uid, payload).files;
-  const graphTransition = assertAccountGraphTransition(uid, payload);
-  const names = Object.keys(payload.data);
-  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
-  const snapshots = new Map(); const written = [];
-  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
-  try {
-    for (const name of names) {
-      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
-      backupFile(dir, name);
-      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
-      written.push(name);
-    }
-    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
-  } catch (error) {
-    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
-    throw error;
+  if (Object.hasOwn(payload.data, 'purchases') && payload.version !== 3) return commitEconomyData(uid, payload);
+  return commitFeatureSnapshotData(uid, payload, 'guide');
+}
+
+// The same WAL owns all files of a guided action / habit gesture. In-memory
+// restoreSnapshot rollback alone cannot survive a killed process.
+function commitFeatureSnapshotData(uid, payload, kind) {
+  const policy = EconomyWriteV1[kind], names = Object.keys(payload.data);
+  const invalid = 'invalid_' + (kind === 'habits' ? 'habit' : kind) + '_commit';
+  if (payload.version !== undefined && payload.version !== 3) throw new Error(invalid);
+  if (payload.version === 3 && payload.featureBase === undefined) throw new Error(invalid);
+  const allNames = COMMITMENT_JOURNAL_ALLOWED_NAMES.filter(n => COMMITMENT_PAIR_NAMES.includes(n) || names.includes(n));
+  const actual = commitmentActualFiles(uid, allNames);
+  const decision = policy.decide(actual, payload.data, payload.featureBase);
+  if (decision === 'invalid') throw new Error(invalid);
+  if (decision === 'conflict') throw commitmentBoundaryError('commitment_revision_conflict', 409);
+  if (decision !== 'replay') {
+    const graph = assertAccountGraphTransition(uid, payload);
+    assertPurchaseTransition(uid, payload.data);
+    const data = Object.fromEntries(allNames.map(n => [n, Object.hasOwn(payload.data, n) ? payload.data[n]
+      : actual[n].exists ? actual[n].value : n === 'tasks' ? [] : {}]));
+    if (graph.protected) Object.assign(data, graph.pair);
+    commitCommitmentGraphDurable(uid, { names: allNames, actual, data });
   }
-  return names;
+  return { files: names, replay: decision === 'replay', snapshots: commitmentActualFiles(uid, allNames) };
 }
 
 const HABIT_COMMIT_TYPES = Object.freeze({
@@ -2705,23 +2725,7 @@ function commitHabitData(uid, payload) {
   const names = Object.keys(payload.data);
   if (!names.length || names.some((name) => !habitCommitValueValid(name, payload.data[name]))) throw new Error('invalid_habit_commit');
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 3 * 1024 * 1024) throw new Error('habit_commit_too_large');
-  const graphTransition = assertAccountGraphTransition(uid, payload);
-  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
-  const snapshots = new Map(); const written = [];
-  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
-  try {
-    for (const name of names) {
-      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
-      backupFile(dir, name);
-      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
-      written.push(name);
-    }
-    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
-  } catch (error) {
-    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
-    throw error;
-  }
-  return names;
+  return commitFeatureSnapshotData(uid, payload, 'habits');
 }
 
 function goalRecordValid(goal, ids) {
@@ -6159,8 +6163,8 @@ const server = http.createServer(async (req, res) => {
     let payload; try { payload = JSON.parse(await readBody(req, 5 * 1024 * 1024)); }
     catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'guide_commit_too_large' : 'invalid_guide_commit' }); }
     try {
-      const files = commitGuideData(uid, payload);
-      return sendJson(res, 200, { ok: true, files });
+      const result = commitGuideData(uid, payload);
+      return sendJson(res, 200, { ok: true, ...result });
     } catch (error) {
       if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_guide_commit' || error.message === 'guide_commit_too_large');
@@ -6173,8 +6177,8 @@ const server = http.createServer(async (req, res) => {
     let payload; try { payload = JSON.parse(await readBody(req, 4 * 1024 * 1024)); }
     catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'habit_commit_too_large' : 'invalid_habit_commit' }); }
     try {
-      const files = commitHabitData(uid, payload);
-      return sendJson(res, 200, { ok: true, files });
+      const result = commitHabitData(uid, payload);
+      return sendJson(res, 200, { ok: true, ...result });
     } catch (error) {
       if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_habit_commit' || error.message === 'habit_commit_too_large');

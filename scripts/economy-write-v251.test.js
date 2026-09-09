@@ -51,7 +51,10 @@ test('economy real server: crash recovery, stable retry, exact CAS, Guide purcha
   const settings = { lang: 'ru', gear: { owned: [] }, commitmentsV1: { version: 1, mode: 'default', items: [], log: {} } };
   const seed = { base: { settings: await read('settings'), tasks: await read('tasks') }, data: { settings, purchases: [] } };
   assert.equal((await req('/api/economy/commit', cookie, seed)).status, 200);
-  const purchase = { id: 'stable-p1', cost: 150, at: '2026-09-09T12:00:00.000Z', gearId: 'w1' };
+  // Synthetic earned credit and persisted catalogue; v253 rejects invented prices.
+  fs.writeFileSync(path.join(dir, 'users', user.data.id, 'tasks.json'), JSON.stringify([{ id: 'earned', title: 'QA', done: true, goldAwarded: 1000 }]));
+  fs.writeFileSync(path.join(dir, 'users', user.data.id, 'rewards.json'), JSON.stringify([{ id: 'r10', cost: 10 }, { id: 'r20', cost: 20 }, { id: 'r5', cost: 5 }]));
+  const purchase = { id: 'stable-p1', cost: 120, at: '2026-09-09T12:00:00.000Z', gearId: 'w1' };
   const next = { settings: { ...settings, gear: { owned: ['w1'] } }, purchases: [purchase] };
   const payload = await make(next);
   assert.equal((await req('/api/economy/commit', '', payload)).status, 401);
@@ -67,8 +70,8 @@ test('economy real server: crash recovery, stable retry, exact CAS, Guide purcha
   const replay = await req('/api/economy/commit', cookie, payload); assert.equal(replay.status, 200); assert.equal(replay.data.replay, true);
   assert.deepEqual((await req('/api/data/purchases', other.cookie)).status, 404);
   // Two tabs sharing a base: only one divergent spend survives.
-  const a = await make({ purchases: [purchase, { id: 'a', cost: 10 }] });
-  const b = { ...a, data: { purchases: [purchase, { id: 'b', cost: 20 }] } };
+  const a = await make({ purchases: [purchase, { id: 'a', rewardId: 'r10', cost: 10, at: purchase.at }] });
+  const b = { ...a, data: { purchases: [purchase, { id: 'b', rewardId: 'r20', cost: 20, at: purchase.at }] } };
   const results = await Promise.all([req('/api/economy/commit', cookie, a), req('/api/economy/commit', cookie, b)]);
   assert.deepEqual(results.map(r => r.status).sort(), [200, 409]);
   const current = (await read('purchases')).value;
@@ -76,7 +79,7 @@ test('economy real server: crash recovery, stable retry, exact CAS, Guide purcha
   assert.deepEqual((await read('purchases')).value, current);
   // The Guide purchase path must use the same journal, not a weaker two-write exception.
   const guideSettings = { ...(await read('settings')).value, guideV3: { version: 3 } };
-  const guide = { base: { settings: await read('settings'), tasks: await read('tasks') }, data: { settings: guideSettings, purchases: [...current, { id: 'guided', cost: 5 }] } };
+  const guide = { base: { settings: await read('settings'), tasks: await read('tasks') }, data: { settings: guideSettings, purchases: [...current, { id: 'guided', rewardId: 'r5', cost: 5, at: purchase.at }] } };
   await stop(); await start({ COMMITMENT_CRASH_AT: 'after_purchases_write' });
   await assert.rejects(req('/api/guide/commit', cookie, guide)); await stop(); await start();
   assert.deepEqual((await read('purchases')).value, current);

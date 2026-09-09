@@ -5,7 +5,8 @@
   if (root) root.EconomyWriteV1 = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
-  const TYPES = Object.freeze({ settings: 'object', purchases: 'array', rewards: 'array', lootbox: 'object', skilltree: 'object' });
+  function createPolicy(types) {
+  const TYPES = Object.freeze({ ...types });
   const record = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
   function valueValid(name, value) {
     return TYPES[name] === 'array' ? Array.isArray(value) : TYPES[name] === 'object' && record(value);
@@ -31,5 +32,11 @@
     if (base !== undefined && names.some((n) => canonical(actual[n]) !== canonical(base[n]))) return 'conflict';
     return 'commit';
   }
-  return Object.freeze({ TYPES, valueValid, snapshotValid, decide });
+  return Object.freeze({ TYPES, valueValid, snapshotValid, decide, canonical });
+  }
+  return Object.freeze({
+    ...createPolicy({ settings: 'object', purchases: 'array', rewards: 'array', lootbox: 'object', skilltree: 'object' }),
+    guide: createPolicy({ settings: 'object', tasks: 'array', inbox: 'array', purchases: 'array' }),
+    habits: createPolicy({ settings: 'object', habits: 'array', habitlog: 'object', antihabits: 'array' }),
+  });
 });

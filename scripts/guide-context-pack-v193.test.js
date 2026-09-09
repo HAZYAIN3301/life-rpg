@@ -191,7 +191,7 @@ test('Calendar and Notes Guide actions fail closed around real writes and recove
   assert.match(textSubmit, /State\._guideV3NoteDraftId = uid\(\)/);
   assert.match(textSubmit, /id: guideNotes \? State\._guideV3NoteDraftId : uid\(\)/);
   assert.match(textSubmit, /filter\(\(note\) => !guideNotes \|\| note\.id !== item\.id\)/);
-  assert.match(textSubmit, /if \(guideNotes\) State\._guideV3NoteDraftId = ''/);
+  assert.match(textSubmit, /if \(guideNotes\) \{ State\._guideV3NoteDraftId = ''; State\._guideNoteAttempt = null;/);
 
   const mediaStop = APP.slice(APP.indexOf('async function onCaptureStop('), APP.indexOf('\n// Nested-прогрессия'));
   assert.match(mediaStop, /State\._inboxBusy = true/);
@@ -284,9 +284,10 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
 });
 
 test('v205 Guide assets and v210 shell ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v252'/);
+  assert.match(SW, /const CACHE = 'satoru-v253'/);
   assert.match(INDEX, /guide-v3\.js\?v=20260830-guide-tree-v205-1/);
-  assert.match(INDEX, /app\.js\?v=20260909-design-v252-1/);
+  assert.match(INDEX, /app\.js\?v=20260909-design-v253-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
-  assert.match(SERVER, /commitGuideData[\s\S]*restoreSnapshot/);
+  assert.match(SERVER, /commitGuideData[\s\S]*commitFeatureSnapshotData/);
+  assert.match(SERVER, /function commitFeatureSnapshotData[\s\S]*commitCommitmentGraphDurable/);
 });

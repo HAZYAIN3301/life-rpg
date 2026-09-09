@@ -1,5 +1,16 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Крупный пакет v253, 09.09:** FEATURE-WRITES-V253.md. Общий WAL/exact-CAS
+  Notes/Calendar/Habits, стабильный повтор, серверные цены/баланс и append-only purchases
+  внутри economy/Guide endpoints; свет/reset/clear/pet-count/ambient/title после receipt.
+  Проверки/публикация — DEVLOG. Это не server-owned mint/import и не все feature writers.
+- [ ] **Следующий P0 целиком:** единый личный wallet/entitlement, контроль всех
+  источников gold/ownership и generic/import миграция без потери старых прав. Отдельно
+  проверить личный vs leaderboard уровень, Pro и chest grants; нельзя закрыть косметикой.
+- [ ] **Notes capture из v253 QA:** desktop capture/empty разложены в слишком узкие
+  колонки; подсветка Guide не охватывает длинную ошибку. Исправить композицию/error layout
+  вместе с общей очередью toast-ов, не скрывая заметки/голос/итог.
+
 - [x] **Первый P0 — receipt награды рейда и missing boost, v250, 09.09.**
   PARTY-REWARDS-V1.md: серверные 150 gold + реально действующие 30%/6h, одно
   account/week, replay/restart/legacy/import guards, без локального двойного начисления.

@@ -1,5 +1,11 @@
 # Satoru Guide v3 — «Тень ведёт»
 
+**Дельта v253:** [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md) —
+Notes/Calendar feature + settings теперь общий crash-safe WAL и exact-base replay;
+Habits compose и привычки тоже. Заморожены даты/id живого повтора. Rewards остаётся
+на v252. Pure reducer/содержание глав не изменены; остальные события сохраняют своих
+владельцев. Старые заявления «остальные главы не мигрированы» ниже — история v252.
+
 **Актуальная дельта 09.09, v252:** покупка внутри Rewards теперь сохраняет settings
 Guide + purchases общим economy exact-CAS/WAL. Замороженный reducer result удерживает
 первый persistedAt при потере ответа; повтор не создаёт новый purchase и не требует
