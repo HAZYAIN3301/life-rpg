@@ -6,19 +6,22 @@
 **Текущий запрос 09.09: разрешены master push/Railway, продолжение стройки и документация.**
 Дуо v249 опубликовано коммитом `0f4bf82`: оба Railway services success, 7 live-файлов
 совпали byte-for-byte, включая нетронутый compare.html. Прежний permission gate снят
-явным ответом владельца. Следующий срез — [PARTY-REWARDS-V1.md](./PARTY-REWARDS-V1.md),
-receipt-выдача рейда/действующий XP boost v250. Статус его проверок/релиза — верх DEVLOG.
+явным ответом владельца. Следующий срез тоже опубликован: [PARTY-REWARDS-V1.md](./PARTY-REWARDS-V1.md),
+receipt-выдача рейда/действующий XP boost v250, runtime `d412482`. Оба Railway services
+success, 8 live-файлов совпали byte-for-byte 09.09 09:53 UTC. Общий suite 1948/1948 PASS.
+Проверки и ограничения — верх DEVLOG и art-factory/party-rewards-v250/release-receipt.json.
 Пакет Opus №1 взял Codex; для Claude остаются №2/№3/№4. Не дублировать эту работу.
 
 **Предыдущий этап 08–09.09: первый срез мультиплеера v249 + критический продуктовый аудит.**
-[PARTY-DUO-V249.md](./PARTY-DUO-V249.md) — локально построенные совместные сессии
+[PARTY-DUO-V249.md](./PARTY-DUO-V249.md) — опубликованные совместные сессии
 двух участников существующей пати: свой task, отдельно раскрытая подпись, согласие,
 готовность, общий интервал, личный сохранённый итог. UI в Племени/Сегодня, no new nav.
-Новая сессия не начисляет валюту. Старые raid target/claim ещё НЕ исправлены.
+Новая сессия не начисляет валюту. Raid claim/boost исправлены следующим v250;
+старый target members×600 пока НЕ исправлен.
 [PRODUCT-CRITICAL-PATH-2026-09.md](./PRODUCT-CRITICAL-PATH-2026-09.md) — приоритеты,
 реальные основания/пробелы по Тени, привычкам, Вдохновению, дереву, расширению,
 гайду, экономике и канону. [CLAUDE-OPUS5-NEXT-WORK.md](./CLAUDE-OPUS5-NEXT-WORK.md) —
-4 самостоятельных handoff-пакета Opus 5; они подготовлены, но агентам ещё не отправлены.
+4 исходных handoff-пакета: №1 выполнен Codex; №2/№3/№4 готовы для Opus, ещё не отправлены.
 UI receipt: art-factory/party-duo-v249/receipt.json. Release/полные tests — верх DEVLOG.
 Выпуск v249 подтверждён 09.09 после явного разрешения владельца; прежнее ожидание закрыто.
 
@@ -27,10 +30,10 @@ UI receipt: art-factory/party-duo-v249/receipt.json. Release/полные tests 
 исходные идеи/CD5, проверка текущего party runtime, конкретный поток дуо/экспедиции,
 порядок разработки и пять исходных решений. Владелец затем разрешил начать; реализованный
 первый scope уточнён в PARTY-DUO-V249.md. Остальные предложения не стали автоматически
-утверждённым rollout. Эксперимент не запускался. Не возобновлять аватар автоматически. Риски:
-цель рейда растёт с каждым членом, включая неактивного/неразрешившего вклад;
-серверный claim и клиентская запись награды разделены; XP-буст рейда не найден в itemXp.
-Сбои старой выдачи в реальном аккаунте не воспроизводились. Fault tests нового дуо — отдельно.
+утверждённым rollout. Эксперимент не запускался. Не возобновлять аватар автоматически.
+Оставшийся риск рейда: цель растёт с каждым членом, включая неактивного/неразрешившего вклад.
+Найденные исследованием split claim/credit и отсутствующий boost закрыты v250.
+Сбои старой выдачи в реальном аккаунте не воспроизводились; компенсации не выдавались.
 
 Отложенный аватарный трек: [AVATAR-HYBRID-V5.md](./AVATAR-HYBRID-V5.md).
 Текущий checkpoint v6: `traveller.html` — цельная объёмная реконструкция рядом
@@ -91,15 +94,16 @@ Site public, обновление явно разрешено.
 - Канонический код — `origin/master`. Перед работой обязательно сверить
   `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
   источником истины.
-- Новый runtime — **структурный v247 + продуктовая полировка v248**, PWA cache `satoru-v248`,
-  app/style pin `20260908-design-v248-1`, `public/design-next-v1.css`.
-  v248 опубликован: runtime `588fec8`, Railway success; 11 production SHA-256,
-  guest/auth и неизменный архив проверены. Свидетельство — production-receipt.json
-  в `art-factory/product-polish-20260908/`; последующий docs-only commit не меняет runtime.
-  Контракт и границы QA — `PRODUCT-UX-AUDIT-V248.md`.
+- Новый runtime — **структурный v247 + полировка v248 + дуо v249 + награды v250**,
+  PWA cache `satoru-v250`, app pin `20260909-design-v250-1`;
+  неизменённые base/design CSS сохраняют pin `20260908-design-v248-1`.
+  Runtime `d412482` опубликован, Railway app/TTS success; 8 production SHA-256 и
+  read-only auth/bootstrap checks — `art-factory/party-rewards-v250/release-receipt.json`.
+  Границы UI-аудита всех вкладок остаются в `PRODUCT-UX-AUDIT-V248.md`; v250 не выдаёт
+  проверку затронутого рейда за новый полный визуальный аудит приложения.
   Прежний runtime v244 сохранён из `74a97dd` в `/compare.html` (synthetic, read-only).
   Actionable Foundations UI и Commitment v2 не заменены новой моделью хранения.
-- Полная проверка v248: **1935/1935 PASS**; UI/edge/composition/save receipts отдельно в аудите.
+- Полная проверка v250: **1948/1948 PASS**; browser/save/failure receipts отдельно в контракте.
   Перед следующей правкой начать с `git fetch`, `git status --short --branch` и
   `git log -5 --oneline`; обязательный процесс —
   [`AGENTS-PROTOCOL.md`](./AGENTS-PROTOCOL.md).

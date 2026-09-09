@@ -24,6 +24,30 @@
     "reloadVerified": true,
     "staleSnapshotRejected": true
   },
-  "publication": { "status": "pending_authorized_push", "previousProductionRuntime": "satoru-v249" },
+  "publication": {
+    "status": "verified",
+    "previousProductionRuntime": "satoru-v249",
+    "runtimeCommit": "d412482df038b79a0f5fc8709cc5f866b783c347",
+    "verifiedAt": "2026-09-09T09:53:54.086Z",
+    "branch": "master",
+    "url": "https://life-rpg-production-416a.up.railway.app/",
+    "appDeployment": { "id": "82aa7d64-3c15-41f2-8390-0996b0bcc7a9", "state": "success" },
+    "ttsDeployment": { "id": "19f4ab0a-708a-4ae1-8c20-7c6c8c2af0ed", "state": "success" },
+    "liveFiles": [
+      { "file": "index.html", "status": 200, "sha256": "215cf534d19cea9a9e31e0ff6eba957028be610eeb161f728a3cfe0942f56fd5", "matches": true },
+      { "file": "app.js", "status": 200, "sha256": "ba06a34911c670a8ab5ad8d30555cfb43a93fba331af343bf96edd12afbb2858", "matches": true },
+      { "file": "sw.js", "status": 200, "sha256": "a512a31b9fdc63b5cac4ca0aba6daef5258c24e1ba06fda0ce195adf8e373cc3", "matches": true },
+      { "file": "party-session-v1.css", "status": 200, "sha256": "8bf48af53148f3dd1e66d938e21ae792ef9b7e51a6c6621a2b0c7d4a66bd94ae", "matches": true },
+      { "file": "party-reward-policy-v1.js", "status": 200, "sha256": "a879a23e3086d4937bd40f661493ea5eac20145ec3c2effa72230ecdd314781c", "matches": true },
+      { "file": "party-session-v1.js", "status": 200, "sha256": "f3e72a426a911d4de93a3678b68cf4de8b4382381ba07b5559e27773a3c1ca4f", "matches": true },
+      { "file": "party-session-ui-v1.js", "status": 200, "sha256": "35a222fda9f1c4c9de7dee37f6cdb6c8c32a3fc9c73eb134c3c0b7c02840d109", "matches": true },
+      { "file": "compare.html", "status": 200, "sha256": "25a8fc674639d6fde71780fc4ee520ab3b26ce6a2c55e0e7bdaa51d4856777fc", "matches": true }
+    ],
+    "readOnlyEndpoints": [
+      { "path": "/api/party/rewards", "status": 401, "authenticated": false },
+      { "path": "/api/auth/profiles", "status": 200, "authenticated": false }
+    ],
+    "realAccountsMutated": false
+  },
   "remaining": ["raid target members x 600", "durable receipts for other purchases and game perks", "secretary capabilities", "duo delivery and story expedition", "German mobile nav truncation", "avatar remains paused"]
 }

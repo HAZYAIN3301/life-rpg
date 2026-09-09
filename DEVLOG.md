@@ -1,6 +1,6 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
-## [2026-09-09] v249 опубликован; v250 — серверная награда рейда и настоящий boost
+## [2026-09-09] v249 и v250 опубликованы — дуо, серверная награда рейда и настоящий boost
 
 Владелец явно разрешил master push/Railway и продолжение стройки с документацией.
 `0f4bf82` безопасно fast-forward опубликован поверх e76339d. Railway app/TTS success;
@@ -38,9 +38,15 @@ completeTask с усиленным XP, expiry будущего расчёта, r
 focus, light/dark, RU/EN/DE, 375/1280. 8 скриншотов просмотрены; JS errors 0.
 Финальный общий suite: **1948/1948 PASS**, `node --test --test-concurrency=2 scripts/*.test.js`,
 лог `/private/tmp/satoru-v250-final.log`. Browser receipt 09.09 09:43 UTC, 0 JS errors.
-До публикации выполнены `node --check` и `git diff --check`; свежий origin/master
-равен 0f4bf82, конфликтов нет. Runtime готов к разрешённому push; результат deployment
-будет добавлен после внешней проверки, не объявляется выполненным заранее.
+До публикации выполнены `node --check` и `git diff --check`; master обновлён
+fast-forward `0f4bf82` → `4b97dba` → **`d412482`** (последний добавляет direct-claim latch).
+Railway app success: `82aa7d64-3c15-41f2-8390-0996b0bcc7a9`, TTS success:
+`19f4ab0a-708a-4ae1-8c20-7c6c8c2af0ed`. 09.09 **09:53 UTC** 8 live-файлов совпали
+byte-for-byte с финальным кандидатом, включая неизменённый compare.html;
+`/api/party/rewards` без сессии 401, `/api/auth/profiles` 200. Реальные аккаунты
+не использованы для release QA. Полное свидетельство —
+`art-factory/party-rewards-v250/release-receipt.json`. Следующий docs-only commit
+фиксирует эти внешние результаты и не меняет проверенный runtime.
 
 **Передача:** пакет Opus №1 взят Codex и не ждёт второго исполнителя. №2 секретарь,
 №3 наполнение Вдохновения, №4 канон/production bible — готовы, но ещё не запущены.
