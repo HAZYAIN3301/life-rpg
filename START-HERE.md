@@ -4,11 +4,13 @@
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
 **Продолжение 09.09 — v251:** [ECONOMY-WRITES-V251.md](./ECONOMY-WRITES-V251.md).
-**Локальный runtime `5b14150`, НЕ опубликован.** 1951/1951 tests и browser QA PASS.
-Два push отклонены автоматическим permission review, в том числе после проверки
-origin/предыдущего Railway deployment. Нужен явный ответ владельца о публикации v251
-в `https://github.com/HAZYAIN3301/life-rpg.git`, `master`, с обновлением Satoru Railway.
-Не обходить gate другим инструментом. Live пока v250 (`35b4e02` docs над `d412482`).
+**v251 опубликован:** runtime `5b14150`, release `8fd19ec`. Владелец прямо разрешил
+этот destination/payload ответом «Делай дальше. Все разрешаю»; прежний gate закрыт.
+Оба Railway services success; 8 live-файлов совпали с release 09.09 15:23 UTC,
+API без сессии 401, приложение доступно. 1951/1951 tests и browser QA PASS.
+Продолжение v252: покупка внутри главы Rewards использует тот же exact-CAS/WAL
+и замороженный Guide result, а не отдельный нестабильный повтор. Текущий релизный
+статус v252 — верх DEVLOG; не повторять завершённую публикацию v251.
 Покупки/Логово/экипировка/игровые perks и повтор сундука: общий account WAL,
 точная база economy slots, успех после записи. Это не новый server-authoritative
 кошелёк и не готовность всех feature writes. Финальные проверки/релиз — верх DEVLOG.

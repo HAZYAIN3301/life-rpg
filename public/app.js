@@ -28367,10 +28367,45 @@ async function guideV3Commit(event, options = {}) {
   });
 }
 
+// The confirmation retains its purchases array across retries. Freeze the Guide
+// reducer result with that gesture too, or a new persistedAt defeats exact replay.
+const guideV3PurchaseAttempts = new WeakMap();
+async function guideV3PurchaseCommit(completion, itemId, purchases, applyFeature, targetId, { epoch, accountId }) {
+  if (!Array.isArray(purchases) || !pwaWriteAllowed('guideV3FeatureCommit', true)) return false;
+  let attempt = guideV3PurchaseAttempts.get(purchases);
+  if (attempt && (attempt.epoch !== epoch || attempt.accountId !== accountId
+    || attempt.writeEpoch !== Store._writeEpoch || attempt.itemId !== itemId || attempt.targetId !== targetId)) return false;
+  if (!attempt) {
+    const result = window.GuideV3.reduce(State.settings.guideV3, {
+      type: 'guide:context-complete', completion, persisted: true,
+      itemId: itemId || undefined, targetId: targetId || undefined, at: Date.now(),
+    });
+    if (!result.accepted) return false;
+    const settings = structuredClone(State.settings); settings.guideV3 = result.state;
+    attempt = { epoch, accountId, writeEpoch: Store._writeEpoch, itemId, targetId,
+      data: { settings, purchases: structuredClone(purchases) }, metric: result.metric };
+    guideV3PurchaseAttempts.set(purchases, attempt);
+  }
+  // economyCommit owns the Store lock, exact bases, timeout and WAL receipt.
+  // Do not nest it inside the legacy Guide Store.runExclusive below.
+  const saved = await economyCommit(attempt.data);
+  if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
+    || attempt.writeEpoch !== Store._writeEpoch) return false;
+  if (!saved) { State._guideV3Error = 'persist'; return false; }
+  if (typeof applyFeature === 'function' && await applyFeature(attempt.data) === false) return false;
+  if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
+    || attempt.writeEpoch !== Store._writeEpoch) return false;
+  State.settings = attempt.data.settings; State._guideV3Error = '';
+  if (attempt.metric) track(attempt.metric);
+  return true;
+}
 async function guideV3FeatureCommit(chapter, completion, itemId, featureData, applyFeature, targetId = '') {
   return guideV3Exclusive(async ({ epoch, accountId }) => {
     const model = window.GuideV3, names = Object.keys(featureData || {});
     if (!model || !State.settings || !names.length || !guideV3ContextActive(chapter, completion)) return false;
+    if (chapter === 'rewards' && completion === 'purchase-persisted' && names.length === 1 && names[0] === 'purchases') {
+      return guideV3PurchaseCommit(completion, itemId, featureData.purchases, applyFeature, targetId, { epoch, accountId });
+    }
     return Store.runExclusive([...names, 'settings', 'tasks'], async ({ writeEpoch, accountId: storeAccountId }) => {
       if (epoch !== _guideV3WriteEpoch || accountId !== String(State.me?.id || '')
         || writeEpoch !== Store._writeEpoch || storeAccountId !== accountId) return false;
@@ -32792,7 +32827,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v251';
+const PWA_CACHE_VERSION = 'satoru-v252';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

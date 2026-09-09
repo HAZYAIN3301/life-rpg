@@ -2,16 +2,34 @@
   "version": "v251",
   "date": "2026-09-09",
   "runtimeCommit": "5b14150677c4c39c62410876d8d4eea413694264",
-  "status": "local_verified_publication_blocked",
+  "status": "published_verified",
+  "releaseCommit": "8fd19ec16d85a967b96ae5486169d3279ad4552f",
+  "verifiedAt": "2026-09-09T15:23:15.362Z",
+  "railway": {
+    "app": { "status": "success", "deploymentId": "60848816-e1b2-4417-ba72-6e204a25bc4c" },
+    "piperTts": { "status": "success", "deploymentId": "fc33ba73-c349-4174-b123-c52259e928f8" }
+  },
   "destination": "https://github.com/HAZYAIN3301/life-rpg.git",
   "branch": "master",
   "deploymentTarget": "https://life-rpg-production-416a.up.railway.app/",
-  "lastVerifiedRemoteCommit": "35b4e0261f2a9d58445c8f7415c85cb46a1ea772",
+  "lastVerifiedRemoteCommit": "8fd19ec16d85a967b96ae5486169d3279ad4552f",
   "unitTests": { "total": 1951, "passed": 1951, "failed": 0, "log": "/private/tmp/satoru-v251-verified.log" },
   "browserReceipt": "receipt.json",
   "browserComplete": true,
   "screenshotsReviewed": 7,
-  "liveChanged": false,
-  "blocker": "Auto-review rejected master push twice, requiring explicit user confirmation of this destination and v251 payload. The second attempt followed read-only origin/previous-deployment verification. No alternate transport or deployment attempted.",
-  "next": "Obtain explicit publication approval, fetch current master and integrate safely, push then verify actual Railway deployment and live asset hashes."
+  "liveChanged": true,
+  "matchingLiveFiles": {
+    "index.html": "69fa5a3adc9c7ef52c9ebf1ed21f63cdb65a9ed163c9898e92a7bf60952331ef",
+    "app.js": "961e9c9879469326c9c30b374d05689e14282e844a7b5be1e76cc53698497df0",
+    "sw.js": "67c824636e9ad2be720aeca403f89fb2d9c77c59d1e2afcd4d1424deb7042f2e",
+    "economy-write-v1.js": "1dfaba07f9bb6b82edd852adfcd0ba4136c204f2a8aefb536ae680ae655e48ea",
+    "commitment-journal-v1.js": "11020583d6ad645310887ec7ff4cffaede0f95efe2fa57506781af883006a908",
+    "design-next-v1.css": "3e7e192139ed045683948cd1f051b3b282ba588a9044e3842817b53cc6e5ee7b",
+    "styles.css": "a82ca707619a5e415fc8973915f023eb620af93e6f7679faa892466c2e907b74",
+    "compare.html": "25a8fc674639d6fde71780fc4ee520ab3b26ce6a2c55e0e7bdaa51d4856777fc"
+  },
+  "economyUnauthenticatedStatus": 401,
+  "availabilityStatus": 200,
+  "previousBlocker": "Two auto-review rejections resolved by the user's explicit next-turn permission for this destination and payload. No workaround used.",
+  "next": "v252 Guide purchase replay continues separately; do not republish v251 blindly."
 }

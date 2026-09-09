@@ -112,7 +112,7 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
 });
 
 test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v251';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v252';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -559,7 +559,7 @@ test('Context pack v205 explicitly releases exact Guide copy and chapter version
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*design-v251(?:-|$)/, 'the changed app shell needs the v251 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*design-v252(?:-|$)/, 'the changed app shell needs the v252 cache-busting pin');
   sourceMatches(INDEX, /styles\.css\?v=[^"']*design-v248(?:-|["'])/,
     'the current application CSS needs the v248 cache-busting pin');
 });

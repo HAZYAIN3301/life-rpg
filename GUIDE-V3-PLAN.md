@@ -1,5 +1,12 @@
 # Satoru Guide v3 — «Тень ведёт»
 
+**Актуальная дельта 09.09, v252:** покупка внутри Rewards теперь сохраняет settings
+Guide + purchases общим economy exact-CAS/WAL. Замороженный reducer result удерживает
+первый persistedAt при потере ответа; повтор не создаёт новый purchase и не требует
+второй покупки для завершения главы. Проверки/публикация — верх DEVLOG и
+ECONOMY-WRITES-V251.md. Старый endpoint и остальные главы не объявлены мигрированными.
+Остальные исторические статусы ниже сверять с START-HERE, не принимать за текущий gate.
+
 Статус на 2026-08-28: First Journey, account-owned state, Guide Library, replay/Piper и пятиъязычный runtime RU/EN/DE/UK/ES выпущены до C2 v191. Habits v192 и десять глав v193 (Calendar, Notes, Voice, Jarvis, Rewards, Hero, Den, Pets, Tree, Progress) прошли seeded browser E2E; найденные там modal/voice/replay блокеры закрыты. Локальный **v194** добавляет ручную главу System Theme и настоящее значение темы `system`, которое сохраняется атомарно и следует `prefers-color-scheme`; автоматический drip её не навязывает. Общий контракт остаётся `intro → engage → complete`, pacing — не более одной новой auto-главы за сессию. Полный автоматический gate — **1122/1122 PASS**; локальная матрица `360×800`, `375×812`, `1280×900`, RU/EN/DE/UK/ES проходит без горизонтального overflow, а кнопки Guide и System Theme держат минимум 42 px. Production push/deploy и asset-hash verification v192–v194 ещё не выполнялись. Goals остаётся закрытой до questionnaire/data logic, Tribe — до отдельного privacy/consent релиза. Подробный фактический прогон: `GUIDE-V3-V194-QA.md`. Исторический RU-сценарий лежит в `GUIDE-V3-FIRST-SCRIPT-RU.md`; guide-specific концепт Искры по-прежнему не является утверждённым production-art.
 
 ## 0. Решение

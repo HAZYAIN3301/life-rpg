@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-09T15:30:49.397Z",
+  "checks": [
+    "Guide reward: lost committed response → unchanged UI → byte-identical retry → one purchase + same saved Guide completion after reload",
+    "Gear: delayed/lost committed response → no optimistic spend → exact retry → one persisted purchase",
+    "Equip failure keeps old bonus/appearance; retry persists unequip, keyboard focus restored",
+    "Den: price confirmation → ownership + placement + spend in one durable transaction",
+    "Game perk: failed write grants no effect/spend; retry commits one unlock before success",
+    "Reload preserves purchases, den placement and perk",
+    "Chest: lost saved response → same draw and timestamp on retry → exactly one opening",
+    "Voucher failure preserves voucher and catalogue; retry commits both files together",
+    "RU/EN/DE · mobile/desktop · light/dark · reduced motion · no page overflow"
+  ],
+  "errors": [],
+  "complete": true
+}

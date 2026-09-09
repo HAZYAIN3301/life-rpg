@@ -7,7 +7,8 @@ import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 const require = createRequire(new URL('../art-factory/avatar-3d-v1-20260907/package.json', import.meta.url));
 const { chromium } = require('playwright');
-const root = new URL('../', import.meta.url).pathname, out = path.join(root, 'art-factory/economy-v251');
+const guideMode = process.env.ECONOMY_QA_GUIDE === '1';
+const root = new URL('../', import.meta.url).pathname, out = path.join(root, guideMode ? 'art-factory/guide-purchase-v252' : 'art-factory/economy-v251');
 const dir = await mkdtemp(path.join(tmpdir(), 'satoru-economy-ui-')), base = 'http://127.0.0.1:4197';
 await mkdir(out, { recursive: true });
 const server = spawn(process.execPath, ['server.js'], { cwd: root, env: { ...process.env, DATA_DIR: dir, PORT: '4197', HOST: '127.0.0.1', PUSH_SCHED: 'off' }, stdio: 'ignore' });
@@ -36,6 +37,42 @@ try {
     document.querySelectorAll('.modal-overlay').forEach(e => e.remove()); document.querySelector('#app')?.removeAttribute('inert');
     State.view = 'rewards'; render();
   });
+  if (guideMode) {
+    await page.evaluate(async () => {
+      State.rewards = [{ id: 'guide-qa-reward', name: 'Чай на балконе', cost: 10, icon: '🍵' }];
+      if (!await Store.saveNow('rewards', State.rewards)) throw Error('Guide reward fixture');
+      State.settings.guideV3 = GuideV3.normalize({ enabled: true, voiceConsent: false,
+        currentChapter: 'rewards', currentStep: 'engage', completedChapters: [GuideV3.FIRST_CHAPTER],
+        chapterMeta: { rewards: { candidateId: 'guide-qa-reward' } } });
+      if (!await Store.saveNow('settings', State.settings)) throw Error('Guide settings fixture');
+      State._guideV3SessionPrompted = true; State._guideV3ForceOpen = true; State.view = 'rewards'; render();
+    });
+    await page.locator('[data-action=buy-reward][data-id=guide-qa-reward]').click();
+    const guideBefore = await page.evaluate(() => ({ gold: goldBalance(), count: State.purchases.length }));
+    let guideBody, guideRetry;
+    await page.route(base + '/api/economy/commit', async route => { guideBody = route.request().postData(); await route.fetch(); await route.abort(); }, { times: 1 });
+    await page.locator('[data-action=confirm-economy-action]').click();
+    await page.waitForFunction(() => !document.querySelector('[data-action=confirm-economy-action]').disabled);
+    assert.equal(typeof guideBody, 'string', 'Guide purchase uses common durable transport');
+    assert.equal(await page.evaluate(() => goldBalance()), guideBefore.gold);
+    assert.equal(await page.evaluate(() => State.settings.guideV3.currentStep), 'engage');
+    const committed = JSON.parse(await readFile(path.join(dir, 'users', user.id, 'settings.json'), 'utf8'));
+    assert.equal(committed.guideV3.currentStep, 'complete');
+    await page.screenshot({ path: path.join(out, 'guide-purchase-retry.png') });
+    await page.route(base + '/api/economy/commit', async route => { guideRetry = route.request().postData(); await route.continue(); }, { times: 1 });
+    await page.locator('[data-action=confirm-economy-action]').click();
+    await page.waitForFunction(() => !document.querySelector('#economy-confirm-modal'));
+    assert.equal(guideRetry, guideBody, 'Guide timestamp, purchase ID and CAS bases survive retry');
+    assert.equal(await page.evaluate(() => State.purchases.length), guideBefore.count + 1);
+    assert.equal(await page.evaluate(() => goldBalance()), guideBefore.gold - 10);
+    assert.equal(await page.evaluate(() => State.settings.guideV3.chapterMeta.rewards.persistedAt), committed.guideV3.chapterMeta.rewards.persistedAt);
+    await page.screenshot({ path: path.join(out, 'guide-purchase-confirmed.png') });
+    await page.reload(); await page.waitForFunction(() => State.phase === 'app'); await page.locator('#main > *').first().waitFor();
+    assert.equal(await page.evaluate(() => State.settings.guideV3.currentStep), 'complete');
+    assert.equal(await page.evaluate(() => State.purchases.length), guideBefore.count + 1);
+    report.checks.push('Guide reward: lost committed response → unchanged UI → byte-identical retry → one purchase + same saved Guide completion after reload');
+    await page.evaluate(async () => { State.settings.guideV3.enabled = false; await Store.saveNow('settings', State.settings); State.view = 'rewards'; render(); });
+  }
   const ids = await page.evaluate(() => ({ gear: GEAR.find(g => !ensureGear().owned.includes(g.id) && g.lvl <= charLevel()).id,
     den: DEN_ITEMS.find(i => i.access !== 'starter' && i.access !== 'pro' && i.level <= charLevel()).id }));
   const before = await page.evaluate(() => ({ gold: goldBalance(), count: State.purchases.length }));

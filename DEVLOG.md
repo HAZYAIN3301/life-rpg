@@ -1,8 +1,41 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-09] v251 опубликован; v252 — подтверждённая покупка внутри обучения
+
+Владелец ответил «Делай дальше. Все разрешаю» на точный вопрос про v251 в
+HAZYAIN3301/life-rpg/master и рабочий Satoru Railway. Gate предыдущего хода снят.
+Fresh fetch: master не изменился; fast-forward `35b4e02` → `8fd19ec` успешен.
+Оба Railway services success: app `60848816-e1b2-4417-ba72-6e204a25bc4c`, TTS
+`fc33ba73-c349-4174-b123-c52259e928f8`. 15:23 UTC восемь live-файлов совпали с
+коммитом byte-for-byte, включая compare.html; economy API без сессии 401, profiles 200.
+Свидетельство: art-factory/economy-v251/release-status.json. Старые абзацы ниже — история.
+
+**Следующий срез v252:** Guide Rewards purchase раньше повторно вычислял reducer result
+с новым persistedAt и шёл через legacy guide endpoint. При потерянном ответе WAL уже
+сохранил покупку, но повтор не был тем же действием. Теперь только эта ветка передаёт
+единый settings+purchase candidate в economyCommit v251. GuideV3.reduce остаётся
+единственным владельцем перехода главы. Candidate привязан к purchase array,
+item/target/account и обоим write epochs, сохраняет дату на повторе. Общий Store lock
+не вложен во второй lock: дедлока нет. Экономика/открытие новых глав не менялись.
+
+Четыре поведенческих VM-теста вызывают реальные runtime-функции и Guide reducer: отказ и
+повтор, отсутствие раннего эффекта, другой target/account/write epoch, frozen candidate,
+запоздалый ответ после смены аккаунта. Chrome с настоящим сервером: потерянный ответ
+ПОСЛЕ записи → UI ещё на engage → идентичный body retry → одна покупка и тот же
+persistedAt, сохранённые после reload. Заодно повторены все v251 economy scenarios.
+Browser 15:30 UTC complete=true, errors=0; art-factory/guide-purchase-v252/receipt.json.
+Переполнение toast-ами достижений в confirmed screenshot вызвано huge-XP fixture;
+оно показывает старый массовый сценарий, не результат нового дизайна/его приёмку.
+
+App/SW подняты до v252; неизменённые CSS/module pins остались v251/v248.
+Финальный suite **1955/1955 PASS**, `/private/tmp/satoru-v252-verified.log`;
+node --check и git diff --check PASS. Публикация v252 ещё проверяется. Контракт — дополнение
+ECONOMY-WRITES-V251.md и GUIDE-V3-PLAN.md. Calendar/Notes и старые guide clients
+не переведены этим срезом. Пакеты второго агента не затронуты, аватар на паузе.
+
 ## [2026-09-09] v251 — покупки, Логово и игровые perks: запись раньше успеха
 
-**Релиз заблокирован permissions, не тестами.** Runtime commit
+**Исторический gate; закрыт следующим ходом выше.** Runtime commit
 `5b14150677c4c39c62410876d8d4eea413694264`, локальная ветка
 `codex/today-design-v1-20260907`. До commit проверены git diff --check и node --check.
 Push в origin/master дважды отклонён auto-review: требует явного подтверждения
