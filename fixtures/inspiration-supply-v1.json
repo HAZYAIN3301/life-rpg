@@ -1,0 +1,1760 @@
+{
+  "version": 1,
+  "module": "public/inspiration-supply-policy-v1.js",
+  "runner": "scripts/inspiration-supply-policy-v1.test.js",
+  "synthetic": true,
+  "verified": false,
+  "note": "ВСЁ СОДЕРЖИМОЕ СИНТЕТИЧЕСКОЕ И НЕПРОВЕРЕННОЕ. Хосты в домене .invalid зарезервированы RFC 2606 и заведомо не существуют — это сделано намеренно, чтобы ни один выдуманный URL, ни одно выдуманное разрешение и ни одна выдуманная цитата не выглядели как проверенный материал. Реальный allowlist рантайма отдельно закреплён в PRODUCTION_EMBED_HOSTS и сверяется с app.js отдельным тестом.",
+  "context": {
+    "now": "2026-09-09T09:00:00.000Z",
+    "embedHosts": [
+      "embed.example.invalid",
+      "player.example.invalid"
+    ],
+    "imageHosts": [
+      "images.example.invalid"
+    ],
+    "maxAgeDays": {
+      "licensed-local": 365,
+      "official-embed": 30,
+      "link-only": 30
+    },
+    "repeatCooldownDays": 45,
+    "maxSharePerSource": 0.5,
+    "minPerInterest": 2
+  },
+  "candidates": [
+    {
+      "id": "of-light-study",
+      "source": "openfilm",
+      "externalId": "of-0001",
+      "format": "video",
+      "lang": "none",
+      "durationSec": 464,
+      "interestIds": [
+        "animation",
+        "creative",
+        "art"
+      ],
+      "title": {
+        "ru": "Этюд света",
+        "en": "A study of light"
+      },
+      "body": {
+        "ru": "Короткий фильм без слов о том, как свет меняет форму предмета.",
+        "en": "A wordless short about how light reshapes an object."
+      },
+      "rights": {
+        "kind": "cc-by-4.0",
+        "holder": "Open Film Collective (synthetic)",
+        "url": "https://rights.example.invalid/of-0001",
+        "embedAllowed": true,
+        "downloadAllowed": false
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://embed.example.invalid/of-0001",
+        "sourceUrl": "https://openfilm.example.invalid/of-0001"
+      },
+      "lastCheckedAt": "2026-09-01T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "of-quiet-forest",
+      "source": "openfilm",
+      "externalId": "of-0002",
+      "format": "video",
+      "lang": "none",
+      "durationSec": 612,
+      "interestIds": [
+        "animation",
+        "nature",
+        "rest"
+      ],
+      "title": {
+        "ru": "Тихий лес",
+        "en": "Quiet forest"
+      },
+      "body": {
+        "ru": "Десять минут анимации без диалогов и без нарастания.",
+        "en": "Ten minutes of animation with no dialogue and no build-up."
+      },
+      "rights": {
+        "kind": "cc-by-4.0",
+        "holder": "Open Film Collective (synthetic)",
+        "url": "https://rights.example.invalid/of-0002",
+        "embedAllowed": true,
+        "downloadAllowed": false
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://embed.example.invalid/of-0002",
+        "sourceUrl": "https://openfilm.example.invalid/of-0002"
+      },
+      "lastCheckedAt": "2026-09-01T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "of-line-and-mass",
+      "source": "openfilm",
+      "externalId": "of-0003",
+      "format": "edit",
+      "lang": "none",
+      "durationSec": 95,
+      "interestIds": [
+        "animation",
+        "design",
+        "creative"
+      ],
+      "title": {
+        "ru": "Линия и масса",
+        "en": "Line and mass"
+      },
+      "body": {
+        "ru": "Полторы минуты о том, как вес фигуры читается силуэтом.",
+        "en": "Ninety seconds on reading weight through silhouette."
+      },
+      "rights": {
+        "kind": "cc-by-4.0",
+        "holder": "Open Film Collective (synthetic)",
+        "url": "https://rights.example.invalid/of-0003",
+        "embedAllowed": true,
+        "downloadAllowed": false
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://embed.example.invalid/of-0003",
+        "sourceUrl": "https://openfilm.example.invalid/of-0003"
+      },
+      "lastCheckedAt": "2026-09-03T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "of-first-frame",
+      "source": "openfilm",
+      "externalId": "of-0004",
+      "format": "edit",
+      "lang": "en",
+      "durationSec": 180,
+      "interestIds": [
+        "animation",
+        "video",
+        "learning"
+      ],
+      "title": {
+        "ru": "Первый кадр",
+        "en": "The first frame"
+      },
+      "body": {
+        "ru": "Разбор того, что решает первый кадр монтажа. Комментарий на английском.",
+        "en": "What the first cut decides. Narrated in English."
+      },
+      "rights": {
+        "kind": "cc-by-4.0",
+        "holder": "Open Film Collective (synthetic)",
+        "url": "https://rights.example.invalid/of-0004",
+        "embedAllowed": true,
+        "downloadAllowed": false
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://embed.example.invalid/of-0004",
+        "sourceUrl": "https://openfilm.example.invalid/of-0004"
+      },
+      "lastCheckedAt": "2026-09-03T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "ps-valley-morning",
+      "source": "parkservice",
+      "externalId": "ps-1101",
+      "format": "video",
+      "lang": "en",
+      "durationSec": 196,
+      "interestIds": [
+        "nature",
+        "travel",
+        "rest"
+      ],
+      "title": {
+        "ru": "Утро в долине",
+        "en": "Morning in the valley"
+      },
+      "body": {
+        "ru": "Три минуты пространства без ленты и без autoplay.",
+        "en": "Three minutes of space, no feed and no autoplay."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Park Service (synthetic)",
+        "url": "https://rights.example.invalid/ps-1101",
+        "embedAllowed": true,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://player.example.invalid/ps-1101",
+        "sourceUrl": "https://parks.example.invalid/ps-1101"
+      },
+      "lastCheckedAt": "2026-09-02T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "ps-ridge-walk",
+      "source": "parkservice",
+      "externalId": "ps-1102",
+      "format": "video",
+      "lang": "en",
+      "durationSec": 340,
+      "interestIds": [
+        "hiking",
+        "mountains",
+        "nature"
+      ],
+      "title": {
+        "ru": "Тропа по гребню",
+        "en": "Ridge walk"
+      },
+      "body": {
+        "ru": "Съёмка перехода по хребту, без музыки и без комментария.",
+        "en": "A ridge traverse, no music and no commentary."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Park Service (synthetic)",
+        "url": "https://rights.example.invalid/ps-1102",
+        "embedAllowed": true,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://player.example.invalid/ps-1102",
+        "sourceUrl": "https://parks.example.invalid/ps-1102"
+      },
+      "lastCheckedAt": "2026-09-02T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "ps-river-still",
+      "source": "parkservice",
+      "externalId": "ps-1103",
+      "format": "image",
+      "lang": "none",
+      "durationSec": null,
+      "interestIds": [
+        "nature",
+        "rest"
+      ],
+      "title": {
+        "ru": "Река на рассвете",
+        "en": "River at dawn"
+      },
+      "body": {
+        "ru": "Один кадр. Смотреть можно ровно столько, сколько хочется.",
+        "en": "A single frame. Look at it exactly as long as you want."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Park Service (synthetic)",
+        "url": "https://rights.example.invalid/ps-1103",
+        "embedAllowed": false,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "link",
+        "sourceUrl": "https://parks.example.invalid/ps-1103"
+      },
+      "imageUrl": "https://images.example.invalid/ps-1103.jpg",
+      "lastCheckedAt": "2026-09-05T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "ps-night-sky",
+      "source": "parkservice",
+      "externalId": "ps-1104",
+      "format": "image",
+      "lang": "none",
+      "durationSec": null,
+      "interestIds": [
+        "space",
+        "nature"
+      ],
+      "title": {
+        "ru": "Ночное небо над парком",
+        "en": "Night sky over the park"
+      },
+      "body": {
+        "ru": "Длинная выдержка, снятая вдали от городского света.",
+        "en": "A long exposure taken far from city light."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Park Service (synthetic)",
+        "url": "https://rights.example.invalid/ps-1104",
+        "embedAllowed": false,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "link",
+        "sourceUrl": "https://parks.example.invalid/ps-1104"
+      },
+      "imageUrl": "https://images.example.invalid/ps-1104.jpg",
+      "lastCheckedAt": "2026-09-05T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "pd-run-58",
+      "source": "pdarchive",
+      "externalId": "pd-3001",
+      "format": "edit",
+      "lang": "none",
+      "durationSec": 58,
+      "interestIds": [
+        "running",
+        "sport",
+        "movement",
+        "fitness"
+      ],
+      "title": {
+        "ru": "Бег, 58 секунд",
+        "en": "Run, 58 seconds"
+      },
+      "body": {
+        "ru": "Короткий ритмичный ролик из общественного архива.",
+        "en": "A short rhythmic clip from a public archive."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Public Archive (synthetic)",
+        "url": "https://rights.example.invalid/pd-3001",
+        "embedAllowed": true,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://player.example.invalid/pd-3001",
+        "sourceUrl": "https://archive.example.invalid/pd-3001"
+      },
+      "lastCheckedAt": "2026-08-28T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "pd-morning-drill",
+      "source": "pdarchive",
+      "externalId": "pd-3002",
+      "format": "edit",
+      "lang": "none",
+      "durationSec": 120,
+      "interestIds": [
+        "sport",
+        "fitness",
+        "movement"
+      ],
+      "title": {
+        "ru": "Разминка в две минуты",
+        "en": "A two-minute warm-up"
+      },
+      "body": {
+        "ru": "Простая последовательность движений без счёта и без оценки.",
+        "en": "A plain movement sequence with no counting and no scoring."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Public Archive (synthetic)",
+        "url": "https://rights.example.invalid/pd-3002",
+        "embedAllowed": true,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://player.example.invalid/pd-3002",
+        "sourceUrl": "https://archive.example.invalid/pd-3002"
+      },
+      "lastCheckedAt": "2026-08-28T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "pd-signal-lab",
+      "source": "pdarchive",
+      "externalId": "pd-3003",
+      "format": "video",
+      "lang": "en",
+      "durationSec": 900,
+      "interestIds": [
+        "technology",
+        "science",
+        "learning"
+      ],
+      "title": {
+        "ru": "Лаборатория сигналов",
+        "en": "Signal lab"
+      },
+      "body": {
+        "ru": "Пятнадцать минут о том, как измеряют то, чего не видно.",
+        "en": "Fifteen minutes on measuring what cannot be seen."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Public Archive (synthetic)",
+        "url": "https://rights.example.invalid/pd-3003",
+        "embedAllowed": true,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://player.example.invalid/pd-3003",
+        "sourceUrl": "https://archive.example.invalid/pd-3003"
+      },
+      "lastCheckedAt": "2026-09-04T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "pd-old-workshop",
+      "source": "pdarchive",
+      "externalId": "pd-3004",
+      "format": "video",
+      "lang": "en",
+      "durationSec": 1500,
+      "interestIds": [
+        "technology",
+        "design",
+        "home"
+      ],
+      "title": {
+        "ru": "Старая мастерская",
+        "en": "The old workshop"
+      },
+      "body": {
+        "ru": "Двадцать пять минут о порядке инструментов и порядке работы.",
+        "en": "Twenty-five minutes on the order of tools and the order of work."
+      },
+      "rights": {
+        "kind": "public-domain",
+        "holder": "Public Archive (synthetic)",
+        "url": "https://rights.example.invalid/pd-3004",
+        "embedAllowed": true,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "embed",
+        "embedUrl": "https://player.example.invalid/pd-3004",
+        "sourceUrl": "https://archive.example.invalid/pd-3004"
+      },
+      "lastCheckedAt": "2026-09-04T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "sat-next-decision",
+      "source": "satoru",
+      "externalId": "sat-q01",
+      "format": "quote",
+      "lang": "ru",
+      "durationSec": null,
+      "interestIds": [
+        "philosophy",
+        "focus",
+        "learning"
+      ],
+      "title": {
+        "ru": "Не управляй всем днём. Управляй следующим решением."
+      },
+      "body": {
+        "ru": "Satoru · оригинальная мысль"
+      },
+      "rights": {
+        "kind": "satoru-original",
+        "holder": "",
+        "url": "",
+        "embedAllowed": false,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "text"
+      },
+      "lastCheckedAt": "2026-05-01T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false
+    },
+    {
+      "id": "sat-draft-out",
+      "source": "satoru",
+      "externalId": "sat-q02",
+      "format": "quote",
+      "lang": "ru",
+      "durationSec": null,
+      "interestIds": [
+        "business",
+        "product",
+        "creative"
+      ],
+      "title": {
+        "ru": "Черновик, который вышел в мир, сильнее идеала в голове."
+      },
+      "body": {
+        "ru": "Satoru · оригинальная мысль"
+      },
+      "rights": {
+        "kind": "satoru-original",
+        "holder": "",
+        "url": "",
+        "embedAllowed": false,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "text"
+      },
+      "lastCheckedAt": "2026-05-01T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false
+    },
+    {
+      "id": "sat-one-question",
+      "source": "satoru",
+      "externalId": "sat-q03",
+      "format": "quote",
+      "lang": "ru",
+      "durationSec": null,
+      "interestIds": [
+        "study",
+        "learning",
+        "reading"
+      ],
+      "title": {
+        "ru": "Хорошая сессия начинается не с ответа, а с одного точного вопроса."
+      },
+      "body": {
+        "ru": "Satoru · оригинальная мысль"
+      },
+      "rights": {
+        "kind": "satoru-original",
+        "holder": "",
+        "url": "",
+        "embedAllowed": false,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "text"
+      },
+      "lastCheckedAt": "2026-05-01T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false
+    },
+    {
+      "id": "sat-rest-is-work",
+      "source": "satoru",
+      "externalId": "sat-q04",
+      "format": "quote",
+      "lang": "ru",
+      "durationSec": null,
+      "interestIds": [
+        "rest",
+        "recovery",
+        "health"
+      ],
+      "title": {
+        "ru": "Отдых, у которого есть конец, восстанавливает. Без конца — нет."
+      },
+      "body": {
+        "ru": "Satoru · оригинальная мысль"
+      },
+      "rights": {
+        "kind": "satoru-original",
+        "holder": "",
+        "url": "",
+        "embedAllowed": false,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "text"
+      },
+      "lastCheckedAt": "2026-05-01T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false
+    },
+    {
+      "id": "sat-forge-plate",
+      "source": "satoru",
+      "externalId": "sat-i01",
+      "format": "image",
+      "lang": "none",
+      "durationSec": null,
+      "interestIds": [
+        "creative",
+        "art",
+        "design"
+      ],
+      "title": {
+        "ru": "Пластина кузни",
+        "en": "Forge plate"
+      },
+      "body": {
+        "ru": "Отрисованный для Satoru кадр: материал, фактура, вес.",
+        "en": "A frame drawn for Satoru: material, texture, weight."
+      },
+      "rights": {
+        "kind": "satoru-original",
+        "holder": "",
+        "url": "",
+        "embedAllowed": false,
+        "downloadAllowed": true
+      },
+      "delivery": {
+        "policy": "local",
+        "assetPath": "art/inspiration/forge-plate-v1.png"
+      },
+      "lastCheckedAt": "2026-05-01T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false
+    },
+    {
+      "id": "ob-sun-hum",
+      "source": "observatory",
+      "externalId": "ob-7001",
+      "format": "podcast",
+      "lang": "en",
+      "durationSec": 1620,
+      "interestIds": [
+        "space",
+        "science",
+        "learning"
+      ],
+      "title": {
+        "ru": "Гул звезды",
+        "en": "The hum of a star"
+      },
+      "body": {
+        "ru": "Выпуск о том, как данные превращают в звук. Открывается у источника.",
+        "en": "An episode on turning data into sound. It opens at the source."
+      },
+      "rights": {
+        "kind": "official-source",
+        "holder": "Observatory Media (synthetic)",
+        "url": "https://rights.example.invalid/ob-7001",
+        "embedAllowed": false,
+        "downloadAllowed": false
+      },
+      "delivery": {
+        "policy": "link",
+        "sourceUrl": "https://observatory.example.invalid/ob-7001"
+      },
+      "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "ob-deep-field",
+      "source": "observatory",
+      "externalId": "ob-7002",
+      "format": "image",
+      "lang": "none",
+      "durationSec": null,
+      "interestIds": [
+        "space",
+        "science"
+      ],
+      "title": {
+        "ru": "Глубокое поле",
+        "en": "Deep field"
+      },
+      "body": {
+        "ru": "Снимок участка неба, который выглядел пустым.",
+        "en": "An image of a patch of sky that looked empty."
+      },
+      "rights": {
+        "kind": "official-source",
+        "holder": "Observatory Media (synthetic)",
+        "url": "https://rights.example.invalid/ob-7002",
+        "embedAllowed": false,
+        "downloadAllowed": false
+      },
+      "delivery": {
+        "policy": "link",
+        "sourceUrl": "https://observatory.example.invalid/ob-7002"
+      },
+      "imageUrl": "https://images.example.invalid/ob-7002.jpg",
+      "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    },
+    {
+      "id": "ob-orbit-notes",
+      "source": "observatory",
+      "externalId": "ob-7003",
+      "format": "podcast",
+      "lang": "en",
+      "durationSec": 2100,
+      "interestIds": [
+        "space",
+        "science",
+        "technology"
+      ],
+      "title": {
+        "ru": "Заметки с орбиты",
+        "en": "Notes from orbit"
+      },
+      "body": {
+        "ru": "Разговор о том, как чинят то, до чего нельзя дотянуться.",
+        "en": "A conversation about repairing what you cannot reach."
+      },
+      "rights": {
+        "kind": "official-source",
+        "holder": "Observatory Media (synthetic)",
+        "url": "https://rights.example.invalid/ob-7003",
+        "embedAllowed": false,
+        "downloadAllowed": false
+      },
+      "delivery": {
+        "policy": "link",
+        "sourceUrl": "https://observatory.example.invalid/ob-7003"
+      },
+      "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+      "available": true,
+      "synthetic": true,
+      "verified": false,
+      "checkMethod": "playback"
+    }
+  ],
+  "rejections": [
+    {
+      "why": "Официальный источник без ссылки на права. Через полгода никто не сможет проверить, на каком основании материал показывается.",
+      "expect": "missing_rights_url",
+      "candidate": {
+        "id": "rej-no-rights-url",
+        "source": "observatory",
+        "externalId": "x1",
+        "format": "video",
+        "lang": "en",
+        "durationSec": 300,
+        "interestIds": [
+          "space"
+        ],
+        "title": {
+          "ru": "Без основания"
+        },
+        "body": {
+          "ru": "Права не подтверждены ссылкой."
+        },
+        "rights": {
+          "kind": "official-source",
+          "holder": "Observatory Media (synthetic)",
+          "embedAllowed": false,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "link",
+          "sourceUrl": "https://observatory.example.invalid/x1"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "ГЛАВНОЕ ПРАВИЛО ПАКЕТА. «Официальный» источник даёт право показать, а не право скопировать файл себе на сервер.",
+      "expect": "rights_conflict",
+      "candidate": {
+        "id": "rej-official-download",
+        "source": "observatory",
+        "externalId": "x2",
+        "format": "video",
+        "lang": "en",
+        "durationSec": 300,
+        "interestIds": [
+          "space"
+        ],
+        "title": {
+          "ru": "Официальное, но не наше"
+        },
+        "body": {
+          "ru": "Объявляет право хранения там, где его нет."
+        },
+        "rights": {
+          "kind": "official-source",
+          "holder": "Observatory Media (synthetic)",
+          "url": "https://rights.example.invalid/x2",
+          "embedAllowed": false,
+          "downloadAllowed": true
+        },
+        "delivery": {
+          "policy": "local",
+          "assetPath": "art/inspiration/x2.mp4"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true
+      }
+    },
+    {
+      "why": "Embed с хоста вне allowlist. Приложение такой iframe молча не создаст, значит карточка будет пустой.",
+      "expect": "embed_host_not_allowed",
+      "candidate": {
+        "id": "rej-foreign-host",
+        "source": "openfilm",
+        "externalId": "x3",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Чужой проигрыватель"
+        },
+        "body": {
+          "ru": "Хост не входит в границу рантайма."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x3",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://cdn.other.invalid/x3",
+          "sourceUrl": "https://openfilm.example.invalid/x3"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Autoplay в ссылке. Раздел построен на том, что ничего не начинается само.",
+      "expect": "autoplay_in_url",
+      "candidate": {
+        "id": "rej-autoplay",
+        "source": "openfilm",
+        "externalId": "x4",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Начинается само"
+        },
+        "body": {
+          "ru": "Autoplay в параметрах."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x4",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x4?autoplay=1",
+          "sourceUrl": "https://openfilm.example.invalid/x4"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Незащищённый протокол.",
+      "expect": "insecure_url",
+      "candidate": {
+        "id": "rej-http",
+        "source": "openfilm",
+        "externalId": "x5",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "По http"
+        },
+        "body": {
+          "ru": "Небезопасный источник."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x5",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "http://embed.example.invalid/x5",
+          "sourceUrl": "https://openfilm.example.invalid/x5"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Материал удалён у источника — причина постоянная. Он не должен превращаться в карточку с кнопкой «смотреть», ведущей в 404, и не должен перепроверяться.",
+      "expect": "unavailable",
+      "candidate": {
+        "id": "rej-unavailable",
+        "source": "openfilm",
+        "externalId": "x6",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Удалён"
+        },
+        "body": {
+          "ru": "Источник больше не отдаёт материал."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x6",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x6",
+          "sourceUrl": "https://openfilm.example.invalid/x6"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": false,
+        "checkMethod": "playback",
+        "availabilityReason": "removed"
+      }
+    },
+    {
+      "why": "Про чужой материал неизвестно, жив ли он. «Не знаю» — не основание показывать.",
+      "expect": "availability_unknown",
+      "candidate": {
+        "id": "rej-unknown-availability",
+        "source": "openfilm",
+        "externalId": "x7",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Неизвестно"
+        },
+        "body": {
+          "ru": "Доступность не проверялась."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x7",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x7",
+          "sourceUrl": "https://openfilm.example.invalid/x7"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": "unknown",
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Чужой материал не проверяли три месяца. За это время он мог исчезнуть, стать приватным или сменить владельца.",
+      "expect": "stale_unverified",
+      "candidate": {
+        "id": "rej-stale",
+        "source": "openfilm",
+        "externalId": "x8",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Давно не смотрели"
+        },
+        "body": {
+          "ru": "Последняя проверка была в июне."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x8",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x8",
+          "sourceUrl": "https://openfilm.example.invalid/x8"
+        },
+        "lastCheckedAt": "2026-06-01T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Материал не проверяли ни разу.",
+      "expect": "never_checked",
+      "candidate": {
+        "id": "rej-never-checked",
+        "source": "openfilm",
+        "externalId": "x9",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Без проверки"
+        },
+        "body": {
+          "ru": "Поле lastCheckedAt отсутствует."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x9",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x9",
+          "sourceUrl": "https://openfilm.example.invalid/x9"
+        },
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Формат вне словаря профиля. Открытый список форматов превратил бы раздел в свалку.",
+      "expect": "unknown_format",
+      "candidate": {
+        "id": "rej-format",
+        "source": "openfilm",
+        "externalId": "x10",
+        "format": "story",
+        "lang": "none",
+        "durationSec": 30,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Сторис"
+        },
+        "body": {
+          "ru": "Формата story в продукте нет."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x10",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x10",
+          "sourceUrl": "https://openfilm.example.invalid/x10"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Язык вне поддерживаемых пяти и не «без слов».",
+      "expect": "unknown_lang",
+      "candidate": {
+        "id": "rej-lang",
+        "source": "openfilm",
+        "externalId": "x11",
+        "format": "video",
+        "lang": "fr",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "На французском"
+        },
+        "body": {
+          "ru": "Язык не поддерживается интерфейсом."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x11",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x11",
+          "sourceUrl": "https://openfilm.example.invalid/x11"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Без интересов материал невозможно связать с человеком, а значит он попадёт в подборку просто потому, что существует.",
+      "expect": "no_interests",
+      "candidate": {
+        "id": "rej-interests",
+        "source": "openfilm",
+        "externalId": "x12",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [],
+        "title": {
+          "ru": "Ни к чему не привязан"
+        },
+        "body": {
+          "ru": "Интересы не указаны."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x12",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x12",
+          "sourceUrl": "https://openfilm.example.invalid/x12"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Пятидесятиминутный «короткий монтаж». Материал, который нельзя закончить, ломает обещание конечной пачки.",
+      "expect": "duration_out_of_range",
+      "candidate": {
+        "id": "rej-duration",
+        "source": "openfilm",
+        "externalId": "x13",
+        "format": "edit",
+        "lang": "none",
+        "durationSec": 3000,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Слишком длинный монтаж"
+        },
+        "body": {
+          "ru": "Пятьдесят минут в формате edit."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x13",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x13",
+          "sourceUrl": "https://openfilm.example.invalid/x13"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "У цитаты не бывает длительности. Поле с числом означало бы таймер на чтение.",
+      "expect": "duration_out_of_range",
+      "candidate": {
+        "id": "rej-quote-duration",
+        "source": "satoru",
+        "externalId": "x14",
+        "format": "quote",
+        "lang": "ru",
+        "durationSec": 30,
+        "interestIds": [
+          "philosophy"
+        ],
+        "title": {
+          "ru": "Мысль с таймером"
+        },
+        "body": {
+          "ru": "У цитаты указана длительность."
+        },
+        "rights": {
+          "kind": "satoru-original",
+          "holder": "",
+          "url": "",
+          "embedAllowed": false,
+          "downloadAllowed": true
+        },
+        "delivery": {
+          "policy": "text"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true
+      }
+    },
+    {
+      "why": "Нет русского текста. Русский — язык владельца и fallback локализации каталога.",
+      "expect": "missing_text",
+      "candidate": {
+        "id": "rej-no-ru",
+        "source": "openfilm",
+        "externalId": "x15",
+        "format": "video",
+        "lang": "en",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "en": "English only"
+        },
+        "body": {
+          "en": "No Russian text at all."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/x15",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/x15",
+          "sourceUrl": "https://openfilm.example.invalid/x15"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "«Локальный» материал по чужому абсолютному URL. Это не хранение у себя, а тихая зависимость от чужого сервера.",
+      "expect": "invalid_delivery",
+      "candidate": {
+        "id": "rej-fake-local",
+        "source": "satoru",
+        "externalId": "x16",
+        "format": "image",
+        "lang": "none",
+        "durationSec": null,
+        "interestIds": [
+          "art"
+        ],
+        "title": {
+          "ru": "Псевдолокальный"
+        },
+        "body": {
+          "ru": "assetPath на самом деле внешний URL."
+        },
+        "rights": {
+          "kind": "satoru-original",
+          "holder": "",
+          "url": "",
+          "embedAllowed": false,
+          "downloadAllowed": true
+        },
+        "delivery": {
+          "policy": "local",
+          "assetPath": "https://cdn.other.invalid/x16.png"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true
+      }
+    },
+    {
+      "why": "Link-only с объявленным правом встраивания. Одно из двух — иначе непонятно, что именно разрешил правообладатель.",
+      "expect": "rights_conflict",
+      "candidate": {
+        "id": "rej-link-with-embed",
+        "source": "observatory",
+        "externalId": "x17",
+        "format": "podcast",
+        "lang": "en",
+        "durationSec": 1200,
+        "interestIds": [
+          "space"
+        ],
+        "title": {
+          "ru": "И то и другое"
+        },
+        "body": {
+          "ru": "Ссылка и embed одновременно."
+        },
+        "rights": {
+          "kind": "official-source",
+          "holder": "Observatory Media (synthetic)",
+          "url": "https://rights.example.invalid/x17",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "link",
+          "sourceUrl": "https://observatory.example.invalid/x17"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    },
+    {
+      "why": "Чужой текст целиком под правом «официальный источник». Воспроизводить его нельзя, даже если он короткий.",
+      "expect": "rights_conflict",
+      "candidate": {
+        "id": "rej-foreign-quote",
+        "source": "observatory",
+        "externalId": "x18",
+        "format": "quote",
+        "lang": "en",
+        "durationSec": null,
+        "interestIds": [
+          "philosophy"
+        ],
+        "title": {
+          "ru": "Чужая цитата"
+        },
+        "body": {
+          "ru": "Текст целиком без лицензии на воспроизведение."
+        },
+        "rights": {
+          "kind": "official-source",
+          "holder": "Observatory Media (synthetic)",
+          "url": "https://rights.example.invalid/x18",
+          "embedAllowed": false,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "text"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true
+      }
+    },
+    {
+      "why": "Проверяли только HEAD. Сервер ответил — это не доказывает, что плеер проигрывает: «видео недоступно» и «встраивание запрещено» приходят уже внутри плеера и HEAD их не видит.",
+      "expect": "playback_unverified",
+      "candidate": {
+        "id": "rej-head-only",
+        "source": "openfilm",
+        "externalId": "rej-head-only",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Только HEAD"
+        },
+        "body": {
+          "ru": "Живость подтверждена лишь ответом сервера."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/rej-head-only",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/rej-head-only",
+          "sourceUrl": "https://openfilm.example.invalid/rej-head-only"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "head"
+      }
+    },
+    {
+      "why": "Проверка упала по таймауту. Это неизвестность, а не удаление: код отказа обязан отличаться, иначе оператор выбросит живую запись.",
+      "expect": "availability_unknown",
+      "candidate": {
+        "id": "rej-temporary",
+        "source": "openfilm",
+        "externalId": "rej-temporary",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Временная ошибка"
+        },
+        "body": {
+          "ru": "Источник не ответил в момент проверки."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/rej-temporary",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/rej-temporary",
+          "sourceUrl": "https://openfilm.example.invalid/rej-temporary"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": false,
+        "checkMethod": "playback",
+        "availabilityReason": "temporary_error"
+      }
+    },
+    {
+      "why": "Источник запретил встраивание. Это постоянная причина: запись выбрасывается, а не перепроверяется.",
+      "expect": "unavailable",
+      "candidate": {
+        "id": "rej-embed-denied",
+        "source": "openfilm",
+        "externalId": "rej-embed-denied",
+        "format": "video",
+        "lang": "none",
+        "durationSec": 300,
+        "interestIds": [
+          "animation"
+        ],
+        "title": {
+          "ru": "Встраивание запрещено"
+        },
+        "body": {
+          "ru": "Плеер отказал во встраивании."
+        },
+        "rights": {
+          "kind": "cc-by-4.0",
+          "holder": "Open Film Collective (synthetic)",
+          "url": "https://rights.example.invalid/rej-embed-denied",
+          "embedAllowed": true,
+          "downloadAllowed": false
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://embed.example.invalid/rej-embed-denied",
+          "sourceUrl": "https://openfilm.example.invalid/rej-embed-denied"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": false,
+        "checkMethod": "playback",
+        "availabilityReason": "embed_denied"
+      }
+    }
+  ],
+  "duplicates": {
+    "why": "Один и тот же материал приехал двумя поставками. Побеждает более надёжная (embed важнее ссылки), проигравший отмечается как дубль, а не тихо исчезает.",
+    "candidates": [
+      {
+        "id": "dup-link",
+        "source": "pdarchive",
+        "externalId": "pd-9001",
+        "format": "video",
+        "lang": "en",
+        "durationSec": 400,
+        "interestIds": [
+          "science"
+        ],
+        "title": {
+          "ru": "Через ссылку"
+        },
+        "body": {
+          "ru": "Та же запись, поставленная ссылкой."
+        },
+        "rights": {
+          "kind": "public-domain",
+          "holder": "Public Archive (synthetic)",
+          "url": "https://rights.example.invalid/pd-9001",
+          "embedAllowed": false,
+          "downloadAllowed": true
+        },
+        "delivery": {
+          "policy": "link",
+          "sourceUrl": "https://archive.example.invalid/pd-9001"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      },
+      {
+        "id": "dup-embed",
+        "source": "pdarchive",
+        "externalId": "pd-9001",
+        "format": "video",
+        "lang": "en",
+        "durationSec": 400,
+        "interestIds": [
+          "science"
+        ],
+        "title": {
+          "ru": "Через проигрыватель"
+        },
+        "body": {
+          "ru": "Та же запись, поставленная официальным embed."
+        },
+        "rights": {
+          "kind": "public-domain",
+          "holder": "Public Archive (synthetic)",
+          "url": "https://rights.example.invalid/pd-9001",
+          "embedAllowed": true,
+          "downloadAllowed": true
+        },
+        "delivery": {
+          "policy": "embed",
+          "embedUrl": "https://player.example.invalid/pd-9001",
+          "sourceUrl": "https://archive.example.invalid/pd-9001"
+        },
+        "lastCheckedAt": "2026-09-06T08:00:00.000Z",
+        "available": true,
+        "checkMethod": "playback"
+      }
+    ],
+    "expectWinner": "dup-embed",
+    "expectRejected": "dup-link"
+  },
+  "profiles": [
+    {
+      "id": "p1-movement-ru",
+      "why": "Тело и восстановление. Материал есть, но почти весь одного формата — это не «всё хорошо», и отчёт обязан это назвать.",
+      "interests": [
+        "running",
+        "sport",
+        "movement",
+        "fitness",
+        "recovery"
+      ],
+      "formats": [
+        "edit",
+        "video",
+        "image",
+        "quote",
+        "podcast"
+      ],
+      "locales": [
+        "ru"
+      ],
+      "expect": {
+        "matchingIds": [
+          "pd-morning-drill",
+          "pd-run-58",
+          "sat-rest-is-work"
+        ],
+        "status": "thin_formats",
+        "available": 3,
+        "deliverable": 3,
+        "distinctFormats": 2,
+        "thinInterests": [
+          "running",
+          "recovery"
+        ],
+        "missingInterests": []
+      }
+    },
+    {
+      "id": "p2-space-science-en",
+      "why": "Космос и наука на английском в двух форматах. Единственный профиль, по которому запас действительно достаточен.",
+      "interests": [
+        "space",
+        "science"
+      ],
+      "formats": [
+        "video",
+        "podcast"
+      ],
+      "locales": [
+        "en"
+      ],
+      "expect": {
+        "status": "ok",
+        "available": 3,
+        "deliverable": 3,
+        "distinctFormats": 2,
+        "thinInterests": [],
+        "missingInterests": []
+      }
+    },
+    {
+      "id": "p3-creative-visual",
+      "why": "Визуальное творчество. Запас закрывает и монтаж, и полное видео.",
+      "interests": [
+        "animation",
+        "creative",
+        "design"
+      ],
+      "formats": [
+        "edit",
+        "video"
+      ],
+      "locales": [
+        "ru",
+        "en"
+      ],
+      "expect": {
+        "status": "ok",
+        "available": 5,
+        "deliverable": 3,
+        "distinctFormats": 2,
+        "matchingIds": [
+          "of-first-frame",
+          "of-light-study",
+          "of-line-and-mass",
+          "of-quiet-forest",
+          "pd-old-workshop"
+        ],
+        "missingInterests": []
+      }
+    },
+    {
+      "id": "p4-quiet-reader-ru",
+      "why": "Тихое чтение и мышление в двух спокойных форматах. Материала объективно меньше трёх — и подборка обязана стать короче, а не добраться до трёх космическими роликами.",
+      "interests": [
+        "philosophy",
+        "reading",
+        "study",
+        "focus"
+      ],
+      "formats": [
+        "quote",
+        "image"
+      ],
+      "locales": [
+        "ru"
+      ],
+      "expect": {
+        "status": "shortage",
+        "available": 2,
+        "deliverable": 2,
+        "thinInterests": [
+          "philosophy",
+          "reading",
+          "study",
+          "focus"
+        ],
+        "missingInterests": []
+      }
+    },
+    {
+      "id": "p5-builder-de",
+      "why": "Тот же интерес, что у p3/p4, но человек читает по-немецки. Материал существует и всё равно недоступен — это ДРУГАЯ нехватка, и интерфейс обязан сказать «на немецком пока ничего нет», а не «по этим темам ничего нет».",
+      "interests": [
+        "business",
+        "product"
+      ],
+      "formats": [
+        "edit",
+        "video",
+        "image",
+        "quote",
+        "podcast"
+      ],
+      "locales": [
+        "de"
+      ],
+      "expect": {
+        "status": "empty",
+        "available": 0,
+        "deliverable": 0,
+        "blockedCodes": [
+          "language_mismatch"
+        ],
+        "missingInterests": [
+          "business",
+          "product"
+        ]
+      }
+    },
+    {
+      "id": "p6-niche-empty",
+      "why": "Ниша, которой в запасе нет вообще ни на одном языке. Честный ноль — допустимый и обязательный результат.",
+      "interests": [
+        "anime",
+        "superhero",
+        "minecraft"
+      ],
+      "formats": [
+        "edit",
+        "video",
+        "image",
+        "quote",
+        "podcast"
+      ],
+      "locales": [
+        "ru",
+        "en"
+      ],
+      "expect": {
+        "status": "empty",
+        "available": 0,
+        "deliverable": 0,
+        "blockedCodes": [],
+        "missingInterests": [
+          "anime",
+          "superhero",
+          "minecraft"
+        ]
+      }
+    }
+  ]
+}
