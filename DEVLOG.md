@@ -2,6 +2,18 @@
 
 ## [2026-09-09] v251 — покупки, Логово и игровые perks: запись раньше успеха
 
+**Релиз заблокирован permissions, не тестами.** Runtime commit
+`5b14150677c4c39c62410876d8d4eea413694264`, локальная ветка
+`codex/today-design-v1-20260907`. До commit проверены git diff --check и node --check.
+Push в origin/master дважды отклонён auto-review: требует явного подтверждения
+точного destination/payload пользователем, несмотря на общее standing разрешение.
+После первого отказа read-only проверены origin `HAZYAIN3301/life-rpg`, свежая master
+`35b4e02` и оба успешных Railway deployment именно этой master. Повтор после этих
+проверок также отклонён; обход через иной transport не применялся. Production не менялся.
+Следующий агент: получить ответ о публикации **v251 → HAZYAIN3301/life-rpg/master →
+рабочий Satoru Railway**, затем fresh fetch/integration, push и verify; не повторять
+вслепую и не объявлять v251 уже доступным. Есть локальный release-status.json.
+
 Продолжение по просьбе владельца «максимум сделать, минимум токенов». Отдельный
 выданный пакет уже запущен им в другом Codex; №2/№3/№4 не дублировались. Аватар
 не возобновлялся, новые paid API/генерации/настройки баланса не использовались.
@@ -26,7 +38,7 @@ Guide purchase тоже использует общий WAL, сохраняя п
 Browser receipt 09.09 14:23 UTC: complete=true, 0 JS errors; потеря ответа после
 записи для покупки/сундука, 503 equip/perk/voucher, единое сохранение Логова,
 reload, фокус, RU/EN/DE × 375 light/1280 dark. Все 7 скриншотов просмотрены.
-art-factory/economy-v251; финальный release-результат будет дополнен после публикации.
+art-factory/economy-v251; релиз заблокирован, как указано выше.
 Кандидат: app/design CSS v251, SW v251;
 неизменённые styles.css, художественные assets и compare.html сохраняют прежние pins.
 

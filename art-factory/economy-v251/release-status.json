@@ -1,0 +1,17 @@
+{
+  "version": "v251",
+  "date": "2026-09-09",
+  "runtimeCommit": "5b14150677c4c39c62410876d8d4eea413694264",
+  "status": "local_verified_publication_blocked",
+  "destination": "https://github.com/HAZYAIN3301/life-rpg.git",
+  "branch": "master",
+  "deploymentTarget": "https://life-rpg-production-416a.up.railway.app/",
+  "lastVerifiedRemoteCommit": "35b4e0261f2a9d58445c8f7415c85cb46a1ea772",
+  "unitTests": { "total": 1951, "passed": 1951, "failed": 0, "log": "/private/tmp/satoru-v251-verified.log" },
+  "browserReceipt": "receipt.json",
+  "browserComplete": true,
+  "screenshotsReviewed": 7,
+  "liveChanged": false,
+  "blocker": "Auto-review rejected master push twice, requiring explicit user confirmation of this destination and v251 payload. The second attempt followed read-only origin/previous-deployment verification. No alternate transport or deployment attempted.",
+  "next": "Obtain explicit publication approval, fetch current master and integrate safely, push then verify actual Railway deployment and live asset hashes."
+}
