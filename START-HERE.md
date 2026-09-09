@@ -8,9 +8,11 @@
 этот destination/payload ответом «Делай дальше. Все разрешаю»; прежний gate закрыт.
 Оба Railway services success; 8 live-файлов совпали с release 09.09 15:23 UTC,
 API без сессии 401, приложение доступно. 1951/1951 tests и browser QA PASS.
-Продолжение v252: покупка внутри главы Rewards использует тот же exact-CAS/WAL
-и замороженный Guide result, а не отдельный нестабильный повтор. Текущий релизный
-статус v252 — верх DEVLOG; не повторять завершённую публикацию v251.
+**v252 тоже опубликован:** runtime `5dc4096`, 1955/1955 tests PASS, оба Railway
+services success, 8 live-файлов совпали 09.09 15:37 UTC. Покупка внутри главы Rewards
+использует тот же exact-CAS/WAL и замороженный Guide result, а не отдельный нестабильный
+повтор. Receipt: art-factory/guide-purchase-v252/release-receipt.json; детали — DEVLOG.
+Не повторять завершённые публикации v251/v252.
 Покупки/Логово/экипировка/игровые perks и повтор сундука: общий account WAL,
 точная база economy slots, успех после записи. Это не новый server-authoritative
 кошелёк и не готовность всех feature writes. Финальные проверки/релиз — верх DEVLOG.

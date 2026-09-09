@@ -1,0 +1,80 @@
+{
+  "version": "v252",
+  "status": "published_verified",
+  "at": "2026-09-09T15:37:54.252Z",
+  "releaseCommit": "5dc40964bca28d1632013e01eafacdb51eafb53a",
+  "files": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "sha256": "ce0d8aa3d32e95e7300d666a89b4b87554adb01559be229350d4adda7d8454c8",
+      "matches": true
+    },
+    {
+      "file": "app.js",
+      "status": 200,
+      "sha256": "e62d451117b9603fc9fe16966235aa67bbeeff8dca472df9b0c74713f2ec73cf",
+      "matches": true
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "sha256": "43a8d85f61275ec7cc6c2fad6bea7c485d96336d4a6b58722febf7458cd1557e",
+      "matches": true
+    },
+    {
+      "file": "economy-write-v1.js",
+      "status": 200,
+      "sha256": "1dfaba07f9bb6b82edd852adfcd0ba4136c204f2a8aefb536ae680ae655e48ea",
+      "matches": true
+    },
+    {
+      "file": "guide-v3.js",
+      "status": 200,
+      "sha256": "198aa04e1b8a9fc20477851307361546a076ed706d68b729ed7428268da69e2b",
+      "matches": true
+    },
+    {
+      "file": "design-next-v1.css",
+      "status": 200,
+      "sha256": "3e7e192139ed045683948cd1f051b3b282ba588a9044e3842817b53cc6e5ee7b",
+      "matches": true
+    },
+    {
+      "file": "styles.css",
+      "status": 200,
+      "sha256": "a82ca707619a5e415fc8973915f023eb620af93e6f7679faa892466c2e907b74",
+      "matches": true
+    },
+    {
+      "file": "compare.html",
+      "status": 200,
+      "sha256": "25a8fc674639d6fde71780fc4ee520ab3b26ce6a2c55e0e7bdaa51d4856777fc",
+      "matches": true
+    }
+  ],
+  "economyUnauthenticated": 401,
+  "availability": 200,
+  "railway": [
+    {
+      "context": "brilliant-amazement - piper-tts",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/5805cd49-5d30-4dcf-a4fb-3f1bb5cca666?id=64bab3ff-a28f-405f-8236-bdd782cea7fb&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+    },
+    {
+      "context": "brilliant-amazement - life-rpg",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/7a8e0c26-8a60-4bcc-ade2-f9f2e0f7ac7c?id=1e1c113c-283c-4009-9ee6-9482e1497acc&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+    }
+  ],
+  "unitTests": {
+    "total": 1955,
+    "passed": 1955,
+    "failed": 0,
+    "log": "/private/tmp/satoru-v252-verified.log"
+  },
+  "browserReceipt": "receipt.json",
+  "browserComplete": true,
+  "browserErrors": 0,
+  "scope": "Guide reward purchase uses common economy exact-CAS/WAL with stable Guide completion on retry; other Guide chapters unchanged."
+}

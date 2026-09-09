@@ -6,6 +6,10 @@
 
 ## Дополнение v252 — покупка внутри Guide Rewards
 
+Опубликован runtime `5dc4096`, Railway success и точные live hashes проверены
+09.09 15:37 UTC; полный suite 1955/1955 PASS. Release receipt —
+art-factory/guide-purchase-v252/release-receipt.json.
+
 09.09: v251 опубликован (release 8fd19ec, проверен 15:23 UTC). Новый современный
 Guide Rewards путь вызывает тот же `economyCommit`, а не `/api/guide/commit`.
 Результат GuideV3.reduce — settings с завершённым шагом — замораживается вместе с

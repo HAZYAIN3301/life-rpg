@@ -29,7 +29,13 @@ Browser 15:30 UTC complete=true, errors=0; art-factory/guide-purchase-v252/recei
 
 App/SW подняты до v252; неизменённые CSS/module pins остались v251/v248.
 Финальный suite **1955/1955 PASS**, `/private/tmp/satoru-v252-verified.log`;
-node --check и git diff --check PASS. Публикация v252 ещё проверяется. Контракт — дополнение
+node --check и git diff --check PASS. **v252 опубликован** fast-forward `8fd19ec` →
+`5dc40964bca28d1632013e01eafacdb51eafb53a`. Railway app success:
+`1e1c113c-283c-4009-9ee6-9482e1497acc`; TTS success:
+`64bab3ff-a28f-405f-8236-bdd782cea7fb`. 15:37 UTC восемь файлов совпали с runtime
+byte-for-byte, API без сессии 401, приложение 200. Точное свидетельство:
+art-factory/guide-purchase-v252/release-receipt.json. Следующий docs-only commit
+фиксирует внешнюю проверку, не меняя runtime. Контракт — дополнение
 ECONOMY-WRITES-V251.md и GUIDE-V3-PLAN.md. Calendar/Notes и старые guide clients
 не переведены этим срезом. Пакеты второго агента не затронуты, аватар на паузе.
 
