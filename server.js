@@ -33,6 +33,8 @@ const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
 const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
+const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
+const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -617,6 +619,15 @@ function partySessionTask(uid, taskId) {
   return tasks.find((task) => task.id === taskId) || null;
 }
 function partyOf(uid, parties) { return (parties || loadParties()).find((p) => (p.members || []).includes(uid)) || null; }
+const PARTY_REWARDS_FILE = 'party-rewards';
+const partyRewards = PartyRewardServiceV1.createService({
+  read(uid) {
+    try { return PartyRewardPolicyV1.validate(JSON.parse(fs.readFileSync(path.join(userDataDir(uid), PARTY_REWARDS_FILE + '.json'), 'utf8'))); }
+    catch (error) { if (error.code === 'ENOENT') return null; throw error; }
+  },
+  write(uid, ledger) { writeJsonDurable(path.join(userDataDir(uid), PARTY_REWARDS_FILE + '.json'), ledger); },
+  now: () => new Date().toISOString(),
+});
 function socialConsentOf(user) {
   const source = user && user.socialConsent && typeof user.socialConsent === 'object' ? user.socialConsent : {};
   return { leaderboard: source.leaderboard === true, party: source.party === true };
@@ -774,6 +785,8 @@ function acxDayKey(date) { return `${date.getFullYear()}-${String(date.getMonth(
 
 function computeUserXp(uid) {
   const dir = userDataDir(uid);
+  const rewards = partyRewards.snapshot(uid);
+  const withPartyBoost = (xp, at) => Math.round(xp * (1 + PartyRewardPolicyV1.boostPct(rewards, at) / 100));
   const rd = (n) => { try { return JSON.parse(fs.readFileSync(path.join(dir, n + '.json'), 'utf8')); } catch { return null; } };
   const settings = rd('settings') || {}, tasks = rd('tasks') || [], habitlog = rd('habitlog') || {}, goals = rd('goals') || [], habits = rd('habits') || [];
   const habitById = {}; for (const h of (Array.isArray(habits) ? habits : [])) if (h && h.id) habitById[h.id] = h;
@@ -802,7 +815,7 @@ function computeUserXp(uid) {
   for (const t of (Array.isArray(tasks) ? tasks : [])) {
     if (!t || !t.done) continue;
     const d = acxValidDate(t.completedAt || t.date); if (!d) continue;
-    const dk = acxDayKey(d), xp = addCapped(dk, acxBaseXp(t.estimateMin, t.difficulty), true);
+    const dk = acxDayKey(d), xp = addCapped(dk, withPartyBoost(acxBaseXp(t.estimateMin, t.difficulty), t.completedAt), true);
     if (xp <= 0) continue;
     total += xp;
     if (dk >= ws) {
@@ -819,7 +832,7 @@ function computeUserXp(uid) {
     for (const hid in m) {
       const h = habitById[hid], rec = m[hid] || {};
       const min = (h && h.estimateMin != null) ? h.estimateMin : (rec.min || 0);
-      const xp = addCapped(dk, acxBaseXp(min, h ? h.difficulty : 'normal'), false);
+      const xp = addCapped(dk, withPartyBoost(acxBaseXp(min, h ? h.difficulty : 'normal'), rec.at), false);
       if (xp <= 0) continue;
       total += xp;
       if (dk >= ws) {
@@ -1924,6 +1937,7 @@ function publicUser(user) {
   return {
     id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin,
     createdAt: user.createdAt || null,
+    partyRewards: partyRewards.snapshot(user.id),
     // Только администратор видит свой серверный рекламный кредит. Обычным
     // пользователям это поле вообще не выдаётся.
     ...(user.isAdmin ? { adminGold: adminGoldBalance(user.id) } : {}),
@@ -5858,7 +5872,9 @@ const server = http.createServer(async (req, res) => {
     return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX, ws: r.ws,
       sessions: partySessionViews(party, me), serverNow: new Date().toISOString(),
       sessionInvitesEnabled: !(party.sessionMuted || []).includes(me),
-      raid: { total: r.total, target: r.target, won: r.won, iClaimed: (r.claimed || []).includes(me), claimedCount: (r.claimed || []).length },
+      raid: { total: r.total, target: r.target, won: r.won,
+        iClaimed: !!PartyRewardPolicyV1.receiptFor(partyRewards.snapshot(me), r.ws) || (r.claimed || []).includes(me),
+        claimedCount: (party.members || []).filter((id) => (r.claimed || []).includes(id) || PartyRewardPolicyV1.receiptFor(partyRewards.snapshot(id), r.ws)).length },
       season: { wins: r.seasonWins, goal: SEASON_GOAL },
       permissions: { role: party.createdBy === me ? 'owner' : 'member', canDelete: party.createdBy === me, canLeave: true, canCheer: true },
       visibility: { profile: 'party_members', progress: 'explicit_weekly_xp_and_quest_count' } };
@@ -5996,17 +6012,30 @@ const server = http.createServer(async (req, res) => {
     const view = partyView(party, me); saveParties(parties);
     return sendJson(res, 200, { party: view });
   }
-  // Забрать награду за победу в рейде (раз в неделю на участника) — сундук пати
+  if (u === '/api/party/rewards' && req.method === 'GET') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    try { return sendJson(res, 200, { partyRewards: partyRewards.snapshot(me) }); }
+    catch { return sendJson(res, 503, { error: 'reward_storage_unavailable' }); }
+  }
+  // Забрать награду за победу в рейде (раз в неделю на аккаунт) — durable receipt
   if (u === '/api/party/claim' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
-    const parties = loadParties(); const party = partyOf(me, parties);
-    if (!party) return sendJson(res, 404, { error: 'no_party' });
-    refreshRaid(party);
-    if (!party.raid.won) return sendJson(res, 400, { error: 'not_won' });
-    if ((party.raid.claimed || []).includes(me)) return sendJson(res, 400, { error: 'already_claimed' });
-    party.raid.claimed = party.raid.claimed || []; party.raid.claimed.push(me);
-    const view = partyView(party, me); saveParties(parties);
-    return sendJson(res, 200, { reward: { gold: 150, boostPct: 30, boostHours: 6 }, party: view });
+    let body; try { body = JSON.parse(await readBody(req, 2048)); } catch { body = null; }
+    if (!body || body.version !== 2) return sendJson(res, 409, { error: 'reward_client_update_required' });
+    if (Object.keys(body).some((key) => !['version', 'cycle'].includes(key)) || !PartyRewardPolicyV1.cycleValid(body.cycle)) return sendJson(res, 400, { error: 'invalid_reward_request' });
+    try {
+      if (!loadUsers().some((user) => user.id === me)) return sendJson(res, 401, { error: 'user not found' });
+      // A lost response remains recoverable even after leaving or a weekly rollover.
+      const snapshot = partyRewards.snapshot(me), existing = PartyRewardPolicyV1.receiptFor(snapshot, body.cycle);
+      if (existing) return sendJson(res, 200, { receipt: existing, partyRewards: snapshot, replay: true });
+      if (body.cycle !== mondayStr()) return sendJson(res, 409, { error: 'reward_cycle_changed' });
+      const parties = loadParties(), party = partyOf(me, parties);
+      if (!party) return sendJson(res, 404, { error: 'no_party' });
+      const raid = refreshRaid(party);
+      const result = partyRewards.claim(me, { cycle: raid.ws, partyId: party.id, won: raid.won, legacy: (raid.claimed || []).includes(me) });
+      // No second authoritative write and no client lootbox increment.
+      return sendJson(res, 200, { receipt: result.receipt, partyRewards: result.ledger, replay: result.replay });
+    } catch (error) { return sendJson(res, error.code === 'not_won' ? 400 : 503, { error: error.code === 'not_won' ? 'not_won' : 'reward_storage_unavailable' }); }
   }
 
   // ---- Web Push: подписка + тест ----
@@ -6090,6 +6119,7 @@ const server = http.createServer(async (req, res) => {
       format: 'satoru-account', version: 1, exportedAt: new Date().toISOString(),
       account: { id: user.id, name: user.name, email: user.email || null },
       data: readPortableAccountData(uid),
+      serverOwned: { partyRewards: partyRewards.snapshot(uid) }, // export evidence, never importable credit
       excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'pushSubscription', 'noteMedia'],
     };
     const filename = `satoru-account-${new Date().toISOString().slice(0, 10)}.json`;
@@ -6265,7 +6295,7 @@ const server = http.createServer(async (req, res) => {
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
-    if (name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
+    if (name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
 
@@ -6441,6 +6471,9 @@ const server = http.createServer(async (req, res) => {
   return send(res, 405, 'Method not allowed');
 });
 
+// Capture legacy claim markers BEFORE accepting leave/delete/rejoin requests.
+// This blocks duplicate payouts, not a guess or compensation for past goldWon writes.
+partyRewards.migrateLegacy(loadParties(), (uid) => loadUsers().some((user) => user.id === uid));
 server.listen(PORT, HOST, () => {
   console.log(`\n  ⚔️  Satoru запущен:  http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
   console.log(`  📁  Данные:            ${DATA_DIR}`);

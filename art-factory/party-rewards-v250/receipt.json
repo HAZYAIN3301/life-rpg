@@ -1,0 +1,13 @@
+{
+  "at": "2026-09-09T09:43:16.807Z",
+  "checks": [
+    "Lost response → unchanged client balance → safe retry → one durable 150-gold credit, no lootbox write",
+    "Focus returns to receipt; expanded raid remains open",
+    "Actual task completion saves boosted XP; expiry stops future bonus without removing earned XP",
+    "Stale wallet response cannot overwrite a newer confirmed reward",
+    "Reload preserves receipt and awarded XP",
+    "RU/EN/DE · 375/1280 · light/dark · reduced motion · no document overflow"
+  ],
+  "errors": [],
+  "complete": true
+}

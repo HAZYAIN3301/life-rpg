@@ -25,9 +25,14 @@
     "reloadVerified": true
   },
   "publication": {
-    "status": "not_published",
-    "reason": "Awaiting explicit master push and Railway approval after previous permission rejection.",
-    "productionRuntimeUnchanged": "satoru-v248"
+    "status": "published",
+    "commit": "0f4bf82",
+    "approvedDate": "2026-09-09",
+    "railwayApp": "success",
+    "railwayTts": "success",
+    "appDeploymentId": "d7ca7871-0ca0-4c74-8679-725ce4f4a0bc",
+    "liveByteMatches": ["index.html", "app.js", "sw.js", "party-session-v1.js", "party-session-ui-v1.js", "party-session-v1.css", "compare.html"],
+    "url": "https://life-rpg-production-416a.up.railway.app/"
   },
   "notImplemented": [
     "raid reward ledger and XP boost repair",

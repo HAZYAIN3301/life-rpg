@@ -37,3 +37,7 @@
 @keyframes duo-arrive{from{transform:scale(.92);opacity:.5}to{transform:scale(1);opacity:1}}
 @media(max-width:600px){.event-hero.duo-hero{padding:18px}.duo-participants{grid-template-columns:1fr;gap:10px}.duo-empty{align-items:flex-start;flex-direction:column}.duo-header{gap:12px}.duo-emblem{width:44px;height:44px}.duo-actions>.btn,.duo-outcomes>.btn{width:100%}.duo-dialog{padding:18px}}
 @media(prefers-reduced-motion:reduce){.duo-hero *{animation:none!important;transition:none!important}}
+/* The raid is a supporting rail, not two 100px-wide reading columns. */
+.party-shell .party-progress-body{grid-template-columns:minmax(0,1fr);gap:var(--sp-5)}
+.party-shell .party-progress-section{min-width:0}
+.party-shell .party-reward-info{line-height:var(--leading-prose,1.5)}

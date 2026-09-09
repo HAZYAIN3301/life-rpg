@@ -1,0 +1,29 @@
+{
+  "release": "satoru-v250",
+  "dateLocal": "2026-09-09",
+  "baseCommit": "0f4bf82",
+  "runtimeSuite": {
+    "command": "node --test --test-concurrency=2 scripts/*.test.js",
+    "tests": 1948,
+    "passed": 1948,
+    "failed": 0,
+    "newComposedTests": 6,
+    "logLocal": "/private/tmp/satoru-v250-final.log"
+  },
+  "browser": {
+    "command": "node scripts/qa-party-rewards.mjs",
+    "receipt": "receipt.json",
+    "screenshots": 8,
+    "accounts": "synthetic localhost only",
+    "viewports": ["1280x900", "375x812"],
+    "themes": ["dark", "light"],
+    "locales": ["ru", "en", "de"],
+    "pageErrors": 0,
+    "realStoreCAS": true,
+    "lostResponseAfterCommit": true,
+    "reloadVerified": true,
+    "staleSnapshotRejected": true
+  },
+  "publication": { "status": "pending_authorized_push", "previousProductionRuntime": "satoru-v249" },
+  "remaining": ["raid target members x 600", "durable receipts for other purchases and game perks", "secretary capabilities", "duo delivery and story expedition", "German mobile nav truncation", "avatar remains paused"]
+}

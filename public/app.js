@@ -7882,7 +7882,8 @@ function itemXp(it) {
   const base = (Number(it.estimateMin) || 0) * perMinute * economyDifficultyMultiplier(it.difficulty) + completion;
   const gb = gearBonus(it.skillId);
   const bonusPct = Math.min(ECONOMY_XP_BONUS_CAP_PCT, Math.max(0,
-    skillPerkBonus(it.skillId) + (gb.xpPct || 0) + (it.difficulty === 'hard' ? (gb.hardXpPct || 0) : 0)));
+    skillPerkBonus(it.skillId) + (gb.xpPct || 0) + (it.difficulty === 'hard' ? (gb.hardXpPct || 0) : 0)
+    + (window.PartyRewardPolicyV1 ? window.PartyRewardPolicyV1.boostPct(partyRewardSnapshot(), it.completedAt || new Date().toISOString()) : 0)));
   return Math.max(1, Math.round(base * (1 + bonusPct / 100)));
 }
 function itemGold(it) {
@@ -7960,7 +7961,9 @@ function adminGoldCredit() {
   const value = Number(State.me && State.me.isAdmin && State.me.adminGold);
   return Number.isSafeInteger(value) && value > 0 ? value : 0;
 }
-function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0) + adminGoldCredit(); }
+function partyRewardSnapshot() { return State.me?.partyRewards || { version: 1, receipts: [] }; }
+function goldEarned() { return xpEvents().reduce((s, e) => s + e.gold, 0) + (State.lootbox ? (State.lootbox.goldWon || 0) : 0) + adminGoldCredit()
+  + (window.PartyRewardPolicyV1 ? window.PartyRewardPolicyV1.gold(partyRewardSnapshot()) : 0); }
 function goldSpent() {
   const integrity = window.GamificationIntegrityV1;
   return (State.purchases || []).reduce((sum, purchase) => {
@@ -13943,7 +13946,7 @@ function habitRow(h) {
     <span class="t-skill" style="--c:${esc(sk.color)}">${esc(sk.name)}</span>
     <span class="t-time">${fmtDur(h.estimateMin)}</span>
     <span class="t-diff" title="${DIFF[h.difficulty] || ''}">${difficultyIconHTML(h.difficulty)}</span>
-    <span class="t-xp">${done ? '+' + itemXp(h) : ''}</span>
+    <span class="t-xp">${done ? '+' + (State.habitlog[habitDayKey()]?.[h.id]?.xp || 0) : ''}</span>
     <span class="habit-streak" title="Серия">${hs ? satoruIconHTML('status.streak', 'habit-streak-icon', '🔥') + hs : ''}</span><span></span>
     ${habitTwoMinuteButtonHTML(h, done, hs, busy)}</li>`;
 }
@@ -13983,7 +13986,7 @@ async function transactHabitCompletion(h, { twoMinute = false } = {}) {
   State._habitsFocusAfterCommit = '[data-action="habit-undo"]';
   if (!wasDone) {
     track('complete:habit'); const hsk = skillById(h.skillId);
-    toast(`+${itemXp(h)} XP · +${itemGold(h)} 🪙 · ${hsk.name}`);
+    toast(`+${nextLog[day][h.id].xp} XP · +${nextLog[day][h.id].gold} 🪙 · ${hsk.name}`);
     bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
     if (window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
     triggerAvatarReaction('happy', 'Привычка ✓');
@@ -26290,6 +26293,62 @@ function partyDuoUI() {
   });
   return _partyDuoUI;
 }
+function partyRewardText(key) {
+  const copy = {
+    ru: { busy: 'Сохраняем награду…', retry: 'Проверить получение награды', error: 'Нет подтверждения. Повтори проверку.', saved: 'Награда пати сохранена', legacy: 'Эта награда уже была отмечена полученной в прежней версии.', update: 'Обнови приложение и повтори.', cycle: 'Началась новая неделя. Обнови Племя.', boost: 'XP за квесты и привычки · 6 ч · в пределах общего лимита бонусов', active: 'Бонус XP до' },
+    en: { busy: 'Saving reward…', retry: 'Check reward receipt', error: 'No confirmation. Please check again.', saved: 'Party reward saved', legacy: 'This reward was marked claimed in the previous version.', update: 'Update the app and retry.', cycle: 'A new week has started. Refresh Tribe.', boost: 'Quest and habit XP · 6 h · within the combined bonus cap', active: 'XP bonus until' },
+    de: { busy: 'Belohnung wird gespeichert…', retry: 'Erhalt der Belohnung prüfen', error: 'Keine Bestätigung. Bitte erneut prüfen.', saved: 'Gruppenbelohnung gespeichert', legacy: 'Diese Belohnung wurde in der früheren Version als abgeholt markiert.', update: 'App aktualisieren und erneut versuchen.', cycle: 'Eine neue Woche hat begonnen. Stamm neu laden.', boost: 'Quest- und Gewohnheits-XP · 6 Std. · im gemeinsamen Bonuslimit', active: 'XP-Bonus bis' },
+    uk: { busy: 'Зберігаємо нагороду…', retry: 'Перевірити отримання нагороди', error: 'Немає підтвердження. Перевір ще раз.', saved: 'Нагороду групи збережено', legacy: 'Цю нагороду вже позначено отриманою в попередній версії.', update: 'Онови застосунок і повтори.', cycle: 'Почався новий тиждень. Онови Плем’я.', boost: 'XP за квести й звички · 6 год · у межах загального ліміту бонусів', active: 'Бонус XP до' },
+    es: { busy: 'Guardando recompensa…', retry: 'Comprobar recompensa', error: 'Sin confirmación. Vuelve a comprobar.', saved: 'Recompensa del grupo guardada', legacy: 'Esta recompensa ya figuraba como recibida en la versión anterior.', update: 'Actualiza la aplicación y reintenta.', cycle: 'Ha empezado una nueva semana. Actualiza Tribu.', boost: 'XP de misiones y hábitos · 6 h · dentro del límite total de bonificaciones', active: 'Bonificación XP hasta' },
+  };
+  return (copy[lang()] || copy.en)[key];
+}
+async function refreshPartyRewards() {
+  const owner = State.me?.id; if (!owner || State.phase !== 'app') return;
+  try {
+    const r = await fetch('/api/party/rewards', { signal: AbortSignal.timeout(10000), cache: 'no-store' });
+    if (!r.ok) return;
+    const d = await r.json(); window.PartyRewardPolicyV1.validate(d.partyRewards);
+    if (State.me?.id !== owner) return;
+    if (window.PartyRewardPolicyV1.isSuccessor(d.partyRewards, partyRewardSnapshot()) && JSON.stringify(State.me.partyRewards) !== JSON.stringify(d.partyRewards)) { State.me.partyRewards = d.partyRewards; renderHeader(true); }
+  } catch { /* Keep the last confirmed receipt, never replace it with zero on error. */ }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshPartyRewards(); });
+async function claimPartyReward(button) {
+  if (State._partyClaimBusy || !State.me) return;
+  const owner = State.me.id, cycle = State._partyRewardCycle || State.party?.ws;
+  if (!cycle) return;
+  State._partyRewardCycle = cycle; State._partyClaimBusy = true;
+  button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = partyRewardText('busy');
+  try {
+    const r = await fetch('/api/party/claim', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ version: 2, cycle }), signal: AbortSignal.timeout(15000) });
+    const d = await r.json();
+    if (State.me?.id !== owner) return;
+    if (!r.ok) {
+      if (d.error === 'reward_cycle_changed') { State._partyRewardCycle = null; throw new Error(partyRewardText('cycle')); }
+      if (d.error === 'reward_client_update_required') throw new Error(partyRewardText('update'));
+      throw new Error(partyRewardText('error'));
+    }
+    window.PartyRewardPolicyV1.validate(d.partyRewards);
+    const receipt = window.PartyRewardPolicyV1.receiptFor(d.partyRewards, cycle);
+    if (!receipt || receipt.id !== d.receipt?.id) throw new Error(partyRewardText('error'));
+    if (State.me?.id !== owner) return;
+    if (window.PartyRewardPolicyV1.isSuccessor(d.partyRewards, partyRewardSnapshot())) State.me.partyRewards = d.partyRewards;
+    State._partyRewardCycle = null;
+    if (State.party?.ws === cycle) {
+      if (!State.party.raid.iClaimed) State.party.raid.claimedCount = (State.party.raid.claimedCount || 0) + 1;
+      State.party.raid.iClaimed = true;
+    }
+    if (!d.replay && receipt.kind === 'grant') sfx('coin');
+    toast(receipt.kind === 'legacy' ? partyRewardText('legacy') : `${partyRewardText('saved')}: +${receipt.gold} 🪙`);
+    render();
+    const details = document.querySelector('.party-progress-details');
+    if (details) { details.open = true; const confirmed = details.querySelector('.raid-claimed'); if (confirmed) { confirmed.tabIndex = -1; confirmed.setAttribute('role', 'status'); confirmed.focus(); } }
+  } catch (error) {
+    if (State.me?.id === owner) { toast(error.name === 'Error' && !error.code ? error.message : partyRewardText('error')); button.textContent = partyRewardText('retry'); }
+  } finally { if (State.me?.id === owner) State._partyClaimBusy = false; button.disabled = false; button.removeAttribute('aria-busy'); }
+}
 function partyHTML(p) {
   const r = p.raid || { total: 0, target: 1, won: false, iClaimed: false, claimedCount: 0 };
   const pct = r.target ? Math.min(100, Math.round(r.total / r.target * 100)) : 0;
@@ -26306,7 +26365,7 @@ function partyHTML(p) {
   const si = seasonInfo(p.season);
   const seasonPct = si.goal ? Math.round(si.prog / si.goal * 100) : 0;
   const claim = won
-    ? (r.iClaimed ? `<span class="raid-claimed muted">✓ ${t('Награда забрана')}</span>` : `<button class="btn raid-claim" data-action="party-claim">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Забрать награду пати')}</button>`)
+    ? (r.iClaimed ? `<span class="raid-claimed muted">✓ ${t('Награда забрана')}</span>` : `<button class="btn raid-claim" data-action="party-claim" ${State._partyClaimBusy ? 'disabled aria-busy="true"' : ''}>${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${State._partyClaimBusy ? partyRewardText('busy') : State._partyRewardCycle ? partyRewardText('retry') : t('Забрать награду пати')}</button>`)
     : '';
   const members = p.members.map((m) => `<div class="pm-row ${m.me ? 'me' : ''} ${m.shared ? '' : 'is-private'}" role="listitem">
       <button type="button" class="pm-profile" data-action="open-member-profile" data-user="${esc(m.id)}" aria-label="${esc(`${t('Открыть профиль')}: ${m.name}`)}">
@@ -26325,13 +26384,18 @@ function partyHTML(p) {
     <p class="social-consent-state" role="status" aria-live="polite">${partyConsent ? t('Разрешено только для участников этой пати') : t('Вклад скрыт; рейд не учитывает мои XP')}</p>
     ${State._socialError ? `<p class="social-inline-error" role="alert">${esc(State._socialError)}</p>` : ''}
   </div></details>`;
+  const rewardPolicy = window.PartyRewardPolicyV1;
+  const activeReward = rewardPolicy && partyRewardSnapshot().receipts.find((receipt) => receipt.boost && rewardPolicy.boostPct({ version: 1, receipts: [receipt] }, new Date().toISOString()) > 0);
+  const rewardInfo = won && rewardPolicy ? `<p class="muted party-reward-info">${activeReward
+    ? `+${activeReward.boost.pct}% · ${partyRewardText('active')} ${new Date(activeReward.boost.until).toLocaleTimeString(lang(), { hour: '2-digit', minute: '2-digit' })}`
+    : !r.iClaimed ? `${rewardPolicy.GOLD} 🪙 · +${rewardPolicy.BOOST_PCT}% ${partyRewardText('boost')}` : ''}</p>` : '';
   const raidDetails = `<details class="card party-progress-details"><summary><span>${t('Рейд и сезон')}</span><b>${pct}% · ${si.prog}/${si.goal}</b></summary><div class="party-progress-body">
       <section class="party-progress-section" aria-labelledby="party-raid-details"><h3 id="party-raid-details">${won ? t('Босс повержен!') : esc(t(boss.name))}</h3>
         <p class="muted">${won ? `${t('Пати справилась')} — ${r.claimedCount}/${p.members.length} ${t('забрали награду')}` : `${t('Осталось')} ${hp} XP · ${t('цель')} ${r.target}`}</p>
         ${!won && boss.lore ? `<p class="muted raid-lore">${t(boss.lore)}</p>` : ''}
         ${!won && boss.weak ? `<p class="raid-weak">${satoruIconHTML('status.streak', 'inline-emblem', '◇')} ${t('Слабость')}: ${t(boss.weak)} — ${t('урон ×2')}</p>` : ''}
-        <div class="raid-bar"><span style="width:${pct}%"></span></div>${claim}
-        <p class="muted raid-note">${t('Вклад каждого складывается; ничей пропуск не штрафует команду — просто чуть медленнее. Через поддержку, не через вину.')}</p></section>
+        <div class="raid-bar"><span style="width:${pct}%"></span></div>${claim}${rewardInfo}
+        </section>
       <section class="party-progress-section" aria-labelledby="party-season-details"><h3 id="party-season-details">${t('Сезон')} ${si.cycle}</h3>
         <p class="muted">${si.prog}/${si.goal} ${t('побед недели')}${si.done ? ` · ${t('пройдено')} ×${si.done}` : ''}</p>
         <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
@@ -31300,15 +31364,7 @@ async function onClick(e) {
       .then(async (r) => { const d = await r.json().catch(() => ({})); if (!r.ok || !d.party) throw new Error(d.error || 'failed'); State.party = d.party; sfx('coin'); State._socialFocusAfterCommit = `[data-action="party-cheer"][data-to="${CSS.escape(el.dataset.to)}"]`; render(); })
       .catch(() => toast(t('Не удалось отправить поддержку. Повтори попытку.')));
   } else if (action === 'party-claim') {
-    fetch('/api/party/claim', { method: 'POST' }).then((r) => r.json()).then((d) => {
-      if (d.reward) {
-        const lb = ensureLootbox(); lb.goldWon += d.reward.gold;
-        lb.boost = { pct: d.reward.boostPct, until: new Date(Date.now() + d.reward.boostHours * 3600 * 1000).toISOString() };
-        Store.save('lootbox', lb); sfx('coin');
-        toast(`🎁 ${t('Награда пати')}: +${d.reward.gold} 🪙 · +${d.reward.boostPct}% XP · ${d.reward.boostHours}${t('ч')}`);
-        if (d.party) State.party = d.party; render();
-      } else toast(d.error === 'already_claimed' ? 'Уже забрано' : d.error === 'not_won' ? 'Босс ещё не повержен' : 'Не удалось');
-    }).catch(() => toast(t('Сетевая ошибка')));
+    claimPartyReward(el);
   } else if (action === 'raidwin-close') { closeAccountDialog('raidwin');
   } else if (action === 'install-app') { requestInstall();
   } else if (action === 'fp-answer') { founderAnswer(id);
@@ -31618,6 +31674,7 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  State._partyRewardCycle = null; State._partyClaimBusy = false;
   Store.cancelPending();
   cancelCapturePipeline();
   clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
@@ -32671,7 +32728,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v249';
+const PWA_CACHE_VERSION = 'satoru-v250';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

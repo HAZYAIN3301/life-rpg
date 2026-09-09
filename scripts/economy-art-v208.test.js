@@ -73,9 +73,9 @@ test('achievements, rewards and arsenal render the raster family in the existing
 });
 
 test('economy art v208 pins the full PWA shell', () => {
-  assert.match(SW, /const CACHE = 'satoru-v249'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v249'/);
+  assert.match(SW, /const CACHE = 'satoru-v250'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v250'/);
   assert.match(INDEX, /styles\.css\?v=20260908-design-v248-1/);
   assert.match(INDEX, /art\/icons\/icon-registry\.js\?v=20260830-economy-art-v208-1/);
-  assert.match(INDEX, /app\.js\?v=20260908-design-v249-1/);
+  assert.match(INDEX, /app\.js\?v=20260909-design-v250-1/);
 });

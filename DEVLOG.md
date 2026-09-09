@@ -1,5 +1,52 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-09] v249 опубликован; v250 — серверная награда рейда и настоящий boost
+
+Владелец явно разрешил master push/Railway и продолжение стройки с документацией.
+`0f4bf82` безопасно fast-forward опубликован поверх e76339d. Railway app/TTS success;
+7 live-файлов (index/app/sw/duo module/UI/CSS/compare) совпали byte-for-byte.
+Предыдущий permission gate закрыт. Аватар не возобновлялся и не заменял live-персонажа.
+
+**Следующий законченный срез:** PARTY-REWARDS-V1.md. Pure policy + sync server service,
+account-owned append-only receipts в одном durable JSON. 150 монет учитываются прямо
+из квитанции, без отдельного Store.save(lootbox). Один claim на account/week независимо
+от leave/join; retry/restart возвращают тот же at/credit. Старые markers до начала HTTP
+становятся legacy-block без придуманных денег/компенсаций. Null/corrupt ledger — error,
+не пустой баланс. Generic PUT/restore/import не создают credits; export сохраняет
+свидетельство отдельно от переносимых данных; account deletion удаляет user directory.
+
+**⚠️ Протокол:** старый пустой POST claim получает update-required (409), не расходуя
+право. Новый `{version:2,cycle}` получает receipt/snapshot, а не старый reward-object.
+PWA cache v250, app pin 20260909-design-v250-1. Policy и изменённый party CSS в shell;
+прочие неизменённые assets сохраняют прежние pins, compare не тронут.
+
+Существующий +30%/6h теперь входит в itemXp и server social XP по точному timestamp;
+personal bonus cap 60% сохранён, server daily caps не обходятся. Заработанный XP
+остаётся в task/habit record. Habit row/toast показывают receipt, а не текущий boost.
+UI блокирует двойной тап, сохраняет cycle при timeout, обновляет баланс после receipt;
+старый delayed GET не откатывает новый credit. Ошибки переведены на 5 языков; scope
+и срок бонуса видны в рейде. Секция не закрывается после claim, фокус у подтверждения.
+Визуально исправлены узкие две колонки рейда в desktop-rail, убран повторный текст.
+
+**Проверки:** 5 составных pure/service + реальный API-test с 3 аккаунтами,
+физическими rename failures до/после commit, concurrent POST, restart, старым клиентом,
+legacy, foreign identity, leave/create/retry, export/import/forbidden PUT, corrupt/null.
+Chrome: потеря ответа ПОСЛЕ записи, retry ровно +150, untouched lootbox, durable
+completeTask с усиленным XP, expiry будущего расчёта, reload, stale snapshot, keyboard
+focus, light/dark, RU/EN/DE, 375/1280. 8 скриншотов просмотрены; JS errors 0.
+Финальный общий suite: **1948/1948 PASS**, `node --test --test-concurrency=2 scripts/*.test.js`,
+лог `/private/tmp/satoru-v250-final.log`. Browser receipt 09.09 09:43 UTC, 0 JS errors.
+До публикации выполнены `node --check` и `git diff --check`; свежий origin/master
+равен 0f4bf82, конфликтов нет. Runtime готов к разрешённому push; результат deployment
+будет добавлен после внешней проверки, не объявляется выполненным заранее.
+
+**Передача:** пакет Opus №1 взят Codex и не ждёт второго исполнителя. №2 секретарь,
+№3 наполнение Вдохновения, №4 канон/production bible — готовы, но ещё не запущены.
+Следующий P0: реальные durable receipts покупок/игровых perks, затем три полезных
+capability Тени. Target members×600, доставка duo, экспедиции и остальные направления
+PRODUCT-CRITICAL-PATH не объявлены завершёнными. Немецкая mobile nav всё ещё сокращает
+Gewohnheiten — отдельный polish-долг, не скрытый «PASS всего дизайна».
+
 ## [2026-09-09] v249 — локальное дуо + критический путь продукта и Opus handoff
 
 Владелец разрешил начать мультиплеер и попросил приоритеты недореализованного
