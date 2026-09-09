@@ -28,9 +28,11 @@ UI блокирует двойной тап, сохраняет cycle при tim
 и срок бонуса видны в рейде. Секция не закрывается после claim, фокус у подтверждения.
 Визуально исправлены узкие две колонки рейда в desktop-rail, убран повторный текст.
 
-**Проверки:** 5 составных pure/service + реальный API-test с 3 аккаунтами,
+**Проверки:** 5 составных pure/service + реальный API-test с 4 аккаунтами,
 физическими rename failures до/после commit, concurrent POST, restart, старым клиентом,
 legacy, foreign identity, leave/create/retry, export/import/forbidden PUT, corrupt/null.
+Добавлен direct-API сценарий: если победа вычислена впервые в claim, latch победы/сезона
+сохраняется до выдачи. Он не расходует entitlement и не является вторым кошельком.
 Chrome: потеря ответа ПОСЛЕ записи, retry ровно +150, untouched lootbox, durable
 completeTask с усиленным XP, expiry будущего расчёта, reload, stale snapshot, keyboard
 focus, light/dark, RU/EN/DE, 375/1280. 8 скриншотов просмотрены; JS errors 0.

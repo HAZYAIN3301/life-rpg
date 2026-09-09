@@ -50,6 +50,8 @@
   Auth/login/self snapshot также содержит `partyRewards`; чужой публичный профиль — нет.
 - `party.raid.iClaimed/claimedCount` выводятся из receipts и legacy markers, а не
   требуют второго авторитетного write в parties.json.
+  Новая победа/сезон отдельно фиксируется **до** выдачи, если claim вызван напрямую
+  без предварительного GET: этот write не расходует награду и не начисляет монеты.
 - PWA cache v250; app pin `20260909-design-v250-1`; новый policy и обновлённый party
   CSS входят в shell. Base/design CSS и старый comparison не изменены.
 
@@ -93,7 +95,7 @@ Task/habit XP записывается прежним сохранением (CA
 - `scripts/party-reward-policy-v1.test.js`: 5 составных tests — циклы, независимые
   аккаунты, legacy, точный expiry/non-stacking, corrupted receipts, before-write,
   ambiguous-after-write, повтор и новый экземпляр service.
-- `scripts/party-reward-server-v250.test.js`: реальный server/restart, 3 аккаунта,
+- `scripts/party-reward-server-v250.test.js`: реальный server/restart, 4 аккаунта,
   physical rename faults до/после записи, concurrent POST, fresh auth balance,
   server XP, leave/create/retry, старый protocol, foreign identity, export/import,
   запрет generic writes, malformed/null ledger. Старый duo integration также проходит.

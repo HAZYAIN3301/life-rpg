@@ -6032,6 +6032,10 @@ const server = http.createServer(async (req, res) => {
       const parties = loadParties(), party = partyOf(me, parties);
       if (!party) return sendJson(res, 404, { error: 'no_party' });
       const raid = refreshRaid(party);
+      // Preserve the existing latched victory/season even for an API caller that
+      // claims immediately after qualifying, before opening the party screen.
+      // This records victory only, never consumes anyone's reward entitlement.
+      if (raid.justWon) saveParties(parties);
       const result = partyRewards.claim(me, { cycle: raid.ws, partyId: party.id, won: raid.won, legacy: (raid.claimed || []).includes(me) });
       // No second authoritative write and no client lootbox increment.
       return sendJson(res, 200, { receipt: result.receipt, partyRewards: result.ledger, replay: result.replay });

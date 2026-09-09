@@ -75,4 +75,10 @@ test('party reward API: durable credit, lost response, restart, lifecycle, XP an
     assert.equal(fs.readFileSync(wallet(a), 'utf8'), bad);
   }
   fs.writeFileSync(wallet(a), good);
+  const d = await api('/api/auth/register', null, { name: 'direct', email: 'reward-direct@example.test', password: 'reward-tests-123' });
+  await api('/api/party/create', d, { name: 'Direct claim QA', shareProgress: true, acknowledgedVisibility: true });
+  const directTasks = path.join(dir, 'users', d.data.id, 'tasks.json'); fs.mkdirSync(path.dirname(directTasks), { recursive: true });
+  fs.writeFileSync(directTasks, JSON.stringify([{ id: 'qualify', done: true, difficulty: 'normal', estimateMin: 500, completedAt: new Date().toISOString() }]));
+  assert.equal((await api('/api/party/claim', d, payload)).status, 200);
+  assert.equal(JSON.parse(fs.readFileSync(partiesFile, 'utf8')).find((p) => p.members.includes(d.data.id)).raid.won, true, 'direct claim also durably preserves victory, without needing a prior UI GET');
 });
