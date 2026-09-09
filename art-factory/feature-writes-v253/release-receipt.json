@@ -1,0 +1,89 @@
+{
+  "version": "v253",
+  "status": "published_verified",
+  "releaseCommit": "fb411ae1456adae1bacaf458ce2bd23431ff8f9a",
+  "at": "2026-09-09T18:59:06.428Z",
+  "files": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "sha256": "225aac77e55b4037b7c2218e2c83a0619926d54811a4005e628aea4b7009430d",
+      "matches": true
+    },
+    {
+      "file": "app.js",
+      "status": 200,
+      "sha256": "88632556658eb4927f6ba754b3db75eb562b45847bd1fcb2ddfa64b40bbcd5a5",
+      "matches": true
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "sha256": "bf2e7e23dd0cf6e5614eb92565acfe20e6736ccac8c9b142c9dd4fb8e38eb95a",
+      "matches": true
+    },
+    {
+      "file": "economy-write-v1.js",
+      "status": 200,
+      "sha256": "9e5436ef56c35f735602038129ce5d4907ea07aea404b245237e10b9ec63aa66",
+      "matches": true
+    },
+    {
+      "file": "shop-catalog-v1.js",
+      "status": 200,
+      "sha256": "dcb950016c7ef165f2010ee15aff35b21c56f4d86c26eeaa70667e4f8fd6d979",
+      "matches": true
+    },
+    {
+      "file": "guide-v3.js",
+      "status": 200,
+      "sha256": "198aa04e1b8a9fc20477851307361546a076ed706d68b729ed7428268da69e2b",
+      "matches": true
+    },
+    {
+      "file": "design-next-v1.css",
+      "status": 200,
+      "sha256": "3e7e192139ed045683948cd1f051b3b282ba588a9044e3842817b53cc6e5ee7b",
+      "matches": true
+    },
+    {
+      "file": "styles.css",
+      "status": 200,
+      "sha256": "a82ca707619a5e415fc8973915f023eb620af93e6f7679faa892466c2e907b74",
+      "matches": true
+    },
+    {
+      "file": "compare.html",
+      "status": 200,
+      "sha256": "25a8fc674639d6fde71780fc4ee520ab3b26ce6a2c55e0e7bdaa51d4856777fc",
+      "matches": true
+    }
+  ],
+  "availability": 200,
+  "economyUnauthenticated": 401,
+  "availabilityEndpoint": "/api/auth/profiles",
+  "railway": [
+    {
+      "context": "brilliant-amazement - piper-tts",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/5805cd49-5d30-4dcf-a4fb-3f1bb5cca666?id=1f7f20a1-8459-43c4-b4d1-2c855d2d8a5c&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+    },
+    {
+      "context": "brilliant-amazement - life-rpg",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/7a8e0c26-8a60-4bcc-ade2-f9f2e0f7ac7c?id=a831391f-b8c1-4919-94fc-59c645ddbeda&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+    }
+  ],
+  "unitTests": {
+    "total": 1971,
+    "passed": 1971,
+    "failed": 0,
+    "skipped": 0,
+    "log": "/private/tmp/satoru-v253-verified.log"
+  },
+  "browserReceipt": "receipt.json",
+  "browserGroups": 15,
+  "browserComplete": true,
+  "browserErrors": 0,
+  "scope": "Shared durable guide/habit transactions, exact retries, persisted-catalog purchase checks, confirmed den/title controls. Not immutable wallet or full entitlement enforcement. No live-account writes."
+}

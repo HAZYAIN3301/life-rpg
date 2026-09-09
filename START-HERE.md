@@ -3,10 +3,12 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Крупный пакет 09.09 — v253:** [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md).
+**Крупный пакет 09.09 — v253 опубликован:** [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md).
 Notes/Calendar/Habits Guide и обычные habit writes используют общий WAL/exact-CAS;
 сервер проверяет покупки по общему каталогу и сохранённому балансу; настройки Логова
 и звания показывают результат после записи. Проверки/статус публикации — верх DEVLOG.
+Runtime `fb411ae`; оба Railway services success, 9 live-файлов совпали 09.09 18:59 UTC,
+1971/1971 tests и 15 browser-групп PASS. Receipt: art-factory/feature-writes-v253/release-receipt.json.
 Это НЕ закрытие всего P0/авторитетного кошелька; точный остаток в контракте и BACKLOG.
 
 **Продолжение 09.09 — v251:** [ECONOMY-WRITES-V251.md](./ECONOMY-WRITES-V251.md).

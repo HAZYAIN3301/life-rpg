@@ -36,8 +36,13 @@ art-factory/feature-writes-v253/receipt.json. Узкая прежняя форм
 записаны как UX-долг, не выданы за полный visual PASS приложения.
 
 App/SW v253, новый каталог в SHELL и index, неизменённые CSS pins сохранены.
-Кандидат проверен локально; запись о фактической публикации будет добавлена после
-проверки Railway и live-файлов. Следующий шаг — единый личный wallet/entitlement
+**Опубликовано:** fresh master совпал с базой; fast-forward `0db4699` →
+`fb411ae1456adae1bacaf458ce2bd23431ff8f9a`. Railway app/TTS success:
+app `a831391f-b8c1-4919-94fc-59c645ddbeda`, TTS `1f7f20a1-8459-43c4-b4d1-2c855d2d8a5c`.
+09.09 18:59 UTC все 9 live-файлов совпали byte-for-byte; /api/auth/profiles 200,
+economy POST без сессии 401. art-factory/feature-writes-v253/release-receipt.json.
+Следующий docs-only commit фиксирует фактический релиз, runtime не меняет.
+Следующий шаг — единый личный wallet/entitlement
 контракт с миграцией, не обход CAS прямым PUT и не ещё один независимый транспорт.
 
 ## [2026-09-09] v251 опубликован; v252 — подтверждённая покупка внутри обучения
