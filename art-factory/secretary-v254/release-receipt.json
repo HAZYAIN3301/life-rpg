@@ -1,0 +1,124 @@
+{
+  "checkedAt": "2026-09-10T22:09:38.612Z",
+  "sha": "52a124f511307fc404e74a7ac532ed74d806db76",
+  "origin": "https://life-rpg-production-416a.up.railway.app",
+  "status": "success",
+  "railway": [
+    {
+      "context": "brilliant-amazement - life-rpg",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/7a8e0c26-8a60-4bcc-ade2-f9f2e0f7ac7c?id=5cb84a5a-2d7e-4381-bbb2-445947d94ac0&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f",
+      "updated_at": "2026-09-10T22:09:24Z"
+    },
+    {
+      "context": "brilliant-amazement - piper-tts",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/5805cd49-5d30-4dcf-a4fb-3f1bb5cca666?id=0e3629bd-70b0-4f9b-b5f2-27a3890960b5&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f",
+      "updated_at": "2026-09-10T22:09:25Z"
+    }
+  ],
+  "files": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "localSha256": "21e707993e3e2cdc7c0c7e173a09344234ad1f50e5f071b4fe846775ec1b3d96",
+      "liveSha256": "21e707993e3e2cdc7c0c7e173a09344234ad1f50e5f071b4fe846775ec1b3d96",
+      "match": true
+    },
+    {
+      "file": "app.js",
+      "status": 200,
+      "localSha256": "f640e8e2d2aa9719ae124dfcb56b84fd1b6210d9aa73e80fd5d67e582b55e59c",
+      "liveSha256": "f640e8e2d2aa9719ae124dfcb56b84fd1b6210d9aa73e80fd5d67e582b55e59c",
+      "match": true
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "localSha256": "aad7a2d04f0616463ccc8f38183db5d3ddd346425daf419c69423a78b7547c6c",
+      "liveSha256": "aad7a2d04f0616463ccc8f38183db5d3ddd346425daf419c69423a78b7547c6c",
+      "match": true
+    },
+    {
+      "file": "attention-controller-v1.js",
+      "status": 200,
+      "localSha256": "78b27a6b8e9d2bdb770c54df13c141e72c8ac902d95d9ea214a44a00f6007521",
+      "liveSha256": "78b27a6b8e9d2bdb770c54df13c141e72c8ac902d95d9ea214a44a00f6007521",
+      "match": true
+    },
+    {
+      "file": "attention-episode-v1.js",
+      "status": 200,
+      "localSha256": "9f5cc1aad832128971c8545f7f8cb6b88ef4ac8173e7aa279f43de965a65902a",
+      "liveSha256": "9f5cc1aad832128971c8545f7f8cb6b88ef4ac8173e7aa279f43de965a65902a",
+      "match": true
+    },
+    {
+      "file": "attention-session-v1.js",
+      "status": 200,
+      "localSha256": "45cc8ea30c3fc8ccf18fea7e6a40c7de5c94efc95723cc55841b43e6effaf1f3",
+      "liveSha256": "45cc8ea30c3fc8ccf18fea7e6a40c7de5c94efc95723cc55841b43e6effaf1f3",
+      "match": true
+    },
+    {
+      "file": "secretary-router-v1.js",
+      "status": 200,
+      "localSha256": "fe6131a65adb86f53303c028e486be6654b94bd6565960ce20d6fc5380754a93",
+      "liveSha256": "fe6131a65adb86f53303c028e486be6654b94bd6565960ce20d6fc5380754a93",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-producer-v1.js",
+      "status": 200,
+      "localSha256": "6997398547ad89568e4dd90ef53dd3b989b12307119e484ef296c7818701c595",
+      "liveSha256": "6997398547ad89568e4dd90ef53dd3b989b12307119e484ef296c7818701c595",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-client-v1.js",
+      "status": 200,
+      "localSha256": "00c5eaf3c8b430522bf4ce14afb9c4f7e8d37ed8f5dc72ddc932632a2b260f7f",
+      "liveSha256": "00c5eaf3c8b430522bf4ce14afb9c4f7e8d37ed8f5dc72ddc932632a2b260f7f",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-runtime-v1.js",
+      "status": 200,
+      "localSha256": "e6c419cb7ebc112f0233bec5588b5946e70aa312fe88a82828b96099aa494bf7",
+      "liveSha256": "e6c419cb7ebc112f0233bec5588b5946e70aa312fe88a82828b96099aa494bf7",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-ui-v1.js",
+      "status": 200,
+      "localSha256": "0c471ace6a332a9dabcaa87df14a5cf2e56c22766898f1f480674cd3ebdc1ca9",
+      "liveSha256": "0c471ace6a332a9dabcaa87df14a5cf2e56c22766898f1f480674cd3ebdc1ca9",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-v2.js",
+      "status": 200,
+      "localSha256": "19ecb830375effce3751c740625e24c4626b06d1948ccf1279976e65b94906ee",
+      "liveSha256": "19ecb830375effce3751c740625e24c4626b06d1948ccf1279976e65b94906ee",
+      "match": true
+    }
+  ],
+  "endpoints": [
+    {
+      "path": "/api/auth/profiles",
+      "method": "GET",
+      "expected": 200,
+      "status": 200,
+      "pass": true
+    },
+    {
+      "path": "/api/secretary/next-moves",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "authenticatedProductionScenario": "Not run; functional scenarios verified on isolated synthetic local account."
+}

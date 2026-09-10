@@ -2,6 +2,16 @@
 
 ## [2026-09-10] v254 — возврат к своему делу после подтверждённого выпадения
 
+**Опубликовано 11.09 00:09 CEST:** владелец явно подтвердил push/deploy; master
+fast-forward `6da8376` → `52a124f511307fc404e74a7ac532ed74d806db76`.
+Railway app `5cb84a5a-2d7e-4381-bbb2-445947d94ac0` и TTS
+`0e3629bd-70b0-4f9b-b5f2-27a3890960b5` success. 10.09 22:09:38 UTC все
+12 live-файлов совпали byte-for-byte с этим SHA; profiles 200, новый POST без
+сессии 401. Receipt: `art-factory/secretary-v254/release-receipt.json`.
+Authenticated production scenario не запускался: functional browser QA выполнен
+на изолированном synthetic account. Старый checkpoint `ae10553` входит в историю
+текущего master; новые модули и guard handoff-current-v1.test.js присутствуют.
+
 Первый вертикальный срез пакета №2: after-lapse-return подключён на Сегодня.
 Реальный Attention episode даёт один ход к существующему quest/habit с минимумом;
 без живой ссылки — один вопрос. Необязательный originalRef выбирается при входе в

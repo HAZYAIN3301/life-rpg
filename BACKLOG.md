@@ -4,6 +4,8 @@
   ход на Сегодня, action после durable accepted, отказ/expiry/restart, pending retry,
   пять языков. Повреждённый ledger fail-closed и видимая recovery-ошибка. Проверки и
   публикация — DEVLOG, контракт SECRETARY-NEXT-MOVES-TRANSPORT-V1.md.
+  Runtime `52a124f` опубликован; Railway app/TTS success, 12/12 production bytes
+  совпали 11.09 00:09 CEST. Остальные capability ниже остаются открытыми.
 - [ ] **Следующие два среза №2:** planned-start из task.date/startTime, затем
   evening-close с tonightSchedule и настоящим owner перехода вечера; каждый отдельно
   до production. RestProfile runtime и CommitmentV2 task links пока отсутствуют,
