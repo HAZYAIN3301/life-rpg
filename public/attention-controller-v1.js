@@ -147,6 +147,7 @@
     const outcome = expectedOutcome || rule.outcome || '';
     if (outcome) draft.expectedOutcome = outcome;
     if (topic) draft.topic = topic;
+    if (input && input.originalRef != null) draft.originalRef = input.originalRef;
     const started = S.start(bundle.sessions, draft, now);
     return started.ok ? { ok: true, sessions: started.state, session: started.session } : started;
   }

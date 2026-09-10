@@ -23939,32 +23939,74 @@ function attentionPendingReturn() {
 // нельзя — он был бы занят и потерян, не показавшись никому. Слот считает сам
 // рендер, тем же порядком приоритетов, а не второй его копией.
 let _secretaryOfferSlotFree = false;
+let _secretaryNextRuntime = null, _secretaryNextAccount = null;
+function secretaryNextSnapshot() {
+  return { now: attentionNow(), today: todayStr(), utcOffsetMinutes: -new Date().getTimezoneOffset(), dayClosed: dayClosed(),
+    episodes: State.attentionEpisodes, tasks: State.tasks, habits: State.habits, habitlog: State.habitlog, settings: State.settings,
+    guideActive: !!(guideV3RuntimeAllowed() && guideV3State()?.enabled && guideV3State()?.currentChapter),
+    firstValueStatus: State.firstValue?.status || null,
+    activeSession: !!(State.timer?.running || window.AttentionSessionV1?.active(State.attentionSessions) || browserCompanionCurrentStatus()?.active) };
+}
+function secretaryNextRuntime() {
+  const R = window.SecretaryNextMovesRuntimeV1;
+  if (!R || !window.SecretaryNextMovesProducerV1 || !State.me?.id) return null;
+  if (_secretaryNextAccount !== State.me.id) {
+    _secretaryNextRuntime?.dispose(); _secretaryNextAccount = State.me.id;
+    _secretaryNextRuntime = R.create({ account: () => State.me?.id, snapshot: secretaryNextSnapshot, id: () => crypto.randomUUID(),
+      storage: sessionStorage, fetch: (...args) => fetch(...args), changed: () => { if (State.phase === 'app') render(); },
+      expired: handleAccountSessionExpired, open: secretaryNextOpenAction });
+  }
+  return _secretaryNextRuntime;
+}
+function secretaryNextHTML() {
+  const runtime = secretaryNextRuntime();
+  if (State.secretaryOffer?.error) return window.SecretaryNextMovesUIV1.errorHTML(State.secretaryOffer.error, lang());
+  return runtime ? window.SecretaryNextMovesUIV1.render(runtime.state(), lang(), secretaryNextSnapshot()) : '';
+}
+function secretaryNextOpenAction(action) {
+  const UI = window.SecretaryNextMovesUIV1;
+  if (action.type === 'ask_one_question') return showAttentionDialog('secretaryQuestion', { ...secretaryNextSnapshot(), lang: lang() });
+  const ref = action.args?.targetRef, target = UI.target(ref, secretaryNextSnapshot());
+  if (!target) { toast(UI.copy('secretary.v2.common.stale', lang())); return false; }
+  return showAttentionDialog('secretaryPrepared', { ...target, ref, lang: lang(), startLabel: t('Начать фокус'),
+    ownerHTML: target.kind === 'quest' ? questRow(target.item) : habitRow(target.item) });
+}
+async function loadSecretaryOffer() {
+  const runtime = secretaryNextRuntime();
+  if (!runtime) return;
+  if (await runtime.load()) await loadLegacySecretaryOffer();
+}
 function secretaryOfferView() {
   const pending = State.secretaryOffer;
   return pending && pending.view ? pending.view : null;
 }
-async function loadSecretaryOffer() {
+async function loadLegacySecretaryOffer() {
   const V = window.SecretaryOfferViewV1;
   if (!V || State._secretaryOfferBusy || State.secretaryOffer !== undefined) return;
+  const accountId = State.me?.id;
   State._secretaryOfferBusy = true;
   try {
     const response = await fetch('/api/secretary', {
       headers: { 'X-Local-Day': todayStr(), 'X-Tz-Offset': String(-new Date().getTimezoneOffset()), 'X-Channel': 'card' },
     });
+    if (State.me?.id !== accountId) return;
     if (response.status === 401) { handleAccountSessionExpired(); return; }
-    // 422 — файл движка повреждён. Пустое состояние здесь было бы ложью: оно
-    // означало бы «ничего не случилось». Молчим и не трогаем ничего.
-    if (!response.ok) { State.secretaryOffer = null; return; }
-    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(response.status === 422 ? 'invalid_secretary_state' : 'network');
+    const data = await response.json();
+    if (State.me?.id !== accountId) return;
+    if (data?.offer === null) { State.secretaryOffer = null; return; }
     const view = V.presentOffer(data && data.offer);
-    if (!view) { State.secretaryOffer = null; return; }
+    if (!view) throw new Error('invalid_response');
     const claim = await fetch('/api/secretary/claim', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ offerId: view.offerId, channel: 'card' }),
     });
-    if (claim.status !== 200) { State.secretaryOffer = null; return; }
+    if (State.me?.id !== accountId) return;
+    if (claim.status === 409) { State.secretaryOffer = null; return; }
+    if (claim.status !== 200) throw new Error(claim.status === 422 ? 'invalid_secretary_state' : 'network');
     const claimed = await claim.json().catch(() => ({}));
-    if (!claimed || typeof claimed.token !== 'string' || !claimed.token) { State.secretaryOffer = null; return; }
+    if (State.me?.id !== accountId) return;
+    if (!claimed || typeof claimed.token !== 'string' || !claimed.token) throw new Error('invalid_response');
     State.secretaryOffer = { view, token: claimed.token };
     render();
     // Показ состоялся. Заявка закрывается сразу, чтобы пуш знал: это утро занято
@@ -23972,8 +24014,8 @@ async function loadSecretaryOffer() {
     settleSecretaryClaim(view.offerId, claimed.token, 'delivered');
   } catch (error) {
     console.error('secretary offer', error);
-    State.secretaryOffer = null;
-  } finally { State._secretaryOfferBusy = false; }
+    if (State.me?.id === accountId) State.secretaryOffer = { error: error.message || 'network' };
+  } finally { if (State.me?.id === accountId) { State._secretaryOfferBusy = false; render(); } }
 }
 async function settleSecretaryClaim(offerId, token, outcome) {
   try {
@@ -24445,11 +24487,11 @@ function attentionTodayControlHTML(selectedOffer = null) {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
   } else if (closed) {
     primary = fallbackPrimary;
+  } else if (secretaryNextHTML()) {
+    primary = { kind: 'offer', title: t('Следующий ход'), html: secretaryNextHTML() };
   } else if (secretaryOfferView()) {
     // Ход уже заявлен: до этой ветки он не рисуется никогда (см. loadSecretaryOffer).
     primary = { kind: 'offer', title: t('Сейчас важнее всего'), html: secretaryOfferHTML(secretaryOfferView()) };
-  } else if (pendingReturn) {
-    primary = { kind: 'return', title: t('Не нужно держать всю систему в голове'), html: `<button class="secretary-action is-primary" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` };
   } else if (eveningDue) {
     controlState = ' is-due';
     primary = { kind: 'evening', title: t('Пора завершить рабочий день'), html: `<button class="secretary-action is-primary" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` };
@@ -24554,6 +24596,8 @@ function showAttentionDialog(screen, viewModel, options = {}) {
   if (!UI) { toast(t('Модуль внимания не загрузился. Обнови страницу.')); return null; }
   closeAttentionDialog({ restoreFocus: false, force: true });
   const renderers = { setup: UI.renderSetup, entry: UI.renderEntry, boundary: UI.renderBoundary, recovery: UI.renderRecovery, evening: UI.renderEvening, return: UI.renderReturn, error: UI.renderLoadError };
+  renderers.secretaryQuestion = window.SecretaryNextMovesUIV1?.renderQuestion;
+  renderers.secretaryPrepared = window.SecretaryNextMovesUIV1?.renderPrepared;
   const renderScreen = renderers[screen];
   if (!renderScreen) return null;
   const dismissible = options.dismissible !== false;
@@ -24659,7 +24703,9 @@ function openAttentionEntry(policyId, source = 'manual', opener = null) {
   }));
   const selected = purposes[0];
   const calibration = selected ? C.calibrationFor(State.attentionEpisodes, policy.id, selected.id, attentionNow()) : null;
-  return showAttentionDialog('entry', { policyId: policy.id, targetLabel: policy.name, purposes, calibration }, { opener, source });
+  const overlay = showAttentionDialog('entry', { policyId: policy.id, targetLabel: policy.name, purposes, calibration }, { opener, source });
+  overlay?.querySelector('[data-attention-status]')?.insertAdjacentHTML('beforebegin', window.SecretaryNextMovesUIV1.targetField(secretaryNextSnapshot(), lang()));
+  return overlay;
 }
 function openAttentionBoundary(sessionId) {
   const C = attentionController(); if (!C || attentionHasLoadError()) return null;
@@ -24980,6 +25026,7 @@ async function startAttentionEntry(form) {
   const started = C.startSession(attentionBundle(), {
     id: `att-${uid()}`, policyId: form.dataset.policyId, purpose,
     expectedOutcome: form.expectedOutcome ? form.expectedOutcome.value : '', topic: form.topic ? form.topic.value : '',
+    originalRef: form.elements.namedItem('originalRef')?.value || undefined,
     hhmm: attentionHHMM(),
   }, attentionNow());
   if (!started.ok) {
@@ -24995,6 +25042,7 @@ async function startAttentionEntry(form) {
   const refreshSettings = State.view === 'settings';
   closeAttentionDialog({ restoreFocus: !refreshSettings, force: true });
   if (refreshSettings) { State._settingsFocusAfterCommit = '.attention-settings-card'; render(); }
+  else if (State.view === 'today') render();
   scheduleAttentionBoundary(); track(`attention:start:${overlay?.dataset.attentionSource === 'shortcut' ? 'shortcut' : 'manual'}`);
   toast(t('Окно внимания началось'));
   if (shelfSource) {
@@ -25050,6 +25098,7 @@ async function persistAttentionClose(next) {
   if (!await AttentionStore.save(bundle)) return false;
   applyAttentionBundle(bundle);
   reportAttentionEpisode(next.episode);
+  secretaryNextRuntime()?.invalidate(); State.secretaryOffer = undefined;
   return true;
 }
 async function finishAttentionSession(button) {
@@ -25061,7 +25110,7 @@ async function finishAttentionSession(button) {
   attentionBusy(true);
   if (!await persistAttentionClose(next)) { attentionBusy(false); attentionStatus('Не удалось сохранить исход. Окно остаётся открытым — данные не потеряны.', true); return; }
   closeAttentionDialog({ force: true }); clearTimeout(_attentionBoundaryTimer);
-  if (outcome === 'escaped') openAttentionReturn();
+  if (outcome === 'escaped') { State.view = 'today'; }
   else if (outcome === 'rested') toast(t('Отдых завершён без долга'));
   else if (outcome === 'unknown') toast(t('Исход оставлен неизвестным — это не считается срывом'));
   else toast(t('Окно завершено'));
@@ -27250,6 +27299,15 @@ function kickCompVideo() {
 // ============================================================
 async function onSubmit(e) {
   const f = e.target;
+  if (f.id === 'secretary-next-question-form') {
+    e.preventDefault(); const ref = f.elements.namedItem('targetRef')?.value;
+    if (!ref) return;
+    closeAttentionDialog({ restoreFocus: false, force: true });
+    if (ref === 'rest') openRecoveryLauncher();
+    else if (ref === 'plan') { State.view = 'calendar'; render(); }
+    else secretaryNextOpenAction({ type: 'task_open_prepared', args: { targetRef: ref, size: 'minimum', day: todayStr() } });
+    return;
+  }
   if (f.classList?.contains('ai-memory-edit-form')) {
     e.preventDefault();
     const id = String(f.dataset.memoryId || ''), text = String(f.text?.value || '').trim().slice(0, 400);
@@ -29168,6 +29226,14 @@ async function onClick(e) {
     return;
   }
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
+  if (action === 'secretary-next-accept') { await secretaryNextRuntime()?.respond('accepted'); return; }
+  if (action === 'secretary-next-dismiss') { await secretaryNextRuntime()?.respond('dismissed'); return; }
+  if (action === 'secretary-next-retry') {
+    if (State.secretaryOffer?.error) { State.secretaryOffer = undefined; await loadLegacySecretaryOffer(); }
+    else await secretaryNextRuntime()?.retry();
+    return;
+  }
+  if (el.closest('[data-secretary-prepared]') && action !== 'close-attention-dialog') closeAttentionDialog({ restoreFocus: false, force: true });
 
   // Ход открывает существующую поверхность своим обычным действием; здесь только
   // записывается исход, иначе кулдаун не сработает и предложение вернётся завтра.
@@ -31717,6 +31783,7 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  _secretaryNextRuntime?.dispose(); _secretaryNextRuntime = null; _secretaryNextAccount = null; _secretaryOfferSlotFree = false;
   State._partyRewardCycle = null; State._partyClaimBusy = false;
   Store.cancelPending();
   cancelCapturePipeline();
@@ -32772,7 +32839,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v253';
+const PWA_CACHE_VERSION = 'satoru-v254';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -44,6 +44,7 @@
   const WINDOW_DAYS = 14;
 
   const MAX_NOTE = 280;
+  const validOriginalRef = (value) => typeof value === 'string' && /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(value);
 
   const isIso = (s) => typeof s === 'string' && !Number.isNaN(Date.parse(s));
   const ms = (s) => (isIso(s) ? Date.parse(s) : NaN);
@@ -89,6 +90,8 @@
     if (typeof raw.expectedOutcome === 'string' && raw.expectedOutcome.trim()) out.expectedOutcome = raw.expectedOutcome.trim().slice(0, 120);
     if (typeof raw.topic === 'string' && raw.topic.trim()) out.topic = raw.topic.trim().slice(0, 80);
     if (typeof raw.avoidedThingId === 'string' && raw.avoidedThingId.trim()) out.avoidedThingId = raw.avoidedThingId.trim().slice(0, 40);
+    // Legacy avoidedThingId remains untyped; it cannot establish this relationship.
+    if (validOriginalRef(raw.originalRef)) out.originalRef = raw.originalRef;
     if (typeof raw.returnActionId === 'string' && raw.returnActionId.trim()) out.returnActionId = raw.returnActionId.trim().slice(0, 40);
     if (isIso(raw.returnedAt)) out.returnedAt = raw.returnedAt;
     if (typeof raw.note === 'string' && raw.note.trim()) out.note = raw.note.trim().slice(0, MAX_NOTE);
@@ -119,9 +122,11 @@
    */
   function record(state, draft) {
     const s = normalize(state);
+    if (draft && draft.originalRef != null && !validOriginalRef(draft.originalRef)) return { ok: false, error: 'invalid_original_ref' };
     const ep = cleanEpisode(draft);
     if (!ep) return { ok: false, error: 'invalid' };
     const at = s.episodes.findIndex((e) => e.id === ep.id);
+    if (at >= 0 && !Object.prototype.hasOwnProperty.call(draft, 'originalRef') && s.episodes[at].originalRef) ep.originalRef = s.episodes[at].originalRef;
     const episodes = at < 0 ? s.episodes.concat([ep]) : s.episodes.map((e, i) => (i === at ? ep : e));
     return { ok: true, state: { ...s, episodes } };
   }
@@ -131,6 +136,7 @@
     const s = normalize(state);
     const cur = byId(s, id);
     if (!cur) return { ok: false, error: 'not_found' };
+    if (patch && patch.originalRef != null && !validOriginalRef(patch.originalRef)) return { ok: false, error: 'invalid_original_ref' };
     const ep = cleanEpisode({ ...cur, ...(patch && typeof patch === 'object' ? patch : {}), id: cur.id });
     if (!ep) return { ok: false, error: 'invalid' };
     return { ok: true, state: { ...s, episodes: s.episodes.map((e) => (e.id === ep.id ? ep : e)) } };

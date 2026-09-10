@@ -1,5 +1,20 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v254, after-lapse-return:** явная Attention→quest/habit связь, один claimed
+  ход на Сегодня, action после durable accepted, отказ/expiry/restart, pending retry,
+  пять языков. Повреждённый ledger fail-closed и видимая recovery-ошибка. Проверки и
+  публикация — DEVLOG, контракт SECRETARY-NEXT-MOVES-TRANSPORT-V1.md.
+- [ ] **Следующие два среза №2:** planned-start из task.date/startTime, затем
+  evening-close с tonightSchedule и настоящим owner перехода вечера; каждый отдельно
+  до production. RestProfile runtime и CommitmentV2 task links пока отсутствуют,
+  v2 push и legacy morning outcome frozen replay также не закрыты.
+- [ ] **Пакет №3 supply:** проверенный отдельный пакет и миграция starter pool готовы;
+  подключить admit/toCatalogRows до choose и проверить реальное сохранение/повтор.
+  Внешнее воспроизведение материалов не подтверждено.
+- [ ] **Пакет №4 канон:** визуальный лист подготовлен для владельца; художественная
+  приёмка ожидается. Исправить устаревшие утверждения о Viola/количестве assets,
+  не объявлять канон accepted по техническим тестам.
+
 - [x] **Крупный пакет v253, 09.09:** FEATURE-WRITES-V253.md. Общий WAL/exact-CAS
   Notes/Calendar/Habits, стабильный повтор, серверные цены/баланс и append-only purchases
   внутри economy/Guide endpoints; свет/reset/clear/pet-count/ambient/title после receipt.

@@ -1,5 +1,48 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-10] v254 — возврат к своему делу после подтверждённого выпадения
+
+Первый вертикальный срез пакета №2: after-lapse-return подключён на Сегодня.
+Реальный Attention episode даёт один ход к существующему quest/habit с минимумом;
+без живой ссылки — один вопрос. Необязательный originalRef выбирается при входе в
+окно и переживает запись session/episode, продление и закрытие. Открытие отдаёт
+управление существующей задаче/привычке; отдельный явный старт использует обычный focus UI.
+Автоматический локальный return-dialog больше не обходит отказ секретарю.
+
+Новый server-owned secretary.json хранит nextMoves, channel claims и durable receipts.
+Показ только после claim; action только после accepted; неизменный pending запрос
+переживает потерянный ответ и reload. Отказ/expiry переживают restart и удерживают
+дневной budget. Server revalidates собственные tasks/habits/settings, права, Guide,
+First Value и закрытый день. Другой client/channel, stale target, malformed store,
+500, конфликт request и смена аккаунта не дают ложного успеха. Рендер не повторяет
+решение; изменения lapse/блокировок обновляют healthy silence. Accepted во время
+начала новой сессии откладывает открытие до явного retry.
+
+Закрыт defect №15: повреждённый legacy ledger не превращается в empty; decide
+различает ошибку и осознанное молчание. Старый GET/claim reader тоже показывает
+422/500/malformed и retry. 31 новый ключ на пяти языках, App/SW v254; четыре модуля
+producer/client/ui/runtime добавлены в SHELL. Существующие active pins синхронизированы.
+
+Браузер IAB, отдельный DATA_DIR, только test@satoru.local: 375/1280, RU/EN/DE,
+dark/light, конкретное дело и один вопрос, настоящий вход окна/граница/escaped,
+потерянный ПОСЛЕ записи ответ → reload → тот же receipt → существующий focus UI;
+500 при отказе → retry → reload + restart → карточки нет; malformed и offline
+не открывают диалог. Нет горизонтального overflow; кнопки диалога 42–44px,
+фокус приходит на заголовок. Поведенческие тесты отдельно проверяют competing
+devices, expiry/restart, stale/foreign refs, write failures, сохранность pending,
+account race и синхронный повтор рендера. **Итог: 2108/2108 PASS**, без skip,
+49.9 с, node --check 74 изменённых JS и diff --check PASS. Legacy 422 → retry →
+healthy silence проверен в браузере; Tab остаётся в диалоге, Escape закрывает,
+анимаций внутри нового диалога 0. Native reduced-motion emulation в IAB недоступна;
+отдельное системное переключение не проверялось. Production receipt фиксируется
+после Railway и сверки bytes, не выводится из факта push.
+
+Остаток: planned-start/evening-close ещё не включены; v2 push delivery, RestProfile
+writer/menu, исполнимый CommitmentV2 task adapter и полный First Value workflow
+не подключены. Legacy morning outcome ещё без frozen replay. Supply готов отдельно,
+его runtime ещё не импортирован. Канон остаётся draft до просмотра владельцем.
+Контракт: SECRETARY-NEXT-MOVES-TRANSPORT-V1.md; базовые ветки проверены самостоятельно.
+
 ## [2026-09-09] v253 — общий пакет сохранения Guide/привычек, покупок и Логова
 
 Владелец попросил не дробить связанную работу на мелкие остановки. Закрыт один пакет

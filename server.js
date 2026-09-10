@@ -25,6 +25,7 @@ const BulkUndoV1 = require('./public/bulk-undo-v1.js');
 const CommitmentV2 = require('./public/commitment-v2.js');
 const SecretaryExperimentV1 = require('./public/secretary-experiment-v1.js');
 const SecretaryClaimV1 = require('./public/secretary-claim-v1.js');
+const SecretaryNextMovesServiceV1 = require('./server-secretary-next-moves-v1.js');
 const GoalResolveV1 = require('./public/goal-resolve-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
@@ -269,6 +270,9 @@ function saveUsers(users) {
   writeJsonAtomic(USERS_FILE(), users);
 }
 function userDataDir(id) { return path.join(DATA_DIR, 'users', id); }
+const secretaryNextMoves = SecretaryNextMovesServiceV1.createService({
+  userDir: userDataDir, durableWrite: writeJsonDurable, recoverAccount: recoverCommitmentJournal,
+});
 function telemetryConsentFile(id) { return path.join(userDataDir(id), 'telemetry-consent.json'); }
 function loadTelemetryConsent(id) {
   try { return TelemetryConsentV1.normalizeConsent(JSON.parse(fs.readFileSync(telemetryConsentFile(id), 'utf8'))); }
@@ -316,6 +320,9 @@ function attentionCleanEpisode(raw) {
     source: ATTENTION_SOURCES.includes(raw.source) ? raw.source : 'manual',
   };
   const ended = attnIso(raw.endedAt); if (ended) out.endedAt = ended;
+  if (typeof raw.originalRef === 'string' && /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(raw.originalRef)) {
+    out.originalRef = raw.originalRef;
+  }
   const returned = attnIso(raw.returnedAt); if (returned) out.returnedAt = returned;
   const planned = attnInt(raw.plannedMinutes, 0, 1440); if (planned !== null) out.plannedMinutes = planned;
   // null здесь законен и значим: платформа могла не знать длительность (iOS Украина,
@@ -389,6 +396,9 @@ function attentionCleanSession(raw) {
     if (at && m !== null && out.extensions.length < out.extensionsAllowed) out.extensions.push({ at, minutes: m });
   }
   const exp = attnStr(raw.expectedOutcome, 120); if (exp) out.expectedOutcome = exp;
+  if (typeof raw.originalRef === 'string' && /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(raw.originalRef)) {
+    out.originalRef = raw.originalRef;
+  }
   const topic = attnStr(raw.topic, 80); if (topic) out.topic = topic;
   if (raw.emergency && typeof raw.emergency === 'object') {
     const at = attnIso(raw.emergency.at);
@@ -957,6 +967,7 @@ function secretaryPushOffer(uid, tz, today, nowIso, days) {
   });
 }
 function secretaryClaimForPush(uid, offerId, nowIso) {
+  try { if (secretaryNextMoves.held(uid, nowIso)) return null; } catch { return null; }
   const claims = readSecretaryPart(uid, 'secretary-claims.json', SecretaryClaimV1.sanitizeClaims, SecretaryClaimV1.emptyClaims);
   if (!claims) return null;
   const got = SecretaryClaimV1.claim(claims, offerId, 'push', nowIso, crypto.randomUUID());
@@ -4716,6 +4727,25 @@ const server = http.createServer(async (req, res) => {
   // Приватность: событие несёт факт, время и ограниченные поля. Ни URL, ни запросов,
   // ни текста страниц — модуль их и не примет, но гейт повторён здесь, потому что
   // это единственное место, где данные попадают на диск.
+  if (u === '/api/secretary/next-moves') {
+    const uid = sessionUserId(req);
+    if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    if (req.method !== 'POST') return sendJson(res, 405, { error: 'method' });
+    let body;
+    try { body = JSON.parse(await readBody(req, 12 * 1024)); }
+    catch (e) { return sendJson(res, e.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { error: 'invalid_request' }); }
+    try {
+      const result = secretaryNextMoves.transact(uid, body, {
+        now: new Date().toISOString(), today: String(req.headers['x-local-day'] || ''),
+        offset: req.headers['x-tz-offset'] === undefined ? NaN : Number(req.headers['x-tz-offset']),
+      });
+      return sendJson(res, result.status, result.body);
+    } catch (e) {
+      if (sendCommitmentBoundaryError(res, e)) return;
+      return sendJson(res, e.status || 500, { error: e.code || 'secretary_save_failed' });
+    }
+  }
+
   if (u === '/api/secretary' || u === '/api/secretary/event' || u === '/api/secretary/offer'
     || u === '/api/secretary/experiment'
     || u === '/api/secretary/claim' || u === '/api/secretary/claim/settle') {
@@ -4754,7 +4784,7 @@ const server = http.createServer(async (req, res) => {
       const askedChannel = req.headers['x-channel'] ? String(req.headers['x-channel']).slice(0, 16) : undefined;
       const todayKey = /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : new Date().toISOString().slice(0, 10);
       const daysForOffer = readUserJson(uid, 'days') || {};
-      const offer = SecretaryRouterV1.next({
+      const decision = SecretaryRouterV1.decide({
         // Спрашивает открытое приложение, а не таймер перерисовки.
         invocation: 'app_open',
         channel: askedChannel,
@@ -4773,7 +4803,10 @@ const server = http.createServer(async (req, res) => {
         // Человек, уже закрывший день сам, уже принял решение о нём.
         dayClosed: !!(daysForOffer[todayKey] && daysForOffer[todayKey].closed),
       });
-      return sendJson(res, 200, { offer: offer || null });
+      if (!decision.ok) return sendJson(res, 422, { error: 'invalid_secretary_state' });
+      try { if (secretaryNextMoves.held(uid, new Date().toISOString())) return sendJson(res, 200, { offer: null }); }
+      catch (e) { return sendJson(res, e.status || 500, { error: e.code || 'secretary_read_failed' }); }
+      return sendJson(res, 200, { offer: decision.offer });
     }
 
     if (u === '/api/secretary/event' && req.method === 'POST') {
@@ -4816,17 +4849,19 @@ const server = http.createServer(async (req, res) => {
     if (u === '/api/secretary/claim' || u === '/api/secretary/claim/settle') {
       if (req.method !== 'POST') return sendJson(res, 405, { error: 'method' });
       const claimsFile = path.join(dir, 'secretary-claims.json');
+      let body = {}; try { body = JSON.parse(await readBody(req, 4 * 1024)); } catch {}
       const stored = readChecked(claimsFile, SecretaryClaimV1.sanitizeClaims, SecretaryClaimV1.emptyClaims);
       // Повреждённый файл заявок — отказ. Пустой означал бы «ход свободен» и вернул
       // бы ровно тот дубль, ради которого арбитр и существует.
       if (stored.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
 
-      let body = {}; try { body = JSON.parse(await readBody(req, 4 * 1024)); } catch {}
       const offerId = String(body.offerId || '').slice(0, 160);
       if (!offerId) return sendJson(res, 400, { error: 'no_offer' });
       const now = new Date().toISOString();
 
       if (u === '/api/secretary/claim') {
+        try { if (secretaryNextMoves.held(uid, now)) return sendJson(res, 409, { error: 'held', channel: 'card' }); }
+        catch (e) { return sendJson(res, e.status || 500, { error: e.code || 'secretary_read_failed' }); }
         const out = SecretaryClaimV1.claim(stored.value, offerId, body.channel, now, crypto.randomUUID());
         if (!out.ok) {
           const code = out.reason === 'held' || out.reason === 'settled' ? 409 : 400;
@@ -6119,11 +6154,14 @@ const server = http.createServer(async (req, res) => {
     const user = loadUsers().find((item) => item.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     try { recoverCommitmentJournal(uid); }
     catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
+    let secretaryArchive;
+    try { secretaryArchive = secretaryNextMoves.snapshot(uid); }
+    catch (e) { return sendJson(res, e.status || 500, { error: e.code || 'secretary_read_failed' }); }
     const archive = {
       format: 'satoru-account', version: 1, exportedAt: new Date().toISOString(),
       account: { id: user.id, name: user.name, email: user.email || null },
       data: readPortableAccountData(uid),
-      serverOwned: { partyRewards: partyRewards.snapshot(uid) }, // export evidence, never importable credit
+      serverOwned: { partyRewards: partyRewards.snapshot(uid), secretary: secretaryArchive }, // evidence, never importable authority
       excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'pushSubscription', 'noteMedia'],
     };
     const filename = `satoru-account-${new Date().toISOString().slice(0, 10)}.json`;
@@ -6299,6 +6337,7 @@ const server = http.createServer(async (req, res) => {
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
+    if (name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
     if (name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
@@ -6440,6 +6479,7 @@ const server = http.createServer(async (req, res) => {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
       let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
       const name = safeName(String(b.name || '')); if (!name) return sendJson(res, 400, { error: 'bad name' });
+      if (name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
       const dir = userDataDir(am[1]);
       const bfile = path.join(backupDir(dir, name), String(b.stamp || '') + '.json');
       if (!bfile.startsWith(DATA_DIR) || !fs.existsSync(bfile)) return sendJson(res, 404, { error: 'backup not found' });

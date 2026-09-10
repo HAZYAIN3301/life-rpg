@@ -95,8 +95,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   const at = INDEX.indexOf('src="secretary-offer-view-v1.js');
   assert.ok(at >= 0 && INDEX.indexOf('src="app.js') > at);
   assert.equal((SW.match(/'secretary-offer-view-v1\.js'/g) || []).length, 1);
-  assert.match(SW, /const CACHE = 'satoru-v253'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v253'/);
+  assert.match(SW, /const CACHE = 'satoru-v254'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v254'/);
 });
 
 test('the move is claimed before it is ever drawn', () => {
@@ -108,7 +108,7 @@ test('the move is claimed before it is ever drawn', () => {
   const claim = body.indexOf("'/api/secretary/claim'");
   const show = body.indexOf('State.secretaryOffer = { view');
   assert.ok(view >= 0 && claim > view && show > claim, 'порядок: получить → заявить → только потом показать');
-  assert.match(body, /if \(claim\.status !== 200\) \{ State\.secretaryOffer = null; return; \}/, '409 значит молчать');
+  assert.match(body, /if \(claim\.status === 409\) \{ State\.secretaryOffer = null; return; \}/, '409 значит молчать');
   assert.match(body, /settleSecretaryClaim\(view\.offerId, claimed\.token, 'delivered'\)/);
 });
 
@@ -125,8 +125,10 @@ test('one decision-maker for the morning: the local detector is gone', () => {
     assert.equal(APP.includes(dead), false, dead);
   }
   const offerAt = APP.indexOf("} else if (secretaryOfferView()) {");
-  const returnAt = APP.indexOf('} else if (pendingReturn) {');
-  assert.ok(offerAt > 0 && returnAt > offerAt, 'ход сервера стоит выше локального возврата');
+  assert.ok(offerAt > 0);
+  assert.equal(APP.includes('} else if (pendingReturn) {'), false,
+    'незаявленный локальный возврат не обходит отказ серверного next-move');
+  assert.match(APP, /pendingReturn && primary.kind !== 'return'/, 'ручной возврат остаётся в другой поддержке');
   const activeAt = APP.indexOf('} else if (active) {');
   assert.ok(activeAt > 0 && activeAt < offerAt, 'живая граница внимания остаётся выше хода');
 });
@@ -163,7 +165,8 @@ test('only one block on the day may call itself the priority', () => {
   // Герой дня уже называет следующий квест. Второй заголовок «Сейчас важнее всего»
   // над альтернативным советом противоречил ему на одном экране: две вещи объявляли
   // себя главным и указывали на разное.
-  const offer = APP.indexOf("primary = { kind: 'offer'");
+  const legacy = APP.indexOf('} else if (secretaryOfferView()) {');
+  const offer = APP.indexOf("primary = { kind: 'offer'", legacy);
   const nudge = APP.indexOf("primary = { kind: 'nudge'");
   assert.ok(offer > 0 && nudge > 0);
   assert.match(APP.slice(offer, offer + 120), /title: t\('Сейчас важнее всего'\)/,

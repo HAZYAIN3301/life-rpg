@@ -87,14 +87,14 @@ test('manual alternatives live only behind a collapsed Other support disclosure'
     'the primary offer must not be duplicated inside the secondary disclosure');
 });
 
-test('primary arbitration is active boundary, return, evening, nudge, then fallback', () => {
+test('primary arbitration is active boundary, claimed return, evening, nudge, then fallback', () => {
   const control = between(APP, 'function attentionTodayControlHTML(', '\nfunction attentionPolicyId(');
   const signature = control.match(/^function attentionTodayControlHTML\(([^)=,\s]+)/);
   assert.ok(signature, 'selected offer parameter is missing');
   const selectedName = signature[1];
 
   const activeAt = firstIndexAfter(control, 0, ['if (active)', 'active ?']);
-  const returnAt = firstIndexAfter(control, activeAt + 1, ['pendingReturn']);
+  const returnAt = firstIndexAfter(control, activeAt + 1, ['else if (secretaryNextHTML())']);
   const eveningAt = firstIndexAfter(control, returnAt + 1, ['State._eveningDue', 'eveningDue']);
   const nudgeAt = firstIndexAfter(control, eveningAt + 1, [selectedName, 'selectedNudge', 'selectedOffer']);
   const fallbackAt = firstIndexAfter(control.toLowerCase(), nudgeAt + 1,
@@ -119,7 +119,7 @@ test('a closed day suppresses proactive work while preserving non-work support',
     /(?:dayClosed\(\)|\bclosed\b)[\s\S]{0,900}(?:work|nudge|offer|primary)[\s\S]{0,900}(?:null|false|fallback)/i,
     'dayClosed must explicitly suppress a work/nudge primary offer rather than relying on CSS');
   const closedAt = control.indexOf('else if (closed)');
-  const returnAt = control.indexOf('else if (pendingReturn)');
+  const returnAt = control.indexOf('else if (secretaryNextHTML())');
   const eveningAt = control.indexOf('else if (eveningDue)');
   assert.ok(closedAt >= 0 && closedAt < returnAt && closedAt < eveningAt,
     'a closed day must suppress pending return and evening offers, not only ordinary nudges');

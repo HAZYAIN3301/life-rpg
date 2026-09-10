@@ -47,6 +47,9 @@
 
   const MAX_REASON = 200;
   const MAX_TOPIC = 80;
+  // Opaque owner reference; never a title, purpose, URL or untyped legacy id.
+  // 6-character prefix + 74-character id fits the next-moves 80-character limit.
+  const validOriginalRef = (value) => typeof value === 'string' && /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(value);
 
   const isIso = (s) => typeof s === 'string' && !Number.isNaN(Date.parse(s));
   const ms = (s) => (isIso(s) ? Date.parse(s) : NaN);
@@ -90,6 +93,7 @@
       out.expectedOutcome = raw.expectedOutcome.trim().slice(0, 120);
     }
     if (typeof raw.topic === 'string' && raw.topic.trim()) out.topic = raw.topic.trim().slice(0, MAX_TOPIC);
+    if (validOriginalRef(raw.originalRef)) out.originalRef = raw.originalRef;
     if (raw.emergency && typeof raw.emergency === 'object' && isIso(raw.emergency.at)) {
       const reason = typeof raw.emergency.reason === 'string' ? raw.emergency.reason.trim().slice(0, MAX_REASON) : '';
       out.emergency = reason ? { at: raw.emergency.at, reason } : { at: raw.emergency.at };
@@ -157,6 +161,7 @@
   function start(state, draft, now) {
     const s = normalize(state);
     if (active(s)) return { ok: false, error: 'already_open' };
+    if (draft && draft.originalRef != null && !validOriginalRef(draft.originalRef)) return { ok: false, error: 'invalid_original_ref' };
     const session = cleanSession({ ...draft, startedAt: isIso(now) ? now : draft.startedAt });
     if (!session) return { ok: false, error: 'invalid' };
     if (s.sessions.some((x) => x.id === session.id)) return { ok: false, error: 'duplicate' };
@@ -262,11 +267,12 @@
     };
     if (session.expectedOutcome) ep.expectedOutcome = session.expectedOutcome;
     if (session.topic) ep.topic = session.topic;
+    if (validOriginalRef(session.originalRef)) ep.originalRef = session.originalRef;
     return ep;
   }
 
   return Object.freeze({
-    VERSION, OUTCOMES,
+    VERSION, OUTCOMES, validOriginalRef,
     emptyState, normalize, byId, active,
     start, extend, useEmergency, close,
     grantedMinutes, deadlineAt, remainingMs, isOver, canExtend,

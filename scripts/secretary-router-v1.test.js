@@ -28,6 +28,20 @@ const silentYday = { type: E.TYPES.DAY_SILENT, day: YDAY, at: `${YDAY}T20:00:00.
 
 const base = (over) => Object.assign({ invocation: 'app_open', now: morning, today: DAY, tzOffsetMinutes: 0, events: logWith(escapedYday), ledger: R.emptyLedger() }, over || {});
 
+test('invalid ledger cannot reopen a delivered morning; decide distinguishes error from silence', () => {
+  const broken = [null, {}, { version: 1, delivered: [] }, { version: 1, delivered: { x: [] } },
+    { version: 1, delivered: { ['x'.repeat(161)]: { at: morning, state: 'offered' } } }];
+  for (const ledger of broken) {
+    assert.strictEqual(R.next(base({ ledger })), null);
+    assert.deepStrictEqual(R.decide(base({ ledger })), { ok: false, error: 'invalid_ledger' });
+    assert.strictEqual(R.mark(ledger, { cooldownKey: 'morning-recovery|' + DAY }, 'offered', morning), null);
+    assert.strictEqual(R.isCoolingDown(ledger, 'morning-recovery', DAY), true);
+  }
+  assert.deepStrictEqual(R.decide(base({ events: E.emptyLog() })), { ok: true, offer: null, silence: { reason: 'nothing_eligible' } });
+  assert.deepStrictEqual(R.decide(base({ events: {} })), { ok: false, error: 'invalid_events' });
+  assert.deepStrictEqual(R.decide(base()).offer, R.next(base()));
+});
+
 // ── события ────────────────────────────────────────────────────────────────────
 
 test('событие без известного типа или дня не принимается', () => {

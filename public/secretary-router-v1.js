@@ -114,16 +114,17 @@
   function emptyLedger() { return { version: 1, delivered: {} }; }
 
   function sanitizeLedger(raw) {
-    if (!raw || typeof raw !== 'object' || Number(raw.version) !== 1) return null;
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw) || Number(raw.version) !== 1) return null;
     if (!raw.delivered || typeof raw.delivered !== 'object' || Array.isArray(raw.delivered)) return null;
     const delivered = {};
-    for (const k in raw.delivered) {
+    for (const k of Object.keys(raw.delivered)) {
+      if (!k || k.length > 160 || ['__proto__', 'constructor', 'prototype'].includes(k)) return null;
       const row = raw.delivered[k];
-      if (!row || typeof row !== 'object') return null;
+      if (!row || typeof row !== 'object' || Array.isArray(row)) return null;
       const at = typeof row.at === 'string' && !isNaN(Date.parse(row.at)) ? row.at : '';
       const state = OFFER_STATES.indexOf(String(row.state)) >= 0 ? String(row.state) : '';
       if (!at || !state) return null;
-      delivered[String(k).slice(0, 160)] = { at, state };
+      delivered[k] = { at, state };
     }
     return { version: 1, delivered };
   }
@@ -214,7 +215,8 @@
   function cooldownKey(capabilityId, today) { return `${capabilityId}|${today}`; }
 
   function isCoolingDown(ledger, capabilityId, today) {
-    const base = ledger && ledger.delivered ? ledger : emptyLedger();
+    const base = sanitizeLedger(ledger);
+    if (!base) return true;
     return !!base.delivered[cooldownKey(capabilityId, today)];
   }
 
@@ -237,7 +239,8 @@
     const inp = input || {};
     if (INVOCATIONS.indexOf(inp.invocation) < 0) return null;
     if (!isDay(inp.today) || typeof inp.now !== 'string') return null;
-    const ledger = sanitizeLedger(inp.ledger) || emptyLedger();
+    const ledger = sanitizeLedger(inp.ledger);
+    if (!ledger) return null;
 
     for (let i = 0; i < CAPABILITIES.length; i += 1) {
       const cap = CAPABILITIES[i];
@@ -296,7 +299,8 @@
 
   /** Отметить доставку/исход. Возвращает новый ledger — модуль ничего не мутирует. */
   function mark(ledger, offer, state, nowIso) {
-    const base = sanitizeLedger(ledger) || emptyLedger();
+    const base = sanitizeLedger(ledger);
+    if (!base) return null;
     if (!offer || !offer.cooldownKey) return base;
     if (OFFER_STATES.indexOf(String(state)) < 0) return base;
     // Дефект №8: раньше неверное время подменялось показанием часов. Модуль обязан
@@ -309,10 +313,22 @@
     return { version: 1, delivered };
   }
 
+  // Additive API: existing next() callers retain offer|null, transports can now
+  // distinguish damaged input from an ordinary, successful quiet decision.
+  function decide(input) {
+    const inp = input || {};
+    if (!sanitizeLedger(inp.ledger)) return { ok: false, error: 'invalid_ledger' };
+    if (!Events || !Events.sanitizeLog(inp.events)) return { ok: false, error: 'invalid_events' };
+    if (INVOCATIONS.indexOf(inp.invocation) < 0) return { ok: false, error: 'invalid_invocation' };
+    if (!isDay(inp.today) || typeof inp.now !== 'string' || isNaN(Date.parse(inp.now))) return { ok: false, error: 'invalid_time' };
+    const offer = next(inp);
+    return { ok: true, offer, silence: offer ? null : { reason: 'nothing_eligible' } };
+  }
+
   return Object.freeze({
     VERSION, ACTIONS, ACTION_LIST, CHANNELS, OFFER_STATES, INVOCATIONS, CAPABILITIES,
     ASK_BELOW, MORNING_FROM, MORNING_TO,
     emptyLedger, sanitizeLedger, yesterdayTrouble, ownWords,
-    isCoolingDown, next, mark,
+    isCoolingDown, next, decide, mark,
   });
 });
