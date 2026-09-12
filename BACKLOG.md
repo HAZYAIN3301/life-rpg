@@ -4,7 +4,8 @@
   grants и допустимая экипировка, реальный Pro tier; запрет смежного credit/catalog
   изменения в purchase request. Строгая квитанция, точный отказ на пяти языках,
   account/writeEpoch guards и стабильный повтор. PURCHASE-ENTITLEMENTS-V258.md;
-  2449/2449 tests PASS, browser QA и публикация конкретного SHA — верх DEVLOG.
+  2449/2449 tests PASS; опубликовано `8979522`, Railway app/TTS success, 26/26 bytes.
+  Browser QA и receipts конкретного SHA — верх DEVLOG.
 - [ ] **Первый остаток P0 после v258:** generic/import/settings-only пути
   начисления gold и прав, chest grants и общий wallet. Проверка admission покупки
   не делает исходные client-owned task/import начисления авторитетными.

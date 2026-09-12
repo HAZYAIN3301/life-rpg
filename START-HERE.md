@@ -7,8 +7,9 @@
 разделение с Claude — CLAUDE-OPUS5-NEXT-WORK.md. Эти файлы обновлены по фактическим
 v254–v257, выполненные пакеты №2/№3 не выдавать повторно. Следующий P0-срез
 PURCHASE-ENTITLEMENTS-V258.md: серверный личный уровень и точные права новых
-покупок, строгая квитанция и account guards. 2449/2449 tests PASS; конкретный
-статус публикации и browser QA — верх DEVLOG. CACHE satoru-v258.
+покупок, строгая квитанция и account guards. Опубликовано `8979522`:
+Railway app/TTS success, 26/26 live bytes, 2449/2449 tests PASS. Конкретные
+receipts и browser QA — верх DEVLOG. CACHE satoru-v258.
 Это не закрытие generic/import/settings-only/mint/chest и всего wallet P0.
 
 **Предыдущий checkpoint 12.09:** supply Вдохновения v257 опубликован `1b3f52b`;

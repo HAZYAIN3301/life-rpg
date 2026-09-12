@@ -2,7 +2,14 @@
 
 ## [2026-09-12] v258 — личный уровень и точные права покупки
 
-**Релизный кандидат проверен; публикация ещё не подтверждена.**
+**Опубликовано 12.09 19:52 CEST:** `8979522cfe4e892e4e3718e1182e1af41bfbb9ad`.
+Railway app `ee8b37f9-7e71-4123-bd44-04ed05d82643`, TTS
+`6743a7a3-8cfa-4d55-942b-cf5dabd34cbc` success; 26/26 live bytes совпали,
+profiles 200, secretary/economy POST без сессии 401.
+Receipt: art-factory/economy-v258/release-receipt.json. Production IAB загрузил
+экран входа с app/PersonalProgress pins v258 без console errors; покупки живого
+аккаунта не выполнялись. Это функциональный synthetic QA и live-byte gate,
+не полный visual QA приложения.
 PURCHASE-ENTITLEMENTS-V258.md; browser receipt — art-factory/economy-v258/qa-receipt.json.
 
 По найденному PRODUCT-CRITICAL-PATH-2026-09.md продолжается первый остаток P0.
