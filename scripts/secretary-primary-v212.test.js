@@ -119,10 +119,13 @@ test('a closed day suppresses proactive work while preserving non-work support',
     /(?:dayClosed\(\)|\bclosed\b)[\s\S]{0,900}(?:work|nudge|offer|primary)[\s\S]{0,900}(?:null|false|fallback)/i,
     'dayClosed must explicitly suppress a work/nudge primary offer rather than relying on CSS');
   const closedAt = control.indexOf('else if (closed)');
-  const returnAt = control.indexOf('else if (secretaryNextHTML())');
+  const nextMovesAt = control.indexOf('else if (secretaryNextHTML())');
   const eveningAt = control.indexOf('else if (eveningDue)');
-  assert.ok(closedAt >= 0 && closedAt < returnAt && closedAt < eveningAt,
-    'a closed day must suppress pending return and evening offers, not only ordinary nudges');
+  assert.ok(nextMovesAt >= 0 && nextMovesAt < closedAt && closedAt < eveningAt,
+    'a closed day preserves the v2 user-scheduled evening and suppresses legacy proactive support');
+  const runtime = fs.readFileSync(path.join(ROOT, 'public', 'secretary-next-moves-runtime-v1.js'), 'utf8');
+  assert.match(runtime, /env\.snapshot\(\)\.dayClosed && action\?\.type !== 'evening_transition_open'/,
+    'v2 still suppresses advice on closed days; only the explicit evening transition is exempt');
 });
 
 test('legacy nudges enter the primary slot only when they expose exactly one action', () => {

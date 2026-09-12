@@ -279,6 +279,7 @@
         <span aria-hidden="true">✓</span><div><b>${tr(t, label)}</b><small>${tr(t, hint)}</small></div>
       </li>`).join('')}</ol>
       <p class="attention-privacy-note">${tr(t, 'Завершение этого плана не означает, что ты уже лёг спать или восстановился.')}</p>
+      <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
       <div class="attention-actions">
         <button type="button" class="btn ghost" data-action="close-attention-dialog">${tr(t, 'Закрыть')}</button>
         <button type="button" class="btn" data-action="finish-evening-landing">${tr(t, 'Вечер завершён')}</button>
@@ -296,7 +297,7 @@
       </label>
       <label class="attention-choice">
         <input type="checkbox" name="dailyReminder" ${dailyReminder ? 'checked' : ''} />
-        <span><b>${tr(t, 'Напоминать каждый вечер')}</b><small>${tr(t, 'Голос и диалог работают, только пока Satoru открыт. Уведомление браузера появится, только если разрешение уже выдано.')}</small></span>
+        <span><b>${tr(t, 'Напоминать каждый вечер')}</b><small>${tr(t, 'Подсказка появится в Satoru. Уведомление вне приложения доступно при включённых уведомлениях браузера.')}</small></span>
       </label>
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
       <div class="attention-actions">

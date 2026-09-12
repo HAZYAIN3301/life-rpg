@@ -135,7 +135,7 @@ test('actual planned Policy offer passes strict client validation and accepts on
   assert.ok(await h.client.outcome('accepted'));
   assert.equal(h.client.state().offer, null);
   assert.deepEqual(sent.map(body => body.op), ['decide', 'claim', 'outcome']);
-  for (const body of sent.slice(0, 2)) assert.deepEqual(body.supportedCapabilities, ['after-lapse-return', 'planned-start']);
+  for (const body of sent.slice(0, 2)) assert.deepEqual(body.supportedCapabilities, ['after-lapse-return', 'planned-start', 'evening-close']);
   assert.equal(Object.hasOwn(sent[2], 'supportedCapabilities'), false, 'outcome retries retain their original mutation shape');
 });
 

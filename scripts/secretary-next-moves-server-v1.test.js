@@ -323,7 +323,7 @@ test('authoritative return transport on a real isolated server', { timeout: 1800
   await t.test('planned-start requires explicit supported capabilities; old v254 never receives a planned offer or resume', async () => {
     write('tasks', [scheduledTask()]);
     assert.equal((await call(body('decide', { context: { ...context(c), lapse: null } }))).body.offer, null);
-    for (const supportedCapabilities of [null, 'planned-start', ['evening-close'], ['planned-start', 'planned-start']]) {
+    for (const supportedCapabilities of [null, 'planned-start', ['unknown-capability'], ['planned-start', 'planned-start']]) {
       assert.equal((await call(body('decide', { ...plannedExtra(), supportedCapabilities }))).status, 400);
     }
     assert.equal((await call(body('decide', { ...plannedExtra(), supportedCapabilities: [] }))).body.offer, null);
@@ -414,6 +414,98 @@ test('authoritative return transport on a real isolated server', { timeout: 1800
     await stop(rt); rt = await start(dir);
     const replay = await call(intent); assert.equal(replay.body.persistedAt, accepted.body.persistedAt); assert.equal(replay.body.repeat, true);
     assert.equal((await call(body('decide', plannedExtra()))).body.offer, null);
+    reset();
+  });
+  const eveningSupport = ['after-lapse-return', 'planned-start', 'evening-close'];
+  const eveningExtra = () => ({ supportedCapabilities: eveningSupport, context: { ...context(c), lapse: null } });
+  const eveningSettings = extra => ({ secretary: { configured: true, eveningTime: '12:00', dailyReminder: true, ...extra } });
+  await t.test('evening opt-in negotiates only to a capable client and respects explicit reminder opt-out', async () => {
+    write('settings', eveningSettings());
+    for (const supportedCapabilities of [undefined, ['after-lapse-return', 'planned-start']]) {
+      assert.equal((await call(body('decide', { ...eveningExtra(), supportedCapabilities }))).body.offer, null);
+    }
+    const held = await claim(eveningExtra());
+    assert.deepEqual(held.offer.action, { type: 'evening_transition_open', args: { day: c.today, boundaryLocal: '12:00' } });
+    assert.equal(held.offer.alternatives.length, 0); assert.equal(held.offer.closesDay, false);
+    assert.equal((await call(body('decide', { ...eveningExtra(), supportedCapabilities: plannedSupport }))).body.resume, null);
+    reset();
+    for (const dailyReminder of [false, undefined]) {
+      write('settings', eveningSettings({ dailyReminder }));
+      assert.equal((await call(body('decide', eveningExtra()))).body.offer, null);
+    }
+    write('settings', eveningSettings({ dailyReminder: 'true' }));
+    assert.equal((await call(body('decide', eveningExtra()))).status, 422);
+    reset();
+  });
+  await t.test('closed day retains the saved evening reminder; active session waits without claiming its budget', async () => {
+    write('settings', eveningSettings()); write('days', { [c.today]: { closed: true } });
+    const choice = (await call(body('decide', eveningExtra()))).body.offer;
+    assert.equal(choice.capabilityId, 'evening-close');
+    const active = eveningExtra(); active.context.activeSession.active = true;
+    const waiting = await call(body('decide', active));
+    assert.equal(waiting.body.offer, null); assert.equal(waiting.body.silence.deferUntil, 'session_end');
+    assert.equal((await call(body('claim', { ...active, offerId: choice.offerId }))).body.error, 'context_blocked');
+    assert.equal(fs.existsSync(file), false);
+    const held = await claim(eveningExtra());
+    assert.equal((await call(body('decide', eveningExtra()))).body.resume.token, held.token);
+    const accepted = await call(outcome(held, 'accepted', { context: eveningExtra().context }));
+    assert.equal(accepted.status, 200); assert.equal(JSON.parse(fs.readFileSync(path.join(userDir, 'days.json'), 'utf8'))[c.today].closed, true);
+    reset();
+  });
+  await t.test('known saved busy window defers evening decision and claim without spending the daily offer', async () => {
+    write('settings', eveningSettings());
+    const choice = (await call(body('decide', eveningExtra()))).body.offer;
+    write('tasks', [scheduledTask({ startTime: '11:30', estimateMin: 60 })]);
+    const extra = { ...eveningExtra(), supportedCapabilities: ['evening-close'] };
+    const waiting = await call(body('decide', extra));
+    const until = new Date(Date.parse(c.today + 'T12:30:00.000Z') - c.offset * 60000).toISOString();
+    assert.deepEqual(waiting.body.silence, { reason: 'busy_until_known_commitment', recheckAt: until });
+    assert.equal((await call(body('claim', { ...extra, offerId: choice.offerId }))).body.error, 'context_blocked');
+    assert.equal(fs.existsSync(file), false);
+    write('tasks', []); assert.equal((await claim(eveningExtra())).offer.offerId, choice.offerId);
+    reset();
+  });
+  await t.test('saved evening boundary change or opt-out durably expires an accepted stale offer', async () => {
+    for (const change of [{ eveningTime: '12:01' }, { configured: false }, { dailyReminder: false }]) {
+      write('settings', eveningSettings()); const held = await claim(eveningExtra());
+      write('settings', eveningSettings(change));
+      const intent = outcome(held, 'accepted', { context: eveningExtra().context });
+      const stale = await call(intent); assert.equal(stale.status, 409); assert.equal(stale.body.error, 'stale_target');
+      assert.equal(saved().delivery.offers[held.offer.offerId].state, 'expired');
+      assert.equal(saved().nextMoves.capabilities['evening-close'].ignoredInARow, 0, 'user scheduled reminders never accumulate advice suppression');
+      assert.equal((await call(intent)).body.persistedAt, stale.body.persistedAt);
+      reset();
+    }
+  });
+  await t.test('evening acceptance waits for new active/busy context, then permits the same unchanged intent', async () => {
+    write('settings', eveningSettings()); const held = await claim(eveningExtra());
+    const active = eveningExtra().context; active.activeSession.active = true;
+    assert.equal((await call(outcome(held, 'accepted', { context: active }))).body.error, 'context_blocked');
+    write('tasks', [scheduledTask({ startTime: '11:30', estimateMin: 60 })]);
+    const intent = outcome(held, 'accepted', { context: eveningExtra().context });
+    const busy = await call(intent); assert.equal(busy.body.error, 'context_blocked');
+    assert.equal(busy.body.recheckAt, held.offer.expiresAt); assert.equal(saved().delivery.offers[held.offer.offerId].state, 'offered');
+    write('tasks', []); assert.equal((await call(intent)).status, 200);
+    reset();
+  });
+  await t.test('evening lease clips the real boundary window and write failures/restart retain an honest receipt', async () => {
+    write('settings', eveningSettings({ eveningTime: '10:01' })); const held = await claim(eveningExtra());
+    assert.equal(held.offer.expiresAt, new Date(Date.parse(c.today + 'T12:02:00.000Z') - c.offset * 60000).toISOString());
+    const intent = outcome(held, 'accepted', { context: eveningExtra().context });
+    assert.equal((await call(intent, bob)).status, 404);
+    const before = fs.readFileSync(file, 'utf8'), backup = path.join(userDir, '.backups', 'secretary', 'previous.json');
+    fs.rmSync(backup, { force: true }); fs.mkdirSync(backup);
+    assert.equal((await call(intent)).status, 500); assert.equal(fs.readFileSync(file, 'utf8'), before);
+    fs.rmdirSync(backup); const accepted = await call(intent); assert.equal(accepted.status, 200);
+    await stop(rt); rt = await start(dir);
+    assert.equal((await call(intent)).body.persistedAt, accepted.body.persistedAt);
+    assert.equal((await call(body('decide', eveningExtra()))).body.offer, null);
+    reset();
+  });
+  await t.test('evening corrupted action identity fails closed instead of opening or becoming healthy silence', async () => {
+    write('settings', eveningSettings()); const held = await claim(eveningExtra());
+    const state = saved(); state.delivery.offers[held.offer.offerId].offer.action.args.boundaryLocal = ['12:00']; write('secretary', state);
+    assert.equal((await call(body('decide', eveningExtra()))).status, 422);
     reset();
   });
   await t.test('account cascade delete removes envelope, receipts and private backups', async () => {

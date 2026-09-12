@@ -1,5 +1,11 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v256, evening-close:** собственная вечерняя граница/opt-in, tonightSchedule
+  из сохранённых интервалов, один вопрос и три существующих перехода. Общий claimed
+  ход для карточки и прежнего evening push; durable reservation/handoff, неопределённая
+  доставка без повторного push. Подтверждённые owner-записи вечера, account/day guards,
+  видимая ошибка и retry. Проверки/публикация — верх DEVLOG, EVENING-CLOSE-V256.md,
+  EVENING-WRITES-V256.md. Сервер push не знает local-only focus; внешняя доставка не QA.
 - [x] **v255, planned-start:** сохранённые task.date/startTime дают один claimed ход;
   открытие существующего дела после durable accepted, перенос/завершение дают stale,
   foreground timer учитывает окно расписания и истечение чужого claim. Пять языков,
@@ -11,10 +17,9 @@
   публикация — DEVLOG, контракт SECRETARY-NEXT-MOVES-TRANSPORT-V1.md.
   Runtime `52a124f` опубликован; Railway app/TTS success, 12/12 production bytes
   совпали 11.09 00:09 CEST. Остальные capability ниже остаются открытыми.
-- [ ] **Следующий срез №2:** evening-close с tonightSchedule и настоящим owner
-  перехода вечера — после подтверждения production v255. RestProfile runtime/menu
-  остаётся на паузе владельца; CommitmentV2 task links пока отсутствуют,
-  v2 push и legacy morning outcome frozen replay также не закрыты.
+- [ ] **Остаток №2:** RestProfile runtime/menu остаётся на паузе владельца;
+  CommitmentV2 task links и полный First Value ещё не подключены. Остальные v2 push
+  каналы и legacy morning outcome frozen replay также не закрыты. Вечер уже в v256.
 - [ ] **Пакет №3 supply:** проверенный отдельный пакет и миграция starter pool готовы;
   подключить admit/toCatalogRows до choose и проверить реальное сохранение/повтор.
   Внешнее воспроизведение материалов не подтверждено.

@@ -1,8 +1,10 @@
 # Secretary Next Moves v2 — три полезных хода и их оценка
 
 Дата: 2026-09-09
-Статус 11.09: **after-lapse-return подключён в v254, planned-start — в v255**;
-evening-close ещё policy. Проверки и публикация каждого среза — верх DEVLOG.
+Статус 12.09: **after-lapse-return подключён в v254, planned-start — в v255,
+evening-close — в v256**. Последний срез включает общий ledger для существующего
+opt-in evening push; прочие v2 push-каналы ещё не подключены. Проверки и публикация
+каждого среза — верх DEVLOG; вечерний transport — EVENING-CLOSE-V256.md.
 Актуальный транспорт/ограничения: [SECRETARY-NEXT-MOVES-TRANSPORT-V1.md](SECRETARY-NEXT-MOVES-TRANSPORT-V1.md).
 Ниже сохранён контекст исходного чистого пакета; его утверждения «файлы не тронуты»
 описывают пакет до интеграции, а не текущий runtime. Публикация и проверки — DEVLOG.

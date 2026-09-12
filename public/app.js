@@ -1101,6 +1101,9 @@ const I18N_EXTRA = {
   'Spider-Verse, Re:Zero, путешествия…': { en: 'Spider-Verse, Re:Zero, travel…', de: 'Spider-Verse, Re:Zero, Reisen…', uk: 'Spider-Verse, Re:Zero, подорожі…', es: 'Spider-Verse, Re:Zero, viajes…' },
   'Закрыть видео': { en: 'Close video', de: 'Video schließen', uk: 'Закрити відео', es: 'Cerrar vídeo' },
   // ── Attention R1: visible secretary, recovery and evening flows ──
+  'План на завтра': { en: 'Plan tomorrow', de: 'Morgen planen', uk: 'План на завтра', es: 'Planear mañana' },
+  'Подсказка появится в Satoru. Уведомление вне приложения доступно при включённых уведомлениях браузера.': { en: 'The prompt appears in Satoru. Notifications outside the app are available when browser notifications are enabled.', de: 'Der Hinweis erscheint in Satoru. Mitteilungen außerhalb der App sind bei aktivierten Browser-Benachrichtigungen verfügbar.', uk: 'Підказка з’явиться в Satoru. Сповіщення поза застосунком доступне, якщо сповіщення браузера увімкнено.', es: 'La propuesta aparece en Satoru. Las notificaciones fuera de la app están disponibles si las notificaciones del navegador están activadas.' },
+  'Запись не подтверждена. Проверь соединение и повтори.': { en: 'The save is unconfirmed. Check your connection and retry.', de: 'Das Speichern ist nicht bestätigt. Prüfe die Verbindung und versuche es erneut.', uk: 'Збереження не підтверджено. Перевір з’єднання та повтори.', es: 'El guardado no está confirmado. Comprueba la conexión y vuelve a intentarlo.' },
   'Следующий ход': { en: 'Next move', de: 'Nächster Schritt', uk: 'Наступний крок', es: 'Siguiente paso' },
   'Подробнее': { en: 'More', de: 'Mehr', uk: 'Докладніше', es: 'Más' },
   'Свернуть': { en: 'Collapse', de: 'Einklappen', uk: 'Згорнути', es: 'Contraer' },
@@ -5484,11 +5487,13 @@ const Store = {
     // write can be the operation that first introduces a protected graph, so a
     // lock decision based only on the previous State/snapshot is one write late.
     return this.runExclusive(pairedSlot ? ['settings', 'tasks'] : [name], async ({ writeEpoch, accountId }) => {
+      const staleWrite = () => writeEpoch !== this._writeEpoch || accountId !== String(State.me?.id || '');
       let value;
       try {
         value = lazy ? await obj(liveSlot ? State[liveSlot] : undefined)
           : (useLiveValue && State[liveSlot] != null ? State[liveSlot] : obj);
-      } catch (e) { console.error('save builder', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+      } catch (e) { if (staleWrite()) return false; console.error('save builder', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+      if (staleWrite()) return false;
       if (value === undefined) return false;
       if (!pwaWriteAllowed('_put', true)) return false;
       if (!accountDataWriteAllowed(name, '_put', true)) return false;
@@ -5522,6 +5527,7 @@ const Store = {
           let response = await fetch('/api/commitments/commit', {
             method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
           });
+          if (staleWrite()) return false;
           if (response.status === 401) { handleAccountSessionExpired(); return false; }
           // Устаревшая база — не отказ. Запись с другого устройства значит только то, что
           // пару надо пересобрать на свежей серверной правде и попробовать ещё раз. Послать
@@ -5538,6 +5544,7 @@ const Store = {
               response = await fetch('/api/commitments/commit', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fresh),
               });
+              if (staleWrite()) return false;
               if (response.status === 401) { handleAccountSessionExpired(); return false; }
             }
           }
@@ -5557,15 +5564,18 @@ const Store = {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ base: 'server', data: freshPair }),
               });
+              if (staleWrite()) return false;
               if (response.status === 401) { handleAccountSessionExpired(); return false; }
               if (response.ok) console.warn('[конфликт] примирение: запись прошла на серверной базе');
             }
           }
+          if (staleWrite()) return false;
           if (await commitmentBoundaryRejected(response, { retried: true, base: sentBase })) return false;
           if (!response.ok || !rememberDedicatedCommitSlots(pair, { writeEpoch, accountId })) return false;
           if (typeof applyCommitted === 'function' && await applyCommitted(value) === false) return false;
           return true;
         } catch (error) {
+          if (staleWrite()) return false;
           console.error('save commitment graph', name, error); toast(t('⚠️ Не удалось сохранить')); return false;
         }
       }
@@ -5576,6 +5586,7 @@ const Store = {
         const r = await fetch(`/api/data/${name}`, {
           method: 'PUT', headers: { 'Content-Type': 'application/json' }, body,
         });
+        if (staleWrite()) return false;
         if (r.status === 401) { handleAccountSessionExpired(); return false; }
         if (!r.ok) throw new Error('save ' + r.status);
         if (writeEpoch !== this._writeEpoch || accountId !== String(State.me?.id || '')) return false;
@@ -5583,7 +5594,7 @@ const Store = {
         this._persisted[name] = { exists: true, value: structuredClone(value) };
         if (typeof applyCommitted === 'function' && await applyCommitted(value) === false) return false;
         return true;
-      } catch (e) { console.error('save', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
+      } catch (e) { if (staleWrite()) return false; console.error('save', name, e); toast(t('⚠️ Не удалось сохранить')); return false; }
     });
   },
 };
@@ -23966,11 +23977,24 @@ function secretaryNextHTML() {
 }
 function secretaryNextOpenAction(action) {
   const UI = window.SecretaryNextMovesUIV1;
+  if (action.type === 'evening_transition_open') return showAttentionDialog('secretaryEvening', {
+    ...action.args, accountId: State.me?.id, lang: lang() }, { source: 'secretary-evening' });
   if (action.type === 'ask_one_question') return showAttentionDialog('secretaryQuestion', { ...secretaryNextSnapshot(), lang: lang() });
   const ref = action.args?.targetRef, target = UI.target(ref, secretaryNextSnapshot());
   if (!target) { toast(UI.copy('secretary.v2.common.stale', lang())); return false; }
   return showAttentionDialog('secretaryPrepared', { ...target, ref, size: action.args?.size, lang: lang(), startLabel: t('Начать фокус'),
     ownerHTML: target.kind === 'quest' ? questRow(target.item) : habitRow(target.item) });
+}
+function secretaryEveningRespond(choice) {
+  const vm = document.getElementById('attention-dialog-overlay')?._attentionVM;
+  const snapshot = secretaryNextSnapshot(), UI = window.SecretaryNextMovesUIV1;
+  if (!vm || !['ready', 'busy', 'planning'].includes(choice)) return;
+  if (choice === 'busy') { closeAttentionDialog(); return; }
+  if (!UI.eveningCurrent(vm, snapshot, State.me?.id)) { attentionStatus(UI.copy('secretary.v2.evening.changed', lang()), true); return; }
+  if (snapshot.activeSession || snapshot.guideActive || ['new', 'intent_known', 'action_ready', 'action_started'].includes(snapshot.firstValueStatus)) { attentionStatus(UI.copy('secretary.v2.common.blocked', lang()), true); return; }
+  closeAttentionDialog({ restoreFocus: false, force: true });
+  if (choice === 'ready') openEveningLanding(null, { active: true, speak: false, source: 'secretary-evening' });
+  else { State.calDate = addDays(snapshot.today, 1); State.view = 'calendar'; render(); }
 }
 async function loadSecretaryOffer() {
   const runtime = secretaryNextRuntime();
@@ -24452,7 +24476,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
   // сегодняшнего дня их выбирали двое: сервер и локальный детектор. Детектор снят,
   // решение осталось одно, поэтому ход стоит выше возврата. Вне утреннего окна
   // движок молчит, и возврат ведёт себя как раньше.
-  _secretaryOfferSlotFree = !!C && !State._attentionLoadError && !active && !closed
+  _secretaryOfferSlotFree = !!C && !State._attentionLoadError && !active
     && !(State._secretaryExperimentSetupOpen && experiment.status === 'draft');
 
   if (!C) {
@@ -24486,10 +24510,10 @@ function attentionTodayControlHTML(selectedOffer = null) {
     }
   } else if (State._secretaryExperimentSetupOpen && experiment.status === 'draft') {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
-  } else if (closed) {
-    primary = fallbackPrimary;
   } else if (secretaryNextHTML()) {
     primary = { kind: 'offer', title: t('Следующий ход'), html: secretaryNextHTML() };
+  } else if (closed) {
+    primary = fallbackPrimary;
   } else if (secretaryOfferView()) {
     // Ход уже заявлен: до этой ветки он не рисуется никогда (см. loadSecretaryOffer).
     primary = { kind: 'offer', title: t('Сейчас важнее всего'), html: secretaryOfferHTML(secretaryOfferView()) };
@@ -24599,6 +24623,7 @@ function showAttentionDialog(screen, viewModel, options = {}) {
   const renderers = { setup: UI.renderSetup, entry: UI.renderEntry, boundary: UI.renderBoundary, recovery: UI.renderRecovery, evening: UI.renderEvening, return: UI.renderReturn, error: UI.renderLoadError };
   renderers.secretaryQuestion = window.SecretaryNextMovesUIV1?.renderQuestion;
   renderers.secretaryPrepared = window.SecretaryNextMovesUIV1?.renderPrepared;
+  renderers.secretaryEvening = window.SecretaryNextMovesUIV1?.renderEvening;
   const renderScreen = renderers[screen];
   if (!renderScreen) return null;
   const dismissible = options.dismissible !== false;
@@ -24784,44 +24809,82 @@ async function startRecoverySession(form) {
   track('attention:start:recovery'); toast(t('Отдых начался — граница уже поставлена'));
 }
 
+let _eveningWriter = null, _eveningWriterScope = '';
+function eveningWriteScope() { return { accountId: String(State.me?.id || ''), epoch: Store._writeEpoch, day: todayStr() }; }
+function eveningWriter() {
+  const api = window.EveningWritesV1;
+  if (!api) return null;
+  const scope = eveningWriteScope(), key = JSON.stringify([scope.accountId, scope.epoch]);
+  if (_eveningWriterScope !== key) {
+    _eveningWriterScope = key;
+    _eveningWriter = api.create({ scope: eveningWriteScope, storage: sessionStorage,
+      read: async slot => {
+        const response = await fetch(`/api/data/${slot}`);
+        if (!response.ok && response.status !== 404) throw new Error('unconfirmed');
+        const value = response.status === 404 ? {} : await response.json();
+        const valid = slot === 'settings' ? validateSettingsPayload(value) : validateAccountDataPayload('days', value);
+        if (!valid) throw new Error('invalid_data');
+        return value;
+      },
+      write: (slot, build, committed) => Store.updateNow(slot, build, committed),
+      apply: (slot, value) => { State[slot] = value; },
+    });
+  }
+  return _eveningWriter;
+}
+function eveningWriteCurrent(scope, overlay = null) {
+  const current = eveningWriteScope();
+  return scope.accountId === current.accountId && scope.epoch === current.epoch && scope.day === current.day
+    && (!overlay || overlay === document.getElementById('attention-dialog-overlay'));
+}
+function eveningWriteError(result) { return window.EveningWritesV1?.message(result?.error, lang()) || t('Запись не подтверждена. Проверь соединение и повтори.'); }
 async function saveEveningSetup(form) {
   const targetTime = String(form.targetTime?.value || '');
   const dailyReminder = !!form.dailyReminder?.checked;
   if (dailyReminder && !/^([01]\d|2[0-3]):[0-5]\d$/.test(targetTime)) {
     attentionStatus('Для ежедневного напоминания выбери время.', true); form.targetTime?.focus(); return;
   }
-  const nextSettings = structuredClone(State.settings);
-  nextSettings.secretary = Object.assign({}, secretarySettings(), { eveningTime: targetTime, dailyReminder, configured: true });
+  const writer = eveningWriter(), scope = eveningWriteScope(), overlay = document.getElementById('attention-dialog-overlay');
+  if (!writer) { attentionStatus(eveningWriteError(), true); return; }
   attentionBusy(true); attentionStatus('Сохраняю…');
-  const saved = await Store.saveNow('settings', nextSettings, () => { State.settings = nextSettings; return true; });
-  if (!saved) { attentionBusy(false); attentionStatus('Не удалось сохранить. Ничего не изменено — повтори попытку.', true); return; }
+  const result = await writer.run('setup', { eveningTime: targetTime, dailyReminder });
+  if (!eveningWriteCurrent(scope, overlay)) return;
+  if (!result.ok) {
+    if (result.error === 'pending_intent') { form.targetTime.value = result.intent.eveningTime; form.dailyReminder.checked = result.intent.dailyReminder; }
+    attentionBusy(false); attentionStatus(eveningWriteError(result), true); return;
+  }
   scheduleEveningReminder();
-  showAttentionDialog('evening', { active: true, targetTime, dailyReminder }, { source: 'evening' });
-  setTimeout(speakEveningCoach, 80); toast(t('Вечерний контур готов'));
+  const confirmedOverlay = showAttentionDialog('evening', { active: true, targetTime: result.intent.eveningTime, dailyReminder: result.intent.dailyReminder }, { source: 'evening' });
+  setTimeout(() => { if (confirmedOverlay && eveningWriteCurrent(scope, confirmedOverlay)) speakEveningCoach(); }, 80); toast(t('Вечерний контур готов'));
 }
 
 async function commitDayClosed(closed, { reflection } = {}) {
   if (State._dayCloseBusy) return false;
-  const date = todayStr();
-  const nextDays = structuredClone(State.days || {});
-  const current = nextDays[date] || { reflection: '', closed: false };
-  nextDays[date] = { ...current, closed: !!closed };
-  if (reflection !== undefined) nextDays[date].reflection = String(reflection || '').slice(0, 6000);
-  State._dayCloseBusy = true;
-  const saved = await Store.saveNow('days', nextDays, () => { State.days = nextDays; return true; });
-  State._dayCloseBusy = false;
-  if (!saved) return false;
-  if (closed) setEveningDue(false);
+  const writer = eveningWriter(), scope = eveningWriteScope();
+  if (!writer) return false;
+  const attempt = {};
+  State._dayCloseBusy = attempt;
+  const result = await writer.run('close', { closed: !!closed, ...(reflection === undefined ? {} : { reflection: String(reflection || '').slice(0, 6000) }) });
+  if (State._dayCloseBusy === attempt) State._dayCloseBusy = false;
+  if (result.error === 'pending_intent' && eveningWriteCurrent(scope) && result.intent.day === scope.day
+    && result.intent.closed === !!closed && result.intent.reflection !== undefined) {
+    const field = document.getElementById('reflection'); if (field) field.value = result.intent.reflection;
+  }
+  if (!result.ok || !eveningWriteCurrent(scope) || result.day !== scope.day) return false;
+  if (result.intent.closed) setEveningDue(false);
   scheduleEveningReminder();
   return true;
 }
 async function finishEveningLanding() {
-  if (!await commitDayClosed(true)) { attentionStatus('Не удалось закрыть день. Ничего не изменено — повтори попытку.', true); return; }
+  const scope = eveningWriteScope(), overlay = document.getElementById('attention-dialog-overlay');
+  attentionBusy(true); attentionStatus('Сохраняю…');
+  const saved = await commitDayClosed(true);
+  if (!eveningWriteCurrent(scope, overlay)) return;
+  if (!saved) { attentionBusy(false); attentionStatus(eveningWriteError(), true); return; }
   setEveningDue(false);
-  await markEveningPrompted(todayStr());
   closeAttentionDialog({ restoreFocus: false, force: true });
   toast(`🌙 ${t('День закрыт. Что не сделано — осталось в дне, не в тебе.')}`); sfx('complete'); render();
-  requestAnimationFrame(() => focusPathChoiceTarget(document.querySelector('[data-secretary-control]') || document.querySelector('#main h2')));
+  requestAnimationFrame(() => { if (eveningWriteCurrent(scope)) focusPathChoiceTarget(document.querySelector('[data-secretary-control]') || document.querySelector('#main h2')); });
 }
 function scheduleAttentionBoundary() {
   clearTimeout(_attentionBoundaryTimer); _attentionBoundaryTimer = null;
@@ -29229,6 +29292,7 @@ async function onClick(e) {
   const action = el.dataset.action, id = el.dataset.id, today = todayStr();
   if (action === 'secretary-next-accept') { await secretaryNextRuntime()?.respond('accepted'); return; }
   if (action === 'secretary-next-dismiss') { await secretaryNextRuntime()?.respond('dismissed'); return; }
+  if (action.startsWith('secretary-evening-')) { secretaryEveningRespond(action.slice('secretary-evening-'.length)); return; }
   if (action === 'secretary-next-retry') {
     if (State.secretaryOffer?.error) { State.secretaryOffer = undefined; await loadLegacySecretaryOffer(); }
     else await secretaryNextRuntime()?.retry();
@@ -30932,11 +30996,13 @@ async function onClick(e) {
     track('difficulty:edit'); render();
 
   } else if (action === 'close-day' || action === 'reopen-day') {
+    const accountId = State.me?.id, writeEpoch = Store._writeEpoch, requestedDay = todayStr();
     const ref = document.getElementById('reflection');
     el.disabled = true;
     const closed = action === 'close-day';
     const saved = await commitDayClosed(closed, { reflection: ref ? ref.value : undefined });
-    if (!saved) { el.disabled = false; toast(t('Не удалось сохранить завершение дня. Ничего не изменено.')); return; }
+    if (State.me?.id !== accountId || Store._writeEpoch !== writeEpoch || todayStr() !== requestedDay) return;
+    if (!saved) { el.disabled = false; toast(window.SecretaryNextMovesUIV1.copy('secretary.v2.common.error', lang())); return; }
     State._eveningDue = false;
     if (closed) toast(`🌙 ${t('День закрыт. Что не сделано — осталось в дне, не в тебе.')}`);
     render();
@@ -32573,17 +32639,12 @@ function eveningPromptBlocked() {
     || !!document.getElementById('helper-modal') || !!(guideV3RuntimeAllowed() && guide?.currentChapter);
 }
 async function markEveningPrompted(date) {
-  const nextSettings = structuredClone(State.settings);
-  nextSettings.secretary = Object.assign({}, secretarySettings(), { lastEveningPromptDate: date });
-  const saved = await Store.saveNow('settings', nextSettings, () => { State.settings = nextSettings; return true; });
-  if (saved) { clearTimeout(_eveningPromptPersistTimer); _eveningPromptPersistTimer = null; return true; }
-  // Само напоминание уже могло прозвучать или уйти в браузер. Держим маркер в
-  // памяти, чтобы не дублировать его в этой вкладке, и отдельно повторяем только
-  // запись — без второго звука, голоса или push.
-  State.settings.secretary = Object.assign({}, secretarySettings(), { lastEveningPromptDate: date });
   clearTimeout(_eveningPromptPersistTimer);
-  _eveningPromptPersistTimer = setTimeout(() => { markEveningPrompted(date); }, 60000);
-  return false;
+  _eveningPromptPersistTimer = null;
+  const writer = eveningWriter(), scope = eveningWriteScope();
+  if (!writer) return false;
+  const result = await writer.run('prompt', { day: date });
+  return result.ok && eveningWriteCurrent(scope) && result.day === scope.day;
 }
 async function showEveningNotification() {
   const options = { body: t('Рабочий день закончен. Открой три границы вечера — без нового списка дел.'), tag: `satoru-evening-${todayStr()}`, renotify: false, data: { url: './?view=today&do=finish' } };
@@ -32596,6 +32657,7 @@ async function showEveningNotification() {
 }
 async function runEveningReminder() {
   _eveningReminderTimer = null;
+  if (window.SecretaryNextMovesClientV1?.SUPPORTED_CAPABILITIES.includes('evening-close')) { setEveningDue(false); return; }
   const cfg = secretarySettings(), date = todayStr();
   if (!cfg.dailyReminder || !cfg.eveningTime || dayClosed() || cfg.lastEveningPromptDate === date) { scheduleEveningReminder(); return; }
   setEveningDue(true);
@@ -32614,6 +32676,7 @@ async function runEveningReminder() {
 }
 function scheduleEveningReminder() {
   clearTimeout(_eveningReminderTimer); _eveningReminderTimer = null;
+  if (window.SecretaryNextMovesClientV1?.SUPPORTED_CAPABILITIES.includes('evening-close')) { setEveningDue(false); return; }
   if (!State.settings || State.phase !== 'app') return;
   const cfg = secretarySettings();
   if (!cfg.dailyReminder || !/^([01]\d|2[0-3]):[0-5]\d$/.test(cfg.eveningTime) || dayClosed()) { setEveningDue(false); return; }
@@ -32840,7 +32903,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v255';
+const PWA_CACHE_VERSION = 'satoru-v256';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

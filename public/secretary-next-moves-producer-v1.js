@@ -1,4 +1,4 @@
-/* Bounded owner snapshots for after-lapse-return and planned-start.
+/* Bounded owner snapshots for return, planned start and the saved evening boundary.
  * No DOM, storage, clocks, inference from text, or user-data mutation.
  * The caller supplies freshly read owner data and an explicit local clock.
  */
@@ -57,6 +57,46 @@
         precision: 'exact_time', doneToday: false, observedAt: snapshot.now } : null,
       nextDecisionAt: nextDecision === null ? null : new Date(nextDecision).toISOString(),
     };
+  }
+
+  function eveningSchedule(snapshot, nowMs, contract) {
+    const midnight = Date.parse(snapshot.today + 'T00:00:00.000Z') - snapshot.utcOffsetMinutes * 60000;
+    const intervals = [];
+    for (const task of snapshot.tasks) {
+      const at = timeMinutes(task.startTime);
+      if (!validOriginalRef('quest:' + task.id) || !validDay(task.date) || at === null
+        || task.done !== false || task.completedAt || !Number.isFinite(task.estimateMin) || task.estimateMin <= 0) continue;
+      const start = Date.parse(task.date + 'T00:00:00.000Z') - snapshot.utcOffsetMinutes * 60000 + at * 60000;
+      const end = start + task.estimateMin * 60000;
+      if (Number.isFinite(end) && Math.abs(end) <= 8640000000000000 && end > nowMs) intervals.push({ start, end });
+    }
+    intervals.sort((a, b) => a.start - b.start || a.end - b.end);
+    const merged = [];
+    for (const interval of intervals) {
+      const previous = merged[merged.length - 1];
+      if (previous && interval.start <= previous.end) previous.end = Math.max(previous.end, interval.end);
+      else merged.push({ ...interval });
+    }
+    const current = merged.find(interval => interval.start <= nowMs && interval.end > nowMs);
+    const busyUntilAt = current ? new Date(current.end).toISOString() : null;
+    // HH:MM alone cannot represent the next calendar day. Keep that limitation
+    // explicit and let the delivery owner use the exact absolute boundary.
+    const tonightSchedule = current ? { busyUntilAt,
+      busyUntilLocal: localDay(current.end, snapshot.utcOffsetMinutes) === snapshot.today
+        ? new Date(current.end + snapshot.utcOffsetMinutes * 60000).toISOString().slice(11, 16) : null,
+      observedAt: snapshot.now } : null;
+    let nextDecision = null;
+    if (contract?.dailyReminder) {
+      const boundary = timeMinutes(contract.eveningTimeLocal);
+      const opens = midnight + boundary * 60000, closes = midnight + Math.min(1440, boundary + 121) * 60000;
+      const transitions = [opens, closes, opens + 86400000];
+      for (const interval of merged) {
+        if (interval.start >= opens && interval.start < closes) transitions.push(interval.start);
+        if (interval.end > opens && interval.end < closes) transitions.push(interval.end);
+      }
+      for (const at of transitions) if (at > nowMs && (nextDecision === null || at < nextDecision)) nextDecision = at;
+    }
+    return { tonightSchedule, nextDecisionAt: nextDecision === null ? null : new Date(nextDecision).toISOString() };
   }
 
   function ownerRows(raw) {
@@ -168,8 +208,10 @@
     let eveningContract = null;
     if (cfg != null) {
       if (!object(cfg) || (cfg.configured != null && typeof cfg.configured !== 'boolean')
+        || (cfg.dailyReminder != null && typeof cfg.dailyReminder !== 'boolean')
         || (cfg.eveningTime != null && cfg.eveningTime !== '' && (typeof cfg.eveningTime !== 'string' || !/^([01]\d|2[0-3]):[0-5]\d$/.test(cfg.eveningTime)))) return { ok: false, error: 'invalid_evening_contract' };
-      if (cfg.configured === true && cfg.eveningTime) eveningContract = { configured: true, eveningTimeLocal: cfg.eveningTime, observedAt: snapshot.now };
+      if (cfg.configured === true && cfg.eveningTime) eveningContract = { configured: true, eveningTimeLocal: cfg.eveningTime,
+        dailyReminder: cfg.dailyReminder === true, observedAt: snapshot.now };
     }
     let restMenu = null;
     if (snapshot.restProfile != null) {
@@ -186,8 +228,10 @@
       }
     }
     const schedule = plannedSchedule(snapshot, nowMs);
-    return { ok: true, nextDecisionAt: schedule.nextDecisionAt, context: {
-      lapse, habitMinimum, restMenu, eveningContract, plannedStart: schedule.plannedStart,
+    const evening = eveningSchedule(snapshot, nowMs, eveningContract);
+    const nextDecisionAt = [schedule.nextDecisionAt, evening.nextDecisionAt].filter(Boolean).sort()[0] || null;
+    return { ok: true, nextDecisionAt, context: {
+      lapse, habitMinimum, restMenu, eveningContract, tonightSchedule: evening.tonightSchedule, plannedStart: schedule.plannedStart,
       // settings.commitmentsV1 is now CommitmentV2. Raw V1 step ids cannot be
       // executed as tasks; no invented link or lossy V2 -> V1 conversion.
       commitmentItems: [],

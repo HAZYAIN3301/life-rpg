@@ -7,6 +7,17 @@
   'use strict';
   const LANGS = ['ru', 'en', 'de', 'uk', 'es'];
   const rows = {
+    'evening.eyebrow': ['Твоя граница', 'Your boundary', 'Deine Grenze', 'Твоя межа', 'Tu límite'],
+    'evening.title': ['Подошла вечерняя граница', 'Your evening boundary is here', 'Deine Abendgrenze ist erreicht', 'Настала вечірня межа', 'Ha llegado tu límite de la noche'],
+    'evening.body': ['Это время ты выбрал для завершения вечера. Можно посмотреть, что сейчас подходит.', 'You chose this time to wind down. You can see what fits right now.', 'Du hast diese Zeit zum Ausklang gewählt. Schau, was gerade passt.', 'Ти обрав цей час для завершення вечора. Можна подивитися, що зараз доречно.', 'Elegiste esta hora para cerrar la noche. Puedes ver qué encaja ahora.'],
+    'evening.open_transition': ['Выбрать следующий шаг', 'Choose the next step', 'Den nächsten Schritt wählen', 'Обрати наступний крок', 'Elegir el siguiente paso'],
+    'evening.context_question': ['Чем ты сейчас занят?', 'What are you doing right now?', 'Was machst du gerade?', 'Чим ти зараз зайнятий?', '¿Qué estás haciendo ahora?'],
+    'evening.ready': ['Готов завершать — открыть вечер', 'Ready to wind down — open the evening', 'Bereit zum Ausklang — Abend öffnen', 'Готовий завершувати — відкрити вечір', 'Quiero terminar — abrir la noche'],
+    'evening.busy': ['Ещё занят — вернуться к своему делу', 'Still busy — return to what I am doing', 'Noch beschäftigt — zur Tätigkeit zurück', 'Ще зайнятий — повернутися до своєї справи', 'Sigo ocupado — volver a lo mío'],
+    'evening.planning': ['Планирую завтра — открыть план', 'Planning tomorrow — open the plan', 'Ich plane morgen — Plan öffnen', 'Планую завтра — відкрити план', 'Planifico mañana — abrir el plan'],
+    'evening.at': ['Выбранное время', 'Your chosen time', 'Deine gewählte Zeit', 'Обраний час', 'La hora que elegiste'],
+    'evening.changed': ['Вечерняя настройка изменилась. Обнови предложение.', 'Your evening setting has changed. Refresh the offer.', 'Deine Abendeinstellung hat sich geändert. Aktualisiere den Vorschlag.', 'Вечірнє налаштування змінилося. Онови пропозицію.', 'Tu ajuste de la noche cambió. Actualiza la propuesta.'],
+    'reason.evening_boundary_reached': ['Наступило выбранное тобой время.', 'The time you chose has arrived.', 'Die von dir gewählte Zeit ist gekommen.', 'Настав обраний тобою час.', 'Ha llegado la hora que elegiste.'],
     'planned_start.eyebrow': ['Твой план', 'Your plan', 'Dein Plan', 'Твій план', 'Tu plan'],
     'planned_start.title': ['Дело из твоего плана', 'A task from your plan', 'Eine Aufgabe aus deinem Plan', 'Справа з твого плану', 'Una tarea de tu plan'],
     'planned_start.body.window': ['В плане есть дело на это время. Можно открыть его и начать.', 'You have a task planned for this time. You can open it and begin.', 'Für diese Zeit ist eine Aufgabe geplant. Du kannst sie öffnen und beginnen.', 'У плані є справа на цей час. Можна відкрити її та почати.', 'Tienes una tarea prevista para esta hora. Puedes abrirla y empezar.'],
@@ -70,7 +81,7 @@
     return `<label class="attention-field attention-field-wide"><span>${label('common.target', lang)}</span><select name="originalRef"><option value="">${label('common.no_target', lang)}</option>${candidates(snapshot).map(row => `<option value="${esc(row.ref)}">${esc(row.value.title)}</option>`).join('')}</select></label>`;
   }
   function errorHTML(error, lang, retry = true) {
-    const key = /invalid_secretary|invalid_ledger|corrupt/.test(error || '') ? 'common.corrupt' : /stale_target|offer_expired|terminal_outcome|offer_not_found/.test(error || '') ? 'common.stale' : error === 'context_blocked' ? 'common.blocked' : error === 'opening_deferred' ? 'common.deferred' : 'common.error';
+    const key = error === 'stale_evening' ? 'evening.changed' : /invalid_secretary|invalid_ledger|corrupt/.test(error || '') ? 'common.corrupt' : /stale_target|offer_expired|terminal_outcome|offer_not_found/.test(error || '') ? 'common.stale' : error === 'context_blocked' ? 'common.blocked' : error === 'opening_deferred' ? 'common.deferred' : 'common.error';
     return `<div role="alert" class="secretary-next-error"><p>${label(key, lang)}</p>${retry ? `<button type="button" class="btn ghost" data-action="secretary-next-retry">${label('common.retry', lang)}</button>` : ''}</div>`;
   }
   function render(state, lang, snapshot) {
@@ -83,7 +94,7 @@
       <p><b>${esc(copy(offer.copy.titleKey, lang))}</b></p>
       ${named ? `<p data-noi18n><b>${esc(named.title)}</b>${named.minimum ? `<br>${esc(named.minimum)}` : ''}</p>` : ''}
       ${named && offer.capabilityId === 'planned-start' && (offer.about?.planned?.startTime || named.item.startTime) ? `<p>${label('planned_start.at', lang)} <time>${esc(offer.about?.planned?.startTime || named.item.startTime)}</time></p>` : ''}
-      <p class="secretary-primary-note">${esc(copy(offer.copy.questionKey || offer.copy.bodyKey, lang))}</p>${quote}
+      <p class="secretary-primary-note">${esc(copy(offer.capabilityId === 'evening-close' ? offer.copy.bodyKey : offer.copy.questionKey || offer.copy.bodyKey, lang))}</p>${quote}
       <div class="secretary-offer-buttons"><button type="button" class="btn secretary-primary" data-action="secretary-next-accept" ${state.busy ? 'disabled' : ''}>${state.busy ? label('common.saving', lang) : esc(copy(offer.primary.labelKey, lang))}</button><button type="button" class="btn ghost" data-action="secretary-next-dismiss" ${state.busy ? 'disabled' : ''}>${label('common.dismiss', lang)}</button></div>
       ${state.error ? errorHTML(state.error, lang) : ''}
     </div>`;
@@ -96,5 +107,14 @@
     const lang = vm.lang || 'ru';
     return `<div class="attention-flow" data-secretary-prepared="${esc(vm.ref)}"><header class="attention-flow-head"><h2 id="attention-dialog-title" tabindex="-1" data-noi18n>${esc(vm.title)}</h2><p id="attention-dialog-description">${vm.size === 'planned' ? label('planned_start.prepared', lang) : vm.minimum ? esc(vm.minimum) : label('common.prepared', lang)}</p></header><ul class="tasks">${vm.ownerHTML}</ul><div class="attention-actions"><button type="button" class="btn ghost" data-action="close-attention-dialog">${label('common.close', lang)}</button>${vm.kind === 'quest' ? `<button type="button" class="btn" data-action="focus-task" data-id="${esc(vm.id)}">${esc(vm.startLabel)}</button>` : ''}</div></div>`;
   }
-  return Object.freeze({ LANGS, COPY, copy, target, candidates, targetField, render, errorHTML, renderQuestion, renderPrepared });
+  function eveningCurrent(vm, snapshot, account) {
+    const cfg = snapshot.settings?.secretary;
+    return account != null && String(vm.accountId) === String(account) && vm.day === snapshot.today
+      && cfg?.configured === true && cfg.dailyReminder === true && cfg.eveningTime === vm.boundaryLocal;
+  }
+  function renderEvening(vm) {
+    const lang = vm.lang || 'ru';
+    return `<div class="attention-flow" data-secretary-evening><header class="attention-flow-head"><h2 id="attention-dialog-title" tabindex="-1">${label('evening.title', lang)}</h2><p id="attention-dialog-description">${label('evening.context_question', lang)}</p><p>${label('evening.at', lang)} <time>${esc(vm.boundaryLocal)}</time></p></header><div class="attention-actions"><button type="button" class="btn" data-action="secretary-evening-ready">${label('evening.ready', lang)}</button><button type="button" class="btn ghost" data-action="secretary-evening-busy">${label('evening.busy', lang)}</button><button type="button" class="btn ghost" data-action="secretary-evening-planning">${label('evening.planning', lang)}</button></div><p data-attention-status role="status" aria-live="polite"></p></div>`;
+  }
+  return Object.freeze({ LANGS, COPY, copy, target, candidates, targetField, render, errorHTML, renderQuestion, renderPrepared, renderEvening, eveningCurrent });
 });

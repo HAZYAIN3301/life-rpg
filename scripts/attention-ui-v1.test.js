@@ -124,8 +124,9 @@ test('evening setup configures time and reminder without asking for permission',
   assert.match(html, /Настроить завершение вечера/);
   assert.match(html, /name="targetTime" value="22:30"/);
   assert.match(html, /type="checkbox" name="dailyReminder" checked/);
-  assert.match(html, /Голос и диалог работают, только пока Satoru открыт/);
-  assert.match(html, /только если разрешение уже выдано/);
+  assert.match(html, /Подсказка появится в Satoru/);
+  assert.match(html, /при включённых уведомлениях браузера/);
+  assert.doesNotMatch(html, /requestPermission/);
   assert.doesNotMatch(html, /requestPermission/);
   assert.match(html, /type="submit"[^>]*data-action="start-evening-session"/);
   assert.match(html, /data-action="close-attention-dialog">Отмена/);

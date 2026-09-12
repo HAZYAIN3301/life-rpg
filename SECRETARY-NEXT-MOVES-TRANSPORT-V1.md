@@ -1,16 +1,18 @@
 # Secretary next moves: первый runtime-срез
 
-2026-09-11. Контракт сервера и UI для **after-lapse-return + planned-start**, канал `card`.
+2026-09-12. Контракт сервера и UI для **after-lapse-return + planned-start + evening-close**,
+канал `card` и узкий bridge существующего opt-in evening push (v256).
 Policy: `secretary-next-moves-v2.js`; owner projection:
 `secretary-next-moves-producer-v1.js`; транспорт: `server-secretary-next-moves-v1.js`.
 Это дополнение к [контракту движка](SECRETARY-ENGINE-CONTRACT.md) и
-[policy v2](SECRETARY-NEXT-MOVES-V2.md). `evening-close` и v2 push
-пока не включаются. `enabledCapabilities` — явный ограничитель policy;
-вечерняя проекция продолжает защищать сон внутри возврата.
+[policy v2](SECRETARY-NEXT-MOVES-V2.md). Вечерний контракт, known busy schedule,
+push reservation/handoff и его ограничения: [EVENING-CLOSE-V256.md](EVENING-CLOSE-V256.md).
+`enabledCapabilities` — явный ограничитель policy; вечерняя проекция продолжает
+защищать сон внутри возврата даже при отключённом dailyReminder.
 
 ## Владелец данных
 
-В текущем master **нет** прежнего общего `secretary.json`. Legacy владеет файлами
+До v254 общего `secretary.json` не было. Legacy владеет файлами
 `secretary-events.json`, `secretary-ledger.json`, `secretary-claims.json`,
 `secretary-experiment.json`. Они не копируются и не мигрируют в новый envelope.
 Новый единственный владелец v2: `users/<uid>/secretary.json`:
@@ -52,7 +54,8 @@ Generic `/api/data/secretary*` и admin backup restore не пишут эти ф
 clientId хранится на время жизни вкладки (sessionStorage); requestId обозначает
 одно намерение. Повтор отправляет исходное тело без изменения.
 
-V255 decide/claim передают `supportedCapabilities:['after-lapse-return','planned-start']`.
+V256 decide/claim передают `supportedCapabilities:['after-lapse-return','planned-start','evening-close']`.
+V255 сохраняет свой список из двух capability и не получает вечернюю карточку/resume.
 Без поля сервер обслуживает только after-lapse-return для совместимости с v254;
 неизвестные, повторённые или неверно заданные capability дают 400. Даже resume
 не возвращает planned offer старому клиенту. Outcome работает с уже сохранённым
@@ -71,8 +74,10 @@ offer и повторяет исходный body независимо от ве
 
 Флаги обязательны, строго boolean. Сервер дополнительно читает актуальные tasks,
 habits, habitlog, settings, days и first-value после account WAL recovery. Клиент
-не может погасить сохранённый Guide/First Value/закрытый день. Активная локальная
-Attention session остаётся локальным фактом.
+не может погасить сохранённый Guide/First Value. Закрытый день блокирует советы,
+но не собственное вечернее напоминание. Активная локальная Attention session остаётся
+локальным фактом; сервер push видит только сохранённую synced-сессию и не гарантирует
+отсутствие локального фокуса. Открытие карточки всё равно проверяет свежий client context.
 
 Минимальная lapse-проекция: `confirmed:true`, `source:user_confirmed|boundary_measured`,
 `eventKey:attention:<opaque episode id>`, day, endedAt, observedAt, необязательные

@@ -136,7 +136,7 @@ test('daily evening reminder requires a valid time and never requests browser pe
   const save = section(APP, 'async function saveEveningSetup(form) {', '\nasync function commitDayClosed(');
   assert.match(save, /dailyReminder && !\/\^\(\[01\]\\d\|2\[0-3\]\):\[0-5\]\\d\$\/\.test\(targetTime\)/,
     'enabling the daily reminder must reject an empty or invalid time');
-  assert.ok(save.indexOf('dailyReminder &&') < save.indexOf("Store.saveNow('settings'"),
+  assert.ok(save.indexOf('dailyReminder &&') < save.indexOf("writer.run('setup'"),
     'time validation must run before settings are written');
 
   const scheduler = section(APP, 'async function showEveningNotification() {', '\nfunction scheduleReminders() {');
@@ -152,8 +152,9 @@ test('daily evening reminder requires a valid time and never requests browser pe
 
 test('both close-day entry points await write-guarded persistence and expose no legacy false success', () => {
   const commit = section(APP, 'async function commitDayClosed(closed, { reflection } = {}) {', '\nasync function finishEveningLanding(');
-  assert.match(commit, /await Store\.saveNow\('days', nextDays,/);
-  assert.ok(commit.indexOf("await Store.saveNow('days'") < commit.indexOf('if (!saved) return false'));
+  assert.match(commit, /await writer\.run\('close',/);
+  assert.ok(commit.indexOf("await writer.run('close'") < commit.indexOf('if (!result.ok'));
+  assert.match(commit, /result\.day !== scope\.day/);
   assert.doesNotMatch(commit, /Store\.save\('days'/);
 
   const clickBranch = section(
@@ -166,7 +167,10 @@ test('both close-day entry points await write-guarded persistence and expose no 
   assert.doesNotMatch(clickBranch, /Store\.save\('days'/);
 
   const evening = section(APP, 'async function finishEveningLanding() {', '\nfunction scheduleAttentionBoundary(');
-  assert.match(evening, /if \(!await commitDayClosed\(true\)\)/);
+  assert.match(evening, /const saved = await commitDayClosed\(true\)/);
+  assert.match(evening, /if \(!saved\)/);
+  assert.match(AttentionUI.renderEvening({ active: true }, value => value), /data-attention-status role="status" aria-live="polite"/,
+    'a failed day write must remain visible in the actual evening dialog');
   assert.ok(evening.indexOf('await commitDayClosed(true)') < evening.indexOf("toast(`🌙"),
     'the evening success message must follow the durable close');
 });
@@ -211,7 +215,7 @@ test('service-worker click navigates an existing client to the exact same-origin
   assert.equal(opened, 0, 'an existing client must be reused instead of opening another tab');
 });
 
-test('server evening decision skips a closed day and only configured flow owns the evening slot', () => {
+test('server evening reminder preserves the saved boundary on a closed day and owns its configured slot', () => {
   const dueSource = section(SERVER, 'function secretaryEveningDue(', '\nconst SECRETARY_EVENING_COPY');
   const context = {};
   vm.runInNewContext(`${dueSource}\nthis.secretaryEveningDue = secretaryEveningDue;`, context);
@@ -222,14 +226,16 @@ test('server evening decision skips a closed day and only configured flow owns t
   assert.equal(due(configured, {}, '2026-08-29', 21, 15, {}).due, true);
   const closed = due(configured, { '2026-08-29': { closed: true } }, '2026-08-29', 21, 15, {});
   assert.equal(closed.configured, true);
-  assert.equal(closed.due, false);
+  assert.equal(closed.due, true, 'closing a day does not cancel the user-scheduled reminder');
+  assert.equal(due(configured, {}, '2026-08-29', 23, 0, {}).due, true);
+  assert.equal(due(configured, {}, '2026-08-29', 23, 1, {}).due, false);
 
   const tick = section(SERVER, 'async function pushTick() {', '\nfunction aiKeysFile(');
   assert.match(tick, /if \(evening\.configured\)[\s\S]*kind = legacyKind === 'm' \? 'm' : null;/,
     'configured secretary must suppress the legacy evening check-in');
   assert.match(tick, /else if \(days\[date\] && days\[date\]\.closed && kind === 'e'\) kind = null;/,
     'closed day must suppress even the legacy fallback');
-  assert.match(tick, /url: '\.\/\?view=today&do=finish'/);
+  assert.doesNotMatch(tick, /url: '\.\/\?view=today&do=finish'/, 'the push opens Today; the authenticated card must claim and accept before opening an action');
   assert.match(tick, /tag: 'satoru-evening'/);
 });
 
@@ -296,8 +302,9 @@ test('successful recovery and evening close land focus on the visible secretary 
   assert.match(recovery, landing);
   assert.ok(recovery.indexOf('applyAttentionBundle(bundle)') < recovery.search(landing),
     'recovery focus must move only after the stored state is applied and rendered');
-  assert.match(evening, landing);
-  assert.ok(evening.indexOf('await commitDayClosed(true)') < evening.search(landing),
+  const eveningLanding = /requestAnimationFrame\(\(\) => \{ if \(eveningWriteCurrent\(scope\)\) focusPathChoiceTarget/;
+  assert.match(evening, eveningLanding);
+  assert.ok(evening.indexOf('await commitDayClosed(true)') < evening.search(eveningLanding),
     'evening focus must move only after durable day close and render');
 });
 

@@ -1,6 +1,60 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-12] v256 — вечер из своей границы и текущего контекста
+
+Evening-close подключён к общей карточке/claim/receipt. Источник — сохранённые
+configured, dailyReminder и eveningTime; отсутствие opt-in не создаёт напоминание.
+TonightSchedule читает реальные интервалы незавершённых задач, объединяет пересечения
+и сохраняет абсолютный конец через полночь. Активный фокус/Attention, Guide и First
+Value удерживают предложение; закрытый день допускает собственную вечернюю границу.
+Смена времени, выключение напоминания и stale day повторно проверяются перед action.
+
+Принятие открывает один вопрос «Чем ты сейчас занят?». Три ответа: открыть существующий
+вечер, вернуться к своему делу или открыть завтрашний календарь. Эти ответы не пишут
+задачи и не закрывают день автоматически. Owner-записи настроек/закрытия идут через
+Store, с фиксированными выбранными полями и исходным днём в sessionStorage. Потерянный
+ответ подтверждается здоровым чтением точных полей либо остаётся явным retry.
+Account/epoch/day/modal guards подавляют старые UI/TTS tails. Общий Store теперь также
+не показывает late error/401 из предыдущего аккаунта. Активный вечерний диалог получил
+видимый статус сохранения/ошибки и блокировку повторного нажатия — дефект найден в IAB.
+
+Существующий opt-in evening push теперь сначала сохраняет reservation того же хода.
+Неопределённый ответ провайдера не порождает вторую отправку; доставка не равна accepted.
+Открытая карточка атомарно забирает исходный offer с тем же expiry/budget. Поздний
+ответ push не меняет пользовательский исход. Push ведёт нейтрально на Сегодня,
+без do=finish. **Ограничение:** сервер знает synced Attention, но не локальный focus;
+уведомление может прийти во время local-only сессии. Действие в приложении всё равно
+проверяет свежий контекст. Внешний push-провайдер/реальное устройство не проверялись.
+
+Финальный кандидат: **2201/2201 PASS**, без skip, 50.2 с, concurrency 2,
+изолированные DATA_DIR. Syntax 74 изменённых JS и diff checks PASS. Новые behavioral
+cases: producer offset/midnight/duration, real HTTP/ledger/restart/failure, push reserve,
+handoff/late settlement, реальные app writers и client/runtime/пять локалей.
+
+IAB synthetic test@satoru.local: 375×812 и 1280×900, RU/EN/DE, dark/light. Проверены
+closed day → вечерняя карточка, три ответа → существующие поверхности, active focus →
+нет вечернего хода → stop → карточка, saved busy interval → нет вечернего предложения;
+потерянный accepted reply → reload → точный retry → вопрос; 500 owner day write →
+видимая ошибка/диалог открыт → commit-before-lost-reply → healthy readback → day closed.
+На узком экране ответы идут одной колонкой; финальные кнопки 42–44px, overflow отсутствует.
+Tab остаётся в диалоге, Escape закрывает. Новая поверхность не анимируется.
+Native reduced-motion, 200% text-only zoom и полный visual QA приложения не закрыты.
+
+App/SW v256, согласованные JS/CSS pins. Контракты EVENING-CLOSE-V256.md,
+EVENING-WRITES-V256.md и SECRETARY-NEXT-MOVES-TRANSPORT-V1.md. Публикация конкретного
+SHA фиксируется только после Railway app/TTS и сверки live bytes. Следующий срез —
+подготовленный supply Вдохновения. Rest Profile на паузе; CommitmentV2 task adapter,
+полный First Value, остальные v2 push и legacy morning outcome frozen replay остаются.
+Внешний playback материалов и художественная приёмка канона не подтверждены.
+
 ## [2026-09-12] v255 — начать сохранённое дело в его время
+
+**Опубликовано 12.09 17:43 CEST:** runtime `b21ef90ffcc06160ff2771af3037aa57f89bad56`,
+Railway app `6042a31e-a03a-4a8b-a5ef-bd00c6d41b8e` и TTS
+`dc523297-1ae5-4753-a6a2-029197e35d58` success. Все 13 live-файлов совпали
+byte-for-byte, profiles 200, защищённый POST 401. Receipt:
+`art-factory/secretary-v255/release-receipt.json`. Functional browser QA — isolated
+synthetic account; authenticated production writes для проверки не выполнялись.
 
 Planned-start подключён к Сегодня через общий server-owned nextMoves transport.
 Producer читает реальные task.date/startTime; одно ближайшее незавершённое дело

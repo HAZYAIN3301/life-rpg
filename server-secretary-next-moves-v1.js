@@ -15,7 +15,9 @@ const RETAIN_MS = 30 * 86400000;
 const TOKEN = /^[A-Za-z0-9_-]{1,100}$/;
 const token = (value) => typeof value === 'string' && TOKEN.test(value);
 const OUTCOMES = ['accepted', 'dismissed', 'expired'];
-const CAPABILITIES = ['after-lapse-return', 'planned-start'];
+const CAPABILITIES = ['after-lapse-return', 'planned-start', 'evening-close'];
+const PUSH_CLIENT = 'secretary-evening-push';
+const PUSH_OUTCOMES = ['delivered', 'retry', 'gone'];
 const object = (value) => !!value && typeof value === 'object' && !Array.isArray(value);
 const iso = (value) => typeof value === 'string' && Policy.parseIso(value) !== null;
 const own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
@@ -39,20 +41,31 @@ function empty() { return { version: 1, nextMoves: Policy.emptyLedger(), deliver
 function validAction(action) {
   if (!object(action) || !object(action.args) || !Policy.isDay(action.args.day)) return false;
   if (action.type === 'task_open_prepared') return Producer.validOriginalRef(action.args.targetRef) && ['minimum', 'planned'].includes(action.args.size);
+  if (action.type === 'evening_transition_open') return typeof action.args.boundaryLocal === 'string'
+    && /^([01]\d|2[0-3]):[0-5]\d$/.test(action.args.boundaryLocal)
+    && Object.keys(action.args).every(key => ['day', 'boundaryLocal'].includes(key));
   return action.type === 'ask_one_question' && token(action.args.questionId);
 }
 function validOffer(offer) {
   return object(offer) && offer.version === 2 && CAPABILITIES.includes(offer.capabilityId)
+    && object(offer.about) && Policy.isDay(offer.about.day)
     && typeof offer.offerId === 'string' && offer.offerId.length <= 200
     && offer.offerId.startsWith(offer.capabilityId + '|') && typeof offer.cooldownKey === 'string'
     && offer.cooldownKey === offer.capabilityId + '|' + offer.about?.day && iso(offer.expiresAt)
+    && (offer.capabilityId !== 'evening-close' || offer.primary?.action?.type === 'evening_transition_open'
+      && offer.primary.action.args?.day === offer.about.day && offer.about.targetRef === null
+      && offer.boundary?.atLocal === offer.primary.action.args?.boundaryLocal
+      && stable(offer.action) === stable(offer.primary.action)
+      && offer.closesDay === false && offer.plansTomorrow === false && offer.interrupt === true && offer.deferUntil === null
+      && offer.alternatives?.length === 0)
     && (offer.capabilityId !== 'planned-start' || object(offer.about?.planned)
       && Policy.isDay(offer.about.planned.date) && offer.about.planned.date === offer.about.day
       && /^([01]\d|2[0-3]):[0-5]\d$/.test(offer.about.planned.startTime)
       && offer.primary?.action?.type === 'task_open_prepared' && offer.primary.action.args?.size === 'planned'
       && offer.primary.action.args?.day === offer.about.day && typeof offer.about.targetRef === 'string'
       && offer.primary.action.args?.targetRef === offer.about.targetRef && offer.about.targetRef.startsWith('quest:'))
-    && offer.channel === 'card' && offer.primary?.id === 'primary' && validAction(offer.primary?.action)
+    && (offer.channel === 'card' || offer.channel === 'push' && offer.capabilityId === 'evening-close')
+    && offer.primary?.id === 'primary' && validAction(offer.primary?.action)
     && validAction(offer.action) && Array.isArray(offer.alternatives)
     && offer.alternatives.every((item) => object(item) && token(item.id) && validAction(item.action));
 }
@@ -65,6 +78,11 @@ function sanitize(raw) {
     if (!object(row) || !validOffer(row.offer) || row.offer.offerId !== id
       || !token(row.clientId) || !token(row.token) || !iso(row.claimedAt)
       || !iso(row.persistedAt) || !['offered', ...OUTCOMES].includes(row.state)) return null;
+    if (row.push != null && (row.offer.capabilityId !== 'evening-close' || !object(row.push)
+      || !token(row.push.token) || !iso(row.push.reservedAt) || !['reserved', ...PUSH_OUTCOMES].includes(row.push.status)
+      || row.push.settledAt != null && !iso(row.push.settledAt)
+      || row.push.status !== 'reserved' && !iso(row.push.settledAt))) return null;
+    if (row.offer.channel === 'push' && (!row.push || row.clientId !== PUSH_CLIENT || row.token !== row.push.token)) return null;
     const mark = ledger.offers[row.offer.cooldownKey];
     if (!mark || mark.offerId !== id || mark.state !== row.state) return null;
   }
@@ -75,7 +93,7 @@ function sanitize(raw) {
       || !object(receipt.response) || receipt.response.persistedAt !== receipt.persistedAt || !['claim', 'outcome'].includes(receipt.op)
       || !own(raw.delivery.offers, receipt.offerId)) return null;
     if (receipt.status === 200 && receipt.response.ok !== true) return null;
-    if (receipt.op === 'claim' && (!validOffer(receipt.response.offer)
+    if (receipt.op === 'claim' && receipt.status === 200 && (!validOffer(receipt.response.offer)
       || receipt.response.token !== raw.delivery.offers[receipt.offerId].token)) return null;
     if (receipt.op === 'outcome' && receipt.status === 200
       && (!OUTCOMES.includes(receipt.response.outcome)
@@ -168,15 +186,43 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
       ['invalid_owner_snapshot', 'invalid_evening_contract', 'invalid_flag'].includes(result.error) ? 422 : 400);
     return { ...result.context, dayClosed: !!days[today]?.closed };
   }
+  function eveningWindowEnds(context, today, offset) {
+    const time = context.eveningContract?.eveningTimeLocal;
+    if (!time) return null;
+    const at = Number(time.slice(0, 2)) * 60 + Number(time.slice(3));
+    return Date.parse(today + 'T00:00:00.000Z') - offset * 60000 + Math.min(1440, at + 121) * 60000;
+  }
+  function eveningBusy(context, now) { return Date.parse(context.tonightSchedule?.busyUntilAt) > Date.parse(now); }
+  function deliveryBlocked(context, capabilityId) {
+    return context.activeSession.active || context.guide.active || context.firstValue.pending
+      || context.dayClosed && capabilityId !== 'evening-close';
+  }
   function decide(uid, state, body, now, today, offset) {
     const context = snapshot(uid, body.context, now, today, offset);
+    const enabledCapabilities = supported(body).filter(id => id !== 'evening-close'
+      || context.eveningContract?.dailyReminder === true && !eveningBusy(context, now));
     const result = Policy.decide({ ...context, now, today, utcOffsetMinutes: offset,
       invocation: body.invocation || 'app_open', ledger: state.nextMoves,
-      availableChannels: ['card'], preferredChannel: 'card', enabledCapabilities: supported(body) });
+      availableChannels: ['card'], preferredChannel: 'card', enabledCapabilities });
     if (!result.ok) failure(result.error, 400);
+    if (result.offer?.deferUntil === 'session_end') {
+      // A deferred policy candidate has not been displayed and spends no claim.
+      result.offer = null; result.silence = { reason: 'session_active', deferUntil: 'session_end' };
+    }
+    if (!result.offer && supported(body).includes('evening-close') && context.eveningContract?.dailyReminder
+      && eveningBusy(context, now) && !context.guide.active && !context.firstValue.pending) {
+      const end = eveningWindowEnds(context, today, offset);
+      const time = context.eveningContract.eveningTimeLocal;
+      const opens = Date.parse(today + 'T' + time + ':00.000Z') - offset * 60000;
+      if (Date.parse(now) >= opens && Date.parse(now) < end) result.silence = { reason: 'busy_until_known_commitment',
+        recheckAt: new Date(Math.min(Date.parse(context.tonightSchedule.busyUntilAt), end)).toISOString() };
+    }
     if (result.offer) {
       let windowEnds;
-      if (result.offer.capabilityId === 'planned-start') {
+      if (result.offer.capabilityId === 'evening-close') {
+        windowEnds = eveningWindowEnds(context, today, offset);
+        result.offer = { ...result.offer, alternatives: [] };
+      } else if (result.offer.capabilityId === 'planned-start') {
         const time = context.plannedStart.plannedAtLocal;
         const at = Number(time.slice(0, 2)) * 60 + Number(time.slice(3));
         windowEnds = Date.parse(today + 'T00:00:00.000Z') - offset * 60000 + Math.min(1440, at + 46) * 60000;
@@ -192,6 +238,14 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
   }
   function actionAlive(uid, row, action, now, today, offset) {
     // Resolve the original opaque reference again from current account-owned files.
+    if (row.offer.capabilityId === 'evening-close') {
+      if (action.type !== 'evening_transition_open' || action.args.day !== today) return false;
+      const current = snapshot(uid, { activeSession: { active: false }, guide: { active: false }, firstValue: { pending: false }, lapse: null }, now, today, offset);
+      if (!current.eveningContract?.dailyReminder || current.eveningContract.eveningTimeLocal !== action.args.boundaryLocal) return false;
+      const permission = Policy.decide({ ...current, now, today, utcOffsetMinutes: offset,
+        invocation: 'manual', availableChannels: ['card'], enabledCapabilities: ['evening-close'], ledger: Policy.emptyLedger() });
+      return !eveningBusy(current, now) && permission.ok && permission.offer && stable(permission.offer.action) === stable(action);
+    }
     if (action.type === 'ask_one_question') return true;
     if (action.type !== 'task_open_prepared') return false;
     const ref = action.args?.targetRef;
@@ -213,6 +267,43 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
       invocation: 'manual', availableChannels: ['card'], enabledCapabilities: ['after-lapse-return'], ledger: Policy.emptyLedger() });
     return permission.ok && permission.offer && stable(permission.offer.action) === stable(action);
   }
+  const transferable = row => row?.state === 'offered' && row.offer.channel === 'push' && row.clientId === PUSH_CLIENT && !!row.push;
+  function reserveEveningPush(uid, { now, today, offset }) {
+    if (!iso(now) || !Number.isInteger(offset) || offset < -840 || offset > 840
+      || Policy.localParts(Policy.parseIso(now), offset).day !== today) failure('invalid_time', 400);
+    const state = read(uid);
+    if (expire(state, now)) persist(uid, state);
+    if (Object.values(state.delivery.offers).some(row => row.state === 'offered') || legacyRecheckAt(uid, now)) return null;
+    // Synced sessions are usable owner facts. Missing/local telemetry does not
+    // prove idle: this reservation only authorizes the existing opt-in notification.
+    const attention = readFile(uid, 'attention', null, value => object(value) && value.version === 1
+      && ['local', 'contracts', 'aggregates'].includes(value.mode) && Array.isArray(value.sessions)
+      && value.sessions.every(session => object(session) && typeof session.id === 'string' && !!session.id
+        && iso(session.startedAt) && (session.endedAt == null || iso(session.endedAt))));
+    const knownSessionActive = !!attention?.sessions.some(session => session.endedAt == null);
+    const body = { supportedCapabilities: ['evening-close'], invocation: 'app_open', context: { lapse: null,
+      activeSession: { active: knownSessionActive }, guide: { active: false }, firstValue: { pending: false } } };
+    const { result } = decide(uid, state, body, now, today, offset);
+    if (!result.offer) return null;
+    const pushToken = crypto.randomUUID();
+    const row = { offer: { ...result.offer, channel: 'push' }, clientId: PUSH_CLIENT, token: pushToken,
+      state: 'offered', claimedAt: now, persistedAt: now,
+      push: { token: pushToken, status: 'reserved', reservedAt: now } };
+    mark(state, row, 'offered', now); state.delivery.offers[row.offer.offerId] = row;
+    persist(uid, state);
+    return { offerId: row.offer.offerId, token: pushToken, expiresAt: row.offer.expiresAt };
+  }
+  function settleEveningPush(uid, { offerId, token: pushToken, outcome, now }) {
+    if (!PUSH_OUTCOMES.includes(outcome) || !iso(now)) failure('invalid_push_outcome', 400);
+    const state = read(uid), row = state.delivery.offers[offerId];
+    if (!row?.push || row.push.token !== pushToken) failure('claim_not_owned', 403);
+    if (row.push.status !== 'reserved') return { ok: true, repeat: true, outcome: row.push.status };
+    row.push.status = outcome; row.push.settledAt = now;
+    // Delivery acknowledgment is never acceptance or a user outcome, including
+    // when the authenticated card has already taken ownership during the send.
+    persist(uid, state);
+    return { ok: true, repeat: false, outcome };
+  }
   function transact(uid, body, { now = new Date().toISOString(), today, offset } = {}) {
     if (!object(body) || !token(body.clientId) || !token(body.requestId)) failure('invalid_request', 400);
     if (!['decide', 'claim', 'outcome'].includes(body.op)) failure('invalid_op', 400);
@@ -229,7 +320,7 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     if (prior) {
       if (prior.fingerprint !== fingerprint) failure('request_conflict', 409);
       if (changed) persist(uid, state);
-      if (prior.op === 'claim' && state.delivery.offers[prior.offerId].state !== 'offered') failure('offer_expired', 409);
+      if (prior.op === 'claim' && prior.status === 200 && state.delivery.offers[prior.offerId].state !== 'offered') failure('offer_expired', 409);
       return { status: prior.status, body: { ...prior.response, repeat: true } };
     }
     const saveExpiry = () => { if (changed) { persist(uid, state); changed = false; } };
@@ -238,9 +329,16 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
       saveExpiry();
       const activeRows = Object.values(state.delivery.offers).filter((row) => row.state === 'offered');
       const active = activeRows[0];
-      const blocked = context.activeSession.active || context.guide.active || context.firstValue.pending || context.dayClosed;
+      const activeBusy = active?.offer.capabilityId === 'evening-close' && eveningBusy(context, now);
+      const blocked = active && (deliveryBlocked(context, active.offer.capabilityId) || activeBusy);
+      if (transferable(active) && !blocked && supported(body).includes('evening-close')
+        && actionAlive(uid, active, active.offer.action, now, today, offset)) {
+        return { status: 200, body: { ok: true, offer: { ...active.offer, channel: 'card' }, silence: null, resume: null } };
+      }
       if (active) return { status: 200, body: { ok: true, offer: null,
-        silence: blocked ? { reason: 'context_blocked' }
+        silence: activeBusy && !deliveryBlocked(context, active.offer.capabilityId)
+          ? { reason: 'busy_until_known_commitment', recheckAt: new Date(Math.min(Date.parse(context.tonightSchedule.busyUntilAt), Date.parse(active.offer.expiresAt))).toISOString() }
+          : blocked ? { reason: 'context_blocked' }
           : { reason: 'held', recheckAt: earliestExpiry(activeRows.map((row) => row.offer.expiresAt), now) },
         resume: !blocked && active.clientId === body.clientId && supported(body).includes(active.offer.capabilityId)
           ? { offer: active.offer, token: active.token, persistedAt: active.claimedAt } : null } };
@@ -252,10 +350,27 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     if (Object.keys(state.delivery.requests).length >= 2048) failure('receipt_capacity', 429);
     let response, status = 200;
     if (body.op === 'claim') {
+      const transfer = state.delivery.offers[body.offerId];
+      if (transferable(transfer) && supported(body).includes('evening-close')) {
+        const context = snapshot(uid, body.context, now, today, offset);
+        if (deliveryBlocked(context, 'evening-close') || eveningBusy(context, now)) failure('context_blocked', 409);
+        if (!actionAlive(uid, transfer, transfer.offer.action, now, today, offset)) {
+          mark(state, transfer, 'expired', now);
+          response = { ok: false, error: 'stale_target', outcome: 'expired', persistedAt: now, repeat: false }; status = 409;
+        } else {
+          transfer.offer = { ...transfer.offer, channel: 'card' };
+          transfer.clientId = body.clientId; transfer.token = crypto.randomUUID(); transfer.claimedAt = now; transfer.persistedAt = now;
+          response = { ok: true, offer: transfer.offer, token: transfer.token, persistedAt: now, repeat: false };
+        }
+        state.delivery.requests[key] = { fingerprint, persistedAt: now, status, response, offerId: body.offerId, op: 'claim' };
+        persist(uid, state); return { status, body: response };
+      }
       const recheckAt = earliestExpiry([legacyRecheckAt(uid, now), ...Object.values(state.delivery.offers)
         .filter((row) => row.state === 'offered').map((row) => row.offer.expiresAt)], now);
       if (recheckAt) return { status: 409, body: { error: 'held', recheckAt } };
       const { result } = decide(uid, state, body, now, today, offset);
+      if (!result.offer && result.silence?.deferUntil === 'session_end') return { status: 409, body: { error: 'context_blocked', deferUntil: 'session_end' } };
+      if (!result.offer && result.silence?.reason === 'busy_until_known_commitment') return { status: 409, body: { error: 'context_blocked', recheckAt: result.silence.recheckAt } };
       if (!result.offer || result.offer.offerId !== body.offerId) failure('stale_offer', 409);
       const row = { offer: result.offer, clientId: body.clientId, token: crypto.randomUUID(),
         state: 'offered', claimedAt: now, persistedAt: now };
@@ -289,7 +404,9 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
       let action = null;
       if (body.outcome === 'accepted') {
         const live = snapshot(uid, body.context, now, today, offset);
-        if (live.activeSession.active || live.guide.active || live.firstValue.pending || live.dayClosed) failure('context_blocked', 409);
+        if (deliveryBlocked(live, row.offer.capabilityId)) failure('context_blocked', 409);
+        if (row.offer.capabilityId === 'evening-close' && eveningBusy(live, now)) return { status: 409,
+          body: { error: 'context_blocked', recheckAt: new Date(Math.min(Date.parse(live.tonightSchedule.busyUntilAt), Date.parse(row.offer.expiresAt))).toISOString() } };
         const actionId = body.actionId || 'primary';
         const selected = [row.offer.primary, ...row.offer.alternatives].find((item) => item.id === actionId);
         if (!selected) failure('invalid_action', 400);
@@ -308,7 +425,7 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     persist(uid, state);
     return { status, body: response };
   }
-  return { transact, snapshot: read, held };
+  return { transact, snapshot: read, held, reserveEveningPush, settleEveningPush };
 }
 
 module.exports = { FILE, TTL_MS, RETAIN_MS, empty, sanitize, createService };

@@ -3,12 +3,15 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Секретарь, 11.09 — текущий checkpoint:** after-lapse-return v254 опубликован
-runtime `52a124f`, release `f142bb1`; Railway app/TTS success, 12/12 live bytes
-совпали. Следующий срез — planned-start v255 из сохранённых task.date/startTime,
-с общим durable claim/receipt. Текущая проверка/публикация — верх DEVLOG,
-контракты PLANNED-START-V255.md и SECRETARY-NEXT-MOVES-TRANSPORT-V1.md.
-Rest Profile остаётся на паузе владельца; следующий runtime-срез после v255 — вечер.
+**Секретарь, 12.09 — текущий checkpoint:** planned-start v255 опубликован
+runtime `b21ef90`; Railway app/TTS success, 13/13 live bytes совпали 15:43 UTC.
+After-lapse-return v254 также опубликован (`52a124f`, release `f142bb1`).
+Текущий срез v256 — evening-close из выбранной границы и реального расписания,
+один вопрос о контексте, подтверждённые owner-записи вечера и общий ledger
+существующего opt-in push. Проверки/публикация конкретного SHA — верх DEVLOG;
+контракты EVENING-CLOSE-V256.md, EVENING-WRITES-V256.md и
+SECRETARY-NEXT-MOVES-TRANSPORT-V1.md. Затем — подготовленный supply Вдохновения.
+Rest Profile остаётся на паузе владельца; канон ожидает художественной приёмки.
 
 **Крупный пакет 09.09 — v253 опубликован:** [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md).
 Notes/Calendar/Habits Guide и обычные habit writes используют общий WAL/exact-CAS;

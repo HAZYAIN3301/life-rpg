@@ -18461,6 +18461,7 @@ html.attention-dialog-open body { overscroll-behavior: none; }
   .attention-choice-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .attention-actions,
   .attention-boundary-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #attention-dialog-overlay [data-secretary-evening] .attention-actions { grid-template-columns: minmax(0, 1fr); }
   .attention-actions > *,
   .attention-boundary-actions > * { width: 100%; }
   .attention-settings-head { display: grid; }

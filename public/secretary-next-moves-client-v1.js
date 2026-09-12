@@ -8,7 +8,7 @@
   const object = v => !!v && typeof v === 'object' && !Array.isArray(v);
   const iso = value => typeof value === 'string' && Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
   const day = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && iso(value + 'T00:00:00.000Z');
-  const SUPPORTED_CAPABILITIES = Object.freeze(['after-lapse-return', 'planned-start']);
+  const SUPPORTED_CAPABILITIES = Object.freeze(['after-lapse-return', 'planned-start', 'evening-close']);
   const stable = value => JSON.stringify(value, Object.keys(value || {}).sort());
   const sameAction = (left, right) => left?.type === right?.type && stable(left?.args) === stable(right?.args);
   const actionTypes = ['task_open_prepared', 'rest_start_prepared', 'ask_one_question', 'evening_transition_open'];
@@ -16,16 +16,19 @@
     if (!object(action) || !actionTypes.includes(action.type) || !object(action.args) || !day(action.args.day)) return false;
     if (action.type === 'task_open_prepared') return /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(action.args.targetRef || '') && ['minimum', 'planned'].includes(action.args.size);
     if (action.type === 'ask_one_question') return ['return_next_smallest', 'after-lapse-return_confirm'].includes(action.args.questionId);
+    if (action.type === 'evening_transition_open') return /^([01]\d|2[0-3]):[0-5]\d$/.test(action.args.boundaryLocal || '');
     return false; // Enable each executor only with its verified vertical slice.
   }
   function validOffer(offer) {
     const planned = offer?.capabilityId === 'planned-start';
+    const evening = offer?.capabilityId === 'evening-close';
     return object(offer) && offer.version === 2 && SUPPORTED_CAPABILITIES.includes(offer.capabilityId)
       && typeof offer.offerId === 'string' && offer.offerId.length > 0 && offer.channel === 'card'
       && iso(offer.expiresAt) && object(offer.copy) && object(offer.primary)
       && (planned ? offer.copy.titleKey === 'secretary.v2.planned_start.title'
         && offer.primary.action?.type === 'task_open_prepared' && offer.primary.action.args?.size === 'planned'
         && /^quest:/.test(offer.primary.action.args?.targetRef || '')
+        : evening ? offer.copy.titleKey === 'secretary.v2.evening.title' && offer.primary.action?.type === 'evening_transition_open'
         : ['secretary.v2.return.title.minimum', 'secretary.v2.return.title.ask'].includes(offer.copy.titleKey))
       && validAction(offer.primary.action) && Array.isArray(offer.alternatives)
       && offer.alternatives.every(item => object(item) && validAction(item.action));

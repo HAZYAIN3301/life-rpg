@@ -1055,11 +1055,10 @@ function pushDecision(hour, log, checked) {
 function secretaryEveningDue(settings, days, date, hour, minute, log) {
   const cfg = settings && settings.secretary;
   if (!cfg || cfg.configured !== true) return { configured: false, due: false };
-  if (days && days[date] && days[date].closed) return { configured: true, due: false };
   if (!cfg.dailyReminder || !/^([01]\d|2[0-3]):[0-5]\d$/.test(String(cfg.eveningTime || '')) || (log && log.e)) return { configured: true, due: false };
   const [targetHour, targetMinute] = cfg.eveningTime.split(':').map(Number);
   const delta = hour * 60 + minute - (targetHour * 60 + targetMinute);
-  return { configured: true, due: delta >= 0 && delta < 60 };
+  return { configured: true, due: delta >= 0 && delta <= 120 };
 }
 const SECRETARY_EVENING_COPY = Object.freeze({
   ru: 'Рабочий день закончен. Открой три границы вечера — без нового списка дел.',
@@ -1123,7 +1122,7 @@ async function pushTick() {
     // Утренний ход — раньше тёплого чек-ина. Он единственный привязан к конкретному
     // вчерашнему поводу; общий чек-ин может подождать день, а два пуша за одно утро
     // превращают заботу в преследование.
-    let move = null, moveToken = '';
+    let move = null, moveToken = '', eveningReservation = null;
     const nowIso = new Date().toISOString();
     const candidate = secretaryPushOffer(user.id, tz, date, nowIso, days);
     if (candidate) {
@@ -1135,19 +1134,28 @@ async function pushTick() {
       }
     }
 
+    if (!payload && secretaryEvening) {
+      try {
+        eveningReservation = secretaryNextMoves.reserveEveningPush(user.id, {
+          now: nowIso, today: date, offset: tzOffsetMinutesFor(tz, Date.parse(nowIso)),
+        });
+      } catch { continue; } // No durable reservation means no outbound effect.
+      if (!eveningReservation) continue;
+      const copy = SecretaryClaimV1.pushCopy(lang);
+      payload = { title: copy.title, body: copy.body, url: './?view=today', tag: 'satoru-evening', lang };
+      delivery = { logKey: 'e' };
+    }
     if (!payload && (kind === 'm' || kind === 'e')) {
       const away = daysBetween((comp && comp.lastSeen) || date, date);
       const bucket = away <= 1 ? 'near' : (away <= 3 ? 'mid' : 'far');
       const { text, idx } = pickVariant(NudgeCopy.pool(lang, kind, bucket), vIdx[kind]);
       const chromeCopy = PUSH_CHROME_COPY[lang] || PUSH_CHROME_COPY.en;
       const title = kind === 'm' ? `🌅 ${name} ${chromeCopy.waiting}` : `🌙 ${name}`;
-      payload = secretaryEvening
-        ? { title, body: SECRETARY_EVENING_COPY[lang] || SECRETARY_EVENING_COPY.en, url: './?view=today&do=finish', tag: 'satoru-evening', lang }
-        : { title, body: text, url: './?view=today', tag: 'satoru-checkin', lang };
+      payload = { title, body: text, url: './?view=today', tag: 'satoru-checkin', lang };
       delivery = { logKey: kind, variantKind: kind, variantIdx: idx };
     }
     // Днём (13–17): «питомец заскучал» — максимум раз в 2 дня, только если есть заброшенная сфера
-    else if (hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
+    else if (!payload && hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
       const pet = lonelyPet(user.id);
       if (pet) {
         const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'p'), vIdx.p);
@@ -1178,12 +1186,16 @@ async function pushTick() {
     // Исход сообщается заявке ПЕРВЫМ делом: ветки ниже выходят из цикла, и после них
     // ход остался бы держать сам себя до истечения срока.
     if (move) secretarySettlePush(user.id, move, moveToken, outcome, nowIso);
+    if (eveningReservation) {
+      try { secretaryNextMoves.settleEveningPush(user.id, { ...eveningReservation, outcome, now: new Date().toISOString() }); }
+      catch { /* The durable reservation remains and prevents a second send. */ }
+    }
     if (outcome === 'gone') { delete user.push; changed = true; continue; }
     if (outcome !== 'delivered') continue;
     if (move) { user.push.log = log; changed = true; continue; }
     if (delivery) {
       log[delivery.logKey] = true;
-      user.push.variantIdx = { ...(user.push.variantIdx || {}), [delivery.variantKind]: delivery.variantIdx };
+      if (delivery.variantKind) user.push.variantIdx = { ...(user.push.variantIdx || {}), [delivery.variantKind]: delivery.variantIdx };
       if (delivery.petAt) user.push.petAt = delivery.petAt;
       if (delivery.quietAskAt) user.push.quietAskAt = delivery.quietAskAt;
     }

@@ -56,7 +56,9 @@
         if (sameAccount() && visible()) { client.invalidate(); load(); }
       }, Math.max(1, Math.min(2147483000, Date.parse(at) - Date.parse(snapshot.now) + 10)));
     }
-    function blocked(context) { return context.activeSession.active || context.guide.active || context.firstValue.pending || env.snapshot().dayClosed; }
+    function blocked(context, action) { return context.activeSession.active || context.guide.active || context.firstValue.pending
+      || (action?.type === 'evening_transition_open' && Date.parse(context.tonightSchedule?.busyUntilAt) > Date.parse(env.snapshot().now))
+      || (env.snapshot().dayClosed && action?.type !== 'evening_transition_open'); }
     function openConfirmed(receipt) {
       if (!sameAccount()) return false;
       const snapshot = env.snapshot();
@@ -66,7 +68,13 @@
         env.changed(); return false;
       }
       const current = root.SecretaryNextMovesProducerV1.build(snapshot);
-      if (!visible() || !current.ok || blocked(current.context)) {
+      if (receipt.action.type === 'evening_transition_open' && current.ok
+        && (!current.context.eveningContract?.dailyReminder || current.context.eveningContract.eveningTimeLocal !== receipt.action.args.boundaryLocal)) {
+        deferred = null; projectionError = 'stale_evening';
+        try { env.storage.removeItem(key + '.open'); } catch {}
+        env.changed(); return false;
+      }
+      if (!visible() || !current.ok || blocked(current.context, receipt.action)) {
         deferred = receipt;
         try { env.storage.setItem(key + '.open', JSON.stringify(receipt)); } catch {}
         env.changed(); return false;
@@ -86,9 +94,10 @@
       const projected = root.SecretaryNextMovesProducerV1.build(snapshot);
       if (!projected.ok) { const changed = projectionError !== projected.error; projectionError = projected.error; if (changed) env.changed(); return false; }
       const clearedError = !!projectionError; projectionError = null;
-      const { lapse, plannedStart, activeSession, guide, firstValue } = projected.context;
+      const { lapse, plannedStart, eveningContract, tonightSchedule, activeSession, guide, firstValue } = projected.context;
       const signal = JSON.stringify([snapshot.today, snapshot.dayClosed, lapse?.eventKey, lapse?.originalRef, lapse?.originalStillActionable,
         plannedStart?.taskRef, plannedStart?.plannedAtLocal, plannedStart?.startedToday, plannedStart?.doneToday,
+        eveningContract?.eveningTimeLocal, eveningContract?.dailyReminder, tonightSchedule?.busyUntilAt,
         activeSession.active, guide.active, firstValue.pending]);
       const changedSignal = signal !== lastSignal;
       lastSignal = signal;
@@ -106,7 +115,8 @@
       const projected = root.SecretaryNextMovesProducerV1.build(env.snapshot());
       if (!projected.ok) { projectionError = projected.error; env.changed(); return false; }
       const { lapse, activeSession, guide, firstValue } = projected.context;
-      if ((pending?.outcome || outcome) === 'accepted' && blocked(projected.context)) { projectionError = 'context_blocked'; env.changed(); return false; }
+      const action = client.state().offer?.primary?.action;
+      if ((pending?.outcome || outcome) === 'accepted' && blocked(projected.context, action)) { projectionError = 'context_blocked'; env.changed(); return false; }
       projectionError = null;
       const receipt = await client.outcome(pending?.outcome || outcome, pending?.actionId || 'primary', { lapse, activeSession, guide, firstValue });
       if (!receipt || !sameAccount()) return false;
