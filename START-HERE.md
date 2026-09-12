@@ -5,7 +5,9 @@
 
 **Текущий checkpoint 12.09, v259:** ACCOUNT-IMPORT-V259.md — общий WAL всех
 portable files, подписанный preview с revisions, надёжный повтор импорта/сброса,
-account guards и честные ошибки. 2510/2510 tests PASS. Публикация/QA — верх DEVLOG.
+account guards и честные ошибки. 2510/2510 tests PASS. Опубликовано `e1fc38f`:
+Railway app/TTS success, 28/28 live bytes, production login без console errors.
+Публикация/QA — верх DEVLOG; вопросы — OWNER-DECISIONS-2026-09.md.
 CACHE satoru-v259. Экономические права переноса не изменены; generic/settings-only/
 mint/chest и provenance наград остаются P0. Вопросы владельцу отделены от этого
 технического среза; аватар/Rest Profile не возобновлены.

@@ -2,11 +2,12 @@
 
 **Продолжение 12.09 — v259:** атомарность всего portable import/reset, signed
 preview/revisions, повтор и account guards. ACCOUNT-IMPORT-V259.md; 2510/2510 tests
-PASS, публикация/QA — верх DEVLOG. Экономические правила переноса не изменены.
+PASS. Опубликовано `e1fc38f`: Railway app/TTS success, 28/28 live bytes;
+receipts/QA — верх DEVLOG. Экономические правила переноса не изменены.
 Вопрос о доверенном личном прогрессе/provenance вынесен владельцу отдельно;
 это не закрытие generic/settings-only/mint/chest и всего wallet P0.
 
-**Checkpoint 12.09 — продолжать по этому порядку.** Владелец подтвердил этот план
+**Предыдущий checkpoint v258 — порядок сохраняется.** Владелец подтвердил этот план
 как основную очередь. Runtime `8979522` опубликован: v258, Railway app/TTS success,
 26/26 live bytes. Он включает ранее опубликованные v254–v257;
 предыдущие дельты ниже сохраняют историю, а не актуальный список отсутствующего.
@@ -91,7 +92,7 @@ Actionable Gamification v215/v216, исследование мультиплее
 | Приоритет | Разрыв | Что должно стать правдой | Кто |
 |---|---|---|---|
 | P0, закрыт v250 | Награда рейда/обещанный XP-буст | Серверный receipt и ресурс не расходятся; эффект подключён | Выполнено Codex; PARTY-REWARDS-V1.md |
-| P0, частично v258 | Неодинаковая надёжность feature writes | Покупки/gear/perks, Notes/Calendar/Habits, цены/баланс и admission новых покупок исправлены; generic/import, mint/chest и общий wallet ещё нужны | Codex, FEATURE-WRITES-V253.md, PURCHASE-ENTITLEMENTS-V258.md |
+| P0, частично v259 | Неодинаковая надёжность feature writes | Покупки/gear/perks, Notes/Calendar/Habits, цены/баланс, admission и атомарный import/reset исправлены; generic/import экономические права, mint/chest и общий wallet ещё нужны | Codex, FEATURE-WRITES-V253.md, PURCHASE-ENTITLEMENTS-V258.md, ACCOUNT-IMPORT-V259.md |
 | P1 | Тень ещё не полноценный секретарь | Замечает конкретный повод и предлагает один исполнимый ход из личного плана | Opus 5: политики/оценка; Codex: доставка/UI |
 | P1 | «Привычки» сильнее как редактор, чем как помощь в моменте | Сигнал, минимум и запасной ход реально используются, без нового журнала | Codex; policy cases совместно с Opus |
 | P1 | Расширение: от установленного ZIP до действующей границы | Человек видит, что именно сейчас защищено, и проходит реальный тест | Codex + владелец store-аккаунтов |

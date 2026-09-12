@@ -3,7 +3,8 @@
 - [x] **v259, целостность импорта/сброса:** все portable files в общем WAL,
   подписанный preview/current revisions, стабильный повтор и строгий receipt;
   account/epoch guards, пять локалей, mobile close target. ACCOUNT-IMPORT-V259.md;
-  2510/2510 tests PASS, реальные SIGKILL и browser QA. Публикация — верх DEVLOG.
+  2510/2510 tests PASS, реальные SIGKILL и browser QA. Опубликовано `e1fc38f`:
+  Railway app/TTS success, 28/28 live bytes. Receipts — верх DEVLOG.
 - [ ] **P0 после v259:** определить provenance игровых наград при переносе;
   generic/settings-only/mint/chest остаются открыты. Атомарный импорт не делает
   личный XP/gold/предметы авторитетными серверными наградами.

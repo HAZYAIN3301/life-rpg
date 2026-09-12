@@ -2,6 +2,15 @@
 
 ## [2026-09-12] v259 — атомарный импорт аккаунта и сброс
 
+**Опубликовано 12.09 21:38 CEST:** `e1fc38f6215abf1e4b8bf1dbe6ae844c83f85cd1`.
+Railway app `8109ec87-8948-4353-a5df-89cef0a9cb6d`, TTS
+`9b525811-0fbd-4e62-b94d-a14d402971c8` success. 28/28 live bytes совпали
+19:38:41 UTC; profiles 200, secretary/economy/import/preview без сессии 401.
+Receipt: art-factory/account-import-v259/release-receipt.json. Production IAB
+загрузил login с app/styles/account-import pins v259 без console errors.
+Записи живого аккаунта не выполнялись. Вопросы для Remote Control:
+OWNER-DECISIONS-2026-09.md — три коротких выбора, ответы ещё не получены.
+
 ACCOUNT-IMPORT-V259.md. Следующий технический P0 по найденному критическому плану;
 правила переноса XP/gold/предметов сохранены, продуктовый вопрос вынесен отдельно.
 Все 21 portable файла теперь используют существующий durable WAL. Signed preview
