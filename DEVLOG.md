@@ -1,6 +1,59 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-12] v257 — проверенный запас Вдохновения в реальном приложении
+
+Подготовленный пакет supply подключён перед существующим выбором подборки.
+Admission → язык/частота → catalog rows → прежний InspirationProfile.choose;
+ранжирование и профиль вкусов сохранены. Все 11 старых IDs остаются в манифесте.
+Сейчас допущены девять собственных текстов на RU/EN/DE/UK/ES (три прежних, шесть новых);
+восемь внешних материалов ожидают проверки. Права/HEAD/oEmbed не заменяют playback.
+Никаких внешних media-файлов не скачано и не объявлено проверенными по HTML.
+
+Подборка честно различает нехватку, язык, ожидание проверки и ограничения профиля.
+Уже выбранные дневные ids не заменяются автоматически при выпадении источника.
+Сохранённый catalogId без текущего допуска оставляет личный текст/заметку и архив;
+URL/embed/source/rights не восстанавливаются из старого адреса. Обработчик открытия
+заново проверяет допуск. Не появляется второй feed или подбор нерелевантного filler.
+
+Настройка/Done/feedback используют реальный Store.updateNow и подтверждённое
+состояние. Ошибка сохраняет введённую причину, повтор не добавляет второй feedback
+или doneId. Account/writeEpoch guards прекращают старые хвосты. Независимый review
+нашёл отдельный P1 в ShelfStore: поздний add мог положить весь прежний shelf в новый
+аккаунт. Исправлены add/save, catalog-save/restore и commitShelf, включая ожидание
+JSON, 401/500/lost reply, late success и очистку ошибки только после успешного повтора.
+
+Финальный полный набор: **2341/2341 PASS**, без skip, 51.9 с, concurrency 2,
+изолированные DATA_DIR. 34 новых actual-path shelf cases дополняют реальный Store
+integration suite. Admission/дневные ids/отказы/повтор/пять локалей проверены в Node;
+syntax и diff checks PASS. Контракты: INSPIRATION-SUPPLY-V1.md,
+INSPIRATION-SUPPLY-INTEGRATION-V1.md, INSPIRATION-SUPPLY-RUNTIME-INTEGRATION-V1.md.
+
+IAB synthetic test@satoru.local: реальная ручная настройка Design+Creative,
+quote+video; 500 → форма и параметры сохранены → retry → конечная короткая подборка.
+Done с потерей ответа ПОСЛЕ записи → явная ошибка → повтор → один doneId/конец подборки.
+Feedback с причиной + 500 → текст на месте → повтор → одна серверная запись.
+Сохранение карточки с потерянным ответом → повтор → одна карточка, ошибка снята.
+Профиль только video показывает ожидание проверки без iframe; saved denied catalogId
+сохраняет личную заметку, не даёт media/source actions. Archive 500 → карточка на месте
+→ retry → архив. Эти состояния проверены на пяти языках; 375×812/1280×900, dark/light,
+без horizontal overflow; проверенные основные кнопки 42–44px. Языковые synthetic gaps
+и native reduced-motion/200% text-only zoom отдельно в браузере не эмулировались.
+Полный визуальный QA приложения и playback внешних источников остаются открытыми.
+
+App/SW v257; четыре новых supply modules в SHELL и pinned index, обновлены pins
+catalog/ReturnShelfUI/app. CSS и secretary modules сохраняют опубликованные pins v256.
+Публикация конкретного SHA фиксируется после Railway app/TTS и live-byte gate.
+Повтор по всей 45-дневной истории и периодический сетевой recheck ещё не подключены;
+reviewQueue пока лишь конечная очередь оператора. Rest Profile остаётся на паузе.
+CommitmentV2 task links, полный First Value, остальные v2 push и legacy morning outcome
+frozen replay остаются следующими срезами. Канон ожидает художественного решения.
+
 ## [2026-09-12] v256 — вечер из своей границы и текущего контекста
+
+**Опубликовано 12.09 18:23 CEST:** `e269cf74cb61d43fc3a8defd44ef3a7bc4a3ea52`.
+Railway app `c667359e-7fb5-4d0d-b374-bcc8fdb6ffd7`, TTS
+`bfc3f9f0-7355-4775-9b45-779249b162f1` success; 15/15 live bytes совпали,
+profiles 200, protected POST 401. Receipt: art-factory/secretary-v256/release-receipt.json.
 
 Evening-close подключён к общей карточке/claim/receipt. Источник — сохранённые
 configured, dailyReminder и eveningTime; отсутствие opt-in не создаёт напоминание.

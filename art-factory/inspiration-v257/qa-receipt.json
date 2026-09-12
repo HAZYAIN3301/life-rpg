@@ -1,0 +1,62 @@
+{
+  "release": "v257",
+  "baseSha": "e269cf74cb61d43fc3a8defd44ef3a7bc4a3ea52",
+  "checkedOn": "2026-09-12",
+  "environment": "Isolated localhost; synthetic test@satoru.local; no authenticated production writes",
+  "tests": {
+    "pass": 2341,
+    "fail": 0,
+    "skipped": 0,
+    "durationSeconds": 51.86,
+    "concurrency": 2
+  },
+  "syntaxChangedJavaScript": 65,
+  "diffCheck": "PASS",
+  "browser": {
+    "engine": "Codex IAB",
+    "viewports": [
+      "375x812",
+      "1280x900"
+    ],
+    "locales": [
+      "ru",
+      "en",
+      "de",
+      "uk",
+      "es"
+    ],
+    "themes": [
+      "dark",
+      "light"
+    ],
+    "passed": [
+      "Manual Design+Creative quote/video setup; 500 preserves form; explicit retry saves finite digest",
+      "Done commit-before-lost-reply remains unconfirmed until explicit retry, one doneId",
+      "Feedback 500 retains typed reason; retry stores one feedback row",
+      "Catalog save commit-before-lost-reply; retry yields one saved card and clears error",
+      "Video-only profile shows awaiting review without iframe",
+      "Saved denied catalogId keeps personal note, no media/source controls, archive remains available",
+      "Archive 500 keeps card; explicit retry archives",
+      "Empty state checked in all five locales; no horizontal overflow; measured main buttons 42–44px"
+    ],
+    "limits": [
+      "Synthetic language-gap cases tested in Node only",
+      "Native reduced-motion and 200% text-only zoom not separately exercised",
+      "Full application visual QA remains open"
+    ]
+  },
+  "dataEvidence": "Synthetic settings.json showed one builder-release doneId and one feedback entry with exact QA reason after retries; saved count was one after add retry.",
+  "supply": {
+    "admittedOwnTexts": 9,
+    "locales": 5,
+    "externalPendingReview": 8,
+    "legacyIdsPreserved": 11,
+    "externalPlaybackVerified": false
+  },
+  "remaining": [
+    "Full 45-day impression history",
+    "Scheduled external recheck",
+    "External playback/source review"
+  ],
+  "releaseGate": "Production status recorded separately after Railway app/TTS and live-byte verification."
+}

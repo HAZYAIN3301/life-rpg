@@ -4,10 +4,11 @@
  * autoplay, scrolling pagination, reward counters, popularity or randomization.
  */
 (function exposeReturnShelfUI(root, factory) {
-  const api = factory();
+  const api = factory(typeof module === 'object' && module.exports
+    ? require('./inspiration-supply-ui-v1.js') : root.InspirationSupplyUIV1);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.ReturnShelfUIV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI() {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI(SupplyUI) {
   'use strict';
 
   const VERSION = '2.2.0';
@@ -24,6 +25,7 @@
       .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
   }
   function tr(t, key) { return esc(typeof t === 'function' ? t(key) : key); }
+  function supplyCopy(key, vm) { return esc(SupplyUI ? SupplyUI.copy(key, vm.supplyLocale) : ''); }
   function row(value) { return value && typeof value === 'object' && !Array.isArray(value) ? value : {}; }
   function rows(value, max = 160) { return Array.isArray(value) ? value.slice(0, max).map(row) : []; }
   function formatLabel(format) { return (FORMAT_COPY[format] || FORMAT_COPY.link)[0]; }
@@ -208,18 +210,18 @@
       ${renderVisual(item, t)}
       <div class="inspiration-why"><span>${tr(t, 'Почему здесь')}</span><b data-noi18n>${esc(reason)}</b>${rights}</div>
       <div class="inspiration-item-actions">
-        <button type="button" class="btn${done ? ' ghost' : ''}" data-action="inspiration-done" data-id="${esc(item.id)}" ${done ? 'disabled' : ''}>${done ? tr(t, 'Просмотрено ✓') : tr(t, 'Дальше')}</button>
-        <button type="button" class="inspiration-save" data-action="inspiration-save" data-id="${esc(item.id)}" ${saved ? 'disabled' : ''}>${saved ? tr(t, 'Сохранено') : tr(t, 'Сохранить')}</button>
+        <button type="button" class="btn${done ? ' ghost' : ''}" data-action="inspiration-done" data-id="${esc(item.id)}" ${done || vm.profileBusy ? 'disabled' : ''}>${done ? tr(t, 'Просмотрено ✓') : tr(t, 'Дальше')}</button>
+        <button type="button" class="inspiration-save" data-action="inspiration-save" data-id="${esc(item.id)}" ${saved || vm.profileBusy ? 'disabled' : ''}>${saved ? tr(t, 'Сохранено') : tr(t, 'Сохранить')}</button>
         <details class="inspiration-item-more"><summary aria-label="${tr(t, 'Ещё действия')}">•••</summary><div role="group" aria-label="${tr(t, 'Настроить подборку')}">
-          <button type="button" class="inspiration-menu-action${verdict === 'more' ? ' is-active' : ''}" data-action="inspiration-feedback-open" data-verdict="more" data-id="${esc(item.id)}" aria-pressed="${verdict === 'more'}">${tr(t, 'Понравилось')}</button>
-          <button type="button" class="inspiration-menu-action${verdict === 'not_for_me' ? ' is-active' : ''}" data-action="inspiration-feedback-open" data-verdict="not_for_me" data-id="${esc(item.id)}" aria-pressed="${verdict === 'not_for_me'}">${tr(t, 'Не понравилось')}</button>${sourceAction}
+          <button type="button" class="inspiration-menu-action${verdict === 'more' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="more" data-id="${esc(item.id)}" aria-pressed="${verdict === 'more'}">${tr(t, 'Понравилось')}</button>
+          <button type="button" class="inspiration-menu-action${verdict === 'not_for_me' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="not_for_me" data-id="${esc(item.id)}" aria-pressed="${verdict === 'not_for_me'}">${tr(t, 'Не понравилось')}</button>${sourceAction}
         </div></details>
       </div>
       ${editingFeedback ? `<section class="inspiration-feedback-reason" aria-label="${tr(t, 'Почему? Необязательно')}">
         <header><span class="is-${esc(draft.verdict)}">${tr(t, draft.verdict === 'more' ? 'Понравилось' : 'Не понравилось')}</span><button type="button" data-action="inspiration-feedback-cancel" aria-label="${tr(t, 'Отмена')}">✕</button></header>
         <label><b>${tr(t, 'Почему? Необязательно')}</b><small>${tr(t, 'Объясни, что именно сработало или не сработало — так следующие подборки станут точнее.')}</small>
         <textarea rows="3" maxlength="320" data-inspiration-feedback-reason placeholder="${tr(t, 'Например: нравится темп, музыка и ощущение большого пути')}">${esc(draft.reason)}</textarea></label>
-        <div><button type="button" class="btn ghost sm" data-action="inspiration-feedback-skip" data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Без объяснения')}</button><button type="button" class="btn sm" data-action="inspiration-feedback-save" data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Сохранить ответ')}</button></div>
+        <div><button type="button" class="btn ghost sm" data-action="inspiration-feedback-skip" ${vm.profileBusy ? 'disabled' : ''} data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Без объяснения')}</button><button type="button" class="btn sm" data-action="inspiration-feedback-save" ${vm.profileBusy ? 'disabled' : ''} data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Сохранить ответ')}</button></div>
       </section>` : ''}
     </article>`;
   }
@@ -228,9 +230,16 @@
     const items = rows(vm.items, 3);
     const interests = rows(vm.profile && vm.profile.interests, 8);
     const summary = `<div class="inspiration-profile-summary"><div>${interests.slice(0, 5).map((item) => `<span data-noi18n>${esc(item.label)}</span>`).join('')}${interests.length > 5 ? `<span>+${interests.length - 5}</span>` : ''}</div><button type="button" class="btn ghost sm" data-action="inspiration-setup-edit">${tr(t, 'Настроить')}</button></div>`;
-    if (!items.length) return `${summary}<div class="card inspiration-state"><h3>${tr(t, 'Для этих интересов пока нет безопасных материалов')}</h3><p>${tr(t, 'Измени форматы или добавь своё. Мы не подставляем случайные ссылки только ради заполнения экрана.')}</p><button type="button" class="btn" data-action="inspiration-setup-edit">${tr(t, 'Изменить интересы')}</button></div>`;
+    const noticeKey = SupplyUI ? SupplyUI.notice(vm.supplyReport, vm.unavailableIds) : '';
+    const notice = noticeKey ? `<p class="muted" role="status" data-noi18n>${supplyCopy(noticeKey, vm)}</p>` : '';
+    if (!items.length) {
+      const report = vm.supplyReport;
+      const title = report ? supplyCopy(report.emptyReason || 'no_matching_material', vm) : tr(t, 'Для этих интересов пока нет безопасных материалов');
+      const detail = report ? supplyCopy('empty_detail', vm) : tr(t, 'Измени форматы или добавь своё. Мы не подставляем случайные ссылки только ради заполнения экрана.');
+      return `${summary}${notice}<div class="card inspiration-state" role="status"><h3 data-noi18n>${title}</h3><p data-noi18n>${detail}</p><button type="button" class="btn" data-action="inspiration-setup-edit">${tr(t, 'Изменить интересы')}</button></div>`;
+    }
     const terminal = vm.digestDone ? `<section class="card inspiration-terminal" role="status"><span aria-hidden="true">✓</span><div><h3>${tr(t, 'На сегодня всё')}</h3><p>${tr(t, 'Подборка закончилась. Никакого «ещё одного». Можно вернуться к своему дню.')}</p></div><button type="button" class="btn" data-action="goto-today">${tr(t, 'К делам')}</button></section>` : '';
-    return `${summary}<div class="inspiration-digest${vm.animateEntry ? ' should-enter' : ''}" aria-label="${tr(t, 'Подборка на сегодня')}">${items.map((item, index) => renderDigestItem(item, index, vm, t)).join('')}</div>${terminal}`;
+    return `${summary}${notice}<div class="inspiration-digest${vm.animateEntry ? ' should-enter' : ''}" aria-label="${tr(t, 'Подборка на сегодня')}">${items.map((item, index) => renderDigestItem(item, index, vm, t)).join('')}</div>${terminal}`;
   }
 
   function renderQuickAdd(vm, t) {
@@ -244,7 +253,8 @@
     </form>`;
   }
 
-  function savedMedia(item, t) {
+  function savedMedia(item, t, vm) {
+    if (item.supplyUnavailable) return `<div class="inspiration-saved-preview"><p role="status" data-noi18n>${supplyCopy('unavailable', vm)}</p></div>${item.note ? `<blockquote class="inspiration-saved-quote" data-noi18n>${esc(item.note)}</blockquote>` : ''}`;
     if (item.catalogItem) return renderVisual(Object.assign({}, item.catalogItem, { id: item.id }), t);
     if (item.embedUrl) return `<div class="inspiration-saved-preview is-link" data-inspiration-media="${esc(item.id)}"><button type="button" class="inspiration-play" data-action="inspiration-play-saved" data-id="${esc(item.id)}"><span aria-hidden="true">▶</span>${tr(t, 'Смотреть')}</button></div>`;
     if (item.format === 'image' && item.url) return `<div class="inspiration-saved-preview is-link"><span>${esc(host(item.url) || tr(t, 'Изображение'))}</span></div>`;
@@ -254,10 +264,9 @@
 
   function renderSaved(vm, t) {
     const saved = rows(vm.saved, 40), archived = rows(vm.archived, 160);
-    const status = vm.errorMessage ? `<p class="return-shelf-inline-error" role="alert">${tr(t, vm.errorMessage)}</p>` : '';
-    const list = saved.length ? `<div class="inspiration-saved-grid">${saved.map((item) => `<article class="card inspiration-saved-item" data-shelf-id="${esc(item.id)}">${savedMedia(item, t)}<div><span class="inspiration-format-label">${tr(t, formatLabel(item.format))}</span><h3 data-noi18n>${esc(item.title)}</h3>${item.attribution ? `<p data-noi18n>${esc(item.attribution)}</p>` : ''}</div><div class="inspiration-saved-actions">${item.url ? `<button type="button" class="btn ghost" data-action="shelf-open-source" data-id="${esc(item.id)}">${tr(t, 'Открыть')}</button>` : ''}<button type="button" class="btn ghost" data-action="shelf-archive" data-id="${esc(item.id)}">${tr(t, 'В архив')}</button></div></article>`).join('')}</div>` : `<div class="card inspiration-state"><h3>${tr(t, 'Пока ничего не сохранено')}</h3><p>${tr(t, 'Сохраняй сильные материалы из подборки одним нажатием или добавь своё.')}</p><button type="button" class="btn" data-action="shelf-toggle-composer">${tr(t, 'Добавить своё')}</button></div>`;
+    const list = saved.length ? `<div class="inspiration-saved-grid">${saved.map((item) => `<article class="card inspiration-saved-item" data-shelf-id="${esc(item.id)}">${savedMedia(item, t, vm)}<div><span class="inspiration-format-label">${tr(t, formatLabel(item.format))}</span><h3 data-noi18n>${esc(item.title)}</h3>${item.attribution ? `<p data-noi18n>${esc(item.attribution)}</p>` : ''}</div><div class="inspiration-saved-actions">${item.url && !item.supplyUnavailable ? `<button type="button" class="btn ghost" data-action="shelf-open-source" data-id="${esc(item.id)}">${tr(t, 'Открыть')}</button>` : ''}<button type="button" class="btn ghost" data-action="shelf-archive" data-id="${esc(item.id)}">${tr(t, 'В архив')}</button></div></article>`).join('')}</div>` : `<div class="card inspiration-state"><h3>${tr(t, 'Пока ничего не сохранено')}</h3><p>${tr(t, 'Сохраняй сильные материалы из подборки одним нажатием или добавь своё.')}</p><button type="button" class="btn" data-action="shelf-toggle-composer">${tr(t, 'Добавить своё')}</button></div>`;
     const archive = archived.length ? `<details class="card inspiration-archive"><summary>${tr(t, 'Архив')} · ${archived.length}</summary><div>${archived.map((item) => `<p><span data-noi18n>${esc(item.title)}</span><button type="button" class="btn danger sm" data-action="shelf-delete" data-id="${esc(item.id)}">${tr(t, 'Удалить')}</button></p>`).join('')}</div></details>` : '';
-    return `<div class="inspiration-saved-head"><div><h3>${tr(t, 'Мои материалы')}</h3><p>${tr(t, 'Личная конечная коллекция — не ещё один список «когда-нибудь».')}</p></div><button type="button" class="btn" data-action="shelf-toggle-composer">${vm.composerOpen ? tr(t, 'Закрыть') : `+ ${tr(t, 'Добавить своё')}`}</button></div>${renderQuickAdd(vm, t)}${status}${list}${archive}`;
+    return `<div class="inspiration-saved-head"><div><h3>${tr(t, 'Мои материалы')}</h3><p>${tr(t, 'Личная конечная коллекция — не ещё один список «когда-нибудь».')}</p></div><button type="button" class="btn" data-action="shelf-toggle-composer">${vm.composerOpen ? tr(t, 'Закрыть') : `+ ${tr(t, 'Добавить своё')}`}</button></div>${renderQuickAdd(vm, t)}${list}${archive}`;
   }
 
   function renderReady(vm, t) {
@@ -266,7 +275,8 @@
     const actions = configured ? `<button type="button" class="btn ghost inspiration-settings-button" data-action="inspiration-setup-edit" aria-label="${tr(t, 'Настроить интересы')}">${tr(t, 'Интересы')}</button>` : '';
     const main = setup ? renderSetup(vm, t) : !configured ? renderFirstUse(vm, t)
       : (vm.section === 'saved' ? renderSaved(vm, t) : renderDaily(vm, t));
-    return `<section class="return-shelf-shell inspiration-shell" aria-labelledby="return-shelf-title">${shellHead(t, actions)}${configured && !setup ? renderTabs(vm, t) : ''}${main}</section>`;
+    const status = vm.errorMessage ? `<p class="return-shelf-inline-error" role="alert">${tr(t, vm.errorMessage)}</p>` : '';
+    return `<section class="return-shelf-shell inspiration-shell" aria-labelledby="return-shelf-title">${shellHead(t, actions)}${configured && !setup ? renderTabs(vm, t) : ''}${status}${main}</section>`;
   }
 
   function render(vm = {}, t) {

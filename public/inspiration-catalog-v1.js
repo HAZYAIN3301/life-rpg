@@ -12,12 +12,35 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildInspirationCatalog() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   const LOCALES = Object.freeze(['ru', 'en', 'de', 'uk', 'es']);
   const copy = (ru, en, de, uk, es) => Object.freeze({ ru, en, de, uk, es });
+  // Metadata review is not a playback receipt. External rows remain present for
+  // rechecking and saved references, but cannot enter a digest until admitted.
+  const REVIEWED_AT = '2026-09-10T21:27:18.000Z';
+  const SOURCE_REVIEW = Object.freeze({
+    'blender-spring': { lang: 'none' },
+    'nps-yosemite': { lang: null, embedAllowed: true },
+    'dvids-run': { lang: null },
+    'blender-bunny': { lang: 'none' },
+    'nasa-hum-sun': { lang: 'en' },
+    'nasa-pale-blue-dot': { lang: 'none' },
+    'spiderverse-official-trailer': { lang: 'en' },
+    'rezero-official-pv': { lang: 'ja' },
+  });
+  function supplyMetadata(id, extra) {
+    const own = !extra || !extra.rightsKind || extra.rightsKind === 'satoru-original';
+    return Object.freeze(own ? {
+      lang: 'ru', contentLocales: LOCALES, available: true,
+      lastCheckedAt: REVIEWED_AT, checkMethod: 'manual', availabilityReason: '',
+    } : Object.assign({ available: 'unknown', lastCheckedAt: null,
+      availabilityReason: 'not_checked', checkMethod: null, embedAllowed: false,
+    }, SOURCE_REVIEW[id] || {}));
+  }
   const row = (id, format, interestIds, visual, title, body, extra) => Object.freeze(Object.assign({
     id, format, interestIds: Object.freeze(interestIds), visual,
     title, body, rightsKind: 'satoru-original', attribution: 'Satoru',
+    supply: supplyMetadata(id, extra),
   }, extra || {}));
 
   const CATALOG = Object.freeze([

@@ -363,19 +363,24 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260912-secretary-v256-1');
+  const appAt = index.indexOf('app.js?v=20260912-inspiration-v257-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
-  for (const asset of ['inspiration-import-v1.js', 'inspiration-catalog-v1.js', 'return-shelf-v1.js']) {
+  for (const asset of ['inspiration-import-v1.js', 'return-shelf-v1.js']) {
     assert.match(index, new RegExp(`${asset.replaceAll('.', '\\.')}\\?v=20260829-inspiration-learning-v201-1`));
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
+  for (const asset of ['inspiration-catalog-v1.js', 'inspiration-supply-policy-v1.js', 'inspiration-supply-batch-v1.js', 'inspiration-supply-runtime-v1.js', 'inspiration-supply-ui-v1.js']) {
+    assert.ok(index.includes(asset + '?v=20260912-inspiration-v257-1'));
+    assert.ok(index.indexOf(asset) < uiAt);
+    assert.ok(sw.includes(asset));
+  }
   assert.match(index, /inspiration-profile-v1\.js\?v=20260830-economy-art-v208-1/);
-  assert.match(index, /return-shelf-ui-v1\.js\?v=20260830-economy-art-v208-1/);
+  assert.match(index, /return-shelf-ui-v1\.js\?v=20260912-inspiration-v257-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
   assert.match(index, /styles\.css\?v=20260912-secretary-v256-1/);
-  assert.match(sw, /satoru-v256/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v256'/);
+  assert.match(sw, /satoru-v257/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v257'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {

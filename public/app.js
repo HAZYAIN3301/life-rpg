@@ -5721,27 +5721,37 @@ const ShelfStore = {
   },
   async save(value, { allowEmpty = false } = {}) {
     if (State._shelfLoadError || !validateShelfEnvelope(value)) return false;
+    const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+    const stale = () => accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch;
     try {
       const response = await fetch('/api/shelf', {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ data: value, allowEmpty: !!allowEmpty }),
       });
+      if (stale()) return false;
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
       if (!response.ok) throw new Error('save ' + response.status);
       return true;
-    } catch (error) { console.error('shelf save', error); return false; }
+    } catch (error) { if (!stale()) console.error('shelf save', error); return false; }
   },
   async add(item) {
     if (State._shelfLoadError) return { ok: false, error: 'blocked' };
+    const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+    const stale = () => accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch;
     try {
       const response = await fetch('/api/shelf/item', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item }),
       });
+      if (stale()) return { ok: false, error: 'stale_write' };
       const data = await response.json().catch(() => ({}));
+      if (stale()) return { ok: false, error: 'stale_write' };
       if (response.status === 401) { handleAccountSessionExpired(); return { ok: false, error: 'session' }; }
       if (!response.ok) return { ok: false, error: data.error || `save_${response.status}` };
       return { ok: true };
-    } catch (error) { console.error('shelf add', error); return { ok: false, error: 'save_failed' }; }
+    } catch (error) {
+      if (stale()) return { ok: false, error: 'stale_write' };
+      console.error('shelf add', error); return { ok: false, error: 'save_failed' };
+    }
   },
 };
 
@@ -25259,7 +25269,15 @@ function inspirationImportDevice() {
   return { kind: override, detectedKind, platform };
 }
 function inspirationCatalog() {
-  const C = inspirationCatalogEngine(); return C ? C.items(lang()) : [];
+  const result = inspirationSupply(); return result.ok ? result.catalog : [];
+}
+function inspirationSupply(profile = inspirationProfileState()) {
+  const R = window.InspirationSupplyRuntimeV1;
+  return R ? R.ensureDigest({ profile, day: todayStr(), now: new Date().toISOString(), locale: lang() })
+    : { ok: false, error: 'supply_not_loaded' };
+}
+function inspirationSupplyCopy(key) {
+  return window.InspirationSupplyUIV1?.copy(key, lang()) || t('Не удалось загрузить Вдохновение');
 }
 function inspirationProfileState() {
   const P = inspirationProfileEngine();
@@ -25436,11 +25454,13 @@ function inspirationYoutubeEmbed(url) {
 }
 function shelfViewModel() {
   const S = shelfEngine(), UI = window.ReturnShelfUIV1, P = inspirationProfileEngine();
-  if (!S || !UI || !P || !inspirationCatalogEngine()) return { state: 'error', error: 'load' };
+  if (!S || !UI || !P || !inspirationCatalogEngine() || !window.InspirationSupplyUIV1) return { state: 'error', error: 'load' };
   if (State._shelfLoadBusy && !State.shelf) return { state: 'loading' };
   if (State._shelfLoadError) return { state: 'error', error: State._shelfLoadError, busy: State._shelfLoadBusy };
-  const state = shelfState(), profile = inspirationProfileState() || P.emptyProfile(), catalog = inspirationCatalog();
-  const ensured = P.ensureDigest(profile, catalog, todayStr()), activeProfile = ensured.profile;
+  const state = shelfState(), profile = inspirationProfileState() || P.emptyProfile();
+  const ensured = inspirationSupply(profile);
+  if (!ensured.ok) return { state: 'error', error: 'load' };
+  const activeProfile = ensured.profile, catalog = ensured.catalog;
   // Stable imported ids survive a language change; their visible labels should
   // follow the current locale instead of freezing the language used at setup.
   const visibleProfile = { ...activeProfile, interests: activeProfile.interests.map((interest) => (
@@ -25454,12 +25474,13 @@ function shelfViewModel() {
     done: !!(activeProfile.digest && activeProfile.digest.doneIds.includes(item.id)), saved: savedCatalogIds.has(item.id),
     feedbackVerdict: feedbackById.get(item.id)?.verdict || '', feedbackReason: feedbackById.get(item.id)?.reason || '' }));
   const enrich = (item) => {
-    const catalogItem = item.catalogId ? catalog.find((row) => row.id === item.catalogId) : null;
+    item = window.InspirationSupplyRuntimeV1.resolveSaved(item, catalog);
+    const catalogItem = item.catalogItem || null;
     const format = item.format || (catalogItem && catalogItem.format) || inspirationFormatFromContent(item.url || item.note || '');
-    const embedUrl = catalogItem ? catalogItem.embedUrl : inspirationYoutubeEmbed(item.url);
+    const embedUrl = catalogItem ? catalogItem.embedUrl : item.supplyUnavailable ? '' : inspirationYoutubeEmbed(item.url);
     return { ...item, title: catalogItem ? catalogItem.title : item.title,
       why: catalogItem ? t(item.why) : item.why, format, catalogItem,
-      embedUrl, mediaPolicy: catalogItem ? catalogItem.mediaPolicy : (embedUrl ? 'iframe' : item.url ? 'link' : 'text'),
+      embedUrl, mediaPolicy: item.supplyUnavailable ? 'unavailable' : catalogItem ? catalogItem.mediaPolicy : (embedUrl ? 'iframe' : item.url ? 'link' : 'text'),
       linkLabel: shelfLinkLabel(item) };
   };
   const saved = S.liveItems(state, todayStr()).map(enrich);
@@ -25470,6 +25491,8 @@ function shelfViewModel() {
     importSession: State._inspirationImport || null, importLinksOpen: !!State._inspirationImportLinksOpen,
     importGuideOpen: !!State._inspirationImportGuideOpen, importDevice: inspirationImportDevice(),
     feedbackDraft: State._inspirationFeedbackDraft || null,
+    supplyReport: ensured.report, supplyLocale: ensured.locale, unavailableIds: ensured.unavailableIds,
+    profileBusy: State._shelfBusy === 'profile',
     items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
     saved, savedCount: saved.length, archived, composerOpen: State._shelfComposerOpen,
     errorMessage: State._shelfError,
@@ -25658,6 +25681,7 @@ async function closeInspirationSetup(form = document.getElementById('inspiration
 }
 async function persistInspirationProfile(rawProfile, { closeSetup = false, focus = '#return-shelf-title', toastKey = '' } = {}) {
   const P = inspirationProfileEngine(); if (!P || !State.settings || State._shelfBusy) return false;
+  const accountId = State.me?.id, writeEpoch = Store._writeEpoch;
   const profile = P.normalize(rawProfile);
   State._shelfBusy = 'profile'; State._shelfError = ''; render();
   const saved = await Store.updateNow('settings', (current) => {
@@ -25665,9 +25689,10 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
       ? structuredClone(current) : structuredClone(State.settings);
     base.inspiration = profile; delete base.inspirationDraft; return base;
   }, (committed) => { State.settings = committed; return true; });
+  if (State.me?.id !== accountId || Store._writeEpoch !== writeEpoch) return false;
   State._shelfBusy = '';
   if (!saved) {
-    State._shelfError = 'Не удалось сохранить интересы. Ничего не изменено.';
+    State._shelfError = inspirationSupplyCopy('save_error');
     State._shelfFocusAfterCommit = focus; render(); toast(t(State._shelfError)); return false;
   }
   rememberInspirationLocalDraft(null);
@@ -25679,6 +25704,7 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
 }
 async function saveInspirationSetup(form) {
   const P = inspirationProfileEngine(); if (!P || State._shelfBusy) return;
+  const accountId = State.me?.id, writeEpoch = Store._writeEpoch;
   clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
   let draft = inspirationDraftFromSetupForm(form);
   if (!draft || !draft.interests.length) { shelfFormStatus('Выбери хотя бы один интерес или добавь свой.', true); return; }
@@ -25687,8 +25713,10 @@ async function saveInspirationSetup(form) {
     shelfFormStatus('Анализирую видео-референсы…');
     draft = await enrichInspirationVideoReferences(draft);
   }
+  if (State.me?.id !== accountId || Store._writeEpoch !== writeEpoch) return;
   const configured = P.configure(draft);
-  const ensured = P.ensureDigest(configured, inspirationCatalog(), todayStr());
+  const ensured = inspirationSupply(configured);
+  if (!ensured.ok) { shelfFormStatus(inspirationSupplyCopy('module_error'), true); return; }
   shelfFormStatus('Сохраняю…');
   if (await persistInspirationProfile(ensured.profile, { closeSetup: true, focus: '.inspiration-profile-summary', toastKey: 'Подборка настроена' })) {
     sfx('confirm'); track('inspiration:configured');
@@ -25699,16 +25727,17 @@ function inspirationActionItem(id) {
   if (direct) return direct;
   const saved = shelfState().items.find((item) => item.id === String(id));
   if (!saved) return null;
-  const catalogItem = saved.catalogId ? catalog.find((item) => item.id === saved.catalogId) : null;
-  return catalogItem ? { ...saved, title: catalogItem.title, embedUrl: catalogItem.embedUrl,
-    sourceUrl: catalogItem.sourceUrl, rightsUrl: catalogItem.rightsUrl, body: catalogItem.body,
-    why: t(saved.why), visual: catalogItem.visual, mediaPolicy: catalogItem.mediaPolicy }
-    : { ...saved, embedUrl: inspirationYoutubeEmbed(saved.url),
-      mediaPolicy: inspirationYoutubeEmbed(saved.url) ? 'iframe' : saved.url ? 'link' : 'text' };
+  if (saved.catalogId) return window.InspirationSupplyRuntimeV1
+    ? window.InspirationSupplyRuntimeV1.resolveSaved(saved, catalog)
+    : { ...saved, supplyUnavailable: true, mediaPolicy: 'unavailable', embedUrl: '', imageUrl: '', sourceUrl: '', rightsUrl: '' };
+  return { ...saved, embedUrl: inspirationYoutubeEmbed(saved.url),
+    mediaPolicy: inspirationYoutubeEmbed(saved.url) ? 'iframe' : saved.url ? 'link' : 'text' };
 }
 async function markInspirationDone(id) {
-  const P = inspirationProfileEngine(), item = inspirationActionItem(id); if (!P || !item) return;
-  const ensured = P.ensureDigest(inspirationProfileState(), inspirationCatalog(), todayStr());
+  const P = inspirationProfileEngine(), item = inspirationActionItem(id); if (!P || !item || item.supplyUnavailable || State._shelfBusy) return;
+  const ensured = inspirationSupply(inspirationProfileState());
+  if (!ensured.ok) { toast(inspirationSupplyCopy('module_error')); return; }
+  if (!ensured.profile.digest?.ids.includes(item.id) || ensured.profile.digest.doneIds.includes(item.id)) return;
   const next = P.markDone(ensured.profile, item.id);
   if (await persistInspirationProfile(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-done"]` })) {
     sfx('select'); track('inspiration:done');
@@ -25716,11 +25745,13 @@ async function markInspirationDone(id) {
 }
 async function recordInspirationFeedback(id, verdict, reason = '') {
   const P = inspirationProfileEngine(), item = inspirationActionItem(id);
-  if (!P || !item || !P.VERDICTS.includes(verdict)) return;
-  const ensured = P.ensureDigest(inspirationProfileState(), inspirationCatalog(), todayStr());
+  if (!P || !item || item.supplyUnavailable || !P.VERDICTS.includes(verdict) || State._shelfBusy) return;
+  const ensured = inspirationSupply(inspirationProfileState());
+  if (!ensured.ok) { toast(inspirationSupplyCopy('module_error')); return; }
   const next = P.recordFeedback(ensured.profile, item, verdict, todayStr(), reason);
-  State._inspirationFeedbackDraft = null;
+  State._inspirationFeedbackDraft = { itemId: item.id, verdict, reason: String(reason || '').slice(0, 320) };
   if (await persistInspirationProfile(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"]` })) {
+    State._inspirationFeedbackDraft = null; render();
     sfx('select'); toast(t(reason ? 'Ответ сохранён — следующие подборки станут точнее' : verdict === 'more' ? 'Учту для следующих подборок' : 'Больше не буду показывать этот материал'));
     track(`inspiration:feedback:${verdict}`);
   }
@@ -25728,6 +25759,8 @@ async function recordInspirationFeedback(id, verdict, reason = '') {
 async function saveInspirationCatalogItem(id) {
   const S = shelfEngine(), item = inspirationCatalog().find((row) => row.id === String(id));
   if (!S || !item || State._shelfBusy || State._shelfLoadError) return;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  const stale = () => accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch;
   const existing = shelfState().items.find((row) => row.catalogId === item.id);
   if (existing && !existing.archivedOn) { toast(t('Материал уже сохранён')); return; }
   if (existing && existing.archivedOn) {
@@ -25738,7 +25771,7 @@ async function saveInspirationCatalogItem(id) {
       if (row.id !== existing.id) return row;
       const restored = { ...row }; delete restored.archivedOn; return restored;
     }) };
-    if (await commitShelf(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-save"]`, toastKey: 'Материал сохранён' })) sfx('confirm');
+    if (await commitShelf(next, { focus: `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-save"]`, toastKey: 'Материал сохранён' }) && !stale()) sfx('confirm');
     return;
   }
   const draft = {
@@ -25755,9 +25788,10 @@ async function saveInspirationCatalogItem(id) {
   }
   State._shelfBusy = 'add'; render();
   const stored = await ShelfStore.add(local.state.items[local.state.items.length - 1]);
+  if (stale()) return;
   State._shelfBusy = '';
-  if (!stored.ok) { State._shelfError = 'Не удалось сохранить материал. Ничего не изменено.'; render(); toast(t(State._shelfError)); return; }
-  State.shelf = local.state; State._shelfFocusAfterCommit = `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-save"]`;
+  if (!stored.ok) { State._shelfError = inspirationSupplyCopy('save_error'); render(); toast(t(State._shelfError)); return; }
+  State.shelf = local.state; State._shelfError = ''; State._shelfFocusAfterCommit = `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-save"]`;
   render(); sfx('confirm'); toast(t('Материал сохранён')); track('inspiration:save');
 }
 function inspirationEmbedAllowed(value) {
@@ -25769,6 +25803,7 @@ function inspirationEmbedAllowed(value) {
 }
 function playInspirationEmbed(id, opener) {
   const item = inspirationActionItem(id), url = item && item.embedUrl;
+  if (item?.supplyUnavailable) { toast(inspirationSupplyCopy('unavailable')); return; }
   const host = document.querySelector(`[data-inspiration-media="${CSS.escape(String(id))}"]`);
   if (!item || !host || !inspirationEmbedAllowed(url) || host.querySelector('.inspiration-embed')) return;
   const layer = document.createElement('div'); layer.className = 'inspiration-embed';
@@ -25788,14 +25823,16 @@ function playInspirationMotion(id, button) {
   setTimeout(() => button?.setAttribute('aria-pressed', 'false'), 900);
 }
 function listenInspiration(id, button) {
-  const item = inspirationActionItem(id); if (item) ttsSpeak(item.body || item.title, button, 'calm');
+  const item = inspirationActionItem(id); if (item && !item.supplyUnavailable) ttsSpeak(item.body || item.title, button, 'calm');
 }
 async function commitShelf(next, { focus = '#return-shelf-title', allowEmpty = false, toastKey = '' } = {}) {
   if (State._shelfBusy || State._shelfLoadError) return false;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
   State._shelfBusy = 'save'; State._shelfError = ''; render();
   const saved = await ShelfStore.save(next, { allowEmpty });
+  if (accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch) return false;
   State._shelfBusy = '';
-  if (!saved) { State._shelfError = 'Не удалось изменить Полку. Данные остались на месте.'; State._shelfFocusAfterCommit = focus; render(); return false; }
+  if (!saved) { State._shelfError = inspirationSupplyCopy('save_error'); State._shelfFocusAfterCommit = focus; render(); return false; }
   State.shelf = next; State._shelfError = ''; State._shelfFocusAfterCommit = focus; render();
   if (toastKey) toast(t(toastKey));
   return true;
@@ -25830,6 +25867,11 @@ function shelfSourceTarget(item) {
   try { return new URL(item.url).hostname.replace(/^www\./, '').slice(0, 80); } catch { return ''; }
 }
 function openProtectedInspirationSource(item, opener) {
+  if (item?.catalogId) {
+    const current = inspirationActionItem(item.id);
+    if (!current || current.supplyUnavailable) { toast(inspirationSupplyCopy('unavailable')); return; }
+  }
+  if (item?.supplyUnavailable) { toast(inspirationSupplyCopy('unavailable')); return; }
   if (!item || !item.url) return;
   const active = window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
   if (active) { if (window.AttentionSessionV1.isOver(active, attentionNow())) openAttentionBoundary(active.id); else toast(t('Одно окно внимания уже идёт')); return; }
@@ -25841,7 +25883,7 @@ function openProtectedInspirationSource(item, opener) {
   toast(t('Источник откроется после короткого решения о цели и времени.'));
 }
 function openShelfSource(id, opener) {
-  const item = shelfState().items.find((row) => row.id === id); if (!item) return;
+  const item = inspirationActionItem(id); if (!item) return;
   openProtectedInspirationSource(item, opener);
 }
 function openInspirationSource(id, opener) {
@@ -32903,7 +32945,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v256';
+const PWA_CACHE_VERSION = 'satoru-v257';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

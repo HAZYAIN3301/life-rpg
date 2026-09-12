@@ -1,0 +1,49 @@
+{
+  "release": "v256",
+  "sha": "e269cf74cb61d43fc3a8defd44ef3a7bc4a3ea52",
+  "date": "2026-09-12",
+  "environment": "Isolated localhost fixture; synthetic test@satoru.local; no authenticated production writes",
+  "tests": {
+    "pass": 2201,
+    "fail": 0,
+    "skipped": 0,
+    "durationSeconds": 50.226,
+    "concurrency": 2
+  },
+  "syntaxChangedJavaScript": 74,
+  "diffCheck": "PASS",
+  "browser": {
+    "engine": "Codex IAB",
+    "viewports": [
+      "375x812",
+      "1280x900"
+    ],
+    "locales": [
+      "ru",
+      "en",
+      "de"
+    ],
+    "themes": [
+      "dark",
+      "light"
+    ],
+    "passed": [
+      "Saved evening boundary produces claimed card on open and closed day",
+      "One context question and three explicit navigation choices",
+      "Ready opens existing evening; planning opens tomorrow; busy closes without day writes",
+      "Active focus suppresses evening; stop makes it eligible",
+      "Saved busy interval does not produce evening offer",
+      "Accepted reply lost after server commit; reload and stable retry open one question",
+      "Day save 500 remains visibly unconfirmed with dialog open; retry after commit-before-lost-reply confirms exact fields",
+      "Final narrow responses form one column, 42–44px buttons, no horizontal overflow",
+      "Tab remains inside dialog; Escape closes; new dialog has no animation"
+    ],
+    "limitations": [
+      "Native reduced-motion and 200% text-only zoom not separately exercised",
+      "No external push-provider or real-device delivery test",
+      "Full application visual QA remains open"
+    ]
+  },
+  "pushLimitation": "Server reads synced Attention but cannot know private local-only focus. Opt-in notification may arrive during local-only work; client action rechecks current context.",
+  "releaseGate": "See production-receipt-v256.json; local QA alone does not establish publication."
+}

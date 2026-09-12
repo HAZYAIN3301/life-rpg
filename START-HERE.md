@@ -3,14 +3,15 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Секретарь, 12.09 — текущий checkpoint:** planned-start v255 опубликован
-runtime `b21ef90`; Railway app/TTS success, 13/13 live bytes совпали 15:43 UTC.
-After-lapse-return v254 также опубликован (`52a124f`, release `f142bb1`).
-Текущий срез v256 — evening-close из выбранной границы и реального расписания,
-один вопрос о контексте, подтверждённые owner-записи вечера и общий ledger
-существующего opt-in push. Проверки/публикация конкретного SHA — верх DEVLOG;
-контракты EVENING-CLOSE-V256.md, EVENING-WRITES-V256.md и
-SECRETARY-NEXT-MOVES-TRANSPORT-V1.md. Затем — подготовленный supply Вдохновения.
+**Текущий checkpoint 12.09:** evening-close v256 опубликован `e269cf7`;
+Railway app/TTS success, 15/15 live bytes совпали 16:23 UTC. Planned-start v255
+также опубликован `b21ef90` (13/13 live bytes), after-lapse-return v254 — `52a124f`.
+Контракты EVENING-CLOSE-V256.md, EVENING-WRITES-V256.md и
+SECRETARY-NEXT-MOVES-TRANSPORT-V1.md. Не повторять эти публикации.
+Текущий срез v257 — supply Вдохновения в действующей подборке и подтверждённых
+owner-записях: девять собственных текстов, восемь внешних материалов на проверке.
+Проверки/публикация конкретного SHA — верх DEVLOG;
+контракт INSPIRATION-SUPPLY-RUNTIME-INTEGRATION-V1.md.
 Rest Profile остаётся на паузе владельца; канон ожидает художественной приёмки.
 
 **Крупный пакет 09.09 — v253 опубликован:** [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md).
