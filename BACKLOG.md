@@ -1,12 +1,20 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v259, целостность импорта/сброса:** все portable files в общем WAL,
+  подписанный preview/current revisions, стабильный повтор и строгий receipt;
+  account/epoch guards, пять локалей, mobile close target. ACCOUNT-IMPORT-V259.md;
+  2510/2510 tests PASS, реальные SIGKILL и browser QA. Публикация — верх DEVLOG.
+- [ ] **P0 после v259:** определить provenance игровых наград при переносе;
+  generic/settings-only/mint/chest остаются открыты. Атомарный импорт не делает
+  личный XP/gold/предметы авторитетными серверными наградами.
+
 - [x] **v258, admission новых покупок:** сохранённый личный уровень, exact owned
   grants и допустимая экипировка, реальный Pro tier; запрет смежного credit/catalog
   изменения в purchase request. Строгая квитанция, точный отказ на пяти языках,
   account/writeEpoch guards и стабильный повтор. PURCHASE-ENTITLEMENTS-V258.md;
   2449/2449 tests PASS; опубликовано `8979522`, Railway app/TTS success, 26/26 bytes.
   Browser QA и receipts конкретного SHA — верх DEVLOG.
-- [ ] **Первый остаток P0 после v258:** generic/import/settings-only пути
+- [ ] **Экономический остаток P0 после v258/v259:** generic/import/settings-only пути
   начисления gold и прав, chest grants и общий wallet. Проверка admission покупки
   не делает исходные client-owned task/import начисления авторитетными.
 

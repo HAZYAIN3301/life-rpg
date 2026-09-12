@@ -54,7 +54,7 @@ test('Tree crash redaction preserves the mechanical graph without mutating its s
 });
 
 test('redaction is scoped to crash diagnostics; owner and full admin exports remain complete', () => {
-  const accountExport = sourceBetween("if (u === '/api/account/export'", "if (u === '/api/account/import'");
+  const accountExport = sourceBetween("if (u === '/api/account/export'", "if ((u === '/api/account/import'");
   assert.match(accountExport, /data: readPortableAccountData\(uid\)/);
   assert.doesNotMatch(accountExport, /redactSkillTreeForCrash/);
 

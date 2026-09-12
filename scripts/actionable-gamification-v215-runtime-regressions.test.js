@@ -274,11 +274,13 @@ test('account reset archives quest commitments and import/reset carry the exact 
   assert.match(reset, /validateCommitPayload/, 'reset candidate is not graph-validated');
 
   const resetAction = between(APP, "if (action === 'confirm-account-reset')", "if (action === 'confirm-account-import')");
-  assert.match(resetAction, /base\s*,\s*data\s*:\s*resetData/);
-  assert.match(resetAction, /rememberDedicatedCommitSlots\(resetData/);
+  assert.match(resetAction, /commitAccountImport\(document\.getElementById\('account-reset-modal'\)\)/);
   const importAction = between(APP, "if (action === 'confirm-account-import')", "if (action === 'crash-export')");
-  assert.match(importAction, /\.\.\.overlay\._archive\s*,\s*base/);
-  assert.match(importAction, /runExclusive\(\[['"]settings['"],\s*['"]tasks['"]\]/);
+  assert.match(importAction, /commitAccountImport\(document\.getElementById\('account-import-modal'\)\)/);
+  assert.match(functionSource(APP, 'prepareAccountImport'), /commitmentWriteBase\(\)/);
+  assert.match(functionSource(APP, 'prepareAccountImport'), /requestId: 'import_' \+ uid\(\), base, data/);
+  assert.match(functionSource(APP, 'commitAccountImport'), /runExclusive\(policy\.namesFor\(attempt\.data\)/);
+  assert.match(functionSource(APP, 'commitAccountImport'), /rememberDedicatedCommitSlots\(attempt\.data/);
 });
 
 test('startup establishes both snapshots before writes and unload never bypasses the graph boundary', () => {

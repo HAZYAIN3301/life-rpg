@@ -3,7 +3,14 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Текущий checkpoint 12.09, v258:** продолжать по PRODUCT-CRITICAL-PATH-2026-09.md;
+**Текущий checkpoint 12.09, v259:** ACCOUNT-IMPORT-V259.md — общий WAL всех
+portable files, подписанный preview с revisions, надёжный повтор импорта/сброса,
+account guards и честные ошибки. 2510/2510 tests PASS. Публикация/QA — верх DEVLOG.
+CACHE satoru-v259. Экономические права переноса не изменены; generic/settings-only/
+mint/chest и provenance наград остаются P0. Вопросы владельцу отделены от этого
+технического среза; аватар/Rest Profile не возобновлены.
+
+**Предыдущий checkpoint 12.09, v258:** продолжать по PRODUCT-CRITICAL-PATH-2026-09.md;
 разделение с Claude — CLAUDE-OPUS5-NEXT-WORK.md. Эти файлы обновлены по фактическим
 v254–v257, выполненные пакеты №2/№3 не выдавать повторно. Следующий P0-срез
 PURCHASE-ENTITLEMENTS-V258.md: серверный личный уровень и точные права новых

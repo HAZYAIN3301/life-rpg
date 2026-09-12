@@ -15214,6 +15214,8 @@ html.calendar-task-open body {
 .account-import-label input { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; pointer-events: none; }
 .account-import-label:focus-within { outline: var(--focus-ring); outline-offset: 2px; }
 .account-dialog-box { width: min(100%, 560px); max-height: min(100%, 720px); overflow-y: auto; }
+.account-dialog-box > h2 { padding-inline-end: var(--touch-min); }
+.account-dialog-box > .modal-x { min-inline-size: var(--touch-min); min-block-size: var(--touch-min); }
 .account-dialog-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); }
 .account-dialog-actions .btn { min-height: var(--touch-min); }
 .account-import-summary { padding: var(--sp-2); border: 1px solid var(--line-soft); border-radius: var(--radius-sm); color: var(--text-soft); background: var(--surface-2); overflow-wrap: anywhere; }

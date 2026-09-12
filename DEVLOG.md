@@ -1,5 +1,32 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-12] v259 — атомарный импорт аккаунта и сброс
+
+ACCOUNT-IMPORT-V259.md. Следующий технический P0 по найденному критическому плану;
+правила переноса XP/gold/предметов сохранены, продуктовый вопрос вынесен отдельно.
+Все 21 portable файла теперь используют существующий durable WAL. Signed preview
+связан с uid, кандидатом и revisions; точный retry после потерянного ответа,
+конфликт до записи, строгая квитанция вместо одного HTTP 200. Legacy архивы совместимы.
+Domain API и завершение чтения body проходят общий recovery fence.
+
+Импорт и RESET используют общий клиент с замороженным body/accountId/writeEpoch.
+Поздняя ошибка прежнего аккаунта не изменяет новую сессию. Успех после сохранения;
+перед import reload pending writers отменены. Пять локалей различают проверку,
+неопределённое сохранение, конфликт и invalid/capacity. На 375px исправлено
+перекрытие длинного заголовка крестиком; target закрытия не меньше 42×42.
+CACHE satoru-v259; app/styles/account-import pin 20260912-import-v259-1.
+
+**Проверки:** полный suite 2510/2510 PASS, 0 skip, 61.6 s, concurrency 2;
+syntax/diff PASS. Реальный SIGKILL на 21 позиции, write failure/rollback,
+restart/replay, cross-account/ticket tamper, revision conflict, legacy import,
+corrupt WAL и реальные клиентские гонки. Устаревшие source assertions обновлены;
+экспорт Полки/Внимания теперь проверяется настоящим HTTP ответом.
+Browser receipt — art-factory/account-import-v259/qa-receipt.json.
+
+**Остаток:** generic/import/settings-only экономические права, mint/chest и
+provenance наград. Не закрыты весь wallet P0 и общий production visual QA.
+Rest Profile/аватар на паузе; художественная приёмка канона отдельно.
+
 ## [2026-09-12] v258 — личный уровень и точные права покупки
 
 **Опубликовано 12.09 19:52 CEST:** `8979522cfe4e892e4e3718e1182e1af41bfbb9ad`.

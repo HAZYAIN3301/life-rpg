@@ -1,0 +1,133 @@
+{
+  "date": "2026-09-12",
+  "version": 259,
+  "environment": "IAB, isolated local DATA_DIR, synthetic qa259@satoru.local, test-only proxy; no production user mutations",
+  "tests": {
+    "total": 2510,
+    "pass": 2510,
+    "fail": 0,
+    "skipped": 0,
+    "concurrency": 2,
+    "durationMs": 61563.827583
+  },
+  "functional": [
+    "Preview HTTP 500: inline error; retry checks only; a separate confirm is required before import.",
+    "Lost response AFTER real import: HTTP reads show all three selected files saved; same request retry succeeds; reload retains imported records (normal task hydration adds existing defaults).",
+    "Real concurrent days write after preview: import rejected with revision conflict, error stays visible.",
+    "HTTP 200 with incomplete receipt: no success/reload, retry remains available.",
+    "Save HTTP 500: localized inline uncertainty, no false success.",
+    "Reset lost response: same frozen retry succeeds; HTTP read tasks=[], days={}, unrelated weeks preserved.",
+    "Keyboard Tab wraps in dialog; Escape closes from inside; focus returns to visible opener."
+  ],
+  "visual": [
+    {
+      "locale": "ru",
+      "theme": "dark",
+      "width": 375,
+      "height": 812,
+      "state": "conflict",
+      "overflow": false,
+      "close": [
+        42,
+        42
+      ],
+      "actions": [
+        152.5,
+        53
+      ]
+    },
+    {
+      "locale": "en",
+      "theme": "light",
+      "width": 375,
+      "height": 812,
+      "state": "save500",
+      "overflow": false,
+      "close": [
+        42,
+        42
+      ],
+      "actions": [
+        152.5,
+        44
+      ]
+    },
+    {
+      "locale": "en",
+      "theme": "light",
+      "width": 1280,
+      "height": 900,
+      "state": "save500",
+      "overflow": false
+    },
+    {
+      "locale": "de",
+      "theme": "dark",
+      "width": 1280,
+      "height": 900,
+      "state": "incomplete receipt",
+      "overflow": false
+    },
+    {
+      "locale": "uk",
+      "theme": "dark",
+      "width": 375,
+      "height": 812,
+      "state": "save500",
+      "overflow": false
+    },
+    {
+      "locale": "es",
+      "theme": "light",
+      "width": 1280,
+      "height": 900,
+      "state": "save500",
+      "overflow": false
+    },
+    {
+      "locale": "es",
+      "theme": "light",
+      "width": 375,
+      "height": 812,
+      "state": "prepared, keyboard focus, CSS motion override",
+      "overflow": false
+    }
+  ],
+  "contrast": {
+    "light": {
+      "text": [
+        98,
+        92,
+        108
+      ],
+      "background": [
+        255,
+        255,
+        255
+      ],
+      "ratio": 6.428438016820202
+    },
+    "dark": {
+      "text": [
+        194,
+        189,
+        203
+      ],
+      "background": [
+        46,
+        48,
+        59
+      ],
+      "ratio": 7.137659814212998
+    }
+  },
+  "consoleErrors": [],
+  "fix": "Long mobile headings reserve space for a 42x42 close button.",
+  "limits": [
+    "Scoped dialog QA, not every application screen or the full 20-cell locale/theme/width cross product.",
+    "Reduced-motion stylesheet checked; visible dialog tested with test-only zero-motion CSS override (computed moving elements=0), not an OS preference toggle.",
+    "Test harness opens the actual import dialog with synthetic archive; native file chooser not repeated. Async file.text/account races covered by actual client-handler tests.",
+    "Crash checkpoints and restart/rollback verified in isolated HTTP server tests, not by crashing production.",
+    "No changes to transferable XP/gold/items policy; generic/settings-only/mint/chest provenance remains open."
+  ]
+}

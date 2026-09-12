@@ -165,10 +165,10 @@ test('Account v123 client contract has honest async states and accessible dialog
   assert.match(APP, /body\.confirm\s*=\s*f\.confirm\.value\.trim\(\)/);
   assert.match(APP, /function accountResetDataCandidate\(\)[\s\S]{0,1400}commitmentApi\.release[\s\S]{0,900}validateCommitPayload\(\{ base, data: \{ settings, tasks \} \}\)[\s\S]{0,180}return \{ settings, tasks, days: \{\} \}/,
     'reset must release live quest commitments and validate the resulting settings/tasks graph');
-  assert.match(APP, /const archive = \{ format: 'satoru-account', version: 1, base, data: resetData \}/,
-    'reset import must carry the exact persisted CAS base');
-  assert.match(APP, /Store\.runExclusive\(\['days', 'settings', 'tasks'\][\s\S]{0,650}commitmentBoundaryRejected\(response\)[\s\S]{0,220}rememberDedicatedCommitSlots\(resetData/,
-    'reset must serialize the whole graph and advance snapshots only after server success');
+  assert.match(APP, /const request = \{ format: 'satoru-account', version: 1, writeVersion: 2,[^\n]+base, data \}/,
+    'reset preview must carry the exact persisted graph base');
+  assert.match(APP, /Store\.runExclusive\(policy\.namesFor\(attempt\.data\)[\s\S]{0,700}policy\.receiptValid[\s\S]{0,160}rememberDedicatedCommitSlots\(attempt\.data/,
+    'reset locks every affected slot and advances snapshots only after its matching import receipt');
   assert.doesNotMatch(APP, /State\.tasks = \[\]; State\.days = \{\}; Store\.save\('tasks'/);
   assert.match(APP, /role', 'dialog'/);
   assert.match(APP, /aria-modal', 'true'/);

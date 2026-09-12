@@ -1,5 +1,11 @@
 # Satoru: критический путь к полноценному продукту
 
+**Продолжение 12.09 — v259:** атомарность всего portable import/reset, signed
+preview/revisions, повтор и account guards. ACCOUNT-IMPORT-V259.md; 2510/2510 tests
+PASS, публикация/QA — верх DEVLOG. Экономические правила переноса не изменены.
+Вопрос о доверенном личном прогрессе/provenance вынесен владельцу отдельно;
+это не закрытие generic/settings-only/mint/chest и всего wallet P0.
+
 **Checkpoint 12.09 — продолжать по этому порядку.** Владелец подтвердил этот план
 как основную очередь. Runtime `8979522` опубликован: v258, Railway app/TTS success,
 26/26 live bytes. Он включает ранее опубликованные v254–v257;
@@ -8,7 +14,7 @@
 | Пункт плана | Подтверждённое состояние | Следующий остаток |
 |---|---|---|
 | P0, награда рейда | v250: receipt и XP boost опубликованы | Общая экономика остаётся отдельным P0 |
-| P0, сохранение/экономика | v251–v253: WAL/exact-CAS, серверные цены и баланс; v258: admission новых покупок опубликован | Generic/import/settings-only, mint и chest grants; receipts — верх DEVLOG |
+| P0, сохранение/экономика | v251–v253: WAL/exact-CAS, цены/баланс; v258: admission; v259: атомарный import/reset и подписанный preview | Generic/import/settings-only экономические права, mint и chest grants; receipts — верх DEVLOG |
 | P1, три хода Тени | v254 возврат, v255 planned-start, v256 evening-close опубликованы | CommitmentV2 task links, полный First Value, остальные push, legacy morning outcome retry |
 | P1, привычки | Редактор/отметки/минимум имеют подтверждённую запись | Наблюдаемый trigger одной привычки и помощь по нему |
 | P1, расширение | Runtime/ZIP и настройки существуют | Установка/подключение/свежий статус и реальный browser-boundary test |

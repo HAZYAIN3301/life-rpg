@@ -272,8 +272,8 @@ test('Полка уходит в переносимый архив и удаля
   const dirs = fs.readdirSync(path.join(rt.dataDir, 'users'));
   assert.equal(fs.existsSync(path.join(rt.dataDir, 'users', dirs[0], 'shelf.json')), true);
 
-  const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
-  assert.match(src, /ACCOUNT_PORTABLE_FILES = \[[\s\S]{0,240}'shelf'/,
-    'shelf обязан быть в переносимом архиве — иначе экспорт молча неполон');
-  assert.match(src, /ACCOUNT_PORTABLE_TYPES = \{[\s\S]{0,460}shelf: 'object'/);
+  const exported = await c('/api/account/export');
+  assert.equal(exported.status, 200);
+  assert.deepEqual(exported.data.data.shelf, JSON.parse(fs.readFileSync(path.join(rt.dataDir, 'users', dirs[0], 'shelf.json'), 'utf8')),
+    'export must actually include the complete stored shelf');
 });

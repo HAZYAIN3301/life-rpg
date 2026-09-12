@@ -28,9 +28,11 @@
   // settings + tasks are the indivisible commitment pair. Goals, initiatives
   // and the skill tree may join for proposal import. Economy commits also add
   // purchases/rewards/lootbox. Guided notes and habit transactions use this same
-  // journal too; arbitrary account files cannot join recovery.
+  // journal too. Portable import adds its explicit account-data allowlist;
+  // secrets and server-owned reward/secretary ledgers never join recovery.
   const REQUIRED_FILES = Object.freeze(['settings', 'tasks']);
-  const OPTIONAL_FILES = Object.freeze(['goals', 'goal-groups', 'skilltree', 'purchases', 'rewards', 'lootbox', 'inbox', 'habits', 'habitlog', 'antihabits']);
+  const OPTIONAL_FILES = Object.freeze(['goals', 'goal-groups', 'skilltree', 'purchases', 'rewards', 'lootbox', 'inbox', 'habits', 'habitlog', 'antihabits',
+    'achievements', 'days', 'weeks', 'episodes', 'profile', 'boardmedia', 'attention', 'shelf', 'questionnaire']);
   const FILES = Object.freeze([...REQUIRED_FILES, ...OPTIONAL_FILES]);
   const MAX_SERIALIZED_BYTES = 16 * 1024 * 1024;
   const MAX_DEPTH = 80;
@@ -118,7 +120,7 @@
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
 
   function fileType(name) {
-    return ['tasks', 'goals', 'goal-groups', 'purchases', 'rewards', 'inbox', 'habits', 'antihabits'].includes(name) ? 'array' : 'object';
+    return ['tasks', 'goals', 'goal-groups', 'purchases', 'rewards', 'inbox', 'habits', 'antihabits', 'episodes'].includes(name) ? 'array' : 'object';
   }
 
   function snapshotValid(snapshot, name) {

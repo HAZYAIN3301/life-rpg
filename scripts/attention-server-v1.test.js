@@ -224,8 +224,8 @@ test('журнал внимания уходит в переносимый ар�
   const file = path.join(rt.dataDir, 'users', dirs[0], 'attention.json');
   assert.equal(fs.existsSync(file), true, 'store обязан лежать в каталоге пользователя');
 
-  const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
-  assert.match(src, /ACCOUNT_PORTABLE_FILES = \[[\s\S]{0,200}'attention'/,
-    'attention обязан быть в переносимом архиве — иначе экспорт молча неполон');
-  assert.match(src, /ACCOUNT_PORTABLE_TYPES = \{[\s\S]{0,400}attention: 'object'/);
+  const exported = await c('/api/account/export');
+  assert.equal(exported.status, 200);
+  assert.deepEqual(exported.data.data.attention, JSON.parse(fs.readFileSync(file, 'utf8')),
+    'export must actually include the complete stored attention envelope');
 });

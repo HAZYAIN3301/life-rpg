@@ -31,6 +31,7 @@ const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
 const CommitmentStoreV1 = require('./public/commitment-store-v1.js');
 const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
+const AccountImportV1 = require('./public/account-import-v1.js');
 const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
@@ -117,15 +118,8 @@ const USER_DATA_FILES = [
 // Переносимый архив намеренно не содержит серверные секреты (AI keys, Strava
 // tokens, push endpoint, recovery/password hashes). Эти данные либо нужно
 // привязать заново, либо они остаются частью серверной учётной записи.
-const ACCOUNT_PORTABLE_FILES = [
-  ...USER_DATA_FILES, 'lootbox', 'inbox', 'antihabits', 'episodes', 'profile', 'boardmedia', 'attention', 'shelf', 'questionnaire',
-];
-const ACCOUNT_PORTABLE_TYPES = {
-  settings: 'object', tasks: 'array', habits: 'array', habitlog: 'object', goals: 'array', 'goal-groups': 'array',
-  skilltree: 'object', rewards: 'array', purchases: 'array', achievements: 'object',
-  days: 'object', weeks: 'object', lootbox: 'object', inbox: 'array', antihabits: 'array',
-  episodes: 'array', profile: 'object', boardmedia: 'object', attention: 'object', shelf: 'object', questionnaire: 'object',
-};
+const ACCOUNT_PORTABLE_FILES = AccountImportV1.FILES;
+const ACCOUNT_PORTABLE_TYPES = AccountImportV1.TYPES;
 const PASSWORD_MIN = 8;
 
 // ============================================================
@@ -193,7 +187,17 @@ function readBody(req, maxBytes) {
       }
       chunks.push(chunk);
     });
-    req.on('end', () => { if (!rejected) resolve(Buffer.concat(chunks).toString('utf8')); });
+    req.on('end', () => {
+      if (rejected) return;
+      try {
+        // The body may have been streaming while another request imported data.
+        // Recheck the recovery fence at the boundary where this writer resumes.
+        if (String(req.url || '').startsWith('/api/') && !String(req.url).startsWith('/api/auth/')) {
+          const uid = sessionUserId(req); if (uid) recoverCommitmentJournal(uid);
+        }
+        resolve(Buffer.concat(chunks).toString('utf8'));
+      } catch (error) { reject(error); }
+    });
     req.on('error', error => { if (!rejected) reject(error); });
   });
 }
@@ -2567,7 +2571,7 @@ function readPortableAccountData(uid) {
   }
   return data;
 }
-function importPortableAccountData(uid, payload) {
+function portableImportNames(payload) {
   if (!payload || payload.format !== 'satoru-account' || Number(payload.version) !== 1 || !payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) {
     throw new Error('invalid_archive');
   }
@@ -2575,39 +2579,81 @@ function importPortableAccountData(uid, payload) {
   if (!names.length || names.some((name) => !ACCOUNT_PORTABLE_FILES.includes(name) || !portableValueValid(name, payload.data[name]))) throw new Error('invalid_archive');
   const encoded = JSON.stringify(payload.data);
   if (Buffer.byteLength(encoded) > 8 * 1024 * 1024) throw new Error('archive_too_large');
-  const graphTransition = assertAccountGraphTransition(uid, { base: payload.base, data: payload.data });
+  return names;
+}
+function validatePortableImportRefs(uid, data) {
 
   // A receipt without its referenced domain objects is a false-success trap.
   // Validate the final merged archive view, not only the files present in this
   // particular import, because portable imports historically allowed subsets.
-  const existingQuestionnaire = payload.data.questionnaire ? null : questionnaireReadStored(uid);
-  const finalQuestionnaire = payload.data.questionnaire || existingQuestionnaire;
+  const existingQuestionnaire = data.questionnaire ? null : questionnaireReadStored(uid);
+  const finalQuestionnaire = data.questionnaire || existingQuestionnaire;
   if (finalQuestionnaire) {
-    const finalSettings = Object.prototype.hasOwnProperty.call(payload.data, 'settings')
-      ? payload.data.settings : questionnaireReadFile(uid, 'settings', {}, 'object');
-    const finalGoals = Object.prototype.hasOwnProperty.call(payload.data, 'goals')
-      ? payload.data.goals : questionnaireReadFile(uid, 'goals', [], 'array');
-    const finalTasks = Object.prototype.hasOwnProperty.call(payload.data, 'tasks')
-      ? payload.data.tasks : questionnaireReadFile(uid, 'tasks', [], 'array');
+    const finalSettings = Object.prototype.hasOwnProperty.call(data, 'settings')
+      ? data.settings : questionnaireReadFile(uid, 'settings', {}, 'object');
+    const finalGoals = Object.prototype.hasOwnProperty.call(data, 'goals')
+      ? data.goals : questionnaireReadFile(uid, 'goals', [], 'array');
+    const finalTasks = Object.prototype.hasOwnProperty.call(data, 'tasks')
+      ? data.tasks : questionnaireReadFile(uid, 'tasks', [], 'array');
     if (!questionnaireReceiptRefsValid(finalQuestionnaire, finalSettings, finalGoals, finalTasks)) throw new Error('invalid_archive');
   }
 
-  const dir = userDataDir(uid); fs.mkdirSync(dir, { recursive: true });
-  const snapshots = new Map(); const written = [];
-  for (const name of names) snapshots.set(name, fileSnapshot(path.join(dir, `${name}.json`)));
-  try {
-    for (const name of names) {
-      if (graphTransition.protected && COMMITMENT_PAIR_NAMES.includes(name)) continue;
-      backupFile(dir, name);
-      writeJsonAtomic(path.join(dir, `${name}.json`), payload.data[name]);
-      written.push(name);
-    }
-    if (graphTransition.protected) commitCommitmentPairDurable(uid, graphTransition);
-  } catch (error) {
-    for (const name of written) { try { restoreSnapshot(path.join(dir, `${name}.json`), snapshots.get(name)); } catch {} }
-    throw error;
+}
+function portableImportHash(value) {
+  return crypto.createHash('sha256').update(AccountImportV1.canonical(value)).digest('hex');
+}
+function portableImportSignature(uid, ticket) {
+  const { signature, ...body } = ticket;
+  return crypto.createHmac('sha256', SECRET).update('satoru.account-import/1\n' + uid + '\n'
+    + AccountImportV1.canonical(body)).digest('hex');
+}
+function portableImportTransition(uid, payload, names, actual, base) {
+  const graph = assertAccountGraphTransition(uid, { base, data: payload.data });
+  validatePortableImportRefs(uid, payload.data);
+  const data = Object.fromEntries(names.map(name => [name, Object.hasOwn(payload.data, name) ? payload.data[name]
+    : actual[name].exists ? actual[name].value : name === 'tasks' ? [] : {}]));
+  if (graph.protected) Object.assign(data, graph.pair);
+  // Validate size/depth/before-state BEFORE any backup or account-file mutation.
+  // Keep the shared journal's existing resource limits; do not silently fall back
+  // to the former sequential, non-recoverable importer for a large archive.
+  if (!CommitmentJournalV1.prepare({ txId: 'import:preview', createdAt: new Date().toISOString(), base: actual, data }).ok)
+    throw commitmentBoundaryError('import_state_not_supported', 422);
+  return { names, actual, data };
+}
+function previewPortableAccountImport(uid, payload) {
+  const files = portableImportNames(payload);
+  if (payload.writeVersion !== 2 || !AccountImportV1.idValid(payload.requestId)) throw new Error('invalid_archive');
+  const names = COMMITMENT_JOURNAL_ALLOWED_NAMES.filter(name => COMMITMENT_PAIR_NAMES.includes(name) || files.includes(name));
+  const actual = commitmentActualFiles(uid, names);
+  portableImportTransition(uid, payload, names, actual, payload.base || { settings: actual.settings, tasks: actual.tasks });
+  const ticket = { version: 1, requestId: payload.requestId, requestHash: portableImportHash(payload.data),
+    revisions: Object.fromEntries(names.map(name => [name, portableImportHash(actual[name])])) };
+  ticket.signature = portableImportSignature(uid, ticket);
+  return { ok: true, files, ticket };
+}
+function importPortableAccountData(uid, payload) {
+  const files = portableImportNames(payload);
+  if (payload.writeVersion !== undefined && payload.writeVersion !== 2) throw new Error('invalid_archive');
+  const modern = payload.writeVersion === 2;
+  const ticket = payload.ticket;
+  if (modern) {
+    if (!AccountImportV1.ticketValid(ticket, payload.data) || payload.requestId !== ticket.requestId
+      || ticket.requestHash !== portableImportHash(payload.data)
+      || !crypto.timingSafeEqual(Buffer.from(ticket.signature, 'hex'), Buffer.from(portableImportSignature(uid, ticket), 'hex')))
+      throw commitmentBoundaryError('invalid_import_ticket', 409);
   }
-  return names;
+  const names = COMMITMENT_JOURNAL_ALLOWED_NAMES.filter(name => COMMITMENT_PAIR_NAMES.includes(name) || files.includes(name));
+  const actual = commitmentActualFiles(uid, names);
+  const replay = files.every(name => actual[name].exists
+    && AccountImportV1.canonical(actual[name].value) === AccountImportV1.canonical(payload.data[name]));
+  if (!replay) {
+    if (modern && names.some(name => portableImportHash(actual[name]) !== ticket.revisions[name]))
+      throw commitmentBoundaryError('import_revision_conflict', 409);
+    const transition = portableImportTransition(uid, payload, names, actual,
+      modern ? { settings: actual.settings, tasks: actual.tasks } : payload.base);
+    commitCommitmentGraphDurable(uid, transition);
+  }
+  return { files, replay, ...(modern ? { writeVersion: 2, requestId: ticket.requestId, requestHash: ticket.requestHash } : {}) };
 }
 
 const EconomyWriteV1 = require('./public/economy-write-v1.js');
@@ -3954,6 +4000,18 @@ async function handleShadowTts(req, res, user) {
 const server = http.createServer(async (req, res) => {
   const u = req.url || '/';
   if (req.method === 'OPTIONS') return send(res, 204, '');
+
+  // A crashed import may include shelf, attention, profile and day data as well
+  // as the original protected pair. Every authenticated domain endpoint must
+  // see recovery before serving or modifying its own file. Auth stays usable
+  // so one damaged account does not prevent login, logout or account recovery.
+  if (u.startsWith('/api/') && !u.startsWith('/api/auth/')) {
+    const uid = sessionUserId(req);
+    if (uid) {
+      try { recoverCommitmentJournal(uid); }
+      catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
+    }
+  }
 
   // ---- Auth API ----
   if (u.startsWith('/api/auth/')) {
@@ -6181,13 +6239,14 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': MIME['.json'], 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store' });
     return res.end(JSON.stringify(archive, null, 2));
   }
-  if (u === '/api/account/import' && req.method === 'POST') {
+  if ((u === '/api/account/import' || u === '/api/account/import/preview') && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let payload; try { payload = JSON.parse(await readBody(req, 9 * 1024 * 1024)); }
     catch (error) { return sendJson(res, 400, { error: error && error.message === 'payload too large' ? 'archive_too_large' : 'invalid_archive' }); }
     try {
-      const files = importPortableAccountData(uid, payload);
-      return sendJson(res, 200, { ok: true, files, importedAt: new Date().toISOString() });
+      if (u.endsWith('/preview')) return sendJson(res, 200, previewPortableAccountImport(uid, payload));
+      const result = importPortableAccountData(uid, payload);
+      return sendJson(res, 200, { ok: true, ...result, importedAt: new Date().toISOString() });
     } catch (error) {
       if (sendCommitmentBoundaryError(res, error)) return;
       const code = error && (error.message === 'invalid_archive' || error.message === 'archive_too_large') ? 400 : 500;

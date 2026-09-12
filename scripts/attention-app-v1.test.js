@@ -24,7 +24,7 @@ test('attention engine, controller and renderer load before app and stay in the 
     assert.equal((SW.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1, `${file} must appear once in SHELL`);
   }
   assert.ok(INDEX.indexOf('src="app.js') > prior, 'app.js must run after every attention dependency');
-  assert.match(SW, /const CACHE = 'satoru-v258'/);
+  assert.match(SW, /const CACHE = 'satoru-v259'/);
 });
 
 test('client uses the dedicated checked envelope and never generic attention data files', () => {
@@ -53,7 +53,8 @@ test('server independently enforces ownership, whitelist, bounded payload and li
   assert.match(SERVER, /ATTENTION_MAX_BYTES = 2 \* 1024 \* 1024/);
   assert.match(SERVER, /if \(u === '\/api\/attention' \|\| u === '\/api\/attention\/episode'\)/);
   assert.match(SERVER, /const uid = sessionUserId\(req\)/);
-  assert.match(SERVER, /ACCOUNT_PORTABLE_FILES = \[[\s\S]{0,220}'attention'/);
+  assert.match(SERVER, /ACCOUNT_PORTABLE_FILES = AccountImportV1\.FILES/);
+  assert.ok(require('../public/account-import-v1').FILES.includes('attention'));
   assert.match(SERVER, /function deleteAccountLifecycle/);
   assert.match(APP, /const attentionLocalKey = AttentionStore\.key\(\)[\s\S]{0,650}localStorage\.removeItem\(attentionLocalKey\)/,
     'account deletion must remove the device-local attention envelope too');

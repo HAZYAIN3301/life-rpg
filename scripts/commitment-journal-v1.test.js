@@ -112,7 +112,7 @@ test('legacy two-file journals remain valid while optional files and unknown fil
   const missingOptionalPeer = graphInput(); delete missingOptionalPeer.data.skilltree;
   assert.deepEqual(J.prepare(missingOptionalPeer), { ok: false, error: 'invalid_prepare' });
   const unknown = graphInput();
-  unknown.base.profile = { exists: false, value: null }; unknown.data.profile = {};
+  unknown.base['ai-keys'] = { exists: false, value: null }; unknown.data['ai-keys'] = {};
   assert.deepEqual(J.prepare(unknown), { ok: false, error: 'invalid_prepare' });
 });
 

@@ -22405,12 +22405,119 @@ function accountDataCard() {
   </div>`;
 }
 
+function accountImportCurrent(overlay) {
+  return !!overlay?.isConnected && overlay._accountId === String(State.me?.id || '')
+    && overlay._writeEpoch === Store._writeEpoch;
+}
+function accountImportStatus(overlay) { return overlay.querySelector('.account-import-result, .account-reset-result'); }
+function accountImportControls(overlay, busy) {
+  overlay._saving = busy;
+  overlay.querySelectorAll('button, input').forEach(control => { control.disabled = busy; });
+  const button = overlay.querySelector('[data-action="confirm-account-import"]');
+  if (button) button.textContent = overlay._importAttempt?.ticket ? t('Подтвердить импорт')
+    : window.AccountImportV1.text(busy ? 'checking' : 'retryCheck', lang());
+}
+function accountImportFailure(response, data, phase) {
+  const code = data?.error;
+  const key = ['import_revision_conflict', 'invalid_import_ticket', 'commitment_revision_conflict'].includes(code) ? 'conflict'
+    : code === 'archive_too_large' ? 'capacity' : code === 'import_state_not_supported' ? 'unsupported'
+      : code === 'invalid_archive' ? 'invalid' : phase === 'prepare' ? 'preparingFailed' : 'unconfirmed';
+  return window.AccountImportV1.text(key, lang());
+}
+async function accountImportRequest(overlay, url, body) {
+  const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body, signal: AbortSignal.timeout(30000) });
+  if (!accountImportCurrent(overlay)) return null;
+  let data; try { data = await response.json(); } catch {}
+  if (!accountImportCurrent(overlay)) return null;
+  if (response.status === 401 && ['not logged in', 'user not found'].includes(data?.error)) {
+    handleAccountSessionExpired(); return null;
+  }
+  return { response, data };
+}
+async function prepareAccountImport(overlay) {
+  const policy = window.AccountImportV1;
+  if (!policy || !accountImportCurrent(overlay) || overlay._saving) return false;
+  const status = accountImportStatus(overlay);
+  accountImportControls(overlay, true); status.textContent = policy.text('checking', lang());
+  try {
+    if (!overlay._importAttempt) {
+      const data = structuredClone(overlay._archive.data), base = commitmentWriteBase();
+      if (!policy.dataValid(data) || !base) throw new Error('invalid_import_state');
+      const request = { format: 'satoru-account', version: 1, writeVersion: 2, requestId: 'import_' + uid(), base, data };
+      overlay._importAttempt = { data, previewBody: JSON.stringify(request), requestId: request.requestId };
+    }
+    const attempt = overlay._importAttempt;
+    const result = await accountImportRequest(overlay, '/api/account/import/preview', attempt.previewBody);
+    if (!result || !accountImportCurrent(overlay)) return false;
+    if (!result.response.ok || !policy.previewValid(result.data, attempt.requestId, attempt.data)) {
+      status.textContent = accountImportFailure(result.response, result.data, 'prepare'); return false;
+    }
+    attempt.ticket = structuredClone(result.data.ticket);
+    attempt.body = JSON.stringify({ format: 'satoru-account', version: 1, writeVersion: 2,
+      requestId: attempt.requestId, data: attempt.data, ticket: attempt.ticket });
+    status.textContent = ''; return true;
+  } catch {
+    if (accountImportCurrent(overlay)) status.textContent = policy.text('preparingFailed', lang());
+    return false;
+  } finally { if (accountImportCurrent(overlay)) accountImportControls(overlay, false); }
+}
+async function commitAccountImport(overlay) {
+  const policy = window.AccountImportV1;
+  if (!policy || !accountImportCurrent(overlay) || overlay._saving) return false;
+  const reset = overlay.id === 'account-reset-modal', status = accountImportStatus(overlay);
+  if (reset) {
+    const input = overlay.querySelector('input[name="confirm"]');
+    if (input.value.trim() !== 'RESET') { status.textContent = t('Для сброса введи RESET'); input.focus(); return false; }
+  }
+  if (reset && !overlay._importAttempt) {
+    const data = accountResetDataCandidate();
+    if (!data) { status.textContent = policy.text('preparingFailed', lang()); return false; }
+    overlay._archive = { data };
+  }
+  if (!overlay._importAttempt?.ticket) {
+    const prepared = await prepareAccountImport(overlay);
+    // Import's retry button only repeats the read-only check. Its newly prepared
+    // candidate still waits for the user's explicit confirmation in this dialog.
+    if (!reset || !prepared || !accountImportCurrent(overlay)) return false;
+  }
+  const attempt = overlay._importAttempt;
+  accountImportControls(overlay, true); status.textContent = policy.text('saving', lang());
+  let failure = policy.text('unconfirmed', lang()), saved = false;
+  try {
+    saved = await Store.runExclusive(policy.namesFor(attempt.data), async ({ writeEpoch, accountId }) => {
+      if (!accountImportCurrent(overlay)) return false;
+      const result = await accountImportRequest(overlay, '/api/account/import', attempt.body);
+      if (!result || !accountImportCurrent(overlay)) return false;
+      if (!result.response.ok) { failure = accountImportFailure(result.response, result.data, 'save'); return false; }
+      if (!policy.receiptValid(result.data, attempt.ticket, attempt.data)) return false;
+      return !reset || rememberDedicatedCommitSlots(attempt.data, { writeEpoch, accountId });
+    });
+  } catch {} finally { if (accountImportCurrent(overlay)) accountImportControls(overlay, false); }
+  if (!accountImportCurrent(overlay)) return false;
+  if (!saved) {
+    status.textContent = failure;
+    overlay.querySelector('[data-action="confirm-account-import"], [data-action="confirm-account-reset"]')?.focus();
+    return false;
+  }
+  if (reset) {
+    State.settings = attempt.data.settings; State.tasks = attempt.data.tasks; State.days = attempt.data.days; State.view = 'today';
+    closeAccountDialog('account-reset-modal', { restoreFocus: false }); toast(t('Сброшено')); render();
+  } else {
+    status.textContent = t('Архив импортирован');
+    // Fence delayed local writers immediately, rather than letting stale State
+    // write over the imported archive during a decorative reload timeout.
+    Store.cancelPending(); location.reload();
+  }
+  return true;
+}
 function showAccountImportDialog(archive, filename, returnFocus) {
   document.getElementById('account-import-modal')?.remove();
   const files = Object.keys(archive.data || {});
   const overlay = document.createElement('div'); overlay.id = 'account-import-modal'; overlay.className = 'modal-overlay';
   overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); overlay.setAttribute('aria-labelledby', 'account-import-title'); overlay.setAttribute('aria-describedby', 'account-import-copy');
   overlay._archive = archive;
+  overlay._accountId = String(State.me?.id || ''); overlay._writeEpoch = Store._writeEpoch;
   overlay.innerHTML = `<div class="paywall-box account-dialog-box">
     <button type="button" class="modal-x" data-action="close-account-import" aria-label="${esc(t('Закрыть'))}">✕</button>
     <h2 id="account-import-title" tabindex="-1">${t('Подтверди импорт данных')}</h2>
@@ -22420,11 +22527,14 @@ function showAccountImportDialog(archive, filename, returnFocus) {
     <p class="account-import-result muted" role="alert" aria-live="assertive"></p>
   </div>`;
   mountAccountDialog(overlay, { initial: '#account-import-title', returnFocus });
+  prepareAccountImport(overlay);
+  return overlay;
 }
 
 function showResetDataDialog(returnFocus = document.activeElement) {
   document.getElementById('account-reset-modal')?.remove();
   const overlay = document.createElement('div'); overlay.id = 'account-reset-modal'; overlay.className = 'modal-overlay';
+  overlay._accountId = String(State.me?.id || ''); overlay._writeEpoch = Store._writeEpoch;
   overlay.setAttribute('role', 'dialog'); overlay.setAttribute('aria-modal', 'true'); overlay.setAttribute('aria-labelledby', 'account-reset-title'); overlay.setAttribute('aria-describedby', 'account-reset-copy');
   overlay.innerHTML = `<div class="paywall-box account-dialog-box">
     <button type="button" class="modal-x" data-action="close-account-reset" aria-label="${esc(t('Закрыть'))}">✕</button>
@@ -30172,45 +30282,10 @@ async function onClick(e) {
   if (action === 'close-account-import') { closeAccountDialog('account-import-modal'); return; }
   if (action === 'close-account-reset') { closeAccountDialog('account-reset-modal'); return; }
   if (action === 'confirm-account-reset') {
-    const overlay = document.getElementById('account-reset-modal'); if (!overlay) return;
-    const input = overlay.querySelector('input[name="confirm"]'), result = overlay.querySelector('.account-reset-result');
-    if (!input || input.value.trim() !== 'RESET') { result.textContent = t('Для сброса введи RESET'); input?.focus(); return; }
-    el.disabled = true; input.disabled = true;
-    const resetData = accountResetDataCandidate();
-    const base = commitmentWriteBase();
-    if (!resetData || !base) {
-      result.textContent = t('Сброс не завершён. Данные сохранены — повтори попытку.'); el.disabled = false; input.disabled = false; input.focus(); return;
-    }
-    const archive = { format: 'satoru-account', version: 1, base, data: resetData };
-    const committed = await Store.runExclusive(['days', 'settings', 'tasks'], async ({ writeEpoch, accountId }) => {
-      const { response } = await accountJson('/api/account/import', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(archive),
-      });
-      if (await commitmentBoundaryRejected(response) || !response.ok) return false;
-      return rememberDedicatedCommitSlots(resetData, { writeEpoch, accountId });
-    }).catch(() => false);
-    if (!committed) {
-      result.textContent = t('Сброс не завершён. Данные сохранены — повтори попытку.'); el.disabled = false; input.disabled = false; input.focus(); return;
-    }
-    State.settings = resetData.settings; State.tasks = resetData.tasks; State.days = resetData.days; State.view = 'today';
-    closeAccountDialog('account-reset-modal', { restoreFocus: false }); toast(t('Сброшено')); render();
-    return;
+    commitAccountImport(document.getElementById('account-reset-modal')); return;
   }
   if (action === 'confirm-account-import') {
-    const overlay = document.getElementById('account-import-modal'); if (!overlay || !overlay._archive) return;
-    const result = overlay.querySelector('.account-import-result'); el.disabled = true;
-    const base = commitmentWriteBase();
-    const archive = base ? { ...overlay._archive, base } : null;
-    const imported = archive && await Store.runExclusive(['settings', 'tasks'], async () => {
-      const { response } = await accountJson('/api/account/import', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(archive),
-      });
-      if (await commitmentBoundaryRejected(response)) return false;
-      return response.ok;
-    }).catch(() => false);
-    if (!imported) { result.textContent = t('Импорт не завершён. Исходные данные сохранены — повтори попытку.'); el.disabled = false; return; }
-    result.textContent = t('Архив импортирован'); setTimeout(() => location.reload(), 350);
-    return;
+    commitAccountImport(document.getElementById('account-import-modal')); return;
   }
   if (action === 'crash-export') {
     const form = document.getElementById('recover-data');
@@ -32394,17 +32469,21 @@ function onChange(e) {
   }
   if (e.target.id === 'account-import-file') {
     const input = e.target, file = input.files && input.files[0], status = document.getElementById('account-import-status');
+    const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+    const current = () => accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch && input.isConnected;
     input.value = '';
     if (!file) return;
     (async () => {
       try {
         if (file.size > 9 * 1024 * 1024) throw new Error('large');
         const archive = JSON.parse(await file.text());
+        if (!current()) return;
         const valid = archive && archive.format === 'satoru-account' && Number(archive.version) === 1 && archive.data && typeof archive.data === 'object' && !Array.isArray(archive.data) && Object.keys(archive.data).length;
         if (!valid) throw new Error('invalid');
         if (status) status.textContent = '';
         showAccountImportDialog(archive, file.name, input.closest('.account-import-label'));
       } catch {
+        if (!current()) return;
         if (status) { status.textContent = t('Архив не распознан. Выбери JSON-экспорт Satoru.'); status.setAttribute('role', 'alert'); }
       }
     })();
@@ -32975,7 +33054,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v258';
+const PWA_CACHE_VERSION = 'satoru-v259';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
