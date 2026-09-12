@@ -3,12 +3,15 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Текущий checkpoint 12.09:** evening-close v256 опубликован `e269cf7`;
-Railway app/TTS success, 15/15 live bytes совпали 16:23 UTC. Planned-start v255
-также опубликован `b21ef90` (13/13 live bytes), after-lapse-return v254 — `52a124f`.
+**Текущий checkpoint 12.09:** supply Вдохновения v257 опубликован `1b3f52b`;
+Railway app/TTS success, 21/21 live bytes совпали 16:41 UTC, 2341/2341 tests PASS.
+Receipt: art-factory/inspiration-v257/release-receipt.json; профильный browser QA —
+art-factory/inspiration-v257/qa-receipt.json. Evening-close v256 опубликован `e269cf7`
+(15/15 live bytes), planned-start v255 — `b21ef90` (13/13),
+after-lapse-return v254 — `52a124f`.
 Контракты EVENING-CLOSE-V256.md, EVENING-WRITES-V256.md и
 SECRETARY-NEXT-MOVES-TRANSPORT-V1.md. Не повторять эти публикации.
-Текущий срез v257 — supply Вдохновения в действующей подборке и подтверждённых
+Срез v257 — supply Вдохновения в действующей подборке и подтверждённых
 owner-записях: девять собственных текстов, восемь внешних материалов на проверке.
 Проверки/публикация конкретного SHA — верх DEVLOG;
 контракт INSPIRATION-SUPPLY-RUNTIME-INTEGRATION-V1.md.
@@ -131,9 +134,10 @@ Site public, обновление явно разрешено.
   `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
   источником истины.
 - Новый runtime — **структурный v247 + полировка v248 + дуо/награды v249/v250 +
-  подтверждённые записи v251–v253, возврат v254 и planned-start v255**.
-  PWA cache `satoru-v255`, app pin `20260911-secretary-v255-1`;
-  CSS pins не менялись с последнего релиза.
+  подтверждённые записи v251–v253, возврат v254, planned-start v255,
+  evening-close v256 и supply Вдохновения v257**.
+  PWA cache `satoru-v257`, app/supply pin `20260912-inspiration-v257-1`;
+  CSS и изменённые secretary modules сохраняют pin `20260912-secretary-v256-1`.
   Актуальный статус master/Railway и live-проверки — верх DEVLOG; старый receipt v250
   не доказывает публикацию нового кандидата. Контракт — FEATURE-WRITES-V253.md.
   Границы UI-аудита всех вкладок остаются в `PRODUCT-UX-AUDIT-V248.md`; v253 не выдаёт

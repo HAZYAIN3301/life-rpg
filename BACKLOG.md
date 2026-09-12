@@ -4,7 +4,8 @@
   девять собственных текстов на пяти языках, все 11 старых IDs сохранены, восемь
   внешних материалов ожидают проверки. Честные shortage/empty, stable daily ids,
   сохранённые личные записи без проигрывания неподтверждённого источника. Реальные
-  settings/shelf writes, повтор и guards аккаунта. Проверки/публикация — верх DEVLOG,
+  settings/shelf writes, повтор и guards аккаунта. Опубликовано `1b3f52b`:
+  Railway app/TTS success, 21/21 live bytes, 2341/2341 tests PASS. Подробности — DEVLOG,
   INSPIRATION-SUPPLY-RUNTIME-INTEGRATION-V1.md.
 - [x] **v256, evening-close:** собственная вечерняя граница/opt-in, tonightSchedule
   из сохранённых интервалов, один вопрос и три существующих перехода. Общий claimed
@@ -81,7 +82,8 @@
   единый подробный приоритетный план, не вторая скрытая очередь. Reward receipt/boost
   закрыты v250; v251–v253 закрывают покупной flow, игровые perks и ряд Guide/habit writes.
   P1: три конкретные capability Тени, исполнимый сигнал привычки, browser setup/delivery,
-  contextual guide/first-value, supply Вдохновения (сейчас 11 starter items), развитие
+  contextual guide/first-value, supply Вдохновения (v257: девять допущенных текстов,
+  восемь внешних материалов на проверке; прежние 11 IDs сохранены), развитие
   реальных навыков. P2: ценность покупок, канон/характер/лор/motion/ad production.
   CLAUDE-OPUS5-NEXT-WORK.md: №1 выполнен Codex; №2/№3/№4 готовы для Claude.
   Не возобновлять аватар или старые уже выполненные задачи автоматически.

@@ -2,6 +2,13 @@
 
 ## [2026-09-12] v257 — проверенный запас Вдохновения в реальном приложении
 
+**Опубликовано 12.09 18:41 CEST:** `1b3f52b3cd154110c13c8c5f77d62d82d57becb1`.
+Railway app `1ce95ca8-df7c-4a21-9502-d87b65bcaf7e`, TTS
+`7f34f487-b43f-47b8-8a0b-f64b1af6f949` success; 21/21 live bytes совпали,
+profiles 200, protected POST 401. Receipt: art-factory/inspiration-v257/release-receipt.json.
+Профильные браузерные сценарии выполнены на изолированном synthetic аккаунте;
+это не проверка действий в живом аккаунте и не полный visual QA приложения.
+
 Подготовленный пакет supply подключён перед существующим выбором подборки.
 Admission → язык/частота → catalog rows → прежний InspirationProfile.choose;
 ранжирование и профиль вкусов сохранены. Все 11 старых IDs остаются в манифесте.
@@ -42,7 +49,7 @@ Feedback с причиной + 500 → текст на месте → повто
 
 App/SW v257; четыре новых supply modules в SHELL и pinned index, обновлены pins
 catalog/ReturnShelfUI/app. CSS и secretary modules сохраняют опубликованные pins v256.
-Публикация конкретного SHA фиксируется после Railway app/TTS и live-byte gate.
+Публикация конкретного SHA подтверждена Railway app/TTS и live-byte gate выше.
 Повтор по всей 45-дневной истории и периодический сетевой recheck ещё не подключены;
 reviewQueue пока лишь конечная очередь оператора. Rest Profile остаётся на паузе.
 CommitmentV2 task links, полный First Value, остальные v2 push и legacy morning outcome
