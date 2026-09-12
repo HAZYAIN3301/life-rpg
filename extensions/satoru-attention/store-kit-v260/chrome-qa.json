@@ -1,0 +1,305 @@
+{
+  "browser": "chrome",
+  "browserVersion": "153.0.8010.37",
+  "at": "2026-09-12T21:01:30.004Z",
+  "passed": true,
+  "scenarios": [
+    "empty readback",
+    "native saved rule and script readback",
+    "user test gesture to real navigation",
+    "actual local gate receipt",
+    "375px options and gate overflow",
+    "reduced motion",
+    "real bridge on locally fulfilled production origin",
+    "20 landing locale/theme/viewport combinations"
+  ],
+  "fixture": "Disposable browser profile; source runtime; test manifest adds only HTTP/HTTPS boundary.satoru.test/* to permanent grants. Production-origin landing responses are fulfilled from local files. No live browsing/user data. Does not prove the native optional-permission dialog or signed install/update.",
+  "status": {
+    "installed": true,
+    "version": "0.6.0",
+    "configuredSites": 1,
+    "active": null,
+    "checkedAt": "2026-09-12T21:01:28.528Z",
+    "enforcement": {
+      "state": "active",
+      "enabledSites": 1,
+      "permittedSites": 1,
+      "protectionEnabled": false
+    },
+    "selfTest": {
+      "state": "passed",
+      "checkedAt": "2026-09-12T21:01:28.520Z"
+    }
+  },
+  "workerRestart": {
+    "state": "passed",
+    "method": "Browser acknowledges MV3 worker close request; GET_HEALTH then confirms applied rules and saved test receipt. Target IDs may be reused, so no new-process inference is made."
+  },
+  "reload": {
+    "state": "not_verified",
+    "reason": "runtime.reload disabled/closed the automation-loaded unpacked fixture in both browsers. Ordinary user Reload and signed updates need separate owner QA."
+  },
+  "views": [
+    {
+      "lang": "ru",
+      "theme": "dark",
+      "width": 375,
+      "overflow": false,
+      "language": "ru",
+      "state": "Подключено · настроенные правила применены",
+      "test": "Последняя проверка: настоящая граница появилась на одном сайте.",
+      "buttons": [
+        44,
+        58
+      ]
+    },
+    {
+      "lang": "ru",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "language": "ru",
+      "state": "Подключено · настроенные правила применены",
+      "test": "Последняя проверка: настоящая граница появилась на одном сайте.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "ru",
+      "theme": "light",
+      "width": 375,
+      "overflow": false,
+      "language": "ru",
+      "state": "Подключено · настроенные правила применены",
+      "test": "Последняя проверка: настоящая граница появилась на одном сайте.",
+      "buttons": [
+        44,
+        58
+      ]
+    },
+    {
+      "lang": "ru",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "language": "ru",
+      "state": "Подключено · настроенные правила применены",
+      "test": "Последняя проверка: настоящая граница появилась на одном сайте.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 375,
+      "overflow": false,
+      "language": "en",
+      "state": "Connected · configured rules are applied",
+      "test": "Last test: the real boundary appeared for one site.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "en",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "language": "en",
+      "state": "Connected · configured rules are applied",
+      "test": "Last test: the real boundary appeared for one site.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 375,
+      "overflow": false,
+      "language": "en",
+      "state": "Connected · configured rules are applied",
+      "test": "Last test: the real boundary appeared for one site.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "en",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "language": "en",
+      "state": "Connected · configured rules are applied",
+      "test": "Last test: the real boundary appeared for one site.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "de",
+      "theme": "dark",
+      "width": 375,
+      "overflow": false,
+      "language": "de",
+      "state": "Verbunden · eingerichtete Regeln angewendet",
+      "test": "Letzter Test: Die echte Grenze erschien für eine Website.",
+      "buttons": [
+        44,
+        58
+      ]
+    },
+    {
+      "lang": "de",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "language": "de",
+      "state": "Verbunden · eingerichtete Regeln angewendet",
+      "test": "Letzter Test: Die echte Grenze erschien für eine Website.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "de",
+      "theme": "light",
+      "width": 375,
+      "overflow": false,
+      "language": "de",
+      "state": "Verbunden · eingerichtete Regeln angewendet",
+      "test": "Letzter Test: Die echte Grenze erschien für eine Website.",
+      "buttons": [
+        44,
+        58
+      ]
+    },
+    {
+      "lang": "de",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "language": "de",
+      "state": "Verbunden · eingerichtete Regeln angewendet",
+      "test": "Letzter Test: Die echte Grenze erschien für eine Website.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "uk",
+      "theme": "dark",
+      "width": 375,
+      "overflow": false,
+      "language": "uk",
+      "state": "Підключено · налаштовані правила застосовані",
+      "test": "Остання перевірка: справжня межа з’явилася на одному сайті.",
+      "buttons": [
+        44,
+        58
+      ]
+    },
+    {
+      "lang": "uk",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "language": "uk",
+      "state": "Підключено · налаштовані правила застосовані",
+      "test": "Остання перевірка: справжня межа з’явилася на одному сайті.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "uk",
+      "theme": "light",
+      "width": 375,
+      "overflow": false,
+      "language": "uk",
+      "state": "Підключено · налаштовані правила застосовані",
+      "test": "Остання перевірка: справжня межа з’явилася на одному сайті.",
+      "buttons": [
+        44,
+        58
+      ]
+    },
+    {
+      "lang": "uk",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "language": "uk",
+      "state": "Підключено · налаштовані правила застосовані",
+      "test": "Остання перевірка: справжня межа з’явилася на одному сайті.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "es",
+      "theme": "dark",
+      "width": 375,
+      "overflow": false,
+      "language": "es",
+      "state": "Conectado · reglas configuradas aplicadas",
+      "test": "Última prueba: apareció el límite real para un sitio.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "es",
+      "theme": "dark",
+      "width": 1280,
+      "overflow": false,
+      "language": "es",
+      "state": "Conectado · reglas configuradas aplicadas",
+      "test": "Última prueba: apareció el límite real para un sitio.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "es",
+      "theme": "light",
+      "width": 375,
+      "overflow": false,
+      "language": "es",
+      "state": "Conectado · reglas configuradas aplicadas",
+      "test": "Última prueba: apareció el límite real para un sitio.",
+      "buttons": [
+        44,
+        44
+      ]
+    },
+    {
+      "lang": "es",
+      "theme": "light",
+      "width": 1280,
+      "overflow": false,
+      "language": "es",
+      "state": "Conectado · reglas configuradas aplicadas",
+      "test": "Última prueba: apareció el límite real para un sitio.",
+      "buttons": [
+        44,
+        44
+      ]
+    }
+  ],
+  "errors": []
+}

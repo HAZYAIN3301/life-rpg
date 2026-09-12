@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-12",
+  "base": "3f0da1111dcb808122795c9a1a117633803853e7",
+  "scope": "textual Shadow module, secretary copy and bounded app integration",
+  "command": "node --test --test-concurrency=2 scripts/shadow-persona-v260.test.js scripts/secretary-next-moves-client-v1.test.js scripts/secretary-evening-client-v1.test.js scripts/secretary-planned-client-v1.test.js scripts/day-load-v1.test.js scripts/assistant-deliberation-v187.test.js scripts/assistant-response-integrity-v186.test.js scripts/habits-integrity-v1.test.js scripts/secretary-recovery-v197.test.js",
+  "tests": { "total": 97, "pass": 96, "fail": 1, "skip": 0 },
+  "personaAndSecretarySubset": { "total": 59, "pass": 59, "newPersonaTests": 19 },
+  "remainingFailure": {
+    "file": "scripts/habits-integrity-v1.test.js",
+    "case": "Habits commit is account-owned, validates its allowlist and is idempotent",
+    "error": "listen EPERM: operation not permitted 127.0.0.1:46285",
+    "stage": "local test server startup before assertions",
+    "required": "integrator rerun with localhost listener permission"
+  },
+  "syntax": "PASS for public/app.js, public/shadow-persona-v1.js, public/secretary-next-moves-ui-v1.js and scripts/shadow-persona-v260.test.js",
+  "copyArtifacts": { "ads": 3, "shortStories": 3, "locales": 5, "jsonParse": "PASS", "sourcePaths": "PASS" },
+  "paidModelCalls": 0,
+  "mediaGenerated": false,
+  "visualAcceptance": false,
+  "publishedByThisWorker": false
+}

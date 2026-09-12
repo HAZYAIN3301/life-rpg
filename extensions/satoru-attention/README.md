@@ -1,4 +1,4 @@
-# Satoru Attention — cross-browser companion v4
+# Satoru Attention — Chrome/Brave boundary v260 (0.6.0)
 
 Manifest V3 extension for the desktop R3 attention boundary across Chromium, Firefox and
 Safari. It controls only sites that
@@ -13,9 +13,10 @@ The public entry point is:
 `https://life-rpg-production-416a.up.railway.app/browser-companion.html`
 
 It provides the current download and a guided three-step test installation. The production
-one-click route is signed store distribution. The build creates Chromium, Firefox and Safari
-packages plus upload aliases for Chrome Web Store, Edge Add-ons, Opera Add-ons, Firefox AMO
-and Apple App Store; the remaining owner-account steps are in `PUBLISH-CHECKLIST.md`.
+one-click route is signed store distribution. `node scripts/build-browser-companion-v260.mjs`
+builds the current Chromium test/upload packages for Chrome and Brave. The older v215
+Firefox/Safari artifacts remain available; this release does not claim fresh QA for those
+engines. The submission kit and owner steps are in `store-kit-v260/SUBMISSION.md`.
 
 ### Test build (unpacked or temporary)
 
@@ -30,6 +31,10 @@ and Apple App Store; the remaining owner-account steps are in `PUBLISH-CHECKLIST
 5. The options page opens. Add one attention site and approve the prompt for that exact
    hostname. Browser Protection is a separate optional switch and requests all-site access
    because category blocking cannot work with an exact-host grant.
+6. In **Check your boundary**, refresh status, select that site and run **Test this boundary**.
+   This opens its real homepage in a new tab; if the guard fails the site can load. Success
+   requires the gate/block page in that exact tab and a persisted receipt. It does not start
+   a session, change rules or award anything. Return to the installation page to see status.
 
 Pin Satoru Attention from Brave's Extensions toolbar menu. Its badge shows `NEW` before
 setup, the configured-site count while idle, `ON` while a boundary is active,
@@ -142,6 +147,18 @@ time to continue. Small NTP corrections remain tolerated.
 
 ## Satoru bridge v1
 
+v260 keeps the bridge read-only and adds a current check of actual browser permissions,
+dynamic rules and registered guard scripts. `active` means the configured rules match the
+browser's applied state, not that every site is protected. A permission removal is distinct
+from an API failure or rule mismatch (`unknown`). The app treats signals older than 90s as
+unconfirmed. No worker keepalive is introduced; explicit reads and foreground return wake it.
+
+The self-test stores one local record (state/time/version/config fingerprint and test tab),
+never an attempted URL history. Pending tests fail after 60s. Changed rules or extension
+version make the prior result `outdated`. An active permitted session is not shortened for
+testing. The test confirms entry into one configured site; expiry/sleep/restart and other
+sites are separate QA. The receipt does not prove an uninstall-proof or system-level lock.
+
 The content script runs only on:
 
 `https://life-rpg-production-416a.up.railway.app/*`
@@ -154,7 +171,7 @@ Announcement:
 {
   source: 'satoru-attention-extension',
   type: 'SATORU_ATTENTION_EXTENSION_READY',
-  version: '0.5.4'
+  version: '0.6.0'
 }
 ```
 
@@ -177,9 +194,12 @@ Read-only response:
   requestId: '...',
   status: {
     installed: true,
-    version: '0.5.4',
+    version: '0.6.0',
     configuredSites: 1,
-    active: null // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
+    active: null, // or { app, phase: 'active'|'boundary', remainingSeconds, mode }
+    checkedAt: '2026-09-12T20:00:00.000Z',
+    enforcement: { state: 'active', enabledSites: 1, permittedSites: 1, protectionEnabled: false },
+    selfTest: { state: 'passed', checkedAt: '2026-09-12T19:59:00.000Z' }
   }
 }
 ```

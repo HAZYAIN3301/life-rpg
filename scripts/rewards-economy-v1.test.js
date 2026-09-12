@@ -90,7 +90,10 @@ test('daily rewards keep an earned, disclosed and power-free surprise', () => {
   assert.match(functionBody('lootboxCard'), /Free и Pro получают один и тот же набор и одну попытку/);
   assert.match(functionBody('lootboxCard'), /Ставки нет, силу предметы не дают, дубликатов косметики нет/);
   assert.doesNotMatch(APP, /function (?:rollLoot|lootResolve|applyLoot|showLootEditor)\s*\(/);
-  assert.match(functionBody('openChest'), /rollChestPrize/);
+  assert.doesNotMatch(functionBody('openChest'), /rollChestPrize/);
+  assert.match(functionBody('openChest'), /commitDailyRewardDialog/);
+  assert.match(functionBody('commitDailyRewardDialog'), /await claimDailyChest/);
+  assert.deepEqual(require('../public/chest-reward-policy-v1').RARITY_WEIGHTS, { common: 60, rare: 28, epic: 10, legendary: 2 });
   assert.doesNotMatch(functionBody('openChest'), /loot-track|loot-window|Math\.random/);
   assert.match(functionBody('commitDailyRewardDialog'), /startChestReel\(overlay\)/);
   assert.match(functionBody('commitDailyRewardDialog'), /skip\.hidden = false; skip\.disabled = false/);

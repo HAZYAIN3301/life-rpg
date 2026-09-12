@@ -1,0 +1,224 @@
+{
+  "checkedAt": "2026-09-12T21:05:45.462244+00:00",
+  "release": "v260",
+  "fullSuite": {
+    "command": "node --test --test-concurrency=2 scripts/*.test.js",
+    "passed": 2621,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 67627.403708
+  },
+  "rewardUI": {
+    "browser": "Codex in-app browser",
+    "data": "Isolated synthetic account, DATA_DIR outside checkout; no production writes",
+    "matrix": [
+      {
+        "width": 375,
+        "theme": "dark",
+        "locale": "ru",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "dark",
+        "locale": "en",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "dark",
+        "locale": "de",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "dark",
+        "locale": "uk",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "dark",
+        "locale": "es",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "light",
+        "locale": "ru",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "light",
+        "locale": "en",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "light",
+        "locale": "de",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "light",
+        "locale": "uk",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 375,
+        "theme": "light",
+        "locale": "es",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "dark",
+        "locale": "ru",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "dark",
+        "locale": "en",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "dark",
+        "locale": "de",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "dark",
+        "locale": "uk",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "dark",
+        "locale": "es",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "light",
+        "locale": "ru",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "light",
+        "locale": "en",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "light",
+        "locale": "de",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "light",
+        "locale": "uk",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      },
+      {
+        "width": 1280,
+        "theme": "light",
+        "locale": "es",
+        "overflow": false,
+        "dialogContained": true,
+        "unconfirmedClaimDisabled": true,
+        "visibleTargetsAtLeast42px": true
+      }
+    ],
+    "scenarios": [
+      "durable HTTP 200 response lost, unconfirmed UI",
+      "same request retry confirms exactly one existing reward",
+      "claim enabled before optional ceremony",
+      "server history/private receipt counts agree after reload",
+      "HTTP 500 and malformed 200 do not show or apply a prize",
+      "keyboard focus remains in dialog",
+      "real protected settings/tasks commit from another tab is rejected with localized chest conflict; claim stays disabled",
+      "emulated reduced-motion media preference: confirmed result visible, reel transition none"
+    ],
+    "serverRecovery": [
+      "after_settings_write",
+      "after_tasks_write",
+      "after_lootbox_write",
+      "after_chest_receipts_write",
+      "after_committed_journal"
+    ]
+  },
+  "extensionQA": [
+    "extensions/satoru-attention/store-kit-v260/chrome-qa.json",
+    "extensions/satoru-attention/store-kit-v260/brave-qa.json"
+  ],
+  "limitations": [
+    "No authenticated production mutation scenario",
+    "Native optional permission prompt, ordinary extension Reload, signed install and N-to-N+1 update are not certified",
+    "Textual Shadow basis is accepted; illustrations, audio/video production and full artistic canon approval are separate",
+    "Generic/import/settings-only wallet authority is not closed by the chest issuer"
+  ]
+}

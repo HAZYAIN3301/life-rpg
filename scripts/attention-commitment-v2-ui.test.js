@@ -83,8 +83,8 @@ test('CommitmentV2 loads after untouched v1, before the store and app, and is ca
   const app = INDEX.indexOf('src="app.js');
   assert.ok(v1 >= 0 && v2 > v1 && store > v2 && app > store);
   assert.equal((SW.match(/'commitment-v2\.js'/g) || []).length, 1);
-  assert.match(SW, /const CACHE = 'satoru-v259'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v259'/);
+  assert.match(SW, /const CACHE = 'satoru-v260'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v260'/);
 });
 
 test('one Attention form writes an exact-label duration agreement and preserves legacy history', () => {

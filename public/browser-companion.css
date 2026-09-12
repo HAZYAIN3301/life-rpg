@@ -30,6 +30,12 @@ h1 { max-width: 820px; margin: 0; font-size: clamp(2.4rem, 7vw, 5.5rem); line-he
 .bc-actions a, .bc-install a, .bc-limit a, .bc-addresses button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 13px; padding: 10px 18px; font-weight: 800; text-decoration: none; }
 .bc-primary, .bc-install a, .bc-limit a { border-color: transparent !important; color: var(--accent-ink) !important; background: var(--accent); }
 .bc-secondary { color: var(--text); background: var(--surface-2); }
+.bc-actions button { min-height: 44px; padding: 10px 18px; border: 1px solid var(--line); border-radius: 13px; font: inherit; font-weight: 800; cursor: pointer; }
+.bc-actions button:disabled { opacity: .65; cursor: default; }
+.bc-connect { margin-top: 32px; max-width: 920px; padding: clamp(24px, 5vw, 52px); border-radius: var(--radius); background: var(--surface); scroll-margin-top: 20px; }
+.bc-connect h2 { margin-top: 0; font-size: clamp(1.75rem, 4vw, 2.6rem); }
+.bc-connect p { color: var(--muted); line-height: 1.6; overflow-wrap: anywhere; }
+#bc-connection-state { color: var(--text); font-weight: 750; }
 .bc-store-note { margin: 0 !important; padding-top: 14px; border-top: 1px solid var(--line); font-size: .9rem !important; }
 .bc-benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 72px 0; }
 .bc-benefits article { padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); background: rgb(16 26 43 / 86%); }

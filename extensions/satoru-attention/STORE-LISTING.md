@@ -33,8 +33,15 @@ person enables it. The bundled catalog is local; browsing addresses are not tran
 
 Rules, active sessions and the last 100 minimal outcomes remain in `chrome.storage.local`.
 The extension does not collect browsing history, page titles, watched items, cookies or the
-reason for an emergency exit. The Satoru web app can read only the installed version, number
-of configured sites, and the bounded state of the current session.
+reason for an emergency exit. The current local session may include your entered detail,
+topic and expected outcome. The Satoru web app can read only the installed version, counts
+of enabled/permitted sites, bounded current-session state, rule-application status, and the
+state/time of the latest boundary test. Site addresses and those private details stay local.
+
+After setup, test entry into one configured website from extension settings. The test opens
+the site's real homepage in a new tab and records success only when its local boundary
+responds. If blocking fails the site can load. This is a test of one entry, not a guarantee
+about all sites, timer expiry, other browsers or resistance to uninstalling the extension.
 
 ## Short description (RU)
 
@@ -59,8 +66,15 @@ Satoru Attention заменяет бесконечную ленту на зар�
 
 Правила, активная сессия и последние 100 минимальных исходов остаются в локальном хранилище
 браузера. Расширение не собирает историю, названия страниц, просмотренные материалы, cookie
-или причину аварийного выхода. Веб-приложение Satoru видит только версию, число настроенных
-сайтов и ограниченное состояние текущей сессии.
+или причину аварийного выхода. Текущая локальная сессия может содержать введённые детали
+задачи, тему и ожидаемый результат. Satoru видит только версию, число включённых сайтов
+и разрешений, ограниченное состояние сессии, состояние применения правил и время/результат
+проверки границы. Адреса сайтов и личные детали остаются в расширении.
+
+После настройки можно проверить вход на один сайт. Расширение откроет его главную страницу
+в новой вкладке и сохранит успех только после ответа локальной границы. При отказе блокировки
+сайт может загрузиться. Проверка одного входа не подтверждает окончание таймера, все сайты,
+другие браузеры или защиту от удаления расширения.
 
 ## Permission rationale
 
@@ -83,7 +97,8 @@ Satoru Attention заменяет бесконечную ленту на зар�
 - Authentication information: not collected.
 - Personal communications: not collected.
 - Location: not collected.
-- Web history: not collected or transmitted.
+- Web history: the browser history database is not read. Permitted addresses are processed
+  in memory for enforcement; minimal session outcomes remain local, and no history is uploaded.
 - User activity: the current local boundary and minimal outcome are stored locally and are
   used only for the extension’s single stated purpose.
 - Selling, advertising, credit decisions: none.
@@ -93,9 +108,11 @@ Satoru Attention заменяет бесконечную ленту на зар�
 Help a person deliberately enter selected websites with a bounded purpose or locally block
 chosen distracting websites and categories in the same browser.
 
-## Store assets still required
+## Store assets and final owner inputs
 
-- 1280×800 or 640×400 store screenshot: options page with one configured website.
-- 1280×800 or 640×400 store screenshot: gate with purpose and duration.
+- 1280×800 Chrome screenshots of settings and gate: `store-kit-v260/chrome-*.png`.
+- 128×128 icon and 440×280 small promo tile: `store-kit-v260/store-icon-128.png` and
+  `store-kit-v260/small-promo-440x280.png`. The existing mark is preserved.
 - Optional 1400×560 promotional tile.
-- Public privacy-policy URL (can point to the Satoru privacy page once published).
+- Public privacy-policy URL: owner must publish the reviewed `store-kit-v260/PRIVACY-DRAFT.md`.
+  Do not point the dashboard to an invented or unpublished page.

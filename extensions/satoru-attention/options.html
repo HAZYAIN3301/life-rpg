@@ -24,6 +24,18 @@
       <span data-i18n="pinLead">Open the Extensions menu in the toolbar and pin Satoru Attention. The badge then shows whether a boundary is ready or active.</span>
     </aside>
 
+    <section id="boundary-check" class="card" aria-labelledby="health-title">
+      <h2 id="health-title" data-i18n="healthTitle">Check your boundary</h2>
+      <p id="health-status" class="status" role="status" aria-live="polite"></p>
+      <p id="health-signal" class="fine"></p>
+      <button id="health-refresh" type="button" class="quiet" data-i18n="healthRefresh">Refresh status</button>
+      <p class="muted" data-i18n="testLead">Choose a configured site. The test opens its homepage in a new tab and waits for the real boundary. If blocking fails, the site can load.</p>
+      <label class="field"><span data-i18n="testSite">Site to test</span><select id="boundary-site"></select></label>
+      <button id="boundary-start" type="button" disabled data-i18n="testStart">Test this boundary</button>
+      <p id="boundary-result" class="status" role="status" aria-live="polite"></p>
+      <p class="fine" data-i18n="testScope">This tests entry into one site. It does not prove timer expiry, other sites or another browser.</p>
+    </section>
+
     <section class="card update-card" aria-labelledby="update-heading">
       <div>
         <p class="eyebrow" data-i18n="updateEyebrow">Release</p>
@@ -189,5 +201,6 @@
   <script src="protection-catalog.js"></script>
   <script src="i18n.js"></script>
   <script src="options.js"></script>
+  <script src="health-ui.js"></script>
 </body>
 </html>

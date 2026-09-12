@@ -1,0 +1,28 @@
+{
+  "release": "v260",
+  "method": "Deterministic browser rendering of exact text and the existing Satoru extension mark; no generated art or changed logo.",
+  "sources": [
+    {
+      "file": "store-assets.html",
+      "sha256": "29c9c50af4bc1bc9ee3b0ed6864d8539f1db1468f5469454cdeba9e55db4a8a4"
+    },
+    {
+      "file": "../icon-192.png",
+      "sha256": "b652539f04dce6b98bf8ef3d47609fedf2e4c63b19b9f042339ee0b8e76825d8"
+    }
+  ],
+  "assets": [
+    {
+      "file": "small-promo-440x280.png",
+      "width": 440,
+      "height": 280,
+      "sha256": "d25692e641b61774f98d907f410c5ba9057d78554411c297b579dac60e808bed"
+    },
+    {
+      "file": "store-icon-128.png",
+      "width": 128,
+      "height": 128,
+      "sha256": "6260ba09e35f5138a698320246e19486d62707bd57a1dbdce3c434ac0582aa50"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "version": "shadow-character-v260",
+  "status": "text-ready; no rendered media; visual approval remains separate",
+  "locales": ["ru", "en", "de", "uk", "es"],
+  "ads": [
+    {
+      "id": "your-planned-start",
+      "targetSeconds": 12,
+      "capability": "planned-start",
+      "sourceContract": "PLANNED-START-V255.md",
+      "ru": { "title": "Уже в твоём плане", "narration": "Дело уже в твоём плане. Тень подскажет, когда подойдёт время. Открываешь его — и выбираешь, с чего начать. Satoru. Твой следующий шаг.", "captions": ["Дело уже в твоём плане", "Тень напомнит в Satoru", "Открыть и начать", "Satoru · Твой следующий шаг"] },
+      "en": { "title": "Already in your plan", "narration": "The task is already in your plan. Shadow offers a nudge when its time comes. Open it and choose where to begin. Satoru. Your next step.", "captions": ["Already in your plan", "A nudge from Shadow in Satoru", "Open it and begin", "Satoru · Your next step"] },
+      "de": { "title": "Schon in deinem Plan", "narration": "Die Aufgabe steht schon in deinem Plan. Wenn die Zeit kommt, gibt der Schatten dir einen Hinweis. Öffne sie und wähle deinen Einstieg. Satoru. Dein nächster Schritt.", "captions": ["Schon in deinem Plan", "Ein Hinweis vom Schatten in Satoru", "Öffnen und anfangen", "Satoru · Dein nächster Schritt"] },
+      "uk": { "title": "Уже у твоєму плані", "narration": "Справа вже у твоєму плані. Тінь підкаже, коли настане час. Відкриваєш її — й обираєш, із чого почати. Satoru. Твій наступний крок.", "captions": ["Справа вже у твоєму плані", "Тінь нагадає в Satoru", "Відкрити й почати", "Satoru · Твій наступний крок"] },
+      "es": { "title": "Ya está en tu plan", "narration": "La tarea ya está en tu plan. Sombra te da un aviso cuando se acerca la hora. La abres y eliges por dónde empezar. Satoru. Tu siguiente paso.", "captions": ["Ya está en tu plan", "Un aviso de Sombra en Satoru", "Abrir y empezar", "Satoru · Tu siguiente paso"] }
+    },
+    {
+      "id": "your-evening-choice",
+      "targetSeconds": 15,
+      "capability": "evening-close",
+      "sourceContract": "EVENING-CLOSE-V256.md",
+      "ru": { "title": "Вечер решаешь ты", "narration": "Ты выбрал время завершать вечер. Тень напомнит и спросит, чем ты занят. Закончить, продолжить своё дело или спланировать завтра — решаешь ты. Satoru.", "captions": ["Твоё время завершать вечер", "Чем ты сейчас занят?", "Закончить · Продолжить · Спланировать", "Satoru · Решение за тобой"] },
+      "en": { "title": "Your evening, your choice", "narration": "You chose when to wind down. Shadow reminds you and asks what you’re doing. Finish, carry on with your task, or plan tomorrow. The choice is yours. Satoru.", "captions": ["Your chosen time to wind down", "What are you doing right now?", "Finish · Carry on · Plan", "Satoru · Your choice"] },
+      "de": { "title": "Dein Abend, deine Entscheidung", "narration": "Du hast deine Zeit zum Ausklang gewählt. Der Schatten erinnert dich und fragt, was du gerade machst. Aufhören, weitermachen oder morgen planen — du entscheidest. Satoru.", "captions": ["Deine gewählte Zeit zum Ausklang", "Was machst du gerade?", "Aufhören · Weitermachen · Planen", "Satoru · Du entscheidest"] },
+      "uk": { "title": "Вечір вирішуєш ти", "narration": "Ти обрав час завершувати вечір. Тінь нагадає й запитає, чим ти зайнятий. Закінчити, продовжити свою справу чи спланувати завтра — вирішуєш ти. Satoru.", "captions": ["Твій час завершувати вечір", "Чим ти зараз зайнятий?", "Закінчити · Продовжити · Спланувати", "Satoru · Рішення за тобою"] },
+      "es": { "title": "Tu noche, tu decisión", "narration": "Elegiste una hora para cerrar la noche. Sombra te la recuerda y pregunta qué estás haciendo. Terminar, seguir con tu tarea o planificar mañana: tú decides. Satoru.", "captions": ["La hora que elegiste para terminar", "¿Qué estás haciendo ahora?", "Terminar · Seguir · Planificar", "Satoru · Tú decides"] }
+    },
+    {
+      "id": "return-to-your-task",
+      "targetSeconds": 12,
+      "capability": "after-lapse-return",
+      "sourceContract": "SECRETARY-NEXT-MOVES-TRANSPORT-V1.md",
+      "ru": { "title": "К тому же делу", "narration": "Отвлёкся и хочешь вернуться? Тень предложит открыть то самое дело. Выбираешь небольшой шаг и продолжаешь. Satoru. Можно вернуться сейчас.", "captions": ["Хочешь вернуться?", "К тому же делу", "Выбери небольшой шаг", "Satoru · Можно вернуться сейчас"] },
+      "en": { "title": "Back to the same task", "narration": "Got distracted and want to return? Shadow offers to open the same task. Choose a small step and carry on. Satoru. You can return now.", "captions": ["Want to return?", "Back to the same task", "Choose a small step", "Satoru · You can return now"] },
+      "de": { "title": "Zurück zu derselben Aufgabe", "narration": "Abgelenkt und bereit, zurückzukehren? Der Schatten bietet dir dieselbe Aufgabe wieder an. Wähle einen kleinen Schritt und mach weiter. Satoru. Du kannst jetzt zurückkehren.", "captions": ["Möchtest du zurückkehren?", "Zu derselben Aufgabe", "Wähle einen kleinen Schritt", "Satoru · Du kannst jetzt zurückkehren"] },
+      "uk": { "title": "До тієї самої справи", "narration": "Відволікся й хочеш повернутися? Тінь запропонує відкрити ту саму справу. Обираєш невеликий крок і продовжуєш. Satoru. Можна повернутися зараз.", "captions": ["Хочеш повернутися?", "До тієї самої справи", "Обери невеликий крок", "Satoru · Можна повернутися зараз"] },
+      "es": { "title": "Volver a la misma tarea", "narration": "¿Te distrajiste y quieres volver? Sombra te ofrece abrir la misma tarea. Eliges un paso pequeño y continúas. Satoru. Puedes volver ahora.", "captions": ["¿Quieres volver?", "A la misma tarea", "Elige un paso pequeño", "Satoru · Puedes volver ahora"] }
+    }
+  ],
+  "shortStories": [
+    {
+      "id": "a-place-to-begin",
+      "trigger": "person explicitly opens the saved planned task",
+      "runtimeStatus": "editorial copy only; no automatic story delivery installed",
+      "ru": "В плане была строка. Теперь у неё открытая страница. «Вот здесь начнём», — говорит Тень. На столе достаточно места для одного дела.",
+      "en": "It was a line in the plan. Now its page is open. “We can start here,” says Shadow. There is room on the desk for one task.",
+      "de": "Im Plan stand eine Zeile. Jetzt ist ihre Seite offen. „Hier können wir anfangen“, sagt der Schatten. Auf dem Tisch ist Platz für eine Aufgabe.",
+      "uk": "У плані був рядок. Тепер у нього відкрита сторінка. «Ось тут почнемо», — каже Тінь. На столі достатньо місця для однієї справи.",
+      "es": "Era una línea en el plan. Ahora su página está abierta. «Podemos empezar aquí», dice Sombra. En la mesa hay sitio para una tarea."
+    },
+    {
+      "id": "the-unfinished-page",
+      "trigger": "person chooses planning tomorrow from the accepted evening dialog",
+      "runtimeStatus": "editorial copy only; no automatic story delivery installed",
+      "ru": "«Ты ещё работаешь?» — спрашивает Тень. «Нет, выбираю, с чего начать завтра». Тень придвигает лампу к плану. Сегодняшнюю страницу не нужно дописывать ради красивого конца.",
+      "en": "“Still working?” asks Shadow. “No, choosing where to begin tomorrow.” Shadow brings the lamp closer to the plan. Today’s page does not need a perfect ending.",
+      "de": "„Arbeitest du noch?“, fragt der Schatten. „Nein, ich wähle, womit ich morgen anfange.“ Der Schatten rückt die Lampe zum Plan. Die heutige Seite braucht kein perfektes Ende.",
+      "uk": "«Ти ще працюєш?» — питає Тінь. «Ні, обираю, з чого почати завтра». Тінь присуває лампу до плану. Сьогоднішня сторінка не потребує красивого завершення.",
+      "es": "«¿Sigues trabajando?», pregunta Sombra. «No, estoy eligiendo por dónde empezar mañana». Sombra acerca la lámpara al plan. La página de hoy no necesita un final perfecto."
+    },
+    {
+      "id": "the-bookmark",
+      "trigger": "person accepts return to a still-actionable linked task after a confirmed attention event",
+      "runtimeStatus": "editorial copy only; no automatic story delivery installed",
+      "ru": "Страница осталась открытой на том же месте. «Закладка пригодилась», — говорит Тень. Ни объяснений, ни новой клятвы. Можно прочитать следующую строку.",
+      "en": "The page is still open at the same place. “The bookmark came in handy,” says Shadow. No explanation, no new promise. The next line is there to read.",
+      "de": "Die Seite ist noch an derselben Stelle offen. „Das Lesezeichen hat geholfen“, sagt der Schatten. Keine Erklärung, kein neues Versprechen. Die nächste Zeile wartet zum Lesen.",
+      "uk": "Сторінка залишилася відкритою на тому самому місці. «Закладка стала в пригоді», — каже Тінь. Без пояснень і нової обіцянки. Можна прочитати наступний рядок.",
+      "es": "La página sigue abierta en el mismo sitio. «El marcapáginas vino bien», dice Sombra. Sin explicaciones ni nuevas promesas. Se puede leer la siguiente línea."
+    }
+  ]
+}

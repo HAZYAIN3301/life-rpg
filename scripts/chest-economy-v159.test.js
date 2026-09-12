@@ -39,9 +39,7 @@ function constOf(name) {
 // Косметика и каталог — настоящие, вырезанные из app.js, чтобы количество и цены совпадали
 // с боевыми. Иначе тест мерил бы выдуманную экономику.
 function realRewardCatalog() {
-  const start = APP.indexOf('const REWARD_CATALOG = [');
-  const end = APP.indexOf('];', start) + 2;
-  return APP.slice(start, end);
+  return 'const REWARD_CATALOG = ' + JSON.stringify(require('../public/reward-catalog-v1').REWARD_CATALOG) + ';';
 }
 
 function buildSandbox({ ownedCosmetics = [] } = {}) {

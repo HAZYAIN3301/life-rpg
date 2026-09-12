@@ -14,7 +14,7 @@ const i18n = readFileSync(join(EXTENSION, 'i18n.js'), 'utf8');
 const manifest = JSON.parse(readFileSync(join(EXTENSION, 'manifest.json'), 'utf8'));
 
 test('v0.5.4 cannot present selected protection rules as active while the master switch is off', () => {
-  assert.equal(manifest.version, '0.5.4');
+  assert.ok(['0.5.4', '0.6.0'].includes(manifest.version));
   assert.match(html, /id="protection-inactive-warning"/);
   assert.match(html, /id="activate-protection"/);
   assert.match(options, /configuredProtectionCount/);

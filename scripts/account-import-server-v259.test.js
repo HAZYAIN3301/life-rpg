@@ -98,7 +98,7 @@ test('portable import: read-only preview, bound ticket, exact revisions, durable
 
 test('portable import: real SIGKILL after each file restores one complete state, including new WAL slots', { timeout: 60000 }, async t => {
   const r = await runtime(t), before = fixture('before'), after = fixture('after');
-  const names = J.FILES.filter(n => n !== 'questionnaire');
+  const names = A.FILES.filter(n => n !== 'questionnaire');
   for (const point of [...names.map(name => 'after_' + name.replace(/-/g, '_') + '_write'), 'after_committed_journal']) {
     await t.test(point, async () => {
       await r.stop(); r.seed(before); await r.start();

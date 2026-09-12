@@ -20,7 +20,7 @@ function between(source, from, to) {
 
 test('browser companion status parser accepts only the bounded read-only schema', () => {
   const source = between(APP, 'const BROWSER_COMPANION_TARGETS', 'function browserCompanionRequestId');
-  const context = { Date, Set, Object };
+  const context = { Date, Set, Object, window: { BrowserCompanionStatusV1: require('../public/browser-companion-status-v1.js') } };
   vm.createContext(context);
   vm.runInContext(`${source}\nthis.target = browserCompanionTarget; this.parse = browserCompanionStatusFromMessage;`, context);
 
@@ -32,6 +32,8 @@ test('browser companion status parser accepts only the bounded read-only schema'
       active: { app: 'youtube', phase: 'active', remainingSeconds: 90, mode: 'control' } },
   });
   assert.equal(valid.installed, true);
+  assert.deepEqual(valid.enforcement, { state: 'unknown', enabledSites: 0, permittedSites: 0, protectionEnabled: false }, 'legacy extension presence does not prove current enforcement');
+  assert.deepEqual(valid.selfTest, { state: 'never', checkedAt: null });
   assert.deepEqual({ ...valid.active }, { app: 'youtube', phase: 'active', remainingSeconds: 90, mode: 'control' });
   assert.equal(context.parse({ source: 'satoru-attention-extension', type: 'SATORU_ATTENTION_STATUS_RESPONSE', status: {
     installed: true, version: '0.1.0', configuredSites: 1,
@@ -40,6 +42,15 @@ test('browser companion status parser accepts only the bounded read-only schema'
   assert.equal(context.parse({ source: 'satoru-attention-extension', type: 'SATORU_ATTENTION_STATUS_RESPONSE', status: {
     installed: true, version: '0.1.0', configuredSites: 1, active: null, history: ['private'],
   } }).installed, true, 'unknown fields are never copied into the sanitized projection');
+  const checkedAt = new Date().toISOString();
+  const current = context.parse({ source: 'satoru-attention-extension', type: 'SATORU_ATTENTION_STATUS_RESPONSE', status: {
+    installed: true, version: '0.6.0', configuredSites: 1, active: null, checkedAt,
+    enforcement: { state: 'permission_removed', enabledSites: 1, permittedSites: 0, protectionEnabled: false, hostname: 'private.test' },
+    selfTest: { state: 'passed', checkedAt, fingerprint: 'private' },
+  } });
+  assert.equal(current.enforcement.state, 'permission_removed');
+  assert.equal(current.selfTest.checkedAt, checkedAt);
+  assert.doesNotMatch(JSON.stringify(current), /private\.test|fingerprint/);
 });
 
 test('page bridge is exact-origin, request-correlated and cannot mutate attention data', () => {

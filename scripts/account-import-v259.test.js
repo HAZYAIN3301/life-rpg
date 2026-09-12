@@ -10,7 +10,8 @@ const ticket = () => ({ version: 1, requestId: 'import_one', requestHash: 'a'.re
 
 test('portable allowlist joins the existing WAL; secrets and server ledgers never do', () => {
   assert.equal(A.FILES.length, 21);
-  assert.deepEqual([...J.FILES].sort(), [...A.FILES].sort());
+  assert.deepEqual(J.FILES.filter(n => n !== 'chest-receipts').sort(), [...A.FILES].sort());
+  assert.equal(A.FILES.includes('chest-receipts'), false, 'private chest receipts are not portable progress');
   const values = Object.fromEntries(A.FILES.map(name => [name, A.TYPES[name] === 'array' ? [] : {}]));
   const prepared = J.prepare({ txId: 'import:all-files', createdAt: '2026-09-12T20:00:00.000Z',
     base: Object.fromEntries(A.FILES.map(name => [name, { exists: false, value: null }])), data: values });

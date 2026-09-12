@@ -1,10 +1,12 @@
 'use strict';
 
-importScripts('core.js', 'protection.js', 'protection-catalog.js');
+importScripts('core.js', 'protection.js', 'protection-catalog.js', 'health.js');
 
 const Core = self.SatoruAttentionCore;
 const Protection = self.SatoruProtection;
 const ProtectionCatalog = self.SatoruProtectionCatalog;
+const Health = self.SatoruAttentionHealth;
+const SELF_TEST_KEY = 'satoruBoundaryTestV1';
 const STATE_KEY = 'satoruAttentionStateV1';
 const PROTECTION_KEY = 'satoruProtectionStateV1';
 const BOUNDARY_ALARM = 'satoru-attention-boundary';
@@ -119,10 +121,8 @@ function exactHostRegex(hostname) {
   return `^https?://${escaped}(?::[0-9]+)?(?:/|$)`;
 }
 
-async function reconcileRules(state, protectionSettings, at) {
+async function expectedRules(state, protectionSettings, at) {
   const policies = state.policies.filter((policy) => policy.enabled).sort((a, b) => a.id.localeCompare(b.id));
-  const existing = await chrome.declarativeNetRequest.getDynamicRules();
-  const removeRuleIds = existing.map((rule) => rule.id);
   const active = state.activeSession;
   const activeOpen = !!(active && !Core.clockRolledBack(state, at) && Date.parse(active.deadlineAt) > Date.parse(at));
   const addRules = [];
@@ -146,13 +146,15 @@ async function reconcileRules(state, protectionSettings, at) {
     baseId: 30_000,
     blockUrl: canRedirect ? protectionUrl() : '',
   }));
-  await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds, addRules });
+  return addRules;
 }
 
-async function reconcileContentScripts(state) {
-  const registered = await chrome.scripting.getRegisteredContentScripts();
-  const ours = registered.map((script) => script.id).filter((id) => id.startsWith(SITE_SCRIPT_PREFIX));
-  if (ours.length) await chrome.scripting.unregisterContentScripts({ ids: ours });
+async function reconcileRules(state, protectionSettings, at) {
+  const existing = await chrome.declarativeNetRequest.getDynamicRules();
+  await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: existing.map(rule => rule.id), addRules: await expectedRules(state, protectionSettings, at) });
+}
+
+async function expectedScripts(state) {
   const scripts = [];
   for (const policy of state.policies.filter((item) => item.enabled)) {
     if (!(await permissionFor(policy))) continue;
@@ -165,7 +167,85 @@ async function reconcileContentScripts(state) {
       allFrames: false,
     });
   }
+  return scripts;
+}
+
+async function reconcileContentScripts(state) {
+  const registered = await chrome.scripting.getRegisteredContentScripts();
+  const ours = registered.map((script) => script.id).filter((id) => id.startsWith(SITE_SCRIPT_PREFIX));
+  if (ours.length) await chrome.scripting.unregisterContentScripts({ ids: ours });
+  const scripts = await expectedScripts(state);
   if (scripts.length) await chrome.scripting.registerContentScripts(scripts);
+}
+
+function testFingerprint(state, protection) {
+  return Health.canonical({ policies: state.policies, protection });
+}
+
+async function verifiedStatus() {
+  const at = currentIso();
+  const state = await loadState();
+  const protection = await loadProtection();
+  const enabled = state.policies.filter(policy => policy.enabled);
+  const enforcement = { state: 'unknown', enabledSites: enabled.length, permittedSites: 0, protectionEnabled: protection.enabled };
+  try {
+    // Read browser state; a configured rule or an installed extension is not a receipt.
+    for (const policy of enabled) {
+      if (await chrome.permissions.contains({ origins: Core.hostPatterns(policy.hostname) })) enforcement.permittedSites += 1;
+    }
+    const broad = await chrome.permissions.contains({ origins: ['http://*/*', 'https://*/*'] });
+    if (enforcement.permittedSites !== enabled.length || (protection.enabled && !broad)) enforcement.state = 'permission_removed';
+    else {
+      const rules = await chrome.declarativeNetRequest.getDynamicRules();
+      const scripts = (await chrome.scripting.getRegisteredContentScripts()).filter(script => script.id.startsWith(SITE_SCRIPT_PREFIX));
+      const applied = Health.sameRules(rules, await expectedRules(state, protection, at))
+        && Health.sameScripts(scripts, await expectedScripts(state));
+      enforcement.state = !applied ? 'unknown' : enabled.length || protection.enabled ? 'active' : 'not_configured';
+    }
+  } catch { /* Keep unknown when a browser API cannot confirm the current state. */ }
+  const record = (await chrome.storage.local.get(SELF_TEST_KEY))[SELF_TEST_KEY];
+  return { ...Core.publicStatus(state, at), checkedAt: at, enforcement,
+    selfTest: Health.publicTest(record, Core.VERSION, at, testFingerprint(state, protection)) };
+}
+
+async function startBoundaryTest(policyId) {
+  const state = await loadState();
+  const protection = await loadProtection();
+  const at = currentIso();
+  const previous = (await chrome.storage.local.get(SELF_TEST_KEY))[SELF_TEST_KEY];
+  const fingerprint = testFingerprint(state, protection);
+  if (Health.publicTest(previous, Core.VERSION, at, fingerprint).state === 'pending') return { ok: true, pending: true };
+  const policy = state.policies.find(item => item.enabled && (!policyId || item.id === policyId));
+  if (!policy) return { ok: false, error: 'test_site_required' };
+  if (!(await permissionFor(policy))) return { ok: false, error: 'permission_required' };
+  const blocked = Protection.decision(protection, ProtectionCatalog, policy.homeUrl, new Date(at)).blocked;
+  if (!blocked && Core.accessDecision(state, policy.homeUrl, at).allowed) return { ok: false, error: 'test_window_active' };
+  if ((await verifiedStatus()).enforcement.state !== 'active') return { ok: false, error: 'enforcement_failed' };
+  const tab = await chrome.tabs.create({ url: 'about:blank' });
+  const record = { state: 'pending', startedAt: at, checkedAt: null, version: Core.VERSION,
+    fingerprint, tabId: tab.id, policyId: policy.id, page: blocked ? 'block.html' : `gate.html?site=${encodeURIComponent(policy.id)}` };
+  try {
+    // Persist before navigation so document_start, worker sleep and a fast redirect cannot race the receipt.
+    await chrome.storage.local.set({ [SELF_TEST_KEY]: record });
+    await chrome.tabs.update(tab.id, { url: policy.homeUrl });
+    return { ok: true, pending: true };
+  } catch {
+    await chrome.storage.local.set({ [SELF_TEST_KEY]: { ...record, state: 'failed', checkedAt: currentIso() } }).catch(() => undefined);
+    await chrome.tabs.remove(tab.id).catch(() => undefined);
+    return { ok: false, error: 'test_failed' };
+  }
+}
+
+async function confirmBoundaryTest(sender) {
+  const record = (await chrome.storage.local.get(SELF_TEST_KEY))[SELF_TEST_KEY];
+  if (!record || record.state !== 'pending' || sender.frameId !== 0 || !sender.tab || sender.tab.id !== record.tabId) return { ok: true, confirmed: false };
+  const candidates = [sender.url, sender.documentUrl, sender.tab.url];
+  if (!candidates.includes(chrome.runtime.getURL(record.page))) return { ok: true, confirmed: false };
+  const status = await verifiedStatus();
+  if (status.selfTest.state !== 'pending' || status.enforcement.state !== 'active') return { ok: true, confirmed: false };
+  const receipt = { ...record, state: 'passed', checkedAt: currentIso() };
+  await chrome.storage.local.set({ [SELF_TEST_KEY]: receipt });
+  return { ok: true, confirmed: true, checkedAt: receipt.checkedAt };
 }
 
 async function scheduleBoundary(state, at) {
@@ -349,6 +429,9 @@ function missionTarget(tabId, state, policy, session) {
 async function handleExtensionMessage(message, sender) {
   const type = message && message.type;
   if (type === 'PING') return { ok: true, version: Core.VERSION };
+  if (type === 'GET_HEALTH') return serialized(async () => ({ ok: true, status: await verifiedStatus() }));
+  if (type === 'START_BOUNDARY_TEST') return serialized(() => startBoundaryTest(message.policyId));
+  if (type === 'CONFIRM_BOUNDARY_TEST') return serialized(() => confirmBoundaryTest(sender));
   if (type === 'GET_CONTEXT') {
     const state = await loadState();
     return contextFor(state, message.siteId, currentIso());
@@ -493,8 +576,7 @@ async function handleExtensionMessage(message, sender) {
 
 async function handleBridgeMessage(message, sender) {
   if (message.type === 'BRIDGE_STATUS') {
-    const state = await loadState();
-    return { ok: true, status: Core.publicStatus(state, currentIso()) };
+    return serialized(async () => ({ ok: true, status: await verifiedStatus() }));
   }
   if (message.type === 'OPEN_OPTIONS') {
     await chrome.runtime.openOptionsPage();

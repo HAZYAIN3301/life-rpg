@@ -29,10 +29,11 @@
   // and the skill tree may join for proposal import. Economy commits also add
   // purchases/rewards/lootbox. Guided notes and habit transactions use this same
   // journal too. Portable import adds its explicit account-data allowlist;
-  // secrets and server-owned reward/secretary ledgers never join recovery.
+  // The private chest receipt file joins its reward in this same journal;
+  // recovery membership never grants generic API access or portable export.
   const REQUIRED_FILES = Object.freeze(['settings', 'tasks']);
   const OPTIONAL_FILES = Object.freeze(['goals', 'goal-groups', 'skilltree', 'purchases', 'rewards', 'lootbox', 'inbox', 'habits', 'habitlog', 'antihabits',
-    'achievements', 'days', 'weeks', 'episodes', 'profile', 'boardmedia', 'attention', 'shelf', 'questionnaire']);
+    'achievements', 'days', 'weeks', 'episodes', 'profile', 'boardmedia', 'attention', 'shelf', 'questionnaire', 'chest-receipts']);
   const FILES = Object.freeze([...REQUIRED_FILES, ...OPTIONAL_FILES]);
   const MAX_SERIALIZED_BYTES = 16 * 1024 * 1024;
   const MAX_DEPTH = 80;

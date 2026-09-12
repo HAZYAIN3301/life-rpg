@@ -1,0 +1,138 @@
+{
+  "release": "v260",
+  "extensionVersion": "0.6.0",
+  "target": "Chrome and Brave desktop",
+  "published": false,
+  "outputs": [
+    {
+      "path": "public/downloads/satoru-attention-chromium-v260.zip",
+      "bytes": 112729,
+      "sha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6"
+    },
+    {
+      "path": "public/downloads/satoru-attention-chrome-store-v260.zip",
+      "bytes": 112729,
+      "sha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6"
+    },
+    {
+      "path": "public/downloads/satoru-attention-v260.zip",
+      "bytes": 112729,
+      "sha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6"
+    },
+    {
+      "path": "public/downloads/satoru-attention-store-v260.zip",
+      "bytes": 112729,
+      "sha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6"
+    }
+  ],
+  "runtime": [
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "sha256": "6719c5a402cfde31a036dc96c0bec610f66fa130891399cb3564df290246f612"
+    },
+    {
+      "path": "_locales/de/messages.json",
+      "sha256": "6b0da1b9304e721a28e1d9effae87fa861ac86ca58fa9879c400821331b0e4bc"
+    },
+    {
+      "path": "_locales/en/messages.json",
+      "sha256": "a3f8ab148f6d9d2219c46a00b45316199b91467bc6a82ae306d8ab3d4e2ddb61"
+    },
+    {
+      "path": "_locales/es/messages.json",
+      "sha256": "a51f106f8230cff0d9cdf28f2f1e34dc948026ddc0657337db6be9bf375c2d74"
+    },
+    {
+      "path": "_locales/ru/messages.json",
+      "sha256": "2a7899efcb8c27b360c8ab012aafcb823b635f25d3fd4ee837cd89755d2b3f88"
+    },
+    {
+      "path": "_locales/uk/messages.json",
+      "sha256": "235be7bdd6353062e94161c971bc9f63ed8caf9acd03bcc6736c3e133eef6d7d"
+    },
+    {
+      "path": "block.html",
+      "sha256": "a4abce2d7d8fa720b7c24c0b5309e437bf1f9cefff602d08822a463e14e1bda7"
+    },
+    {
+      "path": "block.js",
+      "sha256": "2691a635acb924ec6f71842c00695beee43d34f3562f80e0161e6ca742872a63"
+    },
+    {
+      "path": "boundary-test-receipt.js",
+      "sha256": "941d54bb082ed1f6c5de94fe3c345043507c697d1b20961a97bb0a205ae0e23c"
+    },
+    {
+      "path": "bridge.js",
+      "sha256": "50e6ce4186beccf8b9b1e2baa72e16ae31f151b65477b233b83b253ef988238c"
+    },
+    {
+      "path": "core.js",
+      "sha256": "5f2fa0971994aec102e695a95c5d381914f88caa069740178a10041b574bf81e"
+    },
+    {
+      "path": "gate.html",
+      "sha256": "1a7dc9dc02b3e156f6a04653ba9ec4d89c1655bb015873ee22f83bb71202c8a0"
+    },
+    {
+      "path": "gate.js",
+      "sha256": "184b452ecd6cc99d96084ba101637ca212a390bc9136583120fb748c44f5b10c"
+    },
+    {
+      "path": "health-ui.js",
+      "sha256": "5e31c1eb429d777cf0d8933402685d3da9cf276bcc5e10a35a279efeadaefe6f"
+    },
+    {
+      "path": "health.js",
+      "sha256": "4092dce51bb49eb284173ebf2e1a533036857da8dd172b12507840631b376c29"
+    },
+    {
+      "path": "i18n.js",
+      "sha256": "2195c7d1fb4592573ff0fbc9020ac0b15b25dccd4274cbdb628c9a154f0d9378"
+    },
+    {
+      "path": "icon-192.png",
+      "sha256": "b652539f04dce6b98bf8ef3d47609fedf2e4c63b19b9f042339ee0b8e76825d8"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "f371c4b77e66bb648ce3dc9eae8a905ed0434416a9ba54d6b896d79b5b964dc7"
+    },
+    {
+      "path": "options.html",
+      "sha256": "ee930c70a8d14daaf200848464fdddfc84d97856489ed372726a611658a61135"
+    },
+    {
+      "path": "options.js",
+      "sha256": "9b00792ce0b524c419c3b0ae76c5be477120dccf3f9b4b9e7baadeed485da828"
+    },
+    {
+      "path": "popup.html",
+      "sha256": "f5b7c17562720fd8e45a75c97ab97491608d2004c8725def5457ab5e3f825a47"
+    },
+    {
+      "path": "popup.js",
+      "sha256": "23cb3ab4373eac0c3377fce129f2a0c659de460b0ab9c3788a7b1b0ef29d98f2"
+    },
+    {
+      "path": "protection-catalog.js",
+      "sha256": "62a63bc284d5657cb41246a4bbd5197e53dbe2b1bab3af65191653114e30726a"
+    },
+    {
+      "path": "protection.js",
+      "sha256": "2d0558fc3121eed1214f76f79e9c15afe6db8e6eda834ad2a30a2138f22a3799"
+    },
+    {
+      "path": "service-worker.js",
+      "sha256": "2a5b92ec0d82cc2c417765e9b40814d5bcc23fe62d4bff9fd0c2c99fb305b18e"
+    },
+    {
+      "path": "site-guard.js",
+      "sha256": "f8afeeeb0d8ff86f1d5258511a07cb1d1e7a2f0c39faf97f1f3a4d6da511cbe1"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "650f792d69ae015268a3a172e63f26c34d9700f02e73bd88119b4e3f4c551c9f"
+    }
+  ]
+}

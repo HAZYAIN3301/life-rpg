@@ -3,7 +3,22 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Текущий checkpoint 12.09, v259:** ACCOUNT-IMPORT-V259.md — общий WAL всех
+**Текущий checkpoint 12.09, v260:** три завершённых технических среза:
+серверные сундуки (CHEST-REWARDS-V260.md), установка/самопроверка Chrome и Brave
+(extensions/satoru-attention/store-kit-v260/SUBMISSION.md), принятая текстовая
+основа Тени (SHADOW-CHARACTER-V260.md). **2621/2621 tests PASS**, 96/96 профильных
+extension checks; browser/QA receipts — верх DEVLOG. CACHE satoru-v260.
+Публикация v260: ожидает фиксации SHA и проверки production в верхней записи DEVLOG.
+
+Ответы владельца получены: Chrome и Brave; характер Тени принят. Вопрос о переносе
+прогресса объяснён, новая ограничительная политика НЕ утверждена. Личный архив
+XP/gold/предметов работает по-прежнему; выданные сервером сундуки не выдаются второй
+раз после импорта старого архива. Для следующих срезов остаются generic/settings-only
+mint и единый wallet; обычный ZIP/самопроверка не равны публикации в store.
+Паузы аватара/Rest Profile и отдельный художественный gate сохраняются.
+Решения/единственный текущий вопрос: OWNER-DECISIONS-2026-09.md.
+
+**Предыдущий checkpoint 12.09, v259:** ACCOUNT-IMPORT-V259.md — общий WAL всех
 portable files, подписанный preview с revisions, надёжный повтор импорта/сброса,
 account guards и честные ошибки. 2510/2510 tests PASS. Опубликовано `e1fc38f`:
 Railway app/TTS success, 28/28 live bytes, production login без console errors.

@@ -1,5 +1,50 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-12] v260 — серверные сундуки, Chrome/Brave и принятый характер Тени
+
+**Публикация v260: ожидает SHA и production verification.** Push/deploy ранее
+явно разрешены владельцем. Runtime проверки завершены; факт публикации будет
+записан после обоих Railway statuses и сравнения файлов, а не по одному HTTP 200.
+
+- CHEST-REWARDS-V260.md: server entropy из saved context, exact receipt, private
+  issued cursor/128 последних fingerprints. Lootbox/settings/receipt в одном
+  existing WAL; SIGKILL rollback/rollforward. Старый импорт сохраняет личный прогресс,
+  но не выдаёт те же server tickets снова. Auth/me передаёт только cursor для UI.
+  Квитанция необходима до успеха/церемонии. Chest 409 не запирает весь account;
+  stale account/epoch и malformed responses не применяются.
+- Chrome/Brave 0.6.0: readback permissions/rules/content scripts, freshness и
+  настоящее срабатывание выбранного сайта в отдельной self-test вкладке. Нужен
+  browser acknowledgement именно этой вкладки; spoofed iframe/tab не считается.
+  Локальная install page, четыре детерминированных ZIP aliases и store kit готовы.
+  Магазин ещё не submitted: нет подставного URL/утверждения о signed update.
+- SHADOW-CHARACTER-V260.md: полученное «Да» относится к текстовой основе Тени.
+  Общий модуль подключён в chat/server policy, secretary copy, moment и companion;
+  nudge voice защищён от смены account/epoch/lang, прежний декоративный cache
+  инвалидируется personaVersion. Отсутствие записей об отдыхе не означает усталость.
+  3 рекламных сценария и 3 мини-эпизода × 5 языков готовы текстом. Арт/озвучка/видео
+  не произведены и не объявлены принятыми; паузы avatar/Rest Profile сохранены.
+
+**Проверки:** full suite **2621/2621 PASS**, 0 skipped, 67627.4ms;
+96/96 focused extension tests. Реальный HTTP/SIGKILL, import/replay/corruption,
+async receipt/account guards. Chest browser QA: 20 сочетаний RU/EN/DE/UK/ES ×
+dark/light × 375/1280 без overflow/выхода dialog за viewport, кнопки ≥42px,
+потерянный успешный ответ и повтор без новой выдачи, malformed/500, reload,
+настоящий conflict другой вкладки и focus; emulated reduced motion — без transition.
+Extension QA: реальные Chrome 153.0.8010.37 и Brave 152.0.7977.83 в disposable
+profiles, native DNR gate receipt, locally fulfilled production-origin bridge,
+20 вариантов install page, MV3 worker stop/readback. Обычный Reload automation-loaded
+extension не подтверждён, также открыты настоящий optional-permission dialog,
+signed install/update и проверка обычного профиля владельца.
+Receipts: art-factory/critical-path-v260/qa-receipt.json и
+extensions/satoru-attention/store-kit-v260/{chrome,brave}-qa.json.
+
+CACHE satoru-v260; app/styles/persona/chest pins 20260912-critical-v260-1,
+install/status pins 20260912-browser-companion-v260-1. ZIP SHA256:
+8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6.
+P0 generic/settings-only mint/wallet остаётся; частный ledger не превращает
+весь импортированный прогресс в server-issued права. Решения владельца обновлены
+в OWNER-DECISIONS-2026-09.md; отдельно задан только вопрос о кабинете Chrome Web Store.
+
 ## [2026-09-12] v259 — атомарный импорт аккаунта и сброс
 
 **Опубликовано 12.09 21:38 CEST:** `e1fc38f6215abf1e4b8bf1dbe6ae844c83f85cd1`.

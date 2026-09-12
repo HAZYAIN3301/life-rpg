@@ -1,9 +1,10 @@
 /* Authored neutral card copy and escaped presentation; no state or effects. */
 (function (root, factory) {
-  const api = factory(root?.SecretaryNextMovesProducerV1 || (typeof require === 'function' ? require('./secretary-next-moves-producer-v1.js') : null));
+  const api = factory(root?.SecretaryNextMovesProducerV1 || (typeof require === 'function' ? require('./secretary-next-moves-producer-v1.js') : null),
+    root?.ShadowPersonaV1 || (typeof require === 'function' ? require('./shadow-persona-v1.js') : null));
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.SecretaryNextMovesUIV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (Producer) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (Producer, Persona) {
   'use strict';
   const LANGS = ['ru', 'en', 'de', 'uk', 'es'];
   const rows = {
@@ -61,7 +62,7 @@
     'common.prepared': ['Достаточно открыть дело и выбрать маленький шаг.', 'Open the task and choose a small step.', 'Öffne die Aufgabe und wähle einen kleinen Schritt.', 'Достатньо відкрити справу й обрати маленький крок.', 'Abre la tarea y elige un paso pequeño.'],
     'common.own_words': ['Твои слова', 'Your words', 'Deine Worte', 'Твої слова', 'Tus palabras'],
   };
-  const COPY = Object.freeze(Object.fromEntries(LANGS.map((lang, i) => [lang, Object.freeze(Object.fromEntries(Object.entries(rows).map(([key, values]) => ['secretary.v2.' + key, values[i]])))])));
+  const COPY = Object.freeze(Object.fromEntries(LANGS.map((lang, i) => [lang, Object.freeze(Object.fromEntries(Object.entries(rows).map(([key, values]) => ['secretary.v2.' + key, Persona?.secretaryCopy('secretary.v2.' + key, lang) || values[i]])))])));
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
   function copy(key, lang = 'ru') { return COPY[lang]?.[key] || COPY.ru[key] || ''; }
   function label(key, lang) { return esc(copy('secretary.v2.' + key, lang)); }

@@ -1,7 +1,13 @@
-# Satoru Attention v215 — signed store publication checklist
+# Satoru Attention — signed store publication checklist
 
-`npm run build:browser-extension` creates three engine packages from one source tree and
-the upload aliases below. Every store update must increment `manifest.version`, rebuild,
+**Current Chrome/Brave candidate: v260 / 0.6.0.** Use
+[`store-kit-v260/SUBMISSION.md`](store-kit-v260/SUBMISSION.md), its build receipt and
+`public/downloads/satoru-attention-chrome-store-v260.zip`. No store submission or
+signed update has been performed. The v215 cross-store package list below is retained
+for those earlier engine candidates; it is not fresh Firefox/Safari QA for v260.
+
+The historical v215 builder created the three engine packages and upload aliases below.
+Every store update must increment `manifest.version`, rebuild,
 run the full extension/repository gate and be submitted under the same store item ID.
 
 ## Chromium stores

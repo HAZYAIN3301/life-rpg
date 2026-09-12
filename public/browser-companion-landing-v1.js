@@ -4,12 +4,12 @@
   const LANGUAGE_KEY = 'satoru-browser-companion-language';
   const SUPPORTED_LANGUAGES = new Set(['ru', 'en', 'de', 'uk', 'es']);
   const BROWSERS = Object.freeze({
-    chrome: { name: 'Chrome', address: 'chrome://extensions', package: 'downloads/satoru-attention-chromium-v215.zip', step: 'step3Chromium' },
-    edge: { name: 'Microsoft Edge', address: 'edge://extensions', package: 'downloads/satoru-attention-chromium-v215.zip', step: 'step3Chromium' },
-    brave: { name: 'Brave', address: 'brave://extensions', package: 'downloads/satoru-attention-chromium-v215.zip', step: 'step3Chromium' },
+    chrome: { name: 'Chrome', address: 'chrome://extensions', package: 'downloads/satoru-attention-chromium-v260.zip', step: 'step3Chromium' },
+    edge: { name: 'Microsoft Edge', address: 'edge://extensions', package: 'downloads/satoru-attention-chromium-v260.zip', step: 'step3Chromium' },
+    brave: { name: 'Brave', address: 'brave://extensions', package: 'downloads/satoru-attention-chromium-v260.zip', step: 'step3Chromium' },
     firefox: { name: 'Firefox', address: 'about:debugging#/runtime/this-firefox', package: 'downloads/satoru-attention-firefox-v215.zip', step: 'step3Firefox' },
-    opera: { name: 'Opera', address: 'opera://extensions', package: 'downloads/satoru-attention-chromium-v215.zip', step: 'step3Chromium' },
-    vivaldi: { name: 'Vivaldi', address: 'vivaldi://extensions', package: 'downloads/satoru-attention-chromium-v215.zip', step: 'step3Chromium' },
+    opera: { name: 'Opera', address: 'opera://extensions', package: 'downloads/satoru-attention-chromium-v260.zip', step: 'step3Chromium' },
+    vivaldi: { name: 'Vivaldi', address: 'vivaldi://extensions', package: 'downloads/satoru-attention-chromium-v260.zip', step: 'step3Chromium' },
     safari: { name: 'Safari', address: 'Safari → Settings → Developer', package: 'downloads/satoru-attention-safari-v215.zip', step: 'step3Safari' },
   });
 
@@ -30,6 +30,21 @@
       pageTitle: 'Satoru Attention — extensión del navegador', pageDescription: 'Satoru Attention: un límite local de atención para los navegadores de escritorio más populares.', language: 'Idioma', back: 'Volver a la aplicación', kicker: 'Extensión para los principales navegadores', title: 'El feed empieza solo después de tu decisión', lead: 'Indica un propósito y una ventana breve o bloquea servicios y categorías localmente. El historial no se envía.', download: 'Descargar versión de prueba', chooseBrowser: 'Elegir navegador', updatesTitle: 'Actualizaciones sin volver a descargar.', updatesLead: 'Tras publicar la versión firmada, basta instalar una vez: Chrome, Edge, Firefox y Safari se actualizan automáticamente. Hasta terminar la revisión, el ZIP de prueba aún necesita Recargar.', benefit1Title: 'Antes de entrar, no después de caer', benefit1Text: 'TikTok, YouTube y los sitios elegidos muestran primero el propósito y el límite.', benefit2Title: 'Local', benefit2Text: 'Las reglas, sesiones y resultados permanecen en la extensión. Satoru solo ve un estado seguro.', benefit3Title: 'Una fuente, tres motores', benefit3Text: 'Los manifiestos separados de Chromium, Firefox y Safari se crean desde una base de código auditada.', browserKicker: 'Compatibilidad con navegadores de escritorio', browserTitle: 'Elige dónde debe funcionar Satoru', browserLead: 'La página detecta el navegador, pero puedes elegir otro. Los navegadores Chromium comparten versión; Firefox y Safari tienen manifiestos propios.', chromiumBuild: 'Versión Chromium', firefoxBuild: 'Versión Firefox MV3', safariBuild: 'Versión Safari Web Extension', showSteps: 'Ver pasos', testKicker: 'Instalación de prueba antes de publicar', installTitle: 'Instalar en', step1Title: 'Descarga y descomprime', step1Text: 'El archivo contiene una carpeta de extensión lista.', downloadPackage: 'Descargar paquete', step2Title: 'Abre la página de extensiones', step2Text: 'Pega esta dirección en la barra del navegador.', copy: 'Copiar', step3Title: 'Carga la carpeta', step3Chromium: 'Activa Modo desarrollador, elige Cargar descomprimida y selecciona la carpeta Satoru Attention.', step3Firefox: 'Descomprime el paquete, elige Cargar complemento temporal y abre manifest.json. La versión firmada de AMO quedará instalada y se actualizará sola.', step3Safari: 'En macOS, elige Add Temporary Extension y la carpeta. La versión de App Store quedará instalada en macOS, iPhone y iPad.', signedTitle: 'Por qué la prueba aún necesita Recargar', signedText: 'Los navegadores solo actualizan automáticamente instalaciones firmadas de tiendas. Los paquetes están listos; faltan las cuentas de tienda y las firmas.', limitTitle: 'Un límite honesto', limitText: 'La protección se aplica a este navegador. Puede desactivarse; no sustituye DNS/VPN del sistema ni controla apps nativas.', openApp: 'Abrir Satoru', copied: 'Dirección copiada', copyFailed: 'Copia la dirección manualmente', selected: 'Elegido',
     },
   };
+
+  const connectionCopy = {
+    en: { connectTitle: 'Installed? Connect and test', connectLead: 'Use this page in the same browser as the extension. After installing or reloading the extension, reload this page once.', connectRefresh: 'Check connection', connectOptions: 'Set up and test one site', connectPrivacy: 'Only the version, counts, bounded session state and check results reach this page. Site addresses and your reasons stay in the extension.', connection_wait: 'Checking the extension…', connection_missing: 'No response. Install or enable the extension in this browser, then reload this page.', connection_active: 'Connected · configured rules are applied', connection_permission_removed: 'Connected · site access is missing. Restore permission in the browser.', connection_not_configured: 'Connected · add your first site or enable protection', connection_unknown: 'Connected before · current protection is unconfirmed. Refresh or update the extension.', connection_age: 'Last confirmed signal: {seconds} seconds ago · version {version}', connection_no_age: 'This version does not report a fresh protection check. Update the test build.', test_never: 'Next: open settings and test one configured site.', test_pending: 'A real boundary test is in progress. Return after the new tab reaches the boundary.', test_passed: 'Last test: the real boundary appeared for one site.', test_failed: 'Last test: the boundary was not confirmed. Open settings and retry.', test_outdated: 'Rules or version changed. Repeat the boundary test.', signedText: 'Chrome and Brave use the same Chrome Web Store listing after approval. No listing is published here yet. Test ZIPs require manual Reload; owner account details, store assets, review and signed-update checks remain.', benefit3Title: 'Chrome and Brave', benefit3Text: 'The same Chromium extension and Chrome Web Store delivery path. Test each browser separately.' },
+    ru: { connectTitle: 'Установил? Подключи и проверь', connectLead: 'Открой эту страницу в том же браузере, где стоит расширение. После его установки или Reload один раз обнови страницу.', connectRefresh: 'Проверить подключение', connectOptions: 'Настроить и проверить один сайт', connectPrivacy: 'Эта страница получает только версию, счётчики, ограниченный статус сессии и результаты проверок. Адреса сайтов и твои причины остаются в расширении.', connection_wait: 'Проверяем расширение…', connection_missing: 'Ответа нет. Установи или включи расширение в этом браузере, затем обнови страницу.', connection_active: 'Подключено · настроенные правила применены', connection_permission_removed: 'Подключено · нет доступа к сайту. Верни разрешение в браузере.', connection_not_configured: 'Подключено · добавь первый сайт или включи защиту', connection_unknown: 'Раньше было подключено · текущая защита не подтверждена. Обнови статус или расширение.', connection_age: 'Последний подтверждённый сигнал: {seconds} сек. назад · версия {version}', connection_no_age: 'Эта версия не передаёт свежую проверку защиты. Обнови тестовую сборку.', test_never: 'Дальше: открой настройки и проверь один настроенный сайт.', test_pending: 'Идёт проверка настоящей границы. Вернись, когда новая вкладка дойдёт до неё.', test_passed: 'Последняя проверка: настоящая граница появилась на одном сайте.', test_failed: 'Последняя проверка: граница не подтверждена. Открой настройки и повтори.', test_outdated: 'Правила или версия изменились. Повтори проверку границы.', signedText: 'Chrome и Brave используют одну публикацию в Chrome Web Store после одобрения. Опубликованной ссылки здесь пока нет. Тестовый ZIP требует Reload; ещё нужны данные владельца, материалы магазина, модерация и проверка подписанного обновления.', benefit3Title: 'Chrome и Brave', benefit3Text: 'Одно Chromium-расширение и доставка через Chrome Web Store. Каждый браузер проверяется отдельно.' },
+    de: { connectTitle: 'Installiert? Verbinden und testen', connectLead: 'Öffne diese Seite im Browser mit der Erweiterung. Lade nach Installation oder Reload der Erweiterung diese Seite einmal neu.', connectRefresh: 'Verbindung prüfen', connectOptions: 'Eine Website einrichten und testen', connectPrivacy: 'Diese Seite erhält nur Version, Anzahlen, begrenzten Sitzungsstatus und Prüfergebnisse. Website-Adressen und deine Gründe bleiben in der Erweiterung.', connection_wait: 'Erweiterung wird geprüft…', connection_missing: 'Keine Antwort. Installiere oder aktiviere die Erweiterung in diesem Browser und lade die Seite neu.', connection_active: 'Verbunden · eingerichtete Regeln angewendet', connection_permission_removed: 'Verbunden · Website-Zugriff fehlt. Erlaube ihn wieder im Browser.', connection_not_configured: 'Verbunden · füge eine Website hinzu oder aktiviere den Schutz', connection_unknown: 'Zuvor verbunden · aktueller Schutz unbestätigt. Status oder Erweiterung aktualisieren.', connection_age: 'Letztes bestätigtes Signal: vor {seconds} Sekunden · Version {version}', connection_no_age: 'Diese Version meldet keine aktuelle Schutzprüfung. Aktualisiere die Testversion.', test_never: 'Als Nächstes: Einstellungen öffnen und eine Website testen.', test_pending: 'Eine echte Grenze wird getestet. Kehre zurück, wenn sie im neuen Tab erscheint.', test_passed: 'Letzter Test: Die echte Grenze erschien für eine Website.', test_failed: 'Letzter Test: Grenze unbestätigt. Öffne die Einstellungen und wiederhole den Test.', test_outdated: 'Regeln oder Version geändert. Teste die Grenze erneut.', signedText: 'Chrome und Brave nutzen nach Freigabe denselben Chrome-Web-Store-Eintrag. Hier ist noch kein Eintrag veröffentlicht. Test-ZIPs brauchen Reload; Kontodaten, Store-Material, Prüfung und signierter Update-Test stehen noch aus.', benefit3Title: 'Chrome und Brave', benefit3Text: 'Dieselbe Chromium-Erweiterung und Veröffentlichung im Chrome Web Store. Jeder Browser wird separat getestet.' },
+    uk: { connectTitle: 'Установив? Підключи й перевір', connectLead: 'Відкрий цю сторінку в браузері з розширенням. Після встановлення чи Reload розширення один раз онови сторінку.', connectRefresh: 'Перевірити з’єднання', connectOptions: 'Налаштувати й перевірити один сайт', connectPrivacy: 'Сторінка отримує лише версію, кількості, обмежений стан сесії та результати перевірок. Адреси сайтів і твої причини лишаються в розширенні.', connection_wait: 'Перевіряємо розширення…', connection_missing: 'Немає відповіді. Установи або ввімкни розширення в цьому браузері й онови сторінку.', connection_active: 'Підключено · налаштовані правила застосовані', connection_permission_removed: 'Підключено · немає доступу до сайту. Поверни дозвіл у браузері.', connection_not_configured: 'Підключено · додай перший сайт або ввімкни захист', connection_unknown: 'Раніше було підключено · поточний захист не підтверджено. Онови статус або розширення.', connection_age: 'Останній підтверджений сигнал: {seconds} с тому · версія {version}', connection_no_age: 'Ця версія не передає свіжу перевірку захисту. Онови тестову збірку.', test_never: 'Далі: відкрий налаштування й перевір один сайт.', test_pending: 'Триває перевірка справжньої межі. Повернись, коли вона з’явиться в новій вкладці.', test_passed: 'Остання перевірка: справжня межа з’явилася на одному сайті.', test_failed: 'Остання перевірка: межу не підтверджено. Відкрий налаштування й повтори.', test_outdated: 'Правила або версія змінилися. Повтори перевірку межі.', signedText: 'Chrome та Brave використовують одну публікацію в Chrome Web Store після схвалення. Опублікованого посилання тут ще немає. Тестовий ZIP потребує Reload; ще потрібні дані власника, матеріали магазину, модерація й перевірка підписаного оновлення.', benefit3Title: 'Chrome та Brave', benefit3Text: 'Одне Chromium-розширення й доставка через Chrome Web Store. Кожен браузер перевіряється окремо.' },
+    es: { connectTitle: '¿Instalado? Conecta y prueba', connectLead: 'Abre esta página en el navegador con la extensión. Después de instalar o recargar la extensión, recarga esta página una vez.', connectRefresh: 'Comprobar conexión', connectOptions: 'Configurar y probar un sitio', connectPrivacy: 'Esta página solo recibe versión, cantidades, estado limitado de sesión y resultados. Las direcciones y tus motivos permanecen en la extensión.', connection_wait: 'Comprobando la extensión…', connection_missing: 'Sin respuesta. Instala o activa la extensión en este navegador y recarga la página.', connection_active: 'Conectado · reglas configuradas aplicadas', connection_permission_removed: 'Conectado · falta acceso al sitio. Restaura el permiso del navegador.', connection_not_configured: 'Conectado · añade un sitio o activa la protección', connection_unknown: 'Conectado antes · protección actual sin confirmar. Actualiza el estado o la extensión.', connection_age: 'Última señal confirmada: hace {seconds} segundos · versión {version}', connection_no_age: 'Esta versión no informa de una comprobación reciente. Actualiza la versión de prueba.', test_never: 'Siguiente: abre los ajustes y prueba un sitio.', test_pending: 'Prueba de límite real en curso. Vuelve cuando aparezca en la nueva pestaña.', test_passed: 'Última prueba: apareció el límite real para un sitio.', test_failed: 'Última prueba: límite sin confirmar. Abre los ajustes y reintenta.', test_outdated: 'Las reglas o la versión cambiaron. Repite la prueba del límite.', signedText: 'Chrome y Brave usarán la misma ficha de Chrome Web Store tras la aprobación. Todavía no hay una ficha publicada aquí. Los ZIP necesitan Recargar; faltan datos del propietario, materiales de tienda, revisión y prueba de actualización firmada.', benefit3Title: 'Chrome y Brave', benefit3Text: 'La misma extensión Chromium y publicación en Chrome Web Store. Cada navegador se prueba por separado.' },
+  };
+  Object.assign(en, connectionCopy.en);
+  for (const lang of ['ru', 'de', 'uk', 'es']) Object.assign(patches[lang], connectionCopy[lang]);
+  en.updatesLead = 'After an approved store release, Chrome and Brave can apply updates. No store release is published here yet. Test ZIPs use manual Reload.';
+  patches.ru.updatesLead = 'После одобренной публикации Chrome и Brave смогут получать обновления из магазина. Опубликованной версии здесь пока нет. Тестовый ZIP обновляется вручную через Reload.';
+  patches.de.updatesLead = 'Nach einer freigegebenen Store-Veröffentlichung können Chrome und Brave Updates erhalten. Hier ist noch keine Store-Version veröffentlicht. Test-ZIPs werden manuell neu geladen.';
+  patches.uk.updatesLead = 'Після схваленої публікації Chrome та Brave зможуть отримувати оновлення з магазину. Опублікованої версії тут ще немає. Тестовий ZIP оновлюється вручну через Reload.';
+  patches.es.updatesLead = 'Tras aprobarse la publicación, Chrome y Brave podrán recibir actualizaciones de la tienda. Aún no hay una versión publicada aquí. Los ZIP de prueba se recargan manualmente.';
 
   const params = new URLSearchParams(location.search);
   const normalizedLanguage = (value) => {
@@ -57,6 +72,58 @@
   const languageSelect = document.querySelector('#bc-language');
   const toast = document.querySelector('#bc-toast');
   let timer;
+  const Status = globalThis.BrowserCompanionStatusV1;
+  let lastStatus = null;
+  let receivedAt = 0;
+  let disconnected = false;
+  let pendingStatus = null;
+  let pendingOptions = null;
+  const openOptions = document.querySelector('#bc-open-options');
+
+  function renderConnection() {
+    const view = Status.view(lastStatus, receivedAt);
+    const state = pendingStatus ? 'wait' : disconnected ? 'missing' : !lastStatus ? 'missing' : view.state;
+    const stateNode = document.querySelector('#bc-connection-state');
+    if (stateNode.textContent !== table[`connection_${state}`]) stateNode.textContent = table[`connection_${state}`];
+    document.querySelector('#bc-connection-age').textContent = !lastStatus ? '' : view.ageSeconds === null ? table.connection_no_age
+      : table.connection_age.replace('{seconds}', view.ageSeconds).replace('{version}', lastStatus.version);
+    document.querySelector('#bc-test-state').textContent = table[`test_${lastStatus?.selfTest.state || 'never'}`];
+    openOptions.disabled = !lastStatus || disconnected || !!pendingOptions;
+  }
+  function checkConnection() {
+    if (pendingStatus || document.hidden) return;
+    const requestId = `status:${Date.now()}:${Math.random().toString(36).slice(2, 10)}`;
+    pendingStatus = { requestId, timeout: setTimeout(() => { pendingStatus = null; disconnected = true; renderConnection(); }, 3000) };
+    renderConnection();
+    window.postMessage({ source: 'satoru-app', type: 'SATORU_ATTENTION_STATUS_REQUEST', requestId }, location.origin);
+  }
+  window.addEventListener('message', event => {
+    if (event.source !== window || event.origin !== location.origin || event.data?.source !== 'satoru-attention-extension') return;
+    const data = event.data;
+    if (data.type === 'SATORU_ATTENTION_EXTENSION_READY') { checkConnection(); return; }
+    if (data.type === 'SATORU_ATTENTION_STATUS_RESPONSE' && data.requestId === pendingStatus?.requestId) {
+      const normalized = Status.normalize(data.status);
+      if (!normalized) return;
+      clearTimeout(pendingStatus.timeout); pendingStatus = null;
+      lastStatus = normalized; receivedAt = Date.now(); disconnected = false; renderConnection();
+    }
+    if (data.type === 'SATORU_ATTENTION_OPEN_OPTIONS_RESULT' && data.requestId === pendingOptions?.requestId) {
+      clearTimeout(pendingOptions.timeout); pendingOptions = null;
+      if (!data.ok) say(table.connection_missing);
+      renderConnection();
+    }
+  });
+  document.querySelector('#bc-connect-refresh').addEventListener('click', checkConnection);
+  openOptions.addEventListener('click', () => {
+    if (openOptions.disabled) return;
+    const requestId = `options:${Date.now()}`;
+    pendingOptions = { requestId, timeout: setTimeout(() => { pendingOptions = null; say(table.connection_missing); renderConnection(); }, 3000) };
+    window.postMessage({ source: 'satoru-app', type: 'SATORU_ATTENTION_OPEN_OPTIONS', requestId }, location.origin);
+    renderConnection();
+  });
+  window.addEventListener('focus', checkConnection);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkConnection(); });
+  setInterval(() => { if (!document.hidden) renderConnection(); }, 15_000);
 
   function say(message) {
     clearTimeout(timer);
@@ -83,6 +150,7 @@
     });
     languageSelect.value = language;
     selectBrowser(selectedBrowser, false);
+    renderConnection();
   }
 
   function selectBrowser(browser, scroll = true) {
@@ -117,6 +185,7 @@
   });
 
   applyLanguage();
+  checkConnection();
   if (!requestedBrowser && navigator.brave?.isBrave) navigator.brave.isBrave().then((isBrave) => {
     if (isBrave) selectBrowser('brave', false);
   }).catch(() => {});

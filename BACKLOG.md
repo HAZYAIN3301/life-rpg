@@ -1,12 +1,29 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v260, серверная выдача сундуков:** сохранённые дела, server entropy,
+  private cursor/receipt в том же WAL, строгий клиентский receipt, повтор без
+  второго приза, счётчики после импорта/reload, пять локалей и account guards.
+  CHEST-REWARDS-V260.md; 2621/2621 full tests PASS; публикация — верх DEVLOG.
+- [x] **v260, Chrome/Brave readiness:** реальные readback разрешений/правил,
+  native boundary self-test, fresh/stale/unknown, ZIP 0.6.0 и store kit.
+  Настоящая установка из магазина/подписанное N→N+1 ещё не проверены.
+- [x] **v260, принятый характер Тени:** единая текстовая политика и 5 локалей;
+  отсутствие записей об отдыхе не выдаётся за усталость. 3 рекламы + 3 эпизода
+  в art-factory/shadow-character-v260; видео/арт не произведены.
+- [ ] **Следующий P0 после v260:** generic/settings-only начисления и права,
+  единый wallet/provenance. Перенос личного XP/gold/предметов не ограничивать
+  без отдельного осмысленного решения владельца. Private server-issued награды
+  защищать отдельно; решения — OWNER-DECISIONS-2026-09.md.
+- [ ] **Публикация Chrome Web Store:** готовый store kit; нужен кабинет владельца,
+  контакт/URL privacy и owner declarations, затем signed install/update QA.
+
 - [x] **v259, целостность импорта/сброса:** все portable files в общем WAL,
   подписанный preview/current revisions, стабильный повтор и строгий receipt;
   account/epoch guards, пять локалей, mobile close target. ACCOUNT-IMPORT-V259.md;
   2510/2510 tests PASS, реальные SIGKILL и browser QA. Опубликовано `e1fc38f`:
   Railway app/TTS success, 28/28 live bytes. Receipts — верх DEVLOG.
-- [ ] **P0 после v259:** определить provenance игровых наград при переносе;
-  generic/settings-only/mint/chest остаются открыты. Атомарный импорт не делает
+- [ ] **Исторический остаток v259, уточнён v260:** provenance личного прогресса,
+  generic/settings-only/mint остаются открыты; server chest issuer закрыт. Атомарный импорт не делает
   личный XP/gold/предметы авторитетными серверными наградами.
 
 - [x] **v258, admission новых покупок:** сохранённый личный уровень, exact owned
@@ -16,7 +33,7 @@
   2449/2449 tests PASS; опубликовано `8979522`, Railway app/TTS success, 26/26 bytes.
   Browser QA и receipts конкретного SHA — верх DEVLOG.
 - [ ] **Экономический остаток P0 после v258/v259:** generic/import/settings-only пути
-  начисления gold и прав, chest grants и общий wallet. Проверка admission покупки
+  начисления gold и прав и общий wallet; chest grants закрыты v260. Проверка admission покупки
   не делает исходные client-owned task/import начисления авторитетными.
 
 - [x] **v257, supply Вдохновения:** admit/toCatalogRows до прежнего choose;

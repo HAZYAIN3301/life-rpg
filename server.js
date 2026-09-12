@@ -32,6 +32,9 @@ const AccountProfileV1 = require('./public/account-profile-v1.js');
 const CommitmentStoreV1 = require('./public/commitment-store-v1.js');
 const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
 const AccountImportV1 = require('./public/account-import-v1.js');
+const ChestClaimV1 = require('./public/chest-claim-v1.js');
+const ChestRewardServiceV1 = require('./server-chest-rewards-v1.js');
+const ShadowPersonaV1 = require('./public/shadow-persona-v1.js');
 const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
@@ -1965,6 +1968,7 @@ function publicUser(user) {
     id: user.id, name: user.name, avatar: user.avatar, isAdmin: !!user.isAdmin,
     createdAt: user.createdAt || null,
     partyRewards: partyRewards.snapshot(user.id),
+    dailyChest: dailyChestSummary(user.id),
     // Только администратор видит свой серверный рекламный кредит. Обычным
     // пользователям это поле вообще не выдаётся.
     ...(user.isAdmin ? { adminGold: adminGoldBalance(user.id) } : {}),
@@ -2679,6 +2683,31 @@ function economyValueValid(name, value) {
 }
 // Share the existing account WAL, including the protected settings/tasks pair.
 // No second journal may independently roll back an overlapping settings write.
+function dailyChestSummary(uid) {
+  try {
+    const saved = commitmentActualFiles(uid, [ChestRewardServiceV1.LEDGER_FILE])[ChestRewardServiceV1.LEDGER_FILE];
+    if (!saved.exists) return { version: 1, cursor: null };
+    if (ChestRewardServiceV1.ledgerValid(saved.value)) return { version: 1, cursor: saved.value.cursor };
+  } catch {}
+  // A damaged reward file does not block account access or personal records.
+  // It does disable further chest claims until the stored receipt is recovered.
+  return { version: 1, cursor: null, error: 'chest_receipts_corrupt' };
+}
+function commitDailyChest(uid, payload) {
+  if (!ChestClaimV1.requestValid(payload)) throw commitmentBoundaryError('invalid_chest_request', 400);
+  const actual = commitmentActualFiles(uid, [...ChestClaimV1.FILES, ChestRewardServiceV1.LEDGER_FILE]);
+  return ChestRewardServiceV1.issue({ payload, actual, now: new Date().toISOString(),
+    hash: value => crypto.createHash('sha256').update(ChestClaimV1.canonical(value)).digest('hex'),
+    entropy: () => [0, 1, 2].map(() => crypto.randomInt(0, 0x100000000) / 0x100000000),
+    commit: result => {
+      const names = COMMITMENT_JOURNAL_ALLOWED_NAMES.filter(n => COMMITMENT_PAIR_NAMES.includes(n) || Object.hasOwn(result, n));
+      const data = Object.fromEntries(names.map(n => [n, Object.hasOwn(result, n) ? result[n]
+        : actual[n].exists ? actual[n].value : n === 'tasks' ? [] : {}]));
+      assertAccountGraphTransition(uid, { base: { settings: actual.settings, tasks: actual.tasks }, data });
+      commitCommitmentGraphDurable(uid, { names, actual: Object.fromEntries(names.map(n => [n, actual[n]])), data });
+    },
+  });
+}
 function commitEconomyData(uid, payload) {
   if (!payload || !payload.data || typeof payload.data !== 'object' || Array.isArray(payload.data)) throw new Error('invalid_economy_commit');
   const names = Object.keys(payload.data);
@@ -5802,7 +5831,7 @@ const server = http.createServer(async (req, res) => {
     // long product manual, producing generic advice while pretending to have read the
     // plan. 48k is still bounded inside the 256k request limit and fits the supported
     // providers' practical context windows together with the capped chat history.
-    const system = String(b.system || '').slice(0, 48000);
+    const system = ShadowPersonaV1.systemInstruction({ surface: 'chat' }) + '\n\n' + String(b.system || '').slice(0, 48000);
     let messages = Array.isArray(b.messages) ? b.messages.slice(-20) : [];
     while (messages.length && messages[0].role === 'assistant') messages.shift(); // история должна начинаться с user
     if (!messages.length) return sendJson(res, 400, { error: 'empty' });
@@ -6254,6 +6283,18 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  if (u === '/api/rewards/chest' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload; try { payload = JSON.parse(await readBody(req, 5 * 1024 * 1024)); }
+    catch { return sendJson(res, 400, { error: 'invalid_chest_request' }); }
+    try { return sendJson(res, 200, commitDailyChest(uid, payload)); }
+    catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
+      const status = Number.isInteger(error.status) ? error.status : 500;
+      return sendJson(res, status, { error: status < 500 ? error.message : 'chest_save_unconfirmed' });
+    }
+  }
+
   if (u === '/api/economy/commit' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let payload; try { payload = JSON.parse(await readBody(req, 3 * 1024 * 1024)); }
@@ -6410,7 +6451,7 @@ const server = http.createServer(async (req, res) => {
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
     if (name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
-    if (name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
+    if (name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
 
@@ -6551,7 +6592,7 @@ const server = http.createServer(async (req, res) => {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
       let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
       const name = safeName(String(b.name || '')); if (!name) return sendJson(res, 400, { error: 'bad name' });
-      if (name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
+      if (name === 'secretary' || name.startsWith('secretary-') || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
       const dir = userDataDir(am[1]);
       const bfile = path.join(backupDir(dir, name), String(b.stamp || '') + '.json');
       if (!bfile.startsWith(DATA_DIR) || !fs.existsSync(bfile)) return sendJson(res, 404, { error: 'backup not found' });

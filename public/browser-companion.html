@@ -7,7 +7,7 @@
   <meta name="description" content="Satoru Attention — a local attention boundary for the most popular desktop browsers.">
   <title>Satoru Attention — browser extension</title>
   <link rel="icon" href="browser-companion-icon-v1.png">
-  <link rel="stylesheet" href="browser-companion.css?v=20260901-browser-companion-v215-1">
+  <link rel="stylesheet" href="browser-companion.css?v=20260912-browser-companion-v260-1">
 </head>
 <body>
   <header class="bc-top">
@@ -23,10 +23,23 @@
       <h1 data-copy="title">The feed starts only after your decision</h1>
       <p data-copy="lead">Name a purpose and short window or locally block distracting services and categories. Browsing history is never sent anywhere.</p>
       <div class="bc-actions">
-        <a id="bc-primary-download" class="bc-primary" href="downloads/satoru-attention-chromium-v215.zip" download data-copy="download">Download the test build</a>
+        <a id="bc-primary-download" class="bc-primary" href="downloads/satoru-attention-chromium-v260.zip" download data-copy="download">Download the test build</a>
         <a class="bc-secondary" href="#browsers" data-copy="chooseBrowser">Choose a browser</a>
       </div>
-      <p class="bc-store-note"><b data-copy="updatesTitle">Updates without downloading again</b> <span data-copy="updatesLead">After the signed store release, install once: Chrome, Edge, Firefox and Safari apply future versions automatically. Until review is complete, test ZIPs still use Reload.</span></p>
+      <p class="bc-store-note"><b data-copy="updatesTitle">Updates without downloading again</b> <span data-copy="updatesLead">After an approved store release, Chrome and Brave can apply updates. No store release is published here yet. Test ZIPs use manual Reload.</span></p>
+    </section>
+
+    <section id="connect" class="bc-connect" aria-labelledby="bc-connect-title">
+      <h2 id="bc-connect-title" data-copy="connectTitle">Installed? Connect and test</h2>
+      <p data-copy="connectLead">Use this page in the same browser as the extension. After installing or reloading the extension, reload this page once.</p>
+      <p id="bc-connection-state" role="status" aria-live="polite"></p>
+      <p id="bc-connection-age" class="bc-section-lead"></p>
+      <p id="bc-test-state"></p>
+      <div class="bc-actions">
+        <button id="bc-connect-refresh" class="bc-secondary" type="button" data-copy="connectRefresh">Check connection</button>
+        <button id="bc-open-options" class="bc-primary" type="button" data-copy="connectOptions" disabled>Set up and test one site</button>
+      </div>
+      <p data-copy="connectPrivacy">Only the version, counts, bounded session state and check results reach this page. Site addresses and your reasons stay in the extension.</p>
     </section>
 
     <section class="bc-benefits" aria-label="Benefits">
@@ -54,11 +67,11 @@
       <span class="bc-kicker" data-copy="testKicker">Test installation before store publication</span>
       <h2 id="install-title"><span data-copy="installTitle">Install in</span> <span id="bc-browser-name">Chrome</span></h2>
       <ol>
-        <li><span>1</span><div><h3 data-copy="step1Title">Download and unzip</h3><p id="bc-package-copy" data-copy="step1Text">The archive contains a ready extension folder.</p><a id="bc-package-download" href="downloads/satoru-attention-chromium-v215.zip" download data-copy="downloadPackage">Download package</a></div></li>
+        <li><span>1</span><div><h3 data-copy="step1Title">Download and unzip</h3><p id="bc-package-copy" data-copy="step1Text">The archive contains a ready extension folder.</p><a id="bc-package-download" href="downloads/satoru-attention-chromium-v260.zip" download data-copy="downloadPackage">Download package</a></div></li>
         <li><span>2</span><div><h3 data-copy="step2Title">Open the extensions page</h3><p id="bc-open-copy" data-copy="step2Text">Paste this address into the browser bar.</p><div class="bc-addresses"><code id="bc-extension-address">chrome://extensions</code><button id="bc-copy-address" type="button" data-copy="copy">Copy</button></div></div></li>
         <li><span>3</span><div><h3 data-copy="step3Title">Load the folder</h3><p id="bc-load-copy" data-copy="step3Chromium">Enable Developer mode, choose Load unpacked and select the unzipped Satoru Attention folder.</p></div></li>
       </ol>
-      <aside><b data-copy="signedTitle">Why the test build still needs Reload</b><span data-copy="signedText">Consumer browsers only auto-update signed store installations. The packages above are ready for review; store accounts and signatures are the remaining publication step.</span></aside>
+      <aside><b data-copy="signedTitle">Why the test build still needs Reload</b><span data-copy="signedText">Chrome and Brave use the same Chrome Web Store listing after approval. No listing is published here yet. Test ZIPs require manual Reload; owner account details, store assets, review and signed-update checks remain.</span></aside>
     </section>
 
     <section class="bc-limit">
@@ -68,6 +81,7 @@
     </section>
   </main>
   <div id="bc-toast" role="status" aria-live="polite"></div>
-  <script src="browser-companion-landing-v1.js?v=20260901-browser-companion-v215-1"></script>
+  <script src="browser-companion-status-v1.js?v=20260912-browser-companion-v260-1"></script>
+  <script src="browser-companion-landing-v1.js?v=20260912-browser-companion-v260-1"></script>
 </body>
 </html>

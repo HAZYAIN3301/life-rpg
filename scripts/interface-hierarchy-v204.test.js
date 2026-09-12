@@ -102,7 +102,8 @@ test('Habit design edits one selected item instead of rendering a form wall', ()
 
 test('A saved reward is claimable immediately while its ceremony remains optional', () => {
   const commit = between(APP, 'async function commitDailyRewardDialog', '\n// ── Честная лента сундука');
-  const savedAt = commit.indexOf('State.lootbox = next');
+  const savedAt = commit.indexOf('const receipt = await claimDailyChest');
+  assert.match(commit, /if \(!receipt\)/, 'a missing durable receipt keeps the dialog unconfirmed');
   const reelAt = commit.indexOf('startChestReel(overlay)');
   assert.ok(savedAt >= 0 && reelAt > savedAt, 'the durable save must still precede ceremony');
   const success = commit.slice(savedAt, reelAt);

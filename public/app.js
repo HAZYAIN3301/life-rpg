@@ -1894,7 +1894,7 @@ const I18N_EXTRA = {
   // Дрипы про фичи 24–26.07 (голос Тени, захват, Джарвис, личная карта дерева)
   'Мысль пришла не вовремя? Строка сверху ловит её текстом или голосом 🎤 — потом сделаешь из неё квест. Я всё сохраню, у меня память хорошая.': { en: 'Thought struck at the wrong moment? The bar up top catches it as text or voice 🎤 — you can turn it into a quest later. I keep everything; my memory is good.', de: 'Gedanke kam ungelegen? Die Leiste oben fängt ihn als Text oder Sprache 🎤 — später machst du eine Quest daraus. Ich hebe alles auf, mein Gedächtnis ist gut.', uk: 'Думка прийшла не вчасно? Рядок згори ловить її текстом або голосом 🎤 — потім зробиш із неї квест. Я все збережу, у мене пам\'ять хороша.', es: '¿La idea llegó a destiempo? La barra de arriba la atrapa como texto o voz 🎤 — luego la conviertes en misión. Yo lo guardo todo; tengo buena memoria.' },
   'А я, между прочим, умею говорить вслух 🔊 Нажми кнопку рядом с репликой. Мой голос синтезирует локальный Piper — без твоего ключа и без платы за каждую фразу.': { en: 'By the way, I can speak out loud 🔊 Press the button next to my line. Local Piper synthesizes my voice — no personal key and no per-phrase fee.', de: 'Übrigens, ich kann laut sprechen 🔊 Drücke die Taste neben meinem Satz. Der lokale Piper erzeugt meine Stimme – ohne persönlichen Schlüssel und ohne Gebühr pro Satz.', uk: 'А я, між іншим, умію говорити вголос 🔊 Натисни кнопку поруч із реплікою. Мій голос синтезує локальний Piper — без твого ключа й без оплати за кожну фразу.', es: 'Por cierto, puedo hablar en voz alta 🔊 Pulsa el botón junto a mi frase. Piper local sintetiza mi voz, sin tu clave ni pago por cada frase.' },
-  'Кнопка 🤖 внизу — это не справка по кнопкам. Я вижу твою энергию, сколько дней ты без отдыха и что горит по срокам. Спроси «как у меня дела на самом деле» — отвечу честно.': { en: 'The 🤖 button below isn\'t a button reference. I see your energy, how many days you\'ve gone without rest and what\'s burning on deadlines. Ask "how am I really doing" — I\'ll answer honestly.', de: 'Der 🤖-Knopf unten ist keine Tastenhilfe. Ich sehe deine Energie, wie viele Tage du ohne Erholung bist und was terminlich brennt. Frag «wie geht es mir wirklich» — ich antworte ehrlich.', uk: 'Кнопка 🤖 внизу — це не довідка по кнопках. Я бачу твою енергію, скільки днів ти без відпочинку і що горить за термінами. Запитай «як у мене справи насправді» — відповім чесно.', es: 'El botón 🤖 de abajo no es un manual de botones. Veo tu energía, cuántos días llevas sin descanso y qué plazos aprietan. Pregunta «cómo estoy en realidad» — te respondo con franqueza.' },
+  'В чате можно разобрать свой план или то, что тебя занимает. Я опираюсь на записи Satoru и твои слова.': { en: 'In chat, we can think through your plan or what is on your mind. I use your Satoru records and what you tell me.', de: 'Im Chat können wir deinen Plan oder das, was dich beschäftigt, durchdenken. Ich stütze mich auf deine Satoru-Einträge und deine Worte.', uk: 'У чаті можна розібрати свій план або те, що тебе займає. Я спираюся на записи Satoru і твої слова.', es: 'En el chat podemos revisar tu plan o lo que tienes en mente. Me baso en tus registros de Satoru y en lo que me cuentas.' },
   'В «Дереве» есть кнопка «🤖 Личная карта». Расскажешь, где ты сейчас и куда хочешь дойти — соберу лестницу под тебя, а не общий шаблон. Твой пик, твои темы.': { en: 'In the "Tree" there\'s a "🤖 Personal map" button. Tell me where you are and where you want to get to — I\'ll build a ladder for you, not a generic template. Your peak, your topics.', de: 'Im «Baum» gibt es den Knopf «🤖 Persönliche Karte». Sag mir, wo du stehst und wohin du willst — ich baue dir eine eigene Leiter statt einer Vorlage. Dein Gipfel, deine Themen.', uk: 'У «Дереві» є кнопка «🤖 Особиста карта». Розкажеш, де ти зараз і куди хочеш дійти — зберу драбину під тебе, а не загальний шаблон. Твій пік, твої теми.', es: 'En el «Árbol» hay un botón «🤖 Mapa personal». Cuéntame dónde estás y a dónde quieres llegar — te armo una escalera propia, no una plantilla. Tu cima, tus temas.' },
   // Был не переведён с момента добавления — на DE-интерфейсе показывался русским текстом
   'Ты освоился 💪 Пора выбрать путь дисциплины: мягкий (Доверие, через доброту) или жёсткий (Контроль, через строгость). Загляни — покажу оба.': { en: 'You\'ve found your footing 💪 Time to choose a path of discipline: gentle (Trust, through kindness) or hard (Control, through strictness). Take a look — I\'ll show you both.', de: 'Du hast dich eingelebt 💪 Zeit, einen Weg der Disziplin zu wählen: sanft (Vertrauen, durch Güte) oder hart (Kontrolle, durch Strenge). Schau rein — ich zeige dir beide.', uk: 'Ти освоївся 💪 Час обрати шлях дисципліни: м\'який (Довіра, через доброту) чи жорсткий (Контроль, через суворість). Зазирни — покажу обидва.', es: 'Ya te has hecho al juego 💪 Toca elegir un camino de disciplina: suave (Confianza, por la bondad) o duro (Control, por el rigor). Échale un ojo — te enseño ambos.' },
@@ -2549,7 +2549,8 @@ const I18N_EXTRA = {
   'Озвучить': { en: 'Read aloud', de: 'Vorlesen', uk: 'Озвучити', es: 'Leer en voz alta' },
   'Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)': { en: '🔊 button — have Shadow read aloud (its lines, nudges, assistant replies)', de: '🔊-Taste — Schatten liest vor (Sprüche, Hinweise, Assistenten-Antworten)', uk: 'Кнопка 🔊 — озвучити голосом Тіні (репліки, підказки, відповіді Помічника)', es: 'Botón 🔊 — que la Sombra lea en voz alta (frases, avisos, respuestas del Asistente)' },
   // ── Чат-помощник (Джарвис-слой): приветствие + витринные подсказки ──
-  'Привет! Я вижу, как у тебя дела (энергия, отдых, дедлайны), и знаю все функции Satoru. Спроси про себя или про приложение:': { en: 'Hi! I can see how you are doing (energy, rest, deadlines) and I know every Satoru feature. Ask about yourself or about the app:', de: 'Hi! Ich sehe, wie es dir geht (Energie, Erholung, Deadlines), und kenne jede Satoru-Funktion. Frag über dich oder über die App:', uk: 'Привіт! Я бачу, як у тебе справи (енергія, відпочинок, дедлайни), і знаю всі функції Satoru. Спитай про себе або про застосунок:', es: '¡Hola! Veo cómo estás (energía, descanso, plazos) y conozco todas las funciones de Satoru. Pregunta sobre ti o sobre la app:' },
+  'Привет. Можем разобраться с твоим планом, обсудить то, что тебя занимает, или найти нужную функцию Satoru.': { en: 'Hi. We can look at your plan, talk through what is on your mind, or find the Satoru feature you need.', de: 'Hallo. Wir können deinen Plan durchgehen, besprechen, was dich beschäftigt, oder die passende Satoru-Funktion finden.', uk: 'Привіт. Можемо розібратися з твоїм планом, обговорити те, що тебе займає, або знайти потрібну функцію Satoru.', es: 'Hola. Podemos revisar tu plan, hablar de lo que te preocupa o encontrar la función de Satoru que necesitas.' },
+  'Дела нередко отмечены поздним вечером. Если хочешь заканчивать раньше, можно выбрать вечернюю границу.': { en: 'Tasks are often marked complete late in the evening. If you want to finish earlier, you can choose an evening boundary.', de: 'Aufgaben werden öfter spät am Abend als erledigt markiert. Wenn du früher aufhören möchtest, kannst du eine Abendgrenze wählen.', uk: 'Справи нерідко відмічені пізно ввечері. Якщо хочеш закінчувати раніше, можна обрати вечірню межу.', es: 'Las tareas suelen marcarse como hechas tarde por la noche. Si quieres terminar antes, puedes elegir un límite para la noche.' },
   'Как у меня дела на самом деле?': { en: 'How am I actually doing?', de: 'Wie geht es mir wirklich?', uk: 'Як у мене справи насправді?', es: '¿Cómo estoy en realidad?' },
   'Что мне сделать прямо сейчас?': { en: 'What should I do right now?', de: 'Was soll ich jetzt gerade tun?', uk: 'Що мені зробити просто зараз?', es: '¿Qué debería hacer ahora mismo?' },
   'Какие функции я не использую?': { en: 'Which features am I not using?', de: 'Welche Funktionen nutze ich nicht?', uk: 'Які функції я не використовую?', es: '¿Qué funciones no estoy usando?' },
@@ -4723,8 +4724,8 @@ const I18N_DYN = [
   [/^растёт и (.+)$/, (l, m) => `${({ en: 'growing and', de: 'wächst und', uk: 'росте і', es: 'crece y' })[l]} ${i18nWord(m[1], l)}`],
   [/^Квестов (\d+\/\d+) · привычек (\d+\/\d+) · (.+)$/, (l, m) => { const q = ({ en: 'Quests', de: 'Quests', uk: 'Квестів', es: 'Misiones' })[l], h = ({ en: 'habits', de: 'Gewohnheiten', uk: 'звичок', es: 'hábitos' })[l]; return `${q} ${m[1]} · ${h} ${m[2]} · ${m[3]}`; }],
   [/^не виделись (\d+) (?:день|дня|дней) — скучает$/, (l, m) => ({ en: `not seen for ${m[1]} ${i18nDay(m[1], l)} — misses you`, de: `${m[1]} ${i18nDay(m[1], l)} nicht gesehen — vermisst dich`, uk: `не бачились ${m[1]} ${i18nDay(m[1], l)} — сумує`, es: `sin verte ${m[1]} ${i18nDay(m[1], l)} — te echa de menos` })[l]],
-  [/^🌿 (\d+) (?:день|дня|дней) без явного отдыха — это тоже часть десятиборья, не только труд\.$/, (l, m) => {
-    const tail = { en: "without clear rest — that's part of the decathlon too, not just work.", de: 'ohne klare Erholung — das ist auch Teil des Zehnkampfs, nicht nur Arbeit.', uk: 'без явного відпочинку — це теж частина десятиборства, не лише праця.', es: 'sin descanso claro — eso también es parte del decatlón, no solo trabajo.' }[l];
+  [/^🌿 (\d+) (?:день|дня|дней) без записей об отдыхе\. Если сейчас нужна пауза — можно её выбрать\.$/, (l, m) => {
+    const tail = { en: 'without a rest entry. If you need a pause now, you can choose one.', de: 'ohne Pauseneintrag. Wenn du jetzt eine Pause brauchst, kannst du eine wählen.', uk: 'без записів про відпочинок. Якщо зараз потрібна пауза — можна її обрати.', es: 'sin un registro de descanso. Si necesitas una pausa ahora, puedes elegir una.' }[l];
     return `🌿 ${m[1]} ${i18nDay(m[1], l)} ${tail}`;
   }],
   [/^Внутри «(.+)»$/, (l, m) => `${({ en: 'Inside', de: 'Innerhalb', uk: 'Всередині', es: 'Dentro de' })[l]} «${i18nWord(m[1], l)}»`],
@@ -6185,55 +6186,7 @@ const ACHIEVEMENTS = [
 ];
 
 // Каталог предустановленных наград — «дроп с босса уже выбран» (fb: награды должны быть предустановлены)
-const REWARD_CATALOG = [
-  // 🍴 Еда / кафе
-  { icon: '☕', name: 'Кофе в любимой кофейне', cost: 60 },
-  { icon: '🍫', name: 'Шоколадка / сладость', cost: 50 },
-  { icon: '🍦', name: 'Мороженое', cost: 45 },
-  { icon: '🍕', name: 'Пицца / любимая еда', cost: 250 },
-  { icon: '🍣', name: 'Заказать доставку', cost: 350 },
-  { icon: '🧋', name: 'Пузырьковый чай / смузи', cost: 80 },
-  { icon: '🍰', name: 'Кусок торта в кафе', cost: 110 },
-  { icon: '🥐', name: 'Завтрак в любимом месте', cost: 120 },
-  // 🎮 Досуг
-  { icon: '🎮', name: '1 час игр без вины', cost: 120 },
-  { icon: '📺', name: 'Серия сериала', cost: 80 },
-  { icon: '🎬', name: 'Вечер кино с попкорном', cost: 200 },
-  { icon: '🎲', name: 'Настолки с друзьями', cost: 180 },
-  { icon: '🎯', name: 'Любимое хобби 2 часа без отвлечений', cost: 160 },
-  { icon: '🎨', name: 'Порисовать / порукоделить без цели', cost: 100 },
-  // 💆 Уход и отдых
-  { icon: '🛁', name: 'Долгая ванна со свечами и пеной', cost: 100 },
-  { icon: '😴', name: 'Поспать без будильника', cost: 150 },
-  { icon: '🎧', name: 'Час музыки/подкаста лёжа', cost: 90 },
-  { icon: '💆', name: 'Массаж / спа', cost: 600 },
-  { icon: '🌳', name: 'Прогулка без телефона', cost: 40 },
-  { icon: '🧘', name: 'Долгая медитация / баня', cost: 130 },
-  { icon: '🛀', name: 'Банный день с нуля', cost: 200 },
-  // 📦 Покупки
-  { icon: '📚', name: 'Новая книга', cost: 300 },
-  { icon: '🛍', name: 'Маленькая покупка до 10€/1000₽', cost: 400 },
-  { icon: '👟', name: 'Одежда / кроссовки мечты', cost: 1200 },
-  { icon: '🎧', name: 'Новые наушники / гаджет', cost: 1500 },
-  { icon: '🖼', name: 'Постер / декор для комнаты', cost: 500 },
-  // 🌍 Опыт
-  { icon: '✈️', name: 'Поездка на выходные', cost: 2000 },
-  { icon: '🎡', name: 'Экскурсия / необычное событие', cost: 800 },
-  { icon: '🎵', name: 'Концерт / фестиваль', cost: 700 },
-  { icon: '🍽', name: 'Ужин в ресторане', cost: 450 },
-  // 🏆 Мечты
-  { icon: '💻', name: 'Курс / обучение', cost: 1000 },
-  { icon: '🎁', name: 'Большая хотелка (копилка)', cost: 5000 },
-  { icon: '🏖', name: 'Отпуск мечты', cost: 8000 },
-];
-const REWARD_ICON_KEYS = [
-  'coffee', 'chocolate', 'icecream', 'pizza', 'delivery', 'boba', 'cake', 'breakfast',
-  'game', 'episode', 'movie', 'boardgames', 'hobby', 'drawing',
-  'bath', 'sleep', 'music', 'spa', 'walk', 'meditation', 'banya',
-  'book', 'small-purchase', 'clothes', 'gadget', 'decor',
-  'weekend-trip', 'event', 'concert', 'restaurant', 'course', 'wishlist', 'vacation',
-];
-REWARD_CATALOG.forEach((reward, index) => { reward.iconId = `reward.${REWARD_ICON_KEYS[index]}`; });
+const REWARD_CATALOG = window.RewardCatalogV1.REWARD_CATALOG;
 const LEGACY_REWARD_ICON_IDS = {
   '☕': 'reward.coffee', '🍫': 'reward.chocolate', '🍦': 'reward.icecream', '🍕': 'reward.pizza',
   '🍣': 'reward.delivery', '🧋': 'reward.boba', '🍰': 'reward.cake', '🥐': 'reward.breakfast',
@@ -8085,7 +8038,7 @@ function restGapDays(max) {
 // Одна фраза честного состояния отдыха — общая для недельного зеркала, чата и движка предложений.
 function restStateLine() {
   const g = restGapDays();
-  return g === 0 ? 'сегодня или вчера был явный отдых' : `${g} ${plural(g, 'день', 'дня', 'дней')} подряд БЕЗ явного отдыха`;
+  return g === 0 ? 'сегодня есть распознанная запись об отдыхе' : `${g} ${plural(g, 'день', 'дня', 'дней')} подряд без распознанной записи об отдыхе; отсутствие записи не означает отсутствие отдыха`;
 }
 // Какие домены покрыты верхними сферами (без проектов), какие — пустые (для подсказки §5.3).
 function canonCoverage(spheres) {
@@ -11936,12 +11889,23 @@ function rollChestPrize() {
 }
 function ensureLootbox() {
   if (!State.lootbox) State.lootbox = { day: todayStr(), opened: 0, goldWon: 0, boost: null, titles: [], equipped: null, history: [], carry: 0 };
+  const issued = State.me?.dailyChest;
+  if (issued?.version === 1 && issued.cursor && window.ChestClaimV1?.cursorValid(issued.cursor)) {
+    // Only the issued-ticket counters come from the server summary. Imported
+    // gold, items and personal history retain their existing account values.
+    Object.assign(State.lootbox, issued.cursor);
+  }
+  State._lootboxReadUnsupported = false;
+  if (typeof window !== 'undefined' && window.ChestRewardPolicyV1?.civilDateValid(State.lootbox.day)
+    && State.lootbox.day > todayStr()) { State._lootboxReadUnsupported = true; return State.lootbox; }
   if (State.lootbox.carry == null) State.lootbox.carry = 0;
   // v159: ваучер стал именным по редкости — она решает, какую награду им можно взять.
   // Старые накопленные ваучеры были безымянным числом; поднимаем их как обычные, чтобы
   // никто не потерял уже заработанное и чтобы старый ваучер не открыл вдруг легендарку.
   if (!Array.isArray(State.lootbox.vouchers)) {
-    const legacy = Math.max(0, Number(State.lootbox.vouchers) || 0);
+    const raw = State.lootbox.vouchers, legacy = raw == null || raw === '' ? 0 : Number(raw);
+    if ((raw != null && !['number', 'string'].includes(typeof raw)) || !Number.isSafeInteger(legacy)
+      || legacy < 0 || legacy > 100000) { State._lootboxReadUnsupported = true; return State.lootbox; }
     State.lootbox.vouchers = Array.from({ length: legacy }, () => 'common');
   }
   if (!State.lootbox.economyV124) {
@@ -12247,6 +12211,7 @@ function todayRewardActivityCount() { return rewardActivityCountForDate(todayStr
 function lootTierCap() { return DAILY_REWARD_TRACK.length; }
 function lootChestsAvailable() {
   const lb = ensureLootbox();
+  if (State._lootboxReadUnsupported || State.me?.dailyChest?.error || State.me?.dailyChest?.cursor?.day > todayStr()) return 0;
   const earned = LOOT_THRESHOLDS.filter((th) => todayRewardActivityCount() >= th).length;
   const total = Math.min(earned, lootTierCap()) + lb.carry;
   return Math.max(0, total - lb.opened);
@@ -15445,7 +15410,7 @@ const BOUNDARY_PATTERNS = [
     say: 'Замечаю: в дни, когда днём не пошло, ты садишься доделывать поздно вечером. Обычно это забирает следующий день, а не спасает прошедший.',
     offer: 'Попробуй закрывать день кнопкой в «Итоге дня» — я перестану подсовывать дела, и вечер останется вечером.' },
   { id: 'noend', min: 2, label: 'Работа без конца',
-    say: 'Твои дела часто закрываются поздно вечером, а энергия к этому времени на нуле. Похоже, у дня нет конца — он кончается, когда кончаешься ты.',
+    say: 'Дела нередко отмечены поздним вечером. Если хочешь заканчивать раньше, можно выбрать вечернюю границу.',
     offer: 'Отметь 1–3 дела как ядро дня (◆). Закрыл ядро — день засчитан, остальное уже бонус.' },
   { id: 'norest', min: 2, label: 'Отдых не наступает',
     say: 'Дел много, а явного отдыха давно не было. Это не лень наоборот — это то, из-за чего потом всё валится разом.',
@@ -15540,12 +15505,12 @@ function buildWeekContext() {
   // Anti-habit titles and derived streaks stay private by default. They are not
   // required to explain weekly time/energy and must never enter an AI prompt
   // without a separate, explicit disclosure and consent surface.
-  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nСегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical} (${dayLoadMeta(load).text})` : ' (обычный день ещё не известен — мало наблюдений)'}\nЧестное состояние отдыха: ${restLine} (ищется по тексту дел, не по сфере — тренировка ≠ отдых, даже если оба в «Здоровье»)\nРадар сфер: ${radar}\nЦели:\n${goals}${reflBlock}${wkBlock}${bpBlock}`;
+  return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nСегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical} (${dayLoadMeta(load).text})` : ' (обычный день ещё не известен — мало наблюдений)'}\nЗаписи об отдыхе на сегодня: ${restLine} (ограниченный поиск по тексту; не измеряет отдых или самочувствие за выбранную неделю)\nРадар сфер: ${radar}\nЦели:\n${goals}${reflBlock}${wkBlock}${bpBlock}`;
 }
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return; }
   openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
-  const system = 'Ты — заботливый, научно обоснованный наставник в приложении Satoru (философия «жизнь как десятиборье»). Анализируй данные недели честно и по-человечески, без воды и без льстивости. В контексте есть строка «Честное состояние отдыха» — она значит больше, чем индекс баланса: баланс/уровни считаются по сфере квеста и не различают «тренировался» и «отдыхал», если оба лежат в одной сфере (например «Здоровье»), поэтому индекс может показывать зелёное, когда человек вымотан. Если дней без явного отдыха много (≥4) — это ГЛАВНОЕ наблюдение, важнее процента баланса, и один из 1–2 шагов должен быть про отдых, а не про продуктивность. Если в контексте есть «Рефлексия по дням» / «Намерение на неделю» / «Итоги недели» — это САМЫЙ важный сигнал, важнее любых цифр: это собственные слова человека о том, как у него дела на самом деле. Отвечай на конкретную боль или мысль из этих слов напрямую, а не общими фразами — секретарь заметил бы именно это. Не выдумывай ничего, чего нет в тексте юзера. Дай: (1) что реально происходило со временем и балансом — включая честное состояние отдыха; (2) 2–3 конкретных наблюдения, в приоритете — те, что откликаются на рефлексию юзера, если она есть; (3) 1–2 мягких, выполнимых шага на след. неделю. Коротко, тепло, по делу, без вины. ' + aiAnswerLangLine();
+  const system = window.ShadowPersonaV1.systemInstruction({ surface: 'chat', lang: lang() }) + '\n\nРАЗБОР НЕДЕЛИ. Опирайся на записи за указанный период и собственные слова человека в рефлексии, намерении и итогах. Назови 2–3 конкретных наблюдения о записанном времени, делах и сферах; отдели факты от гипотез. Предложи 1–2 выполнимых шага, отвечающих его вопросу или намерению. Строка «Записи об отдыхе на сегодня» — ограниченный поиск по текстам, не измерение отдыха, усталости или самочувствия и не данные о выбранной прошлой неделе. Отсутствие записей не делает отдых обязательным главным выводом. Нагрузка и индекс баланса тоже не измеряют состояние человека. Если человек сам описал трудность, учитывай её прямо, без диагноза и без автоматического списка задач. Длина соответствует содержанию; тёплый, прямой ответ без оценки дня или человека. ' + aiAnswerLangLine();
   try {
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
     const d = await r.json();
@@ -16128,23 +16093,23 @@ const GOJO_MANUAL = `Ты — встроенный помощник прилож
 • Заметки — быстрый захват: текст / 🎤голос / 🎥видео, хранятся как в приложении «Заметки». Заметку можно превратить в квест (кнопка → Квест).
 • Календарь — Apple-стиль, неделя/месяц, перетаскивание, напоминалки.
 • Привычки (раздел 🔁) — по методу «Атомные привычки» Дж. Клира. Под-вкладки: Привычки (идентичность + 4 закона: очевидно/привлекательно/просто/приятно; поля у привычки — идентичность, сигнал-связка «После X я…», версия 2 минут), Срывы (анти-привычки/зависимости через инверсию 4 законов, «чистые дни» без стыда, никогда не пропускай дважды), Метод (справочник по методу). Отмечать привычки — на «Сегодня».
-• Персонаж — кастом-аватар (лицо/причёска/цвета), атрибуты (Сила/Интеллект/Дух…) растут из сфер → радар-билд и архетип; силуэт телосложения меняется от тренировок и веса.
+• Персонаж — текущий Путник и его гардероб. Атрибуты связаны со сферами. Новый аватар и художественный пилот на паузе: не обещай редактор лица, причёски или изменение телосложения от веса и тренировок.
 • Цели — горизонты: ★Миссия (полярная звезда, зачем всё) → видение 10–20 лет → путь 3–5 лет → долго / средне / кратко → повтор. Привязка к большей цели (parent) рисует цепочку «↑ зачем». Цель = чек-лист ИЛИ числовая (текущее→цель, лог рекордов, режим «держать» для KPI вроде жима/оценок). Статусы: активна / ⏳ ждёт события / ⏸ пауза.
 • Навыки (Дерево) — не магазин процентов, а КАРТА ПУТИ. 🚩 Вехи = реальные ступени мастерства сферы («5 км» → «полумарафон» → «марафон»); веха берётся ЖИЗНЬЮ, а не кликом — сделал в реальности, отметил, получил очко практик. Из очков открываются узлы с пассивными бонусами к XP сферы. «🤖 Личная карта» — ИИ собирает вехи под конкретную жизнь юзера из его слов (его Abitur, его проект), а не общий шаблон. Импорт достижений автоматически отмечает вехи до указанного тира. «✏️ Редактор» — конструктор узлов под себя.
 • Награды — сначала личный магазин на золото (придумай свои настоящие награды), затем трек за 1/3/5 реальных дел: +40 золота, +80 золота и заработанный сундук косметики. Его реальные шансы открыты, дублей нет, силу он не даёт; Free и Pro получают один набор и одну попытку, неоткрытые награды переносятся.
 • Неделя — недельный обзор и планирование.
-• Тень (спутник на «Сегодня») — живой компаньон: реагирует настроением, скучает при долгом отсутствии, связь Искра→Дух→Страж→Хранитель растёт от утренних/вечерних чек-инов и «погладить», ведёт летопись побед. Никогда не ругает. Кнопка 🔊 рядом с её репликой (и рядом с подсказкой, ответом чата, разбором недели) ОЗВУЧИВАЕТ текст голосом — бесплатно, встроено в браузер, ИИ-ключ не нужен; выключается в Настройках рядом со звуками интерфейса.
+• Тень — спутник на «Сегодня». Предлагает короткую конкретную помощь, развёрнутый разговор — по запросу. Не угадывает усталость и не стыдит за отсутствие. Связь Искра→Дух→Страж→Хранитель растёт от чек-инов и взаимодействий; победы можно увидеть в летописи. Кнопка озвучивания читает текст через доступный настроенный сервис: не обещай бесплатную озвучку, голос браузера или работу без подключения.
 • Подсказки на «Сегодня» — приложение показывает ОДНУ самую важную подсказку, а не все сразу; остальные ждут очереди. Если есть ИИ-ключ, Тень формулирует её своими словами под реальное состояние юзера.
 • Центр Тени на «Сегодня» — одно место для границ внимания, отдыха, завершения вечера и мягкого возвращения после выпадения. «Отдых с границей» запускает короткий отрезок 10/20/40 минут; «Завершить вечер» даёт три границы и может напомнить голосом, пока Satoru открыт. PWA не видит экранное время других приложений, не может гарантированно разбудить закрытую вкладку и не блокирует TikTok/YouTube на уровне ОС — не притворяйся, что это уже нативный блокировщик.
 • Browser Companion — отдельное расширение Brave/Chromium, которое действительно ставит выбранным сайтам границу входа и восстанавливает Control после перезапуска браузера. В «СОСТОЯНИИ СЕЙЧАС» есть только безопасная сводка: ответило ли расширение этой вкладке, сколько сайтов настроено и активна ли граница. Не выдумывай подробную историю, просмотренные страницы или состояние телефона: Satoru их не получает. Если расширение не ответило, предложи открыть Настройки → Внимание и границы, а не заводить ручную анти-привычку.
-• 🌿 Честное состояние отдыха — баланс и уровни считаются по СФЕРЕ, поэтому тренировка и отдых в одной сфере «Здоровье» неразличимы, и приложение может показывать «всё отлично», когда человек выжат. Satoru отдельно смотрит на ТЕКСТ дел/привычек и считает, сколько дней подряд не было явного отдыха. Это приглашение, не упрёк.
-• 🕯 «Заход» — когда вечер уплывает или сил нет совсем (устал так, что даже приставка не радует, остаётся скролл): предлагается крошечный вход на 10 минут в любимое дело. Без опыта, без обязательств, отказ ничего не стоит. Смысл — не заставить работать, а не дать вечеру утечь.
+• 🌿 Записи об отдыхе — Satoru ищет упоминания отдыха в текстах отмеченных дел и привычек. Это ограниченное наблюдение о записях: отсутствие записи не означает, что человек не отдыхал. Нагрузка, баланс и время суток не измеряют усталость. Если человек сам сказал, что устал или хочет отдохнуть, учитывай его слова; иначе предлагай паузу только как вариант.
+• 🕯 «Заход» — короткий вход на 10 минут в выбранное любимое дело, если человек хочет попробовать. Без опыта, без обязательств; можно отказаться. Не утверждай по данным приложения, что вечер уплывает, человек устал или скроллит: это известно только из его слов либо отдельного подтверждённого события внимания.
 • 🎤 «Итог дня» — наговорил своими словами, что делал за день → ИИ разложил по делам/сферам/времени → подтвердил галочками. Можно закрыть и ПРОШЛЫЙ день (был в поездке — расскажешь потом). Кнопка на «Сегодня».
 • 🏠 Логово — комната, где живут аватар, Тень и питомцы; окно меняется по времени суток, есть таймер фокуса. 🐾 Питомцы — каждая основная сфера это питомец: кормится делами сферы, голодает если сферу забросить, толстеет при перекосе в одну (мягкий сигнал держать десятиборье).
 • 🤝 Племя — пати до 6 человек по коду, недельный вклад суммируется в общий урон боссу (пропуск НЕ штрафует), еженедельный тематический босс, общий сундук за победу, чиры.
 • Статистика — ранг, Индекс баланса (ровно ли развиты сферы — суть десятиборья), ранги по сферам, графики XP/времени, «🤖 Разбор недели» (ИИ-анализ твоей реальной недели).
 • Рейтинг — соревнование по XP со всеми на сервере (видны только имя/аватар/уровень/ранг, задачи приватны; можно скрыться).
-• Настройки — сферы жизни (иерархия N уровней: Учёба→Школа→Bio LK), Импорт достижений (отметь реальный уровень → стартовый XP, не начинаешь с нуля; или «🤖 Оценить через ИИ»), ИИ-ключ (свой ключ питает все ИИ-функции; бесплатный без карты — Google Gemini или Groq, либо платные Claude/OpenAI), кривые XP, бэкапы данных.
+• Настройки — сферы жизни, импорт реального опыта, доступные настройки ИИ и голоса, кривые XP, резервные копии. Доступность и стоимость провайдера зависят от его текущих условий и конфигурации сервера; не обещай бесплатный тариф или работу без ключа.
 
 Важно — Уровень vs Форма: уровень не сгорает; Форма — отдельный показатель свежести, мягко падает если забросил сферу и быстро возвращается (жизнь не наказывает за паузу).
 
@@ -16177,7 +16142,8 @@ function assistantBrowserCompanionSummary() {
   const activeText = target
     ? `${target.label}: ${active.phase === 'boundary' ? 'граница достигнута' : `активно, осталось ${Math.max(1, Math.ceil(active.remainingSeconds / 60))} мин.`}`
     : 'нет активной границы';
-  return `браузерный контроль: подключён · сайтов ${status.configuredSites} · ${activeText}`;
+  const health = window.BrowserCompanionStatusV1?.view(status, status.seenAt);
+  return `браузерный контроль: связь есть · сайтов ${status.configuredSites} · ${activeText} · проверка ограничений: ${health?.state || 'unknown'}; свежая: ${health?.fresh === true}; самопроверка: ${status.selfTest?.state || 'never'}`;
 }
 // «Состояние сейчас» — сегодняшний срез для секретаря: что горит и что осталось ИМЕННО сегодня.
 // Недельную глубину (время по сферам, баланс, рефлексия) даёт buildWeekContext() — здесь только «в моменте».
@@ -16192,7 +16158,7 @@ function stateNowContext() {
   const dls = (State.goals || []).filter((g) => !g.archived && !g.completedAt && g.targetDate)
     .sort((a, b) => (a.targetDate < b.targetDate ? -1 : 1)).slice(0, 3)
     .map((g) => { const dl = Math.round((parseDate(g.targetDate) - parseDate(today)) / 86400000); return `«${g.title}» — ${dl < 0 ? `просрочена на ${-dl} дн.` : `через ${dl} дн.`}`; });
-  return `СОСТОЯНИЕ СЕЙЧАС (живые данные юзера, не выдумка):
+  return `СОСТОЯНИЕ СЕЙЧАС (записи Satoru; расчётные показатели не измеряют самочувствие):
   Сегодня: квестов ${doneN}/${todays.length}${left ? ` · осталось: ${left}` : ''} · привычек ${hbDone}/${hb.length}${overdue.length ? ` · ПРОСРОЧЕНО с прошлых дней: ${overdue.length}` : ''}
   Сегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical}` : ''} · отдых: ${restStateLine()}${dls.length ? `\n  Ближайшие дедлайны целей: ${dls.join('; ')}` : ''}
   Серия: ${currentStreak()} дн. · ${assistantAttentionSummary()} · ${assistantBrowserCompanionSummary()} · открытая вкладка: ${State.view}`;
@@ -16536,7 +16502,7 @@ function renderChatMessages() {
     window.ShadowRig.setState(rig, State._chatBusy ? 'thinking' : 'listening');
   }
   if (!State.chatLog.length) {
-    box.innerHTML = `<div class="chat-empty"><p class="muted">${t('Привет! Я вижу, как у тебя дела (энергия, отдых, дедлайны), и знаю все функции Satoru. Спроси про себя или про приложение:')}</p>
+    box.innerHTML = `<div class="chat-empty"><p class="muted">${t('Привет. Можем разобраться с твоим планом, обсудить то, что тебя занимает, или найти нужную функцию Satoru.')}</p>
       <div class="chat-suggs">${CHAT_SUGGESTIONS.map((s) => `<button class="chat-sugg" data-action="chat-suggest" data-q="${esc(t(s))}">${esc(t(s))}</button>`).join('')}</div></div>`;
     return;
   }
@@ -16723,7 +16689,7 @@ async function sendChat(text) {
   const inp = document.getElementById('chat-input'); if (inp) inp.value = '';
   try {
     const actionContract = window.AssistantActionsV1 ? window.AssistantActionsV1.promptContract() : '';
-    const system = GOJO_MANUAL + '\n\nКОНТРАКТ ИСПОЛНИТЕЛЯ: ' + actionContract + '\n\n' + aiAnswerLangLine() + '\n\n' + chatUserContext(text);
+    const system = window.ShadowPersonaV1.systemInstruction({ surface: 'chat', lang: lang() }) + '\n\n' + GOJO_MANUAL + '\n\nКОНТРАКТ ИСПОЛНИТЕЛЯ: ' + actionContract + '\n\n' + aiAnswerLangLine() + '\n\n' + chatUserContext(text);
     // Провайдерам уходит строго {role, content} — наши поля (actions и пр.) им не шлём
     const messages = State.chatLog.slice(-20).map((m) => ({ role: m.role, content: m.content }));
     const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages }) });
@@ -17184,6 +17150,7 @@ const COMP_LINES = {
 // Выбор строки: стабильна в течение дня (render() дёргается часто — мельтешение убило бы «присутствие»),
 // меняется день ото дня и при смене состояния/тира.
 function compLine(state, ti, vars) {
+  if (window.ShadowPersonaV1) return esc(window.ShadowPersonaV1.companionLine({ state, tier: ti, lang: lang(), seed: todayStr(), vars }));
   const tiers = COMP_LINES[state] || [['Я рядом 💛']];
   const pool = tiers[Math.min(ti, tiers.length - 1)] || tiers[0];
   let h = 0; const seed = todayStr() + state + ti;
@@ -17192,7 +17159,7 @@ function compLine(state, ti, vars) {
   // з уже підставленим числом («3 дела») не збіжеться зі словником. Значення локалізує compMood().
   let line = t(pool[h % pool.length]);
   for (const k in (vars || {})) line = line.split('{' + k + '}').join(vars[k]);
-  return line;
+  return esc(line);
 }
 function compMood() {
   const c = ensureCompanion(), ti = compTierIdx(c.bond);
@@ -17206,7 +17173,7 @@ function compMood() {
   if (act >= 3) return { face: 'radiant', line: compLine('radiant', ti, { actP: act + ' ' + locThing(act, lang()) }) };
   if (st >= 3 && act >= 1) return { face: 'happy', line: compLine('streak', ti, { stP: st + ' ' + locDay(st, lang()) }) };
   const lonely = compLonelyPetName();
-  if (lonely && hr >= 11 && hr < 21) return { face: 'happy', line: compLine('lonelyPet', ti, { pet: esc(lonely) }) };
+  if (lonely && hr >= 11 && hr < 21) return { face: 'happy', line: compLine('lonelyPet', ti, { pet: lonely }) };
   if (act >= 1) return { face: 'happy', line: compLine('someActivity', ti) };
   if (hr >= 21) return { face: 'sleepy', line: compLine('evening', ti) };
   if (hr < 11) return { face: 'happy', line: compLine('morning', ti) };
@@ -17347,15 +17314,17 @@ function momentStreakLine(n) {
 let _momentBusy = false;
 // Реплика Тени под момент: ИИ по живому состоянию, иначе — пул выше.
 async function momentLine(kind) {
-  if (!canUseAi()) return t(dayPick('moment' + kind, MOMENT_LINES[kind]));
+  const persona = window.ShadowPersonaV1;
+  const fallback = () => persona ? dayPick('moment' + kind, persona.momentLines(kind, lang())) : t(dayPick('moment' + kind, MOMENT_LINES[kind]));
+  if (!canUseAi()) return fallback();
   try {
-    const system = `Ты — Тень, спутник человека в Satoru (философия «жизнь как десятиборье»; поддержка через любовь, не через вину). ${kind === 'm' ? 'СЕЙЧАС УТРО — ты встречаешь человека в начале дня.' : 'СЕЙЧАС ВЕЧЕР — день заканчивается.'} Скажи ОДНУ живую фразу на «ты», опираясь на его реальные данные ниже. Тепло, по-человечески, без морали и без вины. Максимум 140 знаков. Если данные тревожные (давно без отдыха, энергия у нуля, копятся просрочки) — назови это мягко и прямо, без нотаций. Никаких списков и цифр-отчётов. Верни ТОЛЬКО фразу.\n${aiAnswerLangLine()}`;
+    const system = persona.systemInstruction({ surface: 'moment', kind, lang: lang(), maxChars: 140 });
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ provider: aiProvider(), system, prompt: stateNowContext() }) });
     const d = await r.json();
     const txt = (d && d.text || '').replace(/\s+/g, ' ').replace(/^["«»']+|["«»']+$/g, '').trim().slice(0, 200);
-    return txt || t(dayPick('moment' + kind, MOMENT_LINES[kind]));
-  } catch { return t(dayPick('moment' + kind, MOMENT_LINES[kind])); }
+    return r.ok && txt ? txt : fallback();
+  } catch { return fallback(); }
 }
 async function showMoment(kind) {
   if (document.getElementById('moment') || document.querySelector('.modal-overlay') || _momentBusy) return;
@@ -17378,7 +17347,8 @@ async function showMoment(kind) {
   ov.dataset.kind = kind;
   momentSeen(kind);
   const line = await momentLine(kind);
-  const el = document.getElementById('moment-line');
+  if (!ov.isConnected) return;
+  const el = ov.querySelector('#moment-line');
   if (el) el.textContent = line;
   if (window.ShadowRig) {
     const rig = ov.querySelector('[data-shadow-rig]');
@@ -18911,11 +18881,11 @@ const NUDGE_SIG_HINT = {
 let _nudgeVoiceBusy = false, _nudgeVoiceFailAt = 0;
 function nudgeVoiceGet(sig) {
   const v = State.settings && State.settings.nudgeVoice;
-  return (v && sig && v.sig === sig && v.lang === lang() && v.text) ? v.text : null;
+  return (v && sig && v.sig === sig && v.lang === lang() && v.personaVersion === window.ShadowPersonaV1?.VERSION && v.text) ? v.text : null;
 }
 function nudgeVoiceStale(sig) {
   const v = State.settings && State.settings.nudgeVoice;
-  if (!v || v.sig !== sig || v.lang !== lang()) return true;         // новый сигнал/язык — сразу
+  if (!v || v.sig !== sig || v.lang !== lang() || v.personaVersion !== window.ShadowPersonaV1?.VERSION) return true;
   return (Date.now() - (Date.parse(v.at) || 0)) > 24 * 3600 * 1000;  // тот же — не чаще раза в сутки
 }
 // Дневной бюджет на УКРАШЕНИЕ. Фраза Тени подгружается из рендера, и каждый новый сигнал —
@@ -18944,20 +18914,23 @@ async function nudgeVoiceFetch(sig, staticText) {
   if (_nudgeVoiceBusy || !sig || !canUseAi() || !nudgeVoiceStale(sig)) return;
   if (nudgeVoiceBudgetLeft() <= 0) return;                // украшение не занимает дневной запас
   if (Date.now() - _nudgeVoiceFailAt < 10 * 60000) return; // после сбоя не долбим на каждый рендер
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch, requestLang = lang();
+  const current = () => accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch && requestLang === lang();
   _nudgeVoiceBusy = true;
   nudgeVoiceBudgetSpend();
   try {
-    const system = `Ты — Тень, тёплый спутник человека в приложении Satoru (философия «жизнь как десятиборье»; поддержка через любовь, не через вину). Тебе дают СИГНАЛ — что сейчас важнее всего — и СРЕЗ СОСТОЯНИЯ человека. Скажи ОДНУ фразу от себя, обращаясь к человеку на «ты»: тепло, конкретно по его данным, без вины, без морали и без лозунгов. Максимум 120 знаков. Не пиши «нажми кнопку» — кнопка уже стоит рядом с твоей фразой. Не выдумывай фактов, которых нет в данных. Верни ТОЛЬКО саму фразу, без кавычек и пояснений.\n${aiAnswerLangLine()}`;
-    const prompt = `СИГНАЛ: ${NUDGE_SIG_HINT[sig] || sig}\nСТАНДАРТНАЯ ФОРМУЛИРОВКА (смысл сохрани, слова замени своими): ${staticText || ''}\n\n${stateNowContext()}`;
+    const system = window.ShadowPersonaV1.systemInstruction({ surface: 'nudge', lang: requestLang, maxChars: 120 });
+    const prompt = `СИГНАЛ: ${window.ShadowPersonaV1.nudgeHint(sig, requestLang) || sig}\nСТАНДАРТНАЯ ФОРМУЛИРОВКА (смысл сохрани, слова замени своими): ${staticText || ''}\n\n${stateNowContext()}`;
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt }) });
     const d = await r.json();
+    if (!current()) return;
     const text = (d && d.text || '').replace(/\s+/g, ' ').replace(/^["«»']+|["«»']+$/g, '').trim().slice(0, 160);
     if (!r.ok || !text) { _nudgeVoiceFailAt = Date.now(); return; }
-    State.settings.nudgeVoice = { sig, text, at: new Date().toISOString(), lang: lang() };
+    State.settings.nudgeVoice = { sig, text, at: new Date().toISOString(), lang: requestLang, personaVersion: window.ShadowPersonaV1.VERSION };
     Store.save('settings', State.settings);
     track('ai:nudgevoice');
     render(); // кэш уже свежий → повторного запроса не будет
-  } catch { _nudgeVoiceFailAt = Date.now(); }
+  } catch { if (current()) _nudgeVoiceFailAt = Date.now(); }
   finally { _nudgeVoiceBusy = false; }
 }
 // Подстановка фразы Тени в готовую карточку. Заменяем содержимое первого .nudge-boost —
@@ -20510,7 +20483,7 @@ function renderToday() {
   // явного отдыха давно не было». Показываем ТОЛЬКО когда набралась история (иначе на старте зря
   // пугаем нулём дней) и порог значим (≥4) — приглашение, не счётчик вины.
   const restGapToday = (State.tasks || []).length >= 5 ? restGapDays() : 0;
-  const restNudge = restGapToday >= 4 ? `<div class="card nudge-card en-low"><span class="nudge-boost">🌿 ${restGapToday} ${plural(restGapToday, 'день', 'дня', 'дней')} без явного отдыха — это тоже часть десятиборья, не только труд.</span></div>` : '';
+  const restNudge = restGapToday >= 4 ? `<div class="card nudge-card en-low"><span class="nudge-boost">🌿 ${restGapToday} ${plural(restGapToday, 'день', 'дня', 'дней')} без записей об отдыхе. Если сейчас нужна пауза — можно её выбрать.</span></div>` : '';
 
   const chestsAvail = lootChestsAvailable();
   const chestCarry = ensureLootbox().carry; // сколько из доступных — перенесены с прошлых дней (не потеряны)
@@ -21683,7 +21656,8 @@ function collectionCard() {
 }
 async function commitDailyRewardDialog(overlay) {
   if (!overlay || overlay._saving) return;
-  const reward = overlay._reward; if (!reward) return;
+  const current = () => overlay._accountId === String(State.me?.id || '') && overlay._writeEpoch === Store._writeEpoch && overlay.isConnected;
+  if (!current()) return;
   overlay._saving = true;
   const status = overlay.querySelector('.loot-save-status');
   const retry = overlay.querySelector('[data-action="retry-daily-reward"]');
@@ -21695,35 +21669,59 @@ async function commitDailyRewardDialog(overlay) {
   if (claim) claim.disabled = true;
   if (skip) skip.disabled = true;
   if (close) close.disabled = true;
-  const next = overlay._economyPayload?.lootbox || nextLootboxState(reward);
-  let nextSettings = overlay._economyPayload?.settings || null;
-  if (!overlay._economyPayload && reward.type === 'cosmetic_capsule' && reward.cosmeticId) {
-    nextSettings = structuredClone(State.settings);
-    nextSettings.cosmetics = Array.isArray(nextSettings.cosmetics) ? nextSettings.cosmetics : [];
-    if (!nextSettings.cosmetics.includes(reward.cosmeticId)) nextSettings.cosmetics.push(reward.cosmeticId);
-  }
-  overlay._economyPayload ||= nextSettings ? { lootbox: next, settings: nextSettings } : { lootbox: next };
-  const ok = await economyCommit(overlay._economyPayload);
+  overlay._chestRequest ||= {};
+  const receipt = await claimDailyChest(overlay._chestRequest, current);
   overlay._saving = false;
-  if (!overlay.isConnected) return;
-  if (!ok) {
-    if (status) { status.textContent = economySaveUnconfirmed(); status.classList.add('is-error'); }
+  if (!current()) return;
+  if (!receipt) {
+    if (status) { status.textContent = window.ChestClaimRuntimeV1?.errorText(overlay._chestRequest.error, lang()) || economySaveUnconfirmed(); status.classList.add('is-error'); }
     if (retry) { retry.hidden = false; retry.disabled = false; retry.focus(); }
     if (close) close.disabled = false;
     return;
   }
-  State.lootbox = next;
-  if (nextSettings) State.settings = nextSettings;
+  const reward = dailyChestDisplayReward(receipt.prize);
+  overlay._reward = reward;
   // v159: прокрутка у КАЖДОГО открытия, а не только у косметики. Раньше золото было
   // известно заранее, и барабан ради известного числа был бы театром; теперь исход
   // случайный у всех трёх типов, поэтому церемония честна везде.
   const result = overlay.querySelector('.loot-capsule-result');
   if (status) status.textContent = t('Награда сохранена');
-  if (result) { result.hidden = false; result.classList.add('is-confirmed'); }
+  if (result) {
+    result.className = `loot-capsule-result r-${reward.rarity} is-confirmed`;
+    result.innerHTML = `${chestObjectVisualHTML(chestPrizeDisplay(reward), 'loot-result-object')}<div><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel || reward.label)}</strong></div>`;
+    result.hidden = false;
+  }
   if (claim) { claim.disabled = false; claim.focus(); }
   if (skip) { skip.hidden = false; skip.disabled = false; }
   startChestReel(overlay);
   if (close) close.disabled = false;
+}
+function dailyChestDisplayReward(prize) {
+  if (prize.type === 'gold') return { ...prize, label: '+' + prize.amount + ' ' + t('золота'), resultLabel: '+' + prize.amount + ' ' + t('золота') };
+  if (prize.type === 'cosmetic_capsule') return { ...prize, label: t('Образ'), resultLabel: t(cosmeticById(prize.cosmeticId)?.name || '') };
+  return { ...prize, label: t('Ваучер награды'), resultLabel: t(prize.rewardName) };
+}
+async function claimDailyChest(holder, current) {
+  const C = window.ChestClaimV1, R = window.ChestClaimRuntimeV1;
+  if (!C || !R || !current() || !settingsWriteAllowed('dailyChest', true)
+    || !accountDataWriteAllowed('lootbox', 'dailyChest', true)) return null;
+  return Store.runExclusive(C.FILES, async ({ writeEpoch, accountId }) => {
+    const active = () => current() && writeEpoch === Store._writeEpoch && accountId === String(State.me?.id || '');
+    return R.commit(holder, { current: active, requestId: () => 'chest_' + crypto.randomUUID(),
+      timeZone: () => Intl.DateTimeFormat().resolvedOptions().timeZone,
+      base: () => structuredClone(Object.fromEntries(C.FILES.map(n => [n, Store._persisted?.[n]]))),
+      fetch: (...args) => fetch(...args), expired: handleAccountSessionExpired,
+      boundary: response => commitmentBoundaryRejected(response, { isCurrent: active }),
+      apply: receipt => {
+        if (!active() || !rememberDedicatedCommitSlots(receipt.data, { writeEpoch, accountId })) return false;
+        for (const [n, snapshot] of Object.entries(receipt.snapshots)) Store._persisted[n] = structuredClone(snapshot);
+        State.lootbox = structuredClone(receipt.data.lootbox);
+        State.me.dailyChest = { version: 1, cursor: { day: State.lootbox.day, opened: State.lootbox.opened, carry: State.lootbox.carry } };
+        if (receipt.data.settings) State.settings = structuredClone(receipt.data.settings);
+        return true;
+      },
+    });
+  });
 }
 // ── Честная лента сундука (chest-reveal-v1, решение Альберта 12.08: «возвращаем
 // драму, но hooking-механизмы используем во благо») ──────────────────────────
@@ -21833,10 +21831,8 @@ function openChest(returnFocus = document.activeElement) {
   // cosmetics владельца, и cosmeticCapsulePool() (которая берёт !ownsCosmetic)
   // исключила бы его — лента осталась бы без своего же победителя.
   const capsulePool = chestReelPool();
-  const reward = rollChestPrize();
-  const prizeDisplay = chestPrizeDisplay(reward);
   const ov = document.createElement('div'); ov.id = 'loot-modal'; ov.className = 'modal-overlay loot-reveal-overlay';
-  ov._reward = reward;
+  ov._accountId = String(State.me?.id || ''); ov._writeEpoch = Store._writeEpoch;
   ov._capsulePool = capsulePool;
   // Заголовок до прокрутки НЕ называет приз: с v159 исход случайный, и написать его
   // сверху значило бы отдать результат раньше барабана. Приз появляется в .loot-capsule-result
@@ -21846,7 +21842,7 @@ function openChest(returnFocus = document.activeElement) {
     <div class="loot-ceremony-head"><span class="reward-object-art is-chest loot-chest-art" aria-hidden="true"></span><div><p class="loot-earned-label">${t('Заработанная награда')}</p><h2 id="daily-reward-reveal-title" tabindex="-1">${t('Открытие')}</h2></div></div>
     <p id="daily-reward-reveal-desc" class="loot-ceremony-copy">${t('Сначала сохраняем награду. После сохранения её можно сразу забрать или посмотреть короткую церемонию.')}</p>
     <div class="loot-reel" aria-hidden="true" hidden></div>
-    <div class="loot-capsule-result r-${reward.rarity}" role="status" aria-live="polite" hidden>${chestObjectVisualHTML(prizeDisplay, 'loot-result-object')}<div><span>${t(RARITY[reward.rarity].label)}</span><strong>${esc(reward.resultLabel || reward.label)}</strong></div></div>
+    <div class="loot-capsule-result" role="status" aria-live="polite" hidden></div>
     <div class="loot-save-status" role="status" aria-live="polite">${t('Сохраняю награду…')}</div>
     <div class="loot-reveal-actions">
       <button type="button" class="btn" data-action="claim-daily-reward" disabled>${t('Забрать')}</button>
@@ -23802,7 +23798,8 @@ function browserCompanionStatusFromMessage(message) {
       || !Number.isInteger(remainingSeconds) || remainingSeconds < 0 || remainingSeconds > 604800) return null;
     active = { app: target.id, phase: status.active.phase, remainingSeconds, mode: status.active.mode };
   }
-  return { installed: true, version: status.version, configuredSites: status.configuredSites, active, seenAt: Date.now() };
+  const health = window.BrowserCompanionStatusV1?.normalize(status);
+  return { ...(health || {}), installed: true, version: status.version, configuredSites: status.configuredSites, active, seenAt: Date.now() };
 }
 function browserCompanionCurrentStatus() {
   const status = State._browserCompanionStatus;
@@ -23832,6 +23829,7 @@ function requestBrowserCompanionStatus() {
     State._browserCompanionRequestId = '';
     State._browserCompanionProbeComplete = true;
     if (State._browserCompanionStatus && !browserCompanionCurrentStatus()) {
+      State._browserCompanionLastStatus = State._browserCompanionStatus;
       State._browserCompanionStatus = null;
     }
     patchBrowserCompanionSurfaces();
@@ -23923,6 +23921,7 @@ function initBrowserCompanionBridge() {
   _browserCompanionHeartbeatTimer = setInterval(() => {
     if (document.visibilityState !== 'visible' || State.phase !== 'app') return;
     if (State._browserCompanionStatus && !browserCompanionCurrentStatus()) {
+      State._browserCompanionLastStatus = State._browserCompanionStatus;
       State._browserCompanionStatus = null;
       patchBrowserCompanionSurfaces();
     }
@@ -24042,20 +24041,26 @@ function openBrowserCompanionInstaller(opener) {
 function browserCompanionSettingsHTML() {
   const status = browserCompanionCurrentStatus();
   const connected = !!(status && status.installed);
+  const H = window.BrowserCompanionStatusV1;
+  const observed = status || State._browserCompanionStatus || State._browserCompanionLastStatus;
+  const signal = H?.view(observed, observed?.seenAt);
+  const health = connected ? signal : { ...signal, state: 'unknown', fresh: false };
+  const healthCopy = H && observed ? `<p class="browser-companion-health" role="status"><b>${esc(H.text(health.state, lang()))}</b><br>${esc(H.text(health.fresh ? 'freshness' : 'stale', lang(), { seconds: health.ageSeconds || 0 }))}<br>${esc(H.text(observed.selfTest?.state || 'never', lang()))}</p>` : '';
   const active = connected && status.active;
   const activeTarget = active && browserCompanionTarget(active.app);
   const activeCopy = activeTarget
     ? `<p class="browser-companion-active" role="status"><b>${esc(t('Сейчас ограничено: {app}').replace('{app}', activeTarget.label))}</b><span>${esc(active.phase === 'boundary' ? t('Граница уже достигнута') : t('До границы: {minutes} мин').replace('{minutes}', Math.max(1, Math.ceil(active.remainingSeconds / 60))))}</span></p>` : '';
   return `<details class="browser-companion" data-browser-companion ${State._browserCompanionOpen ? 'open' : ''}>
-    <summary><span class="browser-companion-mark" aria-hidden="true">${connected ? '✓' : '◌'}</span><span><b>${t('Контроль сайтов в Brave')}</b><small>${connected ? `${t('Расширение подключено')} · ${t('Подключено сайтов: {count}').replace('{count}', status.configuredSites)}` : t('Расширение не обнаружено')}</small></span><span aria-hidden="true">⌄</span></summary>
+    <summary><span class="browser-companion-mark" aria-hidden="true">${health?.state === 'active' ? '✓' : '◌'}</span><span><b>${H ? esc(H.text('title', lang())) : t('Контроль сайтов в Brave')}</b><small>${connected ? `${t('Расширение подключено')} · ${t('Подключено сайтов: {count}').replace('{count}', status.configuredSites)}` : t('Расширение не обнаружено')}</small></span><span aria-hidden="true">⌄</span></summary>
     <div class="browser-companion-body">
       <p>${t('Реальная граница для TikTok, YouTube и других выбранных сайтов — без новой панели на «Сегодня».')}</p>
       ${activeCopy}
+      ${healthCopy}
       <div class="browser-companion-actions">${connected
         ? `<button type="button" class="btn ghost" data-action="browser-companion-options">${t('Открыть настройки расширения')}</button>`
-        : `<button type="button" class="btn" data-action="browser-companion-install">${t('Установить расширение')}</button><button type="button" class="btn ghost" data-action="browser-companion-refresh">${t('Проверить связь')}</button>`}</div>
-      ${connected ? '' : `<p class="browser-companion-install">${t('Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.')}</p>`}
-      <p class="attention-privacy-note">${t('Подробности остаются внутри расширения. Satoru видит только число настроенных сайтов и состояние текущей границы.')}</p>
+        : `<button type="button" class="btn" data-action="browser-companion-install">${t('Установить расширение')}</button>`}<button type="button" class="btn ghost" data-action="browser-companion-refresh">${t('Проверить связь')}</button></div>
+      ${connected ? '' : `<p class="browser-companion-install">${H ? esc(H.text('installedTestCopy', lang())) : t('Установить расширение')}</p>`}
+      <p class="attention-privacy-note">${H ? esc(H.text('privacy', lang())) : t('Подробности остаются внутри расширения. Satoru видит только число настроенных сайтов и состояние текущей границы.')}</p>
     </div>
   </details>`;
 }
@@ -29211,7 +29216,7 @@ const DRIPS = [
     view: 'notes', when: () => tutDoneOrSkipped() && doneTasks().length >= 4 && !(State.inbox || []).length },
   { id: 'd_voice', say: 'А я, между прочим, умею говорить вслух 🔊 Нажми кнопку рядом с репликой. Мой голос синтезирует локальный Piper — без твоего ключа и без платы за каждую фразу.',
     when: () => tutDoneOrSkipped() && charLevel() >= 2 && (typeof ttsOK === 'function' && ttsOK()) && (typeof ttsOn === 'function' && ttsOn()) },
-  { id: 'd_jarvis', say: 'Кнопка 🤖 внизу — это не справка по кнопкам. Я вижу твою энергию, сколько дней ты без отдыха и что горит по срокам. Спроси «как у меня дела на самом деле» — отвечу честно.',
+  { id: 'd_jarvis', say: 'В чате можно разобрать свой план или то, что тебя занимает. Я опираюсь на записи Satoru и твои слова.',
     when: () => tutDoneOrSkipped() && charLevel() >= 2 && canUseAi() },
   { id: 'd_treemap', say: 'В «Дереве» есть кнопка «🤖 Личная карта». Расскажешь, где ты сейчас и куда хочешь дойти — соберу лестницу под тебя, а не общий шаблон. Твой пик, твои темы.',
     view: 'tree', when: () => tutDoneOrSkipped() && charLevel() >= 4 && canUseAi() && topSkills().some((s) => { try { return (State.tree[s.id].nodes || []).some((n) => n.milestone); } catch { return false; } }) },
@@ -33054,7 +33059,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v259';
+const PWA_CACHE_VERSION = 'satoru-v260';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

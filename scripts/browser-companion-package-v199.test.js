@@ -31,7 +31,7 @@ test('every manifest file exists and both v215 compatibility ZIPs are real artif
     assert.ok(messages.extensionName?.message);
     assert.ok(messages.extensionDescription?.message);
   }
-  assert.equal(manifest.version, '0.5.4');
+  assert.equal(manifest.version, '0.6.0');
   for (const name of ['satoru-attention-v215.zip', 'satoru-attention-store-v215.zip']) {
     const zip = path.join(ROOT, 'public', 'downloads', name);
     assert.ok(fs.existsSync(zip), `${name}: install artifact must not ship as a 404`);
