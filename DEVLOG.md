@@ -1,5 +1,47 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-12] v255 — начать сохранённое дело в его время
+
+Planned-start подключён к Сегодня через общий server-owned nextMoves transport.
+Producer читает реальные task.date/startTime; одно ближайшее незавершённое дело
+даёт нейтральную карточку в окне −10…+45 минут. Claim предшествует показу,
+accepted receipt — открытию существующего task/focus UI. Сервер повторно сверяет
+точную дату и время; перенос, удаление или завершение дают durable expired/stale.
+Добавление другого ближайшего дела не отменяет уже выданный допустимый claim.
+v254 клиенты получают только понятный им возврат через capability negotiation.
+
+Foreground timer учитывает открытие/закрытие окна и server recheckAt занятого
+канала, включая claim race 409. Старый delivered/dismissed claim держит свой lease;
+после его истечения возможна новая проверка. Рендер не опрашивает сеть повторно,
+скрытая вкладка/другой раздел не получают claim. Отложенное открытие после записи
+явно повторяется пользователем; смена аккаунта и dispose гасят старые ответы.
+Копия на пяти языках, App/SW v255, согласованные JS/CSS pins. Touch-кнопки названия
+и фактического времени в prepared dialog подняты до 42px.
+
+Проверки финального кандидата: **2143/2143 PASS**, без skip, 50.0 с,
+concurrency 2, серверные тесты с отдельными DATA_DIR. node --check изменённых JS
+и git diff --check PASS. Реальные server tests покрывают expiry/restart, cross-device
+claims, capability compatibility, saved schedule identity, write failure и replay.
+VM client/runtime проверяют foreground timer, lease expiry, скрытие/возврат,
+malformed recheckAt, dispose и account race без бесконечного render/retry.
+
+IAB, только synthetic test@satoru.local: 375×812 и 1280×900, RU/EN/DE,
+dark/light; saved task → карточка → owner dialog, автоматическое появление на
+границе времени без reload, lost reply после commit → reload → тот же accepted;
+500 при отказе → retry → reload+server restart → тихо; перенос → stale без
+диалога; malformed/offline → видимая ошибка → здоровый retry. Horizontal overflow
+отсутствует; проверенные кнопки prepared dialog ≥42px, Tab внутри, Escape закрывает.
+Light contrast: заголовок 14.11:1, описание 6.43:1, primary 6.40:1.
+У нового диалога animation:none/transition:0s. Native reduced-motion и 200% text-only
+zoom в IAB отдельно не воспроизводились; полный visual QA приложения не закрыт.
+
+Публикация этого SHA фиксируется после Railway и live-byte gate; не выводится
+из успешного теста или push. Контракт: PLANNED-START-V255.md.
+Следующий срез — evening-close/tonightSchedule; затем подготовленный отдельно
+runtime supply Вдохновения. RestProfile menu на паузе владельца. CommitmentV2
+task links, полный First Value, v2 push и legacy morning outcome frozen replay
+ещё не подключены. Внешний playback и художественная приёмка канона не подтверждены.
+
 ## [2026-09-10] v254 — возврат к своему делу после подтверждённого выпадения
 
 **Опубликовано 11.09 00:09 CEST:** владелец явно подтвердил push/deploy; master

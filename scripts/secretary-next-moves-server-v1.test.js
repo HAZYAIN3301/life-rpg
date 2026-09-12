@@ -129,6 +129,7 @@ test('authoritative return transport on a real isolated server', { timeout: 1800
     assert.deepEqual(results.map((r) => r.status).sort(), [200, 409]);
     const winner = results.find((r) => r.status === 200).body;
     const ownRow = saved().delivery.offers[choice.offerId];
+    assert.equal(results.find((r) => r.status === 409).body.recheckAt, winner.offer.expiresAt);
     assert.equal(saved().nextMoves.offers[choice.cooldownKey].state, 'offered');
     assert.equal(ownRow.token, winner.token);
     assert.equal((await req(alice, '/api/secretary/claim', { offerId: 'morning-recovery|' + c.today, channel: 'card' })).status, 409);
@@ -136,13 +137,20 @@ test('authoritative return transport on a real isolated server', { timeout: 1800
     assert.equal(resume.body.resume.token, winner.token);
     const other = await call(body('decide', { clientId: ownRow.clientId === 'tab_a' ? 'tab_b' : 'tab_a' }));
     assert.equal(other.body.resume, null); assert.equal(other.body.offer, null);
+    assert.deepEqual(other.body.silence, { reason: 'held', recheckAt: winner.offer.expiresAt });
+    const blocked = context(c); blocked.activeSession.active = true;
+    assert.deepEqual((await call(body('decide', { context: blocked }))).body.silence, { reason: 'context_blocked' });
     reset();
   });
   await t.test('a legacy hold wins the same account surface before return claim', async () => {
     const choice = (await call(body('decide'))).body.offer;
     assert.equal((await req(alice, '/api/secretary/claim', { offerId: 'morning-recovery|' + c.today, channel: 'push' })).status, 200);
-    assert.equal((await call(body('claim', { offerId: choice.offerId }))).status, 409);
-    assert.equal((await call(body('decide'))).body.offer, null);
+    const lease = JSON.parse(fs.readFileSync(path.join(userDir, 'secretary-claims.json'), 'utf8')).claims['morning-recovery|' + c.today];
+    const race = await call(body('claim', { offerId: choice.offerId }));
+    assert.equal(race.status, 409); assert.deepEqual(race.body, { error: 'held', recheckAt: lease.expiresAt });
+    const silence = await call(body('decide'));
+    assert.equal(silence.body.offer, null);
+    assert.deepEqual(silence.body.silence, { reason: 'legacy_held', recheckAt: lease.expiresAt });
     assert.equal(fs.existsSync(file), false);
     reset();
   });
@@ -271,6 +279,141 @@ test('authoritative return transport on a real isolated server', { timeout: 1800
     fs.rmdirSync(file); reset();
     write('secretary-ledger', { version: 1, delivered: { bad: [] } });
     assert.equal((await req(alice, '/api/secretary', null, 'GET')).status, 422);
+    reset();
+  });
+  const plannedSupport = ['after-lapse-return', 'planned-start'];
+  const plannedExtra = () => ({ supportedCapabilities: plannedSupport, context: { ...context(c), lapse: null } });
+  const scheduledTask = (extra = {}) => ({ id: 'own_task', title: 'Saved scheduled task', done: false,
+    completedAt: null, date: c.today, startTime: '12:00', estimateMin: 30, ...extra });
+  await t.test('legacy hold advertises its earliest live expiry without releasing delivered or uncertain claims', async () => {
+    write('tasks', [scheduledTask()]);
+    const at = new Date().toISOString(), expired = new Date(Date.now() - 1000).toISOString();
+    const first = new Date(Date.now() + 60000).toISOString(), second = new Date(Date.now() + 120000).toISOString();
+    const claims = { version: 1, claims: {
+      expired: { at, expiresAt: expired, token: 'expired-token', channel: 'card' },
+      uncertain: { at, expiresAt: second, token: 'uncertain-token', channel: 'push', outcome: 'retry', settledAt: at },
+      delivered: { at, expiresAt: first, token: 'delivered-token', channel: 'card', outcome: 'delivered', settledAt: at },
+    } };
+    write('secretary-claims', claims);
+    const before = fs.readFileSync(path.join(userDir, 'secretary-claims.json'), 'utf8');
+    const initial = await call(body('decide', plannedExtra()));
+    assert.deepEqual(initial.body.silence, { reason: 'legacy_held', recheckAt: first });
+    assert.equal(initial.body.offer, null); assert.equal(initial.body.resume, null);
+    assert.equal(fs.readFileSync(path.join(userDir, 'secretary-claims.json'), 'utf8'), before, 'wake metadata does not release or extend any legacy lease');
+    assert.equal(fs.existsSync(file), false, 'waiting does not spend the new offer budget');
+    claims.claims.delivered.expiresAt = expired; write('secretary-claims', claims);
+    assert.deepEqual((await call(body('decide', plannedExtra()))).body.silence, { reason: 'legacy_held', recheckAt: second });
+    claims.claims.uncertain.expiresAt = expired; write('secretary-claims', claims);
+    const freed = await call(body('decide', plannedExtra()));
+    assert.equal(freed.body.offer.capabilityId, 'planned-start'); assert.equal(freed.body.resume, null);
+    reset();
+  });
+  await t.test('new claim expiry removes held wake metadata and durably expires only once', async () => {
+    write('tasks', [scheduledTask()]); const held = await claim(plannedExtra());
+    const other = { ...plannedExtra(), clientId: 'tab_b' };
+    assert.deepEqual((await call(body('decide', other))).body.silence, { reason: 'held', recheckAt: held.offer.expiresAt });
+    const state = saved(); state.delivery.offers[held.offer.offerId].offer.expiresAt = new Date(Date.now() - 1).toISOString(); write('secretary', state);
+    const freed = await call(body('decide', other));
+    assert.equal(freed.body.resume, null); assert.notEqual(freed.body.silence?.reason, 'held');
+    assert.equal(freed.body.silence?.recheckAt, undefined);
+    assert.equal(saved().nextMoves.capabilities['planned-start'].ignoredInARow, 1);
+    await call(body('decide', other)); assert.equal(saved().nextMoves.capabilities['planned-start'].ignoredInARow, 1);
+    reset();
+  });
+  await t.test('planned-start requires explicit supported capabilities; old v254 never receives a planned offer or resume', async () => {
+    write('tasks', [scheduledTask()]);
+    assert.equal((await call(body('decide', { context: { ...context(c), lapse: null } }))).body.offer, null);
+    for (const supportedCapabilities of [null, 'planned-start', ['evening-close'], ['planned-start', 'planned-start']]) {
+      assert.equal((await call(body('decide', { ...plannedExtra(), supportedCapabilities }))).status, 400);
+    }
+    assert.equal((await call(body('decide', { ...plannedExtra(), supportedCapabilities: [] }))).body.offer, null);
+    const held = await claim(plannedExtra());
+    assert.equal(held.offer.capabilityId, 'planned-start');
+    assert.equal(held.offer.action.args.size, 'planned');
+    assert.deepEqual(held.offer.about.planned, { date: c.today, startTime: '12:00' });
+    assert.equal(held.offer.alternatives.length, 0);
+    const oldResume = await call(body('decide', { context: { ...context(c), lapse: null } }));
+    assert.equal(oldResume.body.offer, null); assert.equal(oldResume.body.resume, null);
+    const newResume = await call(body('decide', plannedExtra()));
+    assert.equal(newResume.body.resume.token, held.token);
+    const other = await call(body('decide', { ...plannedExtra(), clientId: 'tab_b' }));
+    assert.equal(other.body.resume, null); assert.equal(other.body.offer, null);
+    reset();
+  });
+  await t.test('planned lease needs no lapse and ends at the saved schedule window, not a sliding response window', async () => {
+    write('tasks', [scheduledTask({ startTime: '11:16' })]);
+    const held = await claim(plannedExtra());
+    const closesAt = new Date(Date.parse(c.today + 'T12:02:00.000Z') - c.offset * 60000).toISOString();
+    assert.equal(held.offer.expiresAt, closesAt);
+    const replay = await call(held.intent); assert.equal(replay.body.offer.expiresAt, closesAt); assert.equal(replay.body.token, held.token);
+    const ledger = saved(); ledger.delivery.offers[held.offer.offerId].offer.expiresAt = new Date(Date.now() - 1).toISOString();
+    write('secretary', ledger);
+    const expired = await call(outcome(held, 'expired')); assert.equal(expired.status, 200);
+    assert.equal(saved().nextMoves.capabilities['planned-start'].ignoredInARow, 1);
+    reset();
+  });
+  await t.test('after-lapse priority and the same account claim protect the two enabled capabilities', async () => {
+    write('tasks', [scheduledTask()]);
+    const preferred = await call(body('decide', { supportedCapabilities: plannedSupport }));
+    assert.equal(preferred.body.offer.capabilityId, 'after-lapse-return');
+    const choice = (await call(body('decide', plannedExtra()))).body.offer;
+    const competing = await Promise.all(['tab_a', 'tab_b'].map(clientId => call(body('claim', { ...plannedExtra(), clientId, offerId: choice.offerId }))));
+    assert.deepEqual(competing.map(item => item.status).sort(), [200, 409]);
+    assert.equal((await call(body('claim', { supportedCapabilities: plannedSupport, offerId: preferred.body.offer.offerId }))).status, 409);
+    reset();
+  });
+  await t.test('acceptance revalidates claimed task date/time/deletion/completion and durably expires stale choices', async () => {
+    for (const tasks of [[], [scheduledTask({ done: true })], [scheduledTask({ completedAt: c.now })],
+      [scheduledTask({ date: '2099-01-01' })], [scheduledTask({ startTime: '12:01' })],
+      [scheduledTask({ startTime: null })], [scheduledTask({ startTime: '99:00' })]]) {
+      write('tasks', [scheduledTask()]); const held = await claim(plannedExtra());
+      write('tasks', tasks);
+      const intent = outcome(held, 'accepted', { context: plannedExtra().context });
+      const rejected = await call(intent);
+      assert.equal(rejected.status, 409, JSON.stringify(tasks)); assert.equal(rejected.body.error, 'stale_target');
+      assert.equal(rejected.body.action, undefined); assert.equal(saved().nextMoves.offers[held.offer.cooldownKey].state, 'expired');
+      const again = await call(intent); assert.equal(again.body.persistedAt, rejected.body.persistedAt);
+      assert.equal(saved().nextMoves.capabilities['planned-start'].ignoredInARow, 1);
+      reset();
+    }
+  });
+  await t.test('a nearer task appearing does not revoke the still-valid task the person already saw', async () => {
+    write('tasks', [scheduledTask({ startTime: '11:58' })]); const held = await claim(plannedExtra());
+    write('tasks', [scheduledTask({ startTime: '11:58' }), scheduledTask({ id: 'new_nearer', startTime: '12:00' })]);
+    const accepted = await call(outcome(held, 'accepted', { context: plannedExtra().context }));
+    assert.equal(accepted.status, 200); assert.equal(accepted.body.action.args.targetRef, 'quest:own_task');
+    assert.equal(accepted.body.action.args.size, 'planned');
+    const tasks = JSON.parse(fs.readFileSync(path.join(userDir, 'tasks.json'), 'utf8'));
+    assert.equal(tasks.every(task => task.done === false), true, 'receipt authorizes opening, not start or completion');
+    reset();
+  });
+  await t.test('planned acceptance respects active session/day/Guide/First Value and preserves a saved late schedule', async () => {
+    write('tasks', [scheduledTask()]); const held = await claim(plannedExtra());
+    const active = plannedExtra().context; active.activeSession.active = true;
+    assert.equal((await call(outcome(held, 'accepted', { context: active }))).body.error, 'context_blocked');
+    for (const [name, value] of [['days', { [c.today]: { closed: true } }], ['settings', { guideV3: { currentChapter: 'habits', enabled: true } }], ['first-value', { status: 'action_ready' }]]) {
+      write(name, value); assert.equal((await call(outcome(held, 'accepted', { context: plannedExtra().context }))).body.error, 'context_blocked');
+      if (name === 'first-value') fs.rmSync(path.join(userDir, 'first-value.json'));
+      else write(name, {});
+    }
+    write('settings', { secretary: { configured: true, eveningTime: '11:00' } });
+    assert.equal((await call(outcome(held, 'accepted', { context: plannedExtra().context }))).status, 200,
+      'an explicitly scheduled late task retains planned policy semantics');
+    reset();
+  });
+  await t.test('planned outcome write failure/retry/restart shares the same durable receipt and ownership guards', async () => {
+    write('tasks', [scheduledTask()]); const held = await claim(plannedExtra());
+    const intent = outcome(held, 'accepted', { context: plannedExtra().context });
+    assert.equal((await call(intent, bob)).status, 404);
+    assert.equal((await call({ ...intent, clientId: 'tab_b', requestId: 'foreign-intent' })).status, 403);
+    const before = fs.readFileSync(file, 'utf8'), backup = path.join(userDir, '.backups', 'secretary', 'previous.json');
+    fs.rmSync(backup, { force: true }); fs.mkdirSync(backup);
+    assert.equal((await call(intent)).status, 500); assert.equal(fs.readFileSync(file, 'utf8'), before);
+    fs.rmdirSync(backup);
+    const accepted = await call(intent); assert.equal(accepted.status, 200);
+    await stop(rt); rt = await start(dir);
+    const replay = await call(intent); assert.equal(replay.body.persistedAt, accepted.body.persistedAt); assert.equal(replay.body.repeat, true);
+    assert.equal((await call(body('decide', plannedExtra()))).body.offer, null);
     reset();
   });
   await t.test('account cascade delete removes envelope, receipts and private backups', async () => {

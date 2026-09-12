@@ -18020,6 +18020,9 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 
 .attention-flow-head h2:focus { outline: none; }
 
+#attention-dialog-overlay [data-secretary-prepared] .t-title-edit,
+#attention-dialog-overlay [data-secretary-prepared] .t-time { min-height: 42px; }
+
 .attention-flow-head > p:last-child {
   max-width: var(--measure-compact);
   margin: var(--sp-2) 0 0;

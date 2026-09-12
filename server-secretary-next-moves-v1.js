@@ -15,6 +15,7 @@ const RETAIN_MS = 30 * 86400000;
 const TOKEN = /^[A-Za-z0-9_-]{1,100}$/;
 const token = (value) => typeof value === 'string' && TOKEN.test(value);
 const OUTCOMES = ['accepted', 'dismissed', 'expired'];
+const CAPABILITIES = ['after-lapse-return', 'planned-start'];
 const object = (value) => !!value && typeof value === 'object' && !Array.isArray(value);
 const iso = (value) => typeof value === 'string' && Policy.parseIso(value) !== null;
 const own = (value, key) => Object.prototype.hasOwnProperty.call(value, key);
@@ -24,18 +25,33 @@ function stable(value) {
   if (object(value)) return '{' + Object.keys(value).sort().map((key) => JSON.stringify(key) + ':' + stable(value[key])).join(',') + '}';
   return JSON.stringify(value);
 }
+function earliestExpiry(values, now) {
+  const at = Date.parse(now);
+  let earliest = null;
+  for (const value of values) {
+    const expires = Date.parse(value);
+    if (Number.isFinite(expires) && expires > at && (earliest === null || expires < earliest)) earliest = expires;
+  }
+  return earliest === null ? null : new Date(earliest).toISOString();
+}
 function failure(code, status = 422) { const e = new Error(code); e.code = code; e.status = status; throw e; }
 function empty() { return { version: 1, nextMoves: Policy.emptyLedger(), delivery: { offers: {}, requests: {} } }; }
 function validAction(action) {
   if (!object(action) || !object(action.args) || !Policy.isDay(action.args.day)) return false;
-  if (action.type === 'task_open_prepared') return Producer.validOriginalRef(action.args.targetRef) && action.args.size === 'minimum';
+  if (action.type === 'task_open_prepared') return Producer.validOriginalRef(action.args.targetRef) && ['minimum', 'planned'].includes(action.args.size);
   return action.type === 'ask_one_question' && token(action.args.questionId);
 }
 function validOffer(offer) {
-  return object(offer) && offer.version === 2 && offer.capabilityId === 'after-lapse-return'
+  return object(offer) && offer.version === 2 && CAPABILITIES.includes(offer.capabilityId)
     && typeof offer.offerId === 'string' && offer.offerId.length <= 200
-    && offer.offerId.startsWith('after-lapse-return|') && typeof offer.cooldownKey === 'string'
-    && offer.cooldownKey === 'after-lapse-return|' + offer.about?.day && iso(offer.expiresAt)
+    && offer.offerId.startsWith(offer.capabilityId + '|') && typeof offer.cooldownKey === 'string'
+    && offer.cooldownKey === offer.capabilityId + '|' + offer.about?.day && iso(offer.expiresAt)
+    && (offer.capabilityId !== 'planned-start' || object(offer.about?.planned)
+      && Policy.isDay(offer.about.planned.date) && offer.about.planned.date === offer.about.day
+      && /^([01]\d|2[0-3]):[0-5]\d$/.test(offer.about.planned.startTime)
+      && offer.primary?.action?.type === 'task_open_prepared' && offer.primary.action.args?.size === 'planned'
+      && offer.primary.action.args?.day === offer.about.day && typeof offer.about.targetRef === 'string'
+      && offer.primary.action.args?.targetRef === offer.about.targetRef && offer.about.targetRef.startsWith('quest:'))
     && offer.channel === 'card' && offer.primary?.id === 'primary' && validAction(offer.primary?.action)
     && validAction(offer.action) && Array.isArray(offer.alternatives)
     && offer.alternatives.every((item) => object(item) && token(item.id) && validAction(item.action));
@@ -69,6 +85,11 @@ function sanitize(raw) {
 }
 
 function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
+  function supported(body) {
+    const list = body.supportedCapabilities === undefined ? ['after-lapse-return'] : body.supportedCapabilities;
+    if (!Array.isArray(list) || list.some((id) => !CAPABILITIES.includes(id)) || new Set(list).size !== list.length) failure('invalid_capabilities', 400);
+    return list;
+  }
   function readFile(uid, name, fallback, predicate) {
     let raw;
     try { raw = JSON.parse(fs.readFileSync(path.join(userDir(uid), name + '.json'), 'utf8')); }
@@ -118,11 +139,12 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
   function held(uid, now) {
     return Object.values(read(uid).delivery.offers).some((row) => row.state === 'offered' && Date.parse(row.offer.expiresAt) > Date.parse(now));
   }
-  function legacyHeld(uid, now) {
+  function legacyRecheckAt(uid, now) {
     const raw = readFile(uid, 'secretary-claims', Claims.emptyClaims(), (v) => !!Claims.sanitizeClaims(v));
-    return Object.keys(raw.claims).some((id) => !!Claims.activeClaim(raw, id, now));
+    const claims = Claims.sanitizeClaims(raw);
+    return earliestExpiry(Object.keys(claims.claims).map((id) => Claims.activeClaim(claims, id, now)?.expiresAt), now);
   }
-  function snapshot(uid, context, now, today, offset) {
+  function snapshot(uid, context, now, today, offset, plannedTaskRef) {
     if (!object(context)) failure('invalid_context', 400);
     for (const [name, key] of [['activeSession', 'active'], ['guide', 'active'], ['firstValue', 'pending']]) {
       if (!object(context[name]) || typeof context[name][key] !== 'boolean') failure('invalid_flag', 400);
@@ -137,7 +159,7 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     const guide = settings.guideV3;
     if (guide != null && !object(guide)) failure('invalid_secretary_state');
     const result = Producer.build({ now, today, utcOffsetMinutes: offset, lapse: context.lapse ?? null,
-      settings, tasks, habits, habitlog,
+      settings, tasks: plannedTaskRef ? tasks.filter((task) => 'quest:' + task.id === plannedTaskRef) : tasks, habits, habitlog,
       activeSession: context.activeSession.active,
       guideActive: context.guide.active || !!(guide && guide.enabled !== false && guide.currentChapter),
       firstValueStatus: context.firstValue.pending ? 'new' : firstValue?.status,
@@ -150,21 +172,40 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     const context = snapshot(uid, body.context, now, today, offset);
     const result = Policy.decide({ ...context, now, today, utcOffsetMinutes: offset,
       invocation: body.invocation || 'app_open', ledger: state.nextMoves,
-      availableChannels: ['card'], preferredChannel: 'card', enabledCapabilities: ['after-lapse-return'] });
+      availableChannels: ['card'], preferredChannel: 'card', enabledCapabilities: supported(body) });
     if (!result.ok) failure(result.error, 400);
     if (result.offer) {
-      // The policy's time-of-decision expiry cannot extend a three-hour episode
-      // window each time a client retries. Delivery leases are also finite.
+      let windowEnds;
+      if (result.offer.capabilityId === 'planned-start') {
+        const time = context.plannedStart.plannedAtLocal;
+        const at = Number(time.slice(0, 2)) * 60 + Number(time.slice(3));
+        windowEnds = Date.parse(today + 'T00:00:00.000Z') - offset * 60000 + Math.min(1440, at + 46) * 60000;
+        result.offer = { ...result.offer, about: { ...result.offer.about, planned: { date: today, startTime: time } },
+          // The first planned slice opens exactly this saved task. Unrelated
+          // habit/commitment alternatives need their own reviewed executor flow.
+          alternatives: [] };
+      } else windowEnds = Date.parse(context.lapse.endedAt) + 3 * 3600000;
       result.offer = { ...result.offer, expiresAt: new Date(Math.min(Date.parse(result.offer.expiresAt),
-        Date.parse(context.lapse.endedAt) + 3 * 3600000, Date.parse(now) + TTL_MS)).toISOString() };
+        windowEnds, Date.parse(now) + TTL_MS)).toISOString() };
     }
     return { result, context };
   }
-  function actionAlive(uid, action, now, today, offset) {
+  function actionAlive(uid, row, action, now, today, offset) {
     // Resolve the original opaque reference again from current account-owned files.
     if (action.type === 'ask_one_question') return true;
     if (action.type !== 'task_open_prepared') return false;
     const ref = action.args?.targetRef;
+    if (row.offer.capabilityId === 'planned-start') {
+      if (ref !== row.offer.about.targetRef || row.offer.about.planned.date !== today) return false;
+      // Revalidate the frozen task, not the current nearest-task winner.
+      const current = snapshot(uid, { activeSession: { active: false }, guide: { active: false }, firstValue: { pending: false }, lapse: null },
+        now, today, offset, ref);
+      if (!current.plannedStart || current.plannedStart.taskRef !== ref
+        || current.plannedStart.plannedAtLocal !== row.offer.about.planned.startTime) return false;
+      const permission = Policy.decide({ ...current, now, today, utcOffsetMinutes: offset,
+        invocation: 'manual', availableChannels: ['card'], enabledCapabilities: ['planned-start'], ledger: Policy.emptyLedger() });
+      return permission.ok && permission.offer && stable(permission.offer.action) === stable(action);
+    }
     const context = snapshot(uid, { activeSession: { active: false }, guide: { active: false }, firstValue: { pending: false },
       lapse: { confirmed: true, source: 'user_confirmed', eventKey: 'attention:revalidate',
         day: today, endedAt: now, originalRef: ref, screenEpisode: false, observedAt: now } }, now, today, offset);
@@ -175,6 +216,7 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
   function transact(uid, body, { now = new Date().toISOString(), today, offset } = {}) {
     if (!object(body) || !token(body.clientId) || !token(body.requestId)) failure('invalid_request', 400);
     if (!['decide', 'claim', 'outcome'].includes(body.op)) failure('invalid_op', 400);
+    if (body.op === 'decide' || body.op === 'claim') supported(body);
     if (!iso(now) || !Number.isInteger(offset) || offset < -840 || offset > 840
       || Policy.localParts(Policy.parseIso(now), offset).day !== today) failure('invalid_time', 400);
     const state = read(uid);
@@ -194,19 +236,25 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     if (body.op === 'decide') {
       const { result, context } = decide(uid, state, body, now, today, offset);
       saveExpiry();
-      const active = Object.values(state.delivery.offers).find((row) => row.state === 'offered');
+      const activeRows = Object.values(state.delivery.offers).filter((row) => row.state === 'offered');
+      const active = activeRows[0];
       const blocked = context.activeSession.active || context.guide.active || context.firstValue.pending || context.dayClosed;
       if (active) return { status: 200, body: { ok: true, offer: null,
-        silence: { reason: blocked ? 'context_blocked' : 'held' },
-        resume: !blocked && active.clientId === body.clientId ? { offer: active.offer, token: active.token, persistedAt: active.claimedAt } : null } };
-      if (legacyHeld(uid, now)) return { status: 200, body: { ok: true, offer: null, silence: { reason: 'legacy_held' }, resume: null } };
+        silence: blocked ? { reason: 'context_blocked' }
+          : { reason: 'held', recheckAt: earliestExpiry(activeRows.map((row) => row.offer.expiresAt), now) },
+        resume: !blocked && active.clientId === body.clientId && supported(body).includes(active.offer.capabilityId)
+          ? { offer: active.offer, token: active.token, persistedAt: active.claimedAt } : null } };
+      const legacyAt = legacyRecheckAt(uid, now);
+      if (legacyAt) return { status: 200, body: { ok: true, offer: null, silence: { reason: 'legacy_held', recheckAt: legacyAt }, resume: null } };
       return { status: 200, body: { ok: true, offer: result.offer, silence: result.silence, resume: null } };
     }
     saveExpiry();
     if (Object.keys(state.delivery.requests).length >= 2048) failure('receipt_capacity', 429);
     let response, status = 200;
     if (body.op === 'claim') {
-      if (legacyHeld(uid, now) || Object.values(state.delivery.offers).some((row) => row.state === 'offered')) failure('held', 409);
+      const recheckAt = earliestExpiry([legacyRecheckAt(uid, now), ...Object.values(state.delivery.offers)
+        .filter((row) => row.state === 'offered').map((row) => row.offer.expiresAt)], now);
+      if (recheckAt) return { status: 409, body: { error: 'held', recheckAt } };
       const { result } = decide(uid, state, body, now, today, offset);
       if (!result.offer || result.offer.offerId !== body.offerId) failure('stale_offer', 409);
       const row = { offer: result.offer, clientId: body.clientId, token: crypto.randomUUID(),
@@ -246,7 +294,7 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
         const selected = [row.offer.primary, ...row.offer.alternatives].find((item) => item.id === actionId);
         if (!selected) failure('invalid_action', 400);
         action = selected.action;
-        if (!actionAlive(uid, action, now, today, offset)) {
+        if (!actionAlive(uid, row, action, now, today, offset)) {
           mark(state, row, 'expired', now); status = 409;
           response = { ok: false, error: 'stale_target', outcome: 'expired', persistedAt: now, repeat: false };
         }

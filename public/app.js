@@ -23953,6 +23953,7 @@ function secretaryNextRuntime() {
   if (_secretaryNextAccount !== State.me.id) {
     _secretaryNextRuntime?.dispose(); _secretaryNextAccount = State.me.id;
     _secretaryNextRuntime = R.create({ account: () => State.me?.id, snapshot: secretaryNextSnapshot, id: () => crypto.randomUUID(),
+      visible: () => State.phase === 'app' && State.view === 'today' && !document.hidden,
       storage: sessionStorage, fetch: (...args) => fetch(...args), changed: () => { if (State.phase === 'app') render(); },
       expired: handleAccountSessionExpired, open: secretaryNextOpenAction });
   }
@@ -23968,7 +23969,7 @@ function secretaryNextOpenAction(action) {
   if (action.type === 'ask_one_question') return showAttentionDialog('secretaryQuestion', { ...secretaryNextSnapshot(), lang: lang() });
   const ref = action.args?.targetRef, target = UI.target(ref, secretaryNextSnapshot());
   if (!target) { toast(UI.copy('secretary.v2.common.stale', lang())); return false; }
-  return showAttentionDialog('secretaryPrepared', { ...target, ref, lang: lang(), startLabel: t('Начать фокус'),
+  return showAttentionDialog('secretaryPrepared', { ...target, ref, size: action.args?.size, lang: lang(), startLabel: t('Начать фокус'),
     ownerHTML: target.kind === 'quest' ? questRow(target.item) : habitRow(target.item) });
 }
 async function loadSecretaryOffer() {
@@ -27261,7 +27262,7 @@ function render() {
     try { main.innerHTML = viewErrorCard(State.view, e); } catch { main.innerHTML = '<div class="card"><p>Ошибка. Обнови страницу.</p></div>'; }
   }
   try { if (lang() !== 'ru') translateDOM(document.body); } catch (e) { console.error('translateDOM', e); }
-  try { if (_secretaryOfferSlotFree && State.secretaryOffer === undefined) loadSecretaryOffer(); } catch (e) { console.error('loadSecretaryOffer', e); }
+  try { if (State.view === 'today' && _secretaryOfferSlotFree) loadSecretaryOffer(); } catch (e) { console.error('loadSecretaryOffer', e); }
   try { reportDataDamageOnce(); } catch (e) { console.error('reportDataDamage', e); }
   try { scheduleReminders(); } catch (e) { console.error('scheduleReminders', e); }
   try { scheduleEveningReminder(); } catch (e) { console.error('scheduleEveningReminder', e); }
@@ -32839,7 +32840,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v254';
+const PWA_CACHE_VERSION = 'satoru-v255';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

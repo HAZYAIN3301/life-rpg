@@ -126,7 +126,7 @@ test('only the explicitly linked, due, unfinished habit with its saved minimum i
 test('evening boundary is mapped from configured settings; it does not enable another delivery', () => {
   const result = context({ settings: { secretary: { configured: true, eveningTime: '21:30', dailyReminder: false } } });
   assert.deepEqual(result.eveningContract, { configured: true, eveningTimeLocal: '21:30', observedAt: now });
-  assert.equal(result.plannedStart, undefined);
+  assert.equal(result.plannedStart, null);
   assert.equal(result.tonightSchedule, undefined);
   assert.equal(context({ settings: { secretary: { configured: false, eveningTime: '21:30' } } }).eveningContract, null);
   assert.equal(P.build(snapshot({ settings: { secretary: { configured: true, eveningTime: '25:30' } } })).error, 'invalid_evening_contract');

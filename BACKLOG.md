@@ -1,14 +1,19 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v255, planned-start:** сохранённые task.date/startTime дают один claimed ход;
+  открытие существующего дела после durable accepted, перенос/завершение дают stale,
+  foreground timer учитывает окно расписания и истечение чужого claim. Пять языков,
+  pending retry, общий budget с возвратом. Проверки/публикация — верх DEVLOG и
+  PLANNED-START-V255.md.
 - [x] **v254, after-lapse-return:** явная Attention→quest/habit связь, один claimed
   ход на Сегодня, action после durable accepted, отказ/expiry/restart, pending retry,
   пять языков. Повреждённый ledger fail-closed и видимая recovery-ошибка. Проверки и
   публикация — DEVLOG, контракт SECRETARY-NEXT-MOVES-TRANSPORT-V1.md.
   Runtime `52a124f` опубликован; Railway app/TTS success, 12/12 production bytes
   совпали 11.09 00:09 CEST. Остальные capability ниже остаются открытыми.
-- [ ] **Следующие два среза №2:** planned-start из task.date/startTime, затем
-  evening-close с tonightSchedule и настоящим owner перехода вечера; каждый отдельно
-  до production. RestProfile runtime и CommitmentV2 task links пока отсутствуют,
+- [ ] **Следующий срез №2:** evening-close с tonightSchedule и настоящим owner
+  перехода вечера — после подтверждения production v255. RestProfile runtime/menu
+  остаётся на паузе владельца; CommitmentV2 task links пока отсутствуют,
   v2 push и legacy morning outcome frozen replay также не закрыты.
 - [ ] **Пакет №3 supply:** проверенный отдельный пакет и миграция starter pool готовы;
   подключить admit/toCatalogRows до choose и проверить реальное сохранение/повтор.

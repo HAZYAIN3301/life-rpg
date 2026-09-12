@@ -3,6 +3,13 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
+**Секретарь, 11.09 — текущий checkpoint:** after-lapse-return v254 опубликован
+runtime `52a124f`, release `f142bb1`; Railway app/TTS success, 12/12 live bytes
+совпали. Следующий срез — planned-start v255 из сохранённых task.date/startTime,
+с общим durable claim/receipt. Текущая проверка/публикация — верх DEVLOG,
+контракты PLANNED-START-V255.md и SECRETARY-NEXT-MOVES-TRANSPORT-V1.md.
+Rest Profile остаётся на паузе владельца; следующий runtime-срез после v255 — вечер.
+
 **Крупный пакет 09.09 — v253 опубликован:** [FEATURE-WRITES-V253.md](./FEATURE-WRITES-V253.md).
 Notes/Calendar/Habits Guide и обычные habit writes используют общий WAL/exact-CAS;
 сервер проверяет покупки по общему каталогу и сохранённому балансу; настройки Логова
@@ -120,8 +127,9 @@ Site public, обновление явно разрешено.
   `git rev-parse HEAD` и `git rev-parse origin/master`; checkout с отставшим SHA не считать
   источником истины.
 - Новый runtime — **структурный v247 + полировка v248 + дуо/награды v249/v250 +
-  подтверждённые записи v251–v253**. PWA cache `satoru-v253`,
-  app pin `20260909-design-v253-1`; CSS pins не менялись с последнего релиза.
+  подтверждённые записи v251–v253, возврат v254 и planned-start v255**.
+  PWA cache `satoru-v255`, app pin `20260911-secretary-v255-1`;
+  CSS pins не менялись с последнего релиза.
   Актуальный статус master/Railway и live-проверки — верх DEVLOG; старый receipt v250
   не доказывает публикацию нового кандидата. Контракт — FEATURE-WRITES-V253.md.
   Границы UI-аудита всех вкладок остаются в `PRODUCT-UX-AUDIT-V248.md`; v253 не выдаёт

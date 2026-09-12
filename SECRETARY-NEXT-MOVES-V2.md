@@ -1,7 +1,8 @@
 # Secretary Next Moves v2 — три полезных хода и их оценка
 
 Дата: 2026-09-09
-Статус 10.09: **after-lapse-return подключён к runtime v254**, остальные capability ещё policy.
+Статус 11.09: **after-lapse-return подключён в v254, planned-start — в v255**;
+evening-close ещё policy. Проверки и публикация каждого среза — верх DEVLOG.
 Актуальный транспорт/ограничения: [SECRETARY-NEXT-MOVES-TRANSPORT-V1.md](SECRETARY-NEXT-MOVES-TRANSPORT-V1.md).
 Ниже сохранён контекст исходного чистого пакета; его утверждения «файлы не тронуты»
 описывают пакет до интеграции, а не текущий runtime. Публикация и проверки — DEVLOG.
@@ -353,17 +354,17 @@ M.decide({
 | `safetyTier`, `entryCost`, `cooldown` в registry | как есть | + `producers`, `scopes`, `maxStalenessMinutes` |
 | `ledger` v212 (`claimed/offered/accepted/dismissed/expired`) | v2 ledger | `claimed` остаётся у серверного claim из §7 и в чистый модуль не входит |
 
-**Новое действие — ровно одно и это открытое решение владельца:**
+**Новое действие — ровно одно; решение принято, см. §7.1:**
 
 `task_open_prepared` (`args: {targetRef, size: 'planned'|'minimum', day}`). Его нет в v212,
 потому что «открыть конкретную сохранённую запись» не выражается ни одним из четырёх
 существующих: `recovery_day_open` означает другое, `rest_start_prepared` — отдых. Класс
 безопасности тот же — `reversible_open`, ничего разрушительного/платёжного/социального.
 Модуль экспортирует `PROPOSED_ACTIONS` отдельно, и тест падает, если новых действий станет
-больше одного. **Без решения владельца два хода из трёх (`planned-start` и минимум в
-`after-lapse-return`) доставить нельзя.**
+больше одного. Решение по этому действию закрыто; повторное согласование не требуется.
+Первый runtime-срез after-lapse-return опубликован в v254.
 
-### С тем, что реально задеплоено (`public/secretary-router-v1.js` на v250)
+### С историческим runtime (`public/secretary-router-v1.js` до v254)
 
 Рантайм за время работы над пакетом переписан и закрыл большую часть дефектов §12: он
 переименован в `morning-recovery` (№13), отдаёт один канал (№10), требует `invocation`
@@ -384,7 +385,7 @@ M.decide({
 | `about` | `{day, eventKey}` | `{basisKey, day, targetRef, basisDay}` | `eventKey ← basisKey` |
 | словарь действий | 4 действия v212 | + `task_open_prepared` | **решение владельца, §7.1** |
 
-**Один дефект §12 остался живым: №15, повреждённый ledger.** В `next()` на v250 стоит
+**Дефект §12 №15 закрыт в v254.** Исторически в `next()` на v250 стояло
 `sanitizeLedger(inp.ledger) || emptyLedger()`, то есть испорченный файл молча становится
 пустым — а пустой означает «сегодня ещё не говорили» и заново открывает уже отклонённое
 предложение. Рядом: `next()` возвращает `null` и на молчание, и на некорректный вход, так
@@ -392,7 +393,8 @@ M.decide({
 
 v2 этот дефект не наследует: повреждённый ledger даёт `{ok:false, error:'invalid_ledger'}`,
 а молчание — отдельный `{ok:true, offer:null, silence:{reason}}`. Это не мой файл, поэтому
-фиксирую как факт для интегратора, а не правлю.
+пакет фиксировал факт для интегратора. Интегратор исправил reader и server/UI recovery
+в v254; актуальное поведение описано в SECRETARY-NEXT-MOVES-TRANSPORT-V1.md.
 
 `toLegacyOfferV1(offer)` возвращает `{ok:false, error:'action_not_in_v1', action}` для
 `task_open_prepared` — то есть адаптер сам сообщает, какой ход текущий рантайм доставить

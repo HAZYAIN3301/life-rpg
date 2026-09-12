@@ -1,4 +1,4 @@
-/* Bounded owner snapshots for the first after-lapse-return runtime slice.
+/* Bounded owner snapshots for after-lapse-return and planned-start.
  * No DOM, storage, clocks, inference from text, or user-data mutation.
  * The caller supplies freshly read owner data and an explicit local clock.
  */
@@ -30,6 +30,34 @@
     return Number.isFinite(parsed) ? parsed : null;
   }
   const localDay = (stamp, offset) => new Date(stamp + offset * 60000).toISOString().slice(0, 10);
+  const timeMinutes = value => typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value)
+    ? Number(value.slice(0, 2)) * 60 + Number(value.slice(3)) : null;
+
+  function plannedSchedule(snapshot, nowMs) {
+    const localMinute = Math.floor((nowMs + snapshot.utcOffsetMinutes * 60000) / 60000) % 1440;
+    const candidates = [];
+    let nextDecision = null;
+    for (const task of snapshot.tasks) {
+      const at = timeMinutes(task.startTime), ref = 'quest:' + task.id;
+      if (!validOriginalRef(ref) || !validDay(task.date) || task.date < snapshot.today || at === null
+        || task.done !== false || task.completedAt) continue;
+      const midnight = Date.parse(task.date + 'T00:00:00.000Z') - snapshot.utcOffsetMinutes * 60000;
+      const opens = midnight + Math.max(0, at - 10) * 60000;
+      // Policy compares integer local minutes: +45:59 is eligible, +46:00 is not.
+      const closes = midnight + Math.min(1440, at + 46) * 60000;
+      for (const transition of [opens, closes]) if (transition > nowMs && (nextDecision === null || transition < nextDecision)) nextDecision = transition;
+      if (task.date === snapshot.today && localMinute - at >= -10 && localMinute - at <= 45) {
+        candidates.push({ task, at, distance: Math.abs(localMinute - at) });
+      }
+    }
+    candidates.sort((a, b) => a.distance - b.distance || a.at - b.at || (a.task.id < b.task.id ? -1 : a.task.id > b.task.id ? 1 : 0));
+    const task = candidates[0]?.task;
+    return {
+      plannedStart: task ? { taskRef: 'quest:' + task.id, plannedAtLocal: task.startTime,
+        precision: 'exact_time', doneToday: false, observedAt: snapshot.now } : null,
+      nextDecisionAt: nextDecision === null ? null : new Date(nextDecision).toISOString(),
+    };
+  }
 
   function ownerRows(raw) {
     if (!Array.isArray(raw)) return null;
@@ -157,8 +185,9 @@
         restMenu = { recipeRef: chosen.id, minutes: chosen.defaultMinutes, screenMode: { offline: 'no_screen', device: 'screen', mixed: 'either' }[chosen.mode], observedAt: snapshot.now };
       }
     }
-    return { ok: true, context: {
-      lapse, habitMinimum, restMenu, eveningContract,
+    const schedule = plannedSchedule(snapshot, nowMs);
+    return { ok: true, nextDecisionAt: schedule.nextDecisionAt, context: {
+      lapse, habitMinimum, restMenu, eveningContract, plannedStart: schedule.plannedStart,
       // settings.commitmentsV1 is now CommitmentV2. Raw V1 step ids cannot be
       // executed as tasks; no invented link or lossy V2 -> V1 conversion.
       commitmentItems: [],

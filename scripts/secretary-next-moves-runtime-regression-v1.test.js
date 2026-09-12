@@ -146,7 +146,7 @@ test('a session appearing during accepted RPC defers opening, survives reload an
   const accepting = h.runtime.respond('accepted'); await turn();
   h.current.activeSession = true; release(outcomeReceipt(offer()));
   assert.equal(await accepting, false); assert.equal(h.opened.length, 0);
-  assert.equal(h.runtime.state().error, 'context_blocked');
+  assert.equal(h.runtime.state().error, 'opening_deferred');
   assert.ok(h.storage.get('satoru.secretary.next.a.open'));
   const reloaded = h.reload();
   assert.equal(await reloaded.retry(), false); assert.equal(h.opened.length, 0);

@@ -7,6 +7,16 @@
   'use strict';
   const LANGS = ['ru', 'en', 'de', 'uk', 'es'];
   const rows = {
+    'planned_start.eyebrow': ['Твой план', 'Your plan', 'Dein Plan', 'Твій план', 'Tu plan'],
+    'planned_start.title': ['Дело из твоего плана', 'A task from your plan', 'Eine Aufgabe aus deinem Plan', 'Справа з твого плану', 'Una tarea de tu plan'],
+    'planned_start.body.window': ['В плане есть дело на это время. Можно открыть его и начать.', 'You have a task planned for this time. You can open it and begin.', 'Für diese Zeit ist eine Aufgabe geplant. Du kannst sie öffnen und beginnen.', 'У плані є справа на цей час. Можна відкрити її та почати.', 'Tienes una tarea prevista para esta hora. Puedes abrirla y empezar.'],
+    'planned_start.body.due_soon': ['Подошло время дела с указанным тобой сроком.', 'It is time for the task with your chosen deadline.', 'Es ist Zeit für die Aufgabe mit deiner festgelegten Frist.', 'Настав час справи з указаним тобою строком.', 'Es hora de la tarea con el plazo que indicaste.'],
+    'planned_start.open': ['Открыть дело', 'Open the task', 'Aufgabe öffnen', 'Відкрити справу', 'Abrir la tarea'],
+    'planned_start.question': ['Хочешь сейчас открыть запланированное дело?', 'Would you like to open the planned task now?', 'Möchtest du die geplante Aufgabe jetzt öffnen?', 'Хочеш зараз відкрити заплановану справу?', '¿Quieres abrir ahora la tarea prevista?'],
+    'planned_start.at': ['В плане на', 'Planned for', 'Geplant für', 'У плані на', 'Prevista para'],
+    'planned_start.prepared': ['Дело из твоего плана. Выбери, с чего начать.', 'A task from your plan. Choose where to begin.', 'Eine Aufgabe aus deinem Plan. Wähle, womit du beginnst.', 'Справа з твого плану. Обери, з чого почати.', 'Una tarea de tu plan. Elige por dónde empezar.'],
+    'reason.planned_start_window': ['В плане есть точное время начала.', 'Your plan has a saved start time.', 'Dein Plan enthält eine gespeicherte Startzeit.', 'У плані є точний час початку.', 'Tu plan tiene una hora de inicio guardada.'],
+    'reason.planned_start_due_soon': ['Дело запланировано на это время и имеет твой срок.', 'The task is planned for this time and has your deadline.', 'Die Aufgabe ist für diese Zeit geplant und hat deine Frist.', 'Справа запланована на цей час і має твій строк.', 'La tarea está prevista para esta hora y tiene tu plazo.'],
     'return.eyebrow': ['Тень рядом', 'Shadow is here', 'Der Schatten ist da', 'Тінь поруч', 'Sombra está aquí'],
     'return.title.minimum': ['Вернуться к одному делу', 'Return to one task', 'Zu einer Aufgabe zurückkehren', 'Повернутися до однієї справи', 'Volver a una tarea'],
     'return.body.minimum': ['Можно начать с небольшого шага по этому делу.', 'A small step on this task is enough to begin.', 'Ein kleiner Schritt bei dieser Aufgabe reicht für den Anfang.', 'Можна почати з невеликого кроку в цій справі.', 'Puedes empezar con un paso pequeño en esta tarea.'],
@@ -36,6 +46,7 @@
     'common.stale': ['Это дело уже изменилось. Обнови предложение.', 'This task has changed. Refresh the offer.', 'Diese Aufgabe hat sich geändert. Aktualisiere den Vorschlag.', 'Ця справа вже змінилася. Онови пропозицію.', 'Esta tarea ha cambiado. Actualiza la propuesta.'],
     'common.saving': ['Сохраняю…', 'Saving…', 'Wird gespeichert…', 'Зберігаю…', 'Guardando…'],
     'common.blocked': ['Сначала закончи текущую сессию или обучение, затем повтори открытие.', 'Finish the current session or guide, then try opening again.', 'Beende zuerst die aktuelle Sitzung oder Anleitung und versuche es dann erneut.', 'Спочатку заверши поточну сесію або навчання, потім повтори відкриття.', 'Termina la sesión o guía actual y vuelve a intentar abrirlo.'],
+    'common.deferred': ['Открытие отложено. Когда будешь готов, повтори.', 'Opening is paused. Retry when you are ready.', 'Das Öffnen wartet. Versuche es erneut, wenn du bereit bist.', 'Відкриття відкладено. Коли будеш готовий, повтори.', 'La apertura está pendiente. Reintenta cuando quieras continuar.'],
     'common.prepared': ['Достаточно открыть дело и выбрать маленький шаг.', 'Open the task and choose a small step.', 'Öffne die Aufgabe und wähle einen kleinen Schritt.', 'Достатньо відкрити справу й обрати маленький крок.', 'Abre la tarea y elige un paso pequeño.'],
     'common.own_words': ['Твои слова', 'Your words', 'Deine Worte', 'Твої слова', 'Tus palabras'],
   };
@@ -59,7 +70,7 @@
     return `<label class="attention-field attention-field-wide"><span>${label('common.target', lang)}</span><select name="originalRef"><option value="">${label('common.no_target', lang)}</option>${candidates(snapshot).map(row => `<option value="${esc(row.ref)}">${esc(row.value.title)}</option>`).join('')}</select></label>`;
   }
   function errorHTML(error, lang, retry = true) {
-    const key = /invalid_secretary|invalid_ledger|corrupt/.test(error || '') ? 'common.corrupt' : /stale_target|offer_expired|terminal_outcome|offer_not_found/.test(error || '') ? 'common.stale' : error === 'context_blocked' ? 'common.blocked' : 'common.error';
+    const key = /invalid_secretary|invalid_ledger|corrupt/.test(error || '') ? 'common.corrupt' : /stale_target|offer_expired|terminal_outcome|offer_not_found/.test(error || '') ? 'common.stale' : error === 'context_blocked' ? 'common.blocked' : error === 'opening_deferred' ? 'common.deferred' : 'common.error';
     return `<div role="alert" class="secretary-next-error"><p>${label(key, lang)}</p>${retry ? `<button type="button" class="btn ghost" data-action="secretary-next-retry">${label('common.retry', lang)}</button>` : ''}</div>`;
   }
   function render(state, lang, snapshot) {
@@ -71,6 +82,7 @@
     return `<div class="secretary-offer" data-secretary-next-offer="${esc(offer.offerId)}" aria-busy="${state.busy}">
       <p><b>${esc(copy(offer.copy.titleKey, lang))}</b></p>
       ${named ? `<p data-noi18n><b>${esc(named.title)}</b>${named.minimum ? `<br>${esc(named.minimum)}` : ''}</p>` : ''}
+      ${named && offer.capabilityId === 'planned-start' && (offer.about?.planned?.startTime || named.item.startTime) ? `<p>${label('planned_start.at', lang)} <time>${esc(offer.about?.planned?.startTime || named.item.startTime)}</time></p>` : ''}
       <p class="secretary-primary-note">${esc(copy(offer.copy.questionKey || offer.copy.bodyKey, lang))}</p>${quote}
       <div class="secretary-offer-buttons"><button type="button" class="btn secretary-primary" data-action="secretary-next-accept" ${state.busy ? 'disabled' : ''}>${state.busy ? label('common.saving', lang) : esc(copy(offer.primary.labelKey, lang))}</button><button type="button" class="btn ghost" data-action="secretary-next-dismiss" ${state.busy ? 'disabled' : ''}>${label('common.dismiss', lang)}</button></div>
       ${state.error ? errorHTML(state.error, lang) : ''}
@@ -82,7 +94,7 @@
   }
   function renderPrepared(vm) {
     const lang = vm.lang || 'ru';
-    return `<div class="attention-flow" data-secretary-prepared="${esc(vm.ref)}"><header class="attention-flow-head"><h2 id="attention-dialog-title" tabindex="-1" data-noi18n>${esc(vm.title)}</h2><p id="attention-dialog-description">${vm.minimum ? esc(vm.minimum) : label('common.prepared', lang)}</p></header><ul class="tasks">${vm.ownerHTML}</ul><div class="attention-actions"><button type="button" class="btn ghost" data-action="close-attention-dialog">${label('common.close', lang)}</button>${vm.kind === 'quest' ? `<button type="button" class="btn" data-action="focus-task" data-id="${esc(vm.id)}">${esc(vm.startLabel)}</button>` : ''}</div></div>`;
+    return `<div class="attention-flow" data-secretary-prepared="${esc(vm.ref)}"><header class="attention-flow-head"><h2 id="attention-dialog-title" tabindex="-1" data-noi18n>${esc(vm.title)}</h2><p id="attention-dialog-description">${vm.size === 'planned' ? label('planned_start.prepared', lang) : vm.minimum ? esc(vm.minimum) : label('common.prepared', lang)}</p></header><ul class="tasks">${vm.ownerHTML}</ul><div class="attention-actions"><button type="button" class="btn ghost" data-action="close-attention-dialog">${label('common.close', lang)}</button>${vm.kind === 'quest' ? `<button type="button" class="btn" data-action="focus-task" data-id="${esc(vm.id)}">${esc(vm.startLabel)}</button>` : ''}</div></div>`;
   }
   return Object.freeze({ LANGS, COPY, copy, target, candidates, targetField, render, errorHTML, renderQuestion, renderPrepared });
 });

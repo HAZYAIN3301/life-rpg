@@ -7,20 +7,26 @@
   'use strict';
   const object = v => !!v && typeof v === 'object' && !Array.isArray(v);
   const iso = value => typeof value === 'string' && Number.isFinite(Date.parse(value)) && new Date(value).toISOString() === value;
+  const day = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && iso(value + 'T00:00:00.000Z');
+  const SUPPORTED_CAPABILITIES = Object.freeze(['after-lapse-return', 'planned-start']);
   const stable = value => JSON.stringify(value, Object.keys(value || {}).sort());
   const sameAction = (left, right) => left?.type === right?.type && stable(left?.args) === stable(right?.args);
   const actionTypes = ['task_open_prepared', 'rest_start_prepared', 'ask_one_question', 'evening_transition_open'];
   function validAction(action) {
-    if (!object(action) || !actionTypes.includes(action.type) || !object(action.args)) return false;
+    if (!object(action) || !actionTypes.includes(action.type) || !object(action.args) || !day(action.args.day)) return false;
     if (action.type === 'task_open_prepared') return /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(action.args.targetRef || '') && ['minimum', 'planned'].includes(action.args.size);
     if (action.type === 'ask_one_question') return ['return_next_smallest', 'after-lapse-return_confirm'].includes(action.args.questionId);
     return false; // Enable each executor only with its verified vertical slice.
   }
   function validOffer(offer) {
-    return object(offer) && offer.version === 2 && offer.capabilityId === 'after-lapse-return'
+    const planned = offer?.capabilityId === 'planned-start';
+    return object(offer) && offer.version === 2 && SUPPORTED_CAPABILITIES.includes(offer.capabilityId)
       && typeof offer.offerId === 'string' && offer.offerId.length > 0 && offer.channel === 'card'
       && iso(offer.expiresAt) && object(offer.copy) && object(offer.primary)
-      && ['secretary.v2.return.title.minimum', 'secretary.v2.return.title.ask'].includes(offer.copy.titleKey)
+      && (planned ? offer.copy.titleKey === 'secretary.v2.planned_start.title'
+        && offer.primary.action?.type === 'task_open_prepared' && offer.primary.action.args?.size === 'planned'
+        && /^quest:/.test(offer.primary.action.args?.targetRef || '')
+        : ['secretary.v2.return.title.minimum', 'secretary.v2.return.title.ask'].includes(offer.copy.titleKey))
       && validAction(offer.primary.action) && Array.isArray(offer.alternatives)
       && offer.alternatives.every(item => object(item) && validAction(item.action));
   }
@@ -45,7 +51,11 @@
         pending = null; try { writePending(null); } catch {}
         publish({ offer: null, token: null });
       }
-      if (code === 'held') { publish({ phase: 'silence', offer: null, token: null, error: null, busy: false, silence: { reason: 'held' } }); return; }
+      if (code === 'held') {
+        if (error.recheckAt != null && !iso(error.recheckAt)) { publish({ phase: 'error', error: 'invalid_response', busy: false }); return; }
+        publish({ phase: 'silence', offer: null, token: null, error: null, busy: false,
+          silence: { reason: 'held', ...(error.recheckAt ? { recheckAt: error.recheckAt } : {}) } }); return;
+      }
       publish({ phase: 'error', error: code, busy: false });
     };
     async function call(payload) {
@@ -58,14 +68,15 @@
       if (!sameAccount() || state.busy || (!force && state.phase !== 'idle')) return false;
       publish({ busy: true, error: null });
       try {
-        const data = await call({ op: 'decide', invocation: 'app_open', context });
+        const data = await call({ op: 'decide', invocation: 'app_open', supportedCapabilities: SUPPORTED_CAPABILITIES, context });
         let claim = data.resume;
         if (!claim && data.offer === null && object(data.silence)) {
+          if (data.silence.recheckAt != null && !iso(data.silence.recheckAt)) throw new Error('invalid_response');
           publish({ phase: 'silence', offer: null, token: null, silence: data.silence, busy: false }); return true;
         }
         if (!claim) {
           if (!validOffer(data.offer)) throw new Error('invalid_response');
-          claim = await call({ op: 'claim', offerId: data.offer.offerId, context });
+          claim = await call({ op: 'claim', offerId: data.offer.offerId, supportedCapabilities: SUPPORTED_CAPABILITIES, context });
         }
         if (!validOffer(claim.offer) || typeof claim.token !== 'string' || !claim.token || !iso(claim.persistedAt)
           || (!data.resume && claim.offer.offerId !== data.offer.offerId)) throw new Error('invalid_response');
@@ -94,5 +105,5 @@
     function invalidate() { if (!state.busy && !state.offer && !pending) publish({ phase: 'idle', error: null, silence: null }); }
     return Object.freeze({ state: () => state, load, outcome, invalidate, pending: () => pending });
   }
-  return Object.freeze({ create, validAction, validOffer, validAcceptedReceipt });
+  return Object.freeze({ SUPPORTED_CAPABILITIES, create, validAction, validOffer, validAcceptedReceipt });
 });

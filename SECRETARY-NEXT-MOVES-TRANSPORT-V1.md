@@ -1,11 +1,11 @@
 # Secretary next moves: первый runtime-срез
 
-2026-09-10. Контракт сервера и UI для **after-lapse-return**, канал `card`.
+2026-09-11. Контракт сервера и UI для **after-lapse-return + planned-start**, канал `card`.
 Policy: `secretary-next-moves-v2.js`; owner projection:
 `secretary-next-moves-producer-v1.js`; транспорт: `server-secretary-next-moves-v1.js`.
 Это дополнение к [контракту движка](SECRETARY-ENGINE-CONTRACT.md) и
-[policy v2](SECRETARY-NEXT-MOVES-V2.md). `planned-start`, `evening-close` и v2 push
-этим срезом не включаются. `enabledCapabilities` — явный ограничитель policy;
+[policy v2](SECRETARY-NEXT-MOVES-V2.md). `evening-close` и v2 push
+пока не включаются. `enabledCapabilities` — явный ограничитель policy;
 вечерняя проекция продолжает защищать сон внутри возврата.
 
 ## Владелец данных
@@ -51,6 +51,12 @@ Generic `/api/data/secretary*` и admin backup restore не пишут эти ф
 Запрос не более 12 KiB. `clientId` и `requestId` — строки `[A-Za-z0-9_-]{1,100}`.
 clientId хранится на время жизни вкладки (sessionStorage); requestId обозначает
 одно намерение. Повтор отправляет исходное тело без изменения.
+
+V255 decide/claim передают `supportedCapabilities:['after-lapse-return','planned-start']`.
+Без поля сервер обслуживает только after-lapse-return для совместимости с v254;
+неизвестные, повторённые или неверно заданные capability дают 400. Даже resume
+не возвращает planned offer старому клиенту. Outcome работает с уже сохранённым
+offer и повторяет исходный body независимо от версии клиента.
 
 Общий `context` для decide/claim/accepted:
 
@@ -157,6 +163,22 @@ server expiry возвращает тому же владельцу успешн
 Legacy GET/claim теперь показывает ошибки чтения/422/malformed и retry через ту же
 поверхность; только явный null/409 означает молчание. Legacy morning outcome transport
 остаётся прежним и ещё не имеет нового frozen pending replay.
+
+### Browser v255: planned-start
+
+Подробный producer/server контракт — PLANNED-START-V255.md. UI показывает сохранённое
+название и время, после accepted открывает ту же owner строку, как return. План
+не переносится, задача не завершается и таймер не запускается автоматически.
+Добавлены переводы planned copy на все пять языков. Формы клиента согласовывают
+capability до показа, а сохранённый pending v254 по-прежнему можно повторить.
+
+Producer сообщает следующую временную границу; runtime ставит один таймер до неё.
+Повторный render не создаёт polling. Возвращение фокуса/видимости перепроверяет
+контекст; скрытая вкладка и другой раздел не заявляют новый ход. Уход во время
+decide проверяется ещё раз непосредственно перед claim. Принятое действие, чей
+ответ пришёл после ухода, ждёт явного открытия на Сегодня. На следующий день
+такое отложенное действие становится устаревшим; новый день не открывает вчерашний
+план. dispose отменяет таймеры/listeners и не применяет поздний ответ старого runtime.
 
 У RestProfileV1 есть чистый модуль, но в текущем runtime нет сохранённого меню и
 его writer/UI. Поэтому транспорт не выдумывает restProfile в settings: сейчас
