@@ -99,8 +99,8 @@ test('generic profile PUT перечитывает память прямо пе�
 });
 
 test('release pins обновлены согласованно', () => {
-  assert.match(sw, /const CACHE = 'satoru-v257'/);
-  assert.match(html, /app\.js\?v=20260912-inspiration-v257-1/);
+  assert.match(sw, /const CACHE = 'satoru-v258'/);
+  assert.match(html, /app\.js\?v=20260912-economy-v258-1/);
   assert.match(html, /styles\.css\?v=20260912-secretary-v256-1/);
 });
 

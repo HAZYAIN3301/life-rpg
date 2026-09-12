@@ -1,0 +1,66 @@
+{
+  "release": "v258",
+  "checkedAt": "2026-09-12 17:48:31 UTC",
+  "environment": "Isolated local synthetic account through injected development proxy; real Store owners and HTTP server. No production account writes.",
+  "origin": "http://127.0.0.1:4490",
+  "tests": {
+    "command": "node --test --test-concurrency=2 scripts/*.test.js",
+    "total": 2449,
+    "pass": 2449,
+    "fail": 0,
+    "skip": 0,
+    "durationMs": 51193.540833,
+    "syntax": "PASS",
+    "diff": "PASS",
+    "handoff": "4/4 PASS after documentation updates"
+  },
+  "browser": [
+    {
+      "scenario": "409 purchase_level_required",
+      "result": "PASS; precise error inside dialog, no optimistic success or new purchase"
+    },
+    {
+      "scenario": "500 then retry",
+      "result": "PASS; same pending candidate, generic unconfirmed-save copy, dialog retained"
+    },
+    {
+      "scenario": "200 malformed receipt without snapshots",
+      "result": "PASS; no optimistic success; retry available"
+    },
+    {
+      "scenario": "Response lost AFTER real commit",
+      "result": "PASS; UI unconfirmed, server read returned exactly one w2 purchase costing 450"
+    },
+    {
+      "scenario": "Retry identical request after lost reply",
+      "result": "PASS; dialog closed, one purchase with same ID, owned w2, balance 1550 from 2000"
+    },
+    {
+      "scenario": "Actual tab.reload()",
+      "result": "PASS; header retained level 5 and 1550 gold"
+    },
+    {
+      "scenario": "Localized purchase error",
+      "result": "PASS on RU/EN/DE/UK/ES actual dialog"
+    },
+    {
+      "scenario": "Layout",
+      "result": "PASS; 375x812 DE light and RU/UK/ES dark, 1280x900 EN dark; inspected light/dark screenshots; no horizontal overflow in measured DE/RU/EN/ES states"
+    },
+    {
+      "scenario": "Keyboard",
+      "result": "PASS; Tab from confirm -> Cancel -> Close remained inside dialog; Escape closed, next frame restored focus to original 100-gold item"
+    },
+    {
+      "scenario": "Status accessibility",
+      "result": "role=status, aria-live=polite; purchase/cancel buttons measured 44px on 375px viewport"
+    }
+  ],
+  "limitations": [
+    "Targeted purchase scenario only; not complete product visual/accessibility QA.",
+    "Native reduced-motion, coarse pointer and 200% text-only zoom were not emulated. Existing CSS reduced-motion/coarse-pointer rules and related tests remain.",
+    "Close glyph measured 18.5px under fine-pointer emulation; existing coarse-pointer CSS expands it to touch minimum. Not claimed as a complete target-size audit.",
+    "Existing untranslated equipment/title/First Value strings remain outside this slice.",
+    "Generic/import/settings-only/mint/chest ownership paths remain separate P0 work; no whole-wallet security claim."
+  ]
+}

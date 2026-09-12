@@ -32,7 +32,18 @@
     if (base !== undefined && names.some((n) => canonical(actual[n]) !== canonical(base[n]))) return 'conflict';
     return 'commit';
   }
-  return Object.freeze({ TYPES, valueValid, snapshotValid, decide, canonical });
+  function receiptValid(receipt, data) {
+    if (!record(receipt) || receipt.ok !== true || !record(receipt.snapshots) || !record(data)) return false;
+    const expected = [...new Set([...Object.keys(data), 'settings', 'tasks'])].sort();
+    if (Object.keys(receipt.snapshots).sort().join(',') !== expected.join(',')) return false;
+    for (const name of expected) {
+      const s = receipt.snapshots[name];
+      if (!record(s) || Object.keys(s).sort().join(',') !== 'exists,value' || typeof s.exists !== 'boolean') return false;
+      if (s.exists ? (name === 'tasks' ? !Array.isArray(s.value) : !valueValid(name, s.value)) : s.value !== null) return false;
+    }
+    return decide(receipt.snapshots, data) === 'replay';
+  }
+  return Object.freeze({ TYPES, valueValid, snapshotValid, decide, canonical, receiptValid });
   }
   return Object.freeze({
     ...createPolicy({ settings: 'object', purchases: 'array', rewards: 'array', lootbox: 'object', skilltree: 'object' }),

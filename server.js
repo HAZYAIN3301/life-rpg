@@ -2614,11 +2614,12 @@ const EconomyWriteV1 = require('./public/economy-write-v1.js');
 const PurchasePolicyV1 = require('./public/purchase-policy-v1.js');
 function assertPurchaseTransition(uid, data) {
   if (!Object.hasOwn(data, 'purchases')) return;
-  const files = commitmentActualFiles(uid, ['settings', 'tasks', 'goals', 'purchases', 'rewards', 'lootbox', 'habitlog']);
+  const files = commitmentActualFiles(uid, ['settings', 'tasks', 'goals', 'purchases', 'rewards', 'lootbox', 'habitlog', 'episodes', 'skilltree']);
   const value = (name, fallback) => files[name].exists ? files[name].value : fallback;
   const user = loadUsers().find(u => u.id === uid);
   const context = { settings: value('settings', {}), purchases: value('purchases', []), rewards: value('rewards', []),
     tasks: value('tasks', []), goals: value('goals', []), habitlog: value('habitlog', {}), lootbox: value('lootbox', {}),
+    episodes: value('episodes', []), skilltree: value('skilltree', {}), tier: user ? entitlement(user).tier : 'free',
     adminGold: user?.isAdmin ? adminGoldBalance(uid) : 0, partyGold: PartyRewardPolicyV1.gold(partyRewards.snapshot(uid)) };
   context.earnedGold = PurchasePolicyV1.earnedGold(context);
   const result = PurchasePolicyV1.validate(context, data);

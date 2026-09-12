@@ -5254,10 +5254,12 @@ async function refreshCommitmentWriteBase({ writeEpoch, accountId } = {}) {
   // Кому нужна свежая правда для пересборки — берёт её из возвращённых значений.
   return { settings: settingsLoad.value, tasks: tasksLoad.value };
 }
-async function commitmentBoundaryRejected(response, { retried = false, base = null } = {}) {
+async function commitmentBoundaryRejected(response, { retried = false, base = null, isCurrent = () => true } = {}) {
   if (!response || ![409, 428].includes(response.status)) return false;
-  State._commitmentConflict = true;
+  if (!isCurrent()) return true;
   const code = await commitmentBoundaryCode(response);
+  if (!isCurrent()) return true;
+  State._commitmentConflict = true;
   State._commitmentBoundaryCode = code;
   if (response.status === 409 && code === 'commitment_data_corrupt') {
     toast(t('Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.'));
@@ -5304,6 +5306,7 @@ async function commitmentBoundaryRejected(response, { retried = false, base = nu
         : '[конфликт] структуры совпали — расхождение не в данных');
     }
     await reportCommitmentConflict(slot, base);
+    if (!isCurrent()) return true;
     toast(t('Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.')
       + (slot ? ` (${slot})` : ''));
     return true;
@@ -12262,7 +12265,11 @@ function nextLootboxState(reward) {
   return next;
 }
 const economyRequests = new WeakMap();
-function economySaveUnconfirmed() {
+function economySaveUnconfirmed(data) {
+  const request = data && economyRequests.get(data);
+  const rejection = request && request.accountId === String(State.me?.id || '') && request.writeEpoch === Store._writeEpoch
+    ? window.PurchaseFeedbackV1?.text(request.failure, lang()) : '';
+  if (rejection) return rejection;
   return ({ ru: 'Не удалось подтвердить сохранение. Повтори запрос; если данные изменились в другой вкладке — обнови страницу.',
     en: 'Could not confirm the save. Retry; if another tab changed the data, reload the page.',
     de: 'Speicherung nicht bestätigt. Erneut versuchen; bei Änderungen in einem anderen Tab die Seite neu laden.',
@@ -12289,16 +12296,24 @@ async function economyCommit(data) {
       if (!payload) return false;
       request = { accountId, writeEpoch, body: JSON.stringify(payload) }; economyRequests.set(data, request);
     }
+    request.failure = '';
+    const current = () => writeEpoch === Store._writeEpoch && accountId === String(State.me?.id || '');
     try {
       const response = await fetch('/api/economy/commit', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: request.body, signal: AbortSignal.timeout(15000),
       });
+      if (!current()) return false;
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (await commitmentBoundaryRejected(response)) return false;
+      if (response.status === 409 && window.PurchaseFeedbackV1) {
+        let rejection; try { rejection = await response.clone().json(); } catch {}
+        if (!current()) return false;
+        if (window.PurchaseFeedbackV1.text(rejection?.error, lang())) { request.failure = rejection.error; return false; }
+      }
+      if (await commitmentBoundaryRejected(response, { isCurrent: current })) return false;
+      if (!current()) return false;
       if (!response.ok) return false;
       const receipt = await response.json();
-      if (!receipt.ok || !receipt.snapshots || writeEpoch !== Store._writeEpoch || accountId !== String(State.me?.id || '')) return false;
-      if (window.EconomyWriteV1.decide(receipt.snapshots, data) !== 'replay') return false;
+      if (!current() || !window.EconomyWriteV1.receiptValid(receipt, data)) return false;
       if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
       for (const [n, snapshot] of Object.entries(receipt.snapshots)) Store._persisted[n] = structuredClone(snapshot);
       return true;
@@ -12308,6 +12323,7 @@ async function economyCommit(data) {
 let equipmentSaving = false;
 async function commitEquipment(data, el, after) {
   if (equipmentSaving) return false;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
   equipmentSaving = true;
   // Keep one candidate (including equip vs unequip) for an ambiguous retry.
   const payload = el._economyPayload || (el._economyPayload = data);
@@ -12315,7 +12331,8 @@ async function commitEquipment(data, el, after) {
   let ok = false;
   try { ok = await economyCommit(payload); }
   finally { equipmentSaving = false; el.disabled = false; el.removeAttribute('aria-busy'); }
-  if (!ok) { toast(economySaveUnconfirmed()); el.focus(); return false; }
+  if (accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch) return false;
+  if (!ok) { toast(economySaveUnconfirmed(payload)); el.focus(); return false; }
   for (const [name, value] of Object.entries(payload)) State[Store._liveSlot(name)] = value;
   if (after) after();
   render();
@@ -21905,8 +21922,19 @@ function economyConfirmationData(kind, id) {
   }
   return null;
 }
+function purchaseProgressError(data) {
+  const item = data.kind === 'gear' ? gearById(data.id)
+    : data.kind === 'den-theme' ? DEN_THEMES.find(item => item.id === data.id)
+      : data.kind === 'den-item' ? denItem(data.id) : null;
+  const requiredLevel = item && (item.lvl || item.level);
+  if (!requiredLevel) return '';
+  const progress = window.PersonalProgressV1?.snapshot(State);
+  const code = !progress?.ok ? 'purchase_progress_unavailable' : progress.level < requiredLevel ? 'purchase_level_required' : '';
+  return window.PurchaseFeedbackV1?.text(code, lang()) || (code ? economySaveUnconfirmed() : '');
+}
 function showEconomyConfirm(kind, id, returnFocus = document.activeElement) {
   const data = economyConfirmationData(kind, id); if (!data) return null;
+  const progressError = purchaseProgressError(data); if (progressError) { toast(progressError); return null; }
   if (data.cost != null && goldBalance() < data.cost) { toast(t('Недостаточно золота')); return null; }
   closeAccountDialog('economy-confirm-modal', { restoreFocus: false });
   const ov = document.createElement('div'); ov.id = 'economy-confirm-modal'; ov.className = 'modal-overlay';
@@ -21930,6 +21958,7 @@ function showEconomyConfirm(kind, id, returnFocus = document.activeElement) {
 }
 async function commitEconomyConfirmation(overlay) {
   if (!overlay || overlay._saving) return;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
   const data = economyConfirmationData(overlay.dataset.kind, overlay.dataset.item); if (!data) return;
   const confirm = overlay.querySelector('[data-action="confirm-economy-action"]');
   const cancel = overlay.querySelector('[data-action="close-economy-confirm"]:not(.modal-x)');
@@ -22006,10 +22035,11 @@ async function commitEconomyConfirmation(overlay) {
     ? await guideV3FeatureCommit('rewards', 'purchase-persisted', guideReceiptId, { purchases: payload.purchases }, (committed) => { State.purchases = committed.purchases; }, data.id)
     : await economyCommit(payload)) : false;
   overlay._saving = false;
+  if (accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch) return;
   if (!overlay.isConnected) return;
   overlay.querySelector('.modal-x').disabled = false;
   if (!ok || !apply) {
-    if (status && !status.textContent.includes(t('Недостаточно золота'))) status.textContent = economySaveUnconfirmed();
+    if (status && !status.textContent.includes(t('Недостаточно золота'))) status.textContent = economySaveUnconfirmed(payload);
     if (confirm) { confirm.disabled = false; confirm.focus(); } if (cancel) cancel.disabled = false; return;
   }
   apply(); closeAccountDialog('economy-confirm-modal', { restoreFocus: false });
@@ -32945,7 +32975,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v257';
+const PWA_CACHE_VERSION = 'satoru-v258';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

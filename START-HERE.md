@@ -3,7 +3,15 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Текущий checkpoint 12.09:** supply Вдохновения v257 опубликован `1b3f52b`;
+**Текущий checkpoint 12.09, v258:** продолжать по PRODUCT-CRITICAL-PATH-2026-09.md;
+разделение с Claude — CLAUDE-OPUS5-NEXT-WORK.md. Эти файлы обновлены по фактическим
+v254–v257, выполненные пакеты №2/№3 не выдавать повторно. Следующий P0-срез
+PURCHASE-ENTITLEMENTS-V258.md: серверный личный уровень и точные права новых
+покупок, строгая квитанция и account guards. 2449/2449 tests PASS; конкретный
+статус публикации и browser QA — верх DEVLOG. CACHE satoru-v258.
+Это не закрытие generic/import/settings-only/mint/chest и всего wallet P0.
+
+**Предыдущий checkpoint 12.09:** supply Вдохновения v257 опубликован `1b3f52b`;
 Railway app/TTS success, 21/21 live bytes совпали 16:41 UTC, 2341/2341 tests PASS.
 Receipt: art-factory/inspiration-v257/release-receipt.json; профильный browser QA —
 art-factory/inspiration-v257/qa-receipt.json. Evening-close v256 опубликован `e269cf7`

@@ -2,8 +2,9 @@
  * This is not a mint/immutable wallet: task/import credit remains client-owned. */
 (function(factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory(
-    require('./shop-catalog-v1'), require('./economy-write-v1'), require('./gamification-integrity-v1'));
-})(function(Catalog, Writes, Integrity) {
+    require('./shop-catalog-v1'), require('./economy-write-v1'), require('./gamification-integrity-v1'),
+    require('./personal-progress-v1'), require('./purchase-entitlement-v1'));
+})(function(Catalog, Writes, Integrity, Progress, Entitlements) {
   'use strict';
   function earnedGold({ tasks = [], habitlog = {}, goals = [], lootbox = {}, adminGold = 0, partyGold = 0 }) {
     const taskGold = tasks.filter(t => t.done).reduce((sum, t) => sum + Number(t.goldAwarded || 0), 0);
@@ -21,6 +22,7 @@
     if (!Array.isArray(next) || next.length < before.length
       || before.some((row, i) => Writes.canonical(row) !== Writes.canonical(next[i]))) return fail('purchase_history_changed');
     const ids = new Set(before.map(row => row.id));
+    const grants = [];
     let spent = before.reduce((sum, row) => sum + Integrity.spendablePurchaseCost(row), 0);
     const owned = { gear: new Set(context.settings?.gear?.owned || []),
       cosmetic: new Set(context.settings?.cosmetics || []), den: new Set(context.settings?.den?.owned || []) };
@@ -47,8 +49,19 @@
       if (context.earnedGold === null || !Number.isFinite(context.earnedGold)
         || Math.round(context.earnedGold - spent) < row.cost) return fail('insufficient_gold');
       spent += row.cost;
+      grants.push({ kind, id, item });
     }
-    return { ok: true };
+    // A purchase does not also open a chest, issue a voucher or edit its catalogue.
+    // These have their own existing owner paths; even legacy batched clients may
+    // carry an unchanged snapshot, but cannot smuggle a grant into this receipt.
+    for (const [name, fallback] of [['lootbox', {}], ['skilltree', {}], ['rewards', []]]) {
+      if (Object.hasOwn(data, name) && Writes.canonical(data[name]) !== Writes.canonical(context[name] ?? fallback)) {
+        return fail('purchase_credit_changed');
+      }
+    }
+    const progress = grants.some(({ kind }) => kind === 'gear' || kind === 'den') ? Progress.snapshot(context) : null;
+    return Entitlements.validate({ settings: context.settings, tier: context.tier,
+      personalLevel: progress?.ok ? progress.level : null }, data, grants);
   }
   return Object.freeze({ validate, earnedGold });
 });

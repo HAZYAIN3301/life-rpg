@@ -1,5 +1,14 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v258, admission новых покупок:** сохранённый личный уровень, exact owned
+  grants и допустимая экипировка, реальный Pro tier; запрет смежного credit/catalog
+  изменения в purchase request. Строгая квитанция, точный отказ на пяти языках,
+  account/writeEpoch guards и стабильный повтор. PURCHASE-ENTITLEMENTS-V258.md;
+  2449/2449 tests PASS, browser QA и публикация конкретного SHA — верх DEVLOG.
+- [ ] **Первый остаток P0 после v258:** generic/import/settings-only пути
+  начисления gold и прав, chest grants и общий wallet. Проверка admission покупки
+  не делает исходные client-owned task/import начисления авторитетными.
+
 - [x] **v257, supply Вдохновения:** admit/toCatalogRows до прежнего choose;
   девять собственных текстов на пяти языках, все 11 старых IDs сохранены, восемь
   внешних материалов ожидают проверки. Честные shortage/empty, stable daily ids,
