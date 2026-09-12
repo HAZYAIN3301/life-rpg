@@ -2,9 +2,20 @@
 
 ## [2026-09-12] v260 — серверные сундуки, Chrome/Brave и принятый характер Тени
 
-**Публикация v260: ожидает SHA и production verification.** Push/deploy ранее
-явно разрешены владельцем. Runtime проверки завершены; факт публикации будет
-записан после обоих Railway statuses и сравнения файлов, а не по одному HTTP 200.
+**Опубликовано 12.09 23:41 CEST:** `b4b4150f1db47c40dceae258e3441710501b260e`.
+Railway app `699e279a-aad2-4665-a5a0-9cc3d66ab2c4` и TTS
+`e6020b99-699c-43d3-a188-96c827ac1566` success. 41/41 production bytes совпали
+21:41:57 UTC, включая четыре ZIP расширения; profiles 200, защищённые
+secretary/economy/chest/import/preview POST без сессии 401.
+Receipt: art-factory/critical-path-v260/release-receipt.json. Production IAB:
+login и установочная страница с v260 assets, без console errors/overflow;
+записи живого аккаунта не выполнялись.
+
+Первый TTS deployment `55635b95-94fc-420d-8b6e-d8c731a0c56d` упал до сборки
+кода: Railway BuildKit потерял файл при commit/rename metadata базового
+`python:3.11-slim` (no such file or directory). CLI не авторизован, но рабочая
+сессия Brave открыла build logs. Один Redeploy того же SHA/config завершился
+успешно без изменений Dockerfile, секретов или инфраструктурных настроек.
 
 - CHEST-REWARDS-V260.md: server entropy из saved context, exact receipt, private
   issued cursor/128 последних fingerprints. Lootbox/settings/receipt в одном
@@ -54,7 +65,7 @@ Railway app `8109ec87-8948-4353-a5df-89cef0a9cb6d`, TTS
 Receipt: art-factory/account-import-v259/release-receipt.json. Production IAB
 загрузил login с app/styles/account-import pins v259 без console errors.
 Записи живого аккаунта не выполнялись. Вопросы для Remote Control:
-OWNER-DECISIONS-2026-09.md — три коротких выбора, ответы ещё не получены.
+OWNER-DECISIONS-2026-09.md — ответы получены следующим v260, актуальный вопрос там же.
 
 ACCOUNT-IMPORT-V259.md. Следующий технический P0 по найденному критическому плану;
 правила переноса XP/gold/предметов сохранены, продуктовый вопрос вынесен отдельно.

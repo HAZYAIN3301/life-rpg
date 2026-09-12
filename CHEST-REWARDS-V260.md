@@ -32,7 +32,9 @@ Chest-specific 409 не ставит весь аккаунт в commitment-confl
 из settings/tasks/lootbox/chest-receipts и после committed journal. Browser QA:
 реальный потерянный ответ/retry, reload, malformed/500, RU/EN/DE/UK/ES на 375px,
 1280px dark/light (20 сочетаний); controls 42–44px, отсутствие horizontal overflow и focus trap.
-Публикация/точный SHA фиксируются в верхней записи DEVLOG после проверки deployment.
+Опубликовано `b4b4150`: Railway app/TTS success, 41/41 production bytes совпали
+12.09 21:41:57 UTC. Receipt — art-factory/critical-path-v260/release-receipt.json;
+production mutation не выполнялась, функциональные сценарии проверены на synthetic account.
 
 ## Чистая политика и каталог
 
@@ -134,7 +136,7 @@ lootbox при сохранённом частном cursor, поврежден�
 Ledger с непустой историей не может потерять cursor, сменить его последний день
 или содержать невалидный сохранённый часовой пояс.
 
-`scripts/chest-runtime-v260.test.js` — 14/14 PASS. Отложенные fetch/JSON проверяют
+`scripts/chest-runtime-v260.test.js` — 16/16 PASS. Отложенные fetch/JSON проверяют
 тот же настоящий issuer receipt, отсутствие эффекта до квитанции, неизменные bytes
 повтора, 401, неполные/подменённые ответы, смену аккаунта/epoch и поздние ошибки.
 Инициализация requestId/base/crypto возвращает управляемый отказ; исключение старого

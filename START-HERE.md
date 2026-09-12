@@ -8,7 +8,9 @@
 (extensions/satoru-attention/store-kit-v260/SUBMISSION.md), принятая текстовая
 основа Тени (SHADOW-CHARACTER-V260.md). **2621/2621 tests PASS**, 96/96 профильных
 extension checks; browser/QA receipts — верх DEVLOG. CACHE satoru-v260.
-Публикация v260: ожидает фиксации SHA и проверки production в верхней записи DEVLOG.
+Опубликовано `b4b4150`: Railway app/TTS success, 41/41 production bytes совпали
+12.09 21:41:57 UTC. Первая TTS-сборка упала в кэше Railway BuildKit; повтор того же
+коммита завершился успешно. Receipt и browser QA — верх DEVLOG.
 
 Ответы владельца получены: Chrome и Brave; характер Тени принят. Вопрос о переносе
 прогресса объяснён, новая ограничительная политика НЕ утверждена. Личный архив
