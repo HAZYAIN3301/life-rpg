@@ -14,7 +14,9 @@
   const actionTypes = ['task_open_prepared', 'rest_start_prepared', 'ask_one_question', 'evening_transition_open'];
   function validAction(action) {
     if (!object(action) || !actionTypes.includes(action.type) || !object(action.args) || !day(action.args.day)) return false;
-    if (action.type === 'task_open_prepared') return /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(action.args.targetRef || '') && ['minimum', 'planned'].includes(action.args.size);
+    if (action.type === 'task_open_prepared') return /^(quest|habit):[A-Za-z0-9_-]{1,74}$/.test(action.args.targetRef || '') && ['minimum', 'planned'].includes(action.args.size)
+      && (action.args.commitmentBasis === undefined || /^quest:/.test(action.args.targetRef)
+        && typeof action.args.commitmentBasis === 'string' && action.args.commitmentBasis.length > 0 && action.args.commitmentBasis.length <= 1024);
     if (action.type === 'ask_one_question') return ['return_next_smallest', 'after-lapse-return_confirm'].includes(action.args.questionId);
     if (action.type === 'evening_transition_open') return /^([01]\d|2[0-3]):[0-5]\d$/.test(action.args.boundaryLocal || '');
     return false; // Enable each executor only with its verified vertical slice.

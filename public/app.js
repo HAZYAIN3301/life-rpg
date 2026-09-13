@@ -5959,13 +5959,15 @@ async function commitmentDataCommit(build, focusSelector = '') {
     return false;
   }
   return Store.runExclusive(['settings', 'tasks'], async ({ writeEpoch, accountId }) => {
+    const isCurrent = () => writeEpoch === Store._writeEpoch && accountId === String(State.me?.id || '');
     // Две попытки, а не одна: устаревшая база — обычное дело, когда аккаунт открыт на
     // нескольких устройствах. На второй попытке изменение ПЕРЕСОБИРАЕТСЯ на свежей
     // серверной правде — так чужая запись не затирается, и если изменение уже неприменимо,
     // build сам вернёт null.
-    // Третья попытка — примирение: базу строит сам сервер. Дотуда доходит только то,
-    // что уже пересобрано на свежих серверных данных, поэтому чужую запись это не трёт.
-    for (let attempt = 0; attempt < 3; attempt += 1) {
+    // A second concurrent edit remains a conflict. Replacing its base with
+    // 'server' would make this stale candidate overwrite someone else's change.
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      if (!isCurrent()) return false;
       const base = commitmentWriteBase();
       if (!base) return false;
       const candidateSettings = structuredClone(State.settings);
@@ -5982,18 +5984,22 @@ async function commitmentDataCommit(build, focusSelector = '') {
       try {
         response = await fetch('/api/commitments/commit', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(attempt === 2 ? { base: 'server', data: candidate } : { base, data: candidate }),
+          body: JSON.stringify({ base, data: candidate }),
         });
       } catch (error) { console.error('commitment commit', error); return false; }
+      if (!isCurrent()) return false;
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (attempt < 2 && response.status === 409
+      if (attempt < 1 && response.status === 409
         && await commitmentBoundaryCode(response) === 'commitment_revision_conflict') {
+        if (!isCurrent()) return false;
         const fresh = await refreshCommitmentWriteBase({ writeEpoch, accountId });
-        if (fresh) { State.settings = fresh.settings; State.tasks = fresh.tasks; continue; }
+        if (fresh && isCurrent()) { State.settings = fresh.settings; State.tasks = fresh.tasks; continue; }
       }
-      if (attempt === 2 && response.ok) console.warn('[конфликт] примирение: запись прошла на серверной базе');
-      if (await commitmentBoundaryRejected(response, { retried: attempt > 0, base })) return false;
-      if (!response.ok || !rememberDedicatedCommitSlots(candidate, { writeEpoch, accountId })) return false;
+      if (!isCurrent() || await commitmentBoundaryRejected(response, { retried: attempt > 0, base, isCurrent })) return false;
+      if (!response.ok || !isCurrent()) return false;
+      const receipt = await response.json().catch(() => null);
+      if (!isCurrent() || !validator.commitReceiptValid(receipt)
+        || !rememberDedicatedCommitSlots(candidate, { writeEpoch, accountId })) return false;
       State.settings = candidate.settings;
       State.tasks = candidate.tasks;
       if (focusSelector) State._tasksFocusAfterCommit = focusSelector;
@@ -13856,15 +13862,15 @@ function dayClosed(dateStr) { const d = State.days[dateStr || todayStr()]; retur
 function commitmentTimeOf(item) {
   return item && item.edge && item.edge.kind === 'time' ? item.edge.at : '22:00';
 }
-let _commitmentUiBusy = false;
+let _commitmentUiBusy = null;
 function beginCommitmentUiAction(control) {
-  if (_commitmentUiBusy) return false;
-  _commitmentUiBusy = true;
+  if (_commitmentUiBusy?.accountId === String(State.me?.id || '') && _commitmentUiBusy.writeEpoch === Store._writeEpoch) return false;
+  _commitmentUiBusy = { accountId: String(State.me?.id || ''), writeEpoch: Store._writeEpoch, control };
   if (control) { control.disabled = true; control.setAttribute('aria-busy', 'true'); }
   return true;
 }
 function endCommitmentUiAction(control) {
-  _commitmentUiBusy = false;
+  if (_commitmentUiBusy?.control === control) _commitmentUiBusy = null;
   if (control && control.isConnected) { control.disabled = false; control.removeAttribute('aria-busy'); }
 }
 function openQuestCommitmentDialog(task, mode = 'take') {
@@ -13884,6 +13890,7 @@ function openQuestCommitmentDialog(task, mode = 'take') {
     <label class="commitment-win"><span>${esc(t('Что считается выполненным'))}</span><input id="quest-commitment-win" type="text" maxlength="120" value="${esc(defaultWin)}" required /></label>
     <label class="commitment-time"><span>${esc(t('Закончить до'))}</span><input id="quest-commitment-time" type="time" value="${esc(commitmentTimeOf(current))}" required /></label>
     <p class="muted">${esc(t('Это заранее выбранная граница, не ставка. Её можно пересмотреть или снять бесплатно; XP и золото не меняются.'))}</p>
+    <p class="muted">${esc(window.SecretaryNextMovesUIV1?.copy('secretary.v2.commitment.hint', lang()) || '')}</p>
     <button type="button" class="btn" data-action="commitment-confirm" data-id="${esc(task.id)}" data-mode="${revise ? 'revise' : 'take'}">${esc(t(revise ? 'Сохранить новую границу' : 'Взять обязательство'))}</button>
   </section>`;
   mountAccountDialog(overlay, { initial: '#quest-commitment-win', returnFocus });
@@ -24105,7 +24112,7 @@ function attentionPendingReturn() {
 // нельзя — он был бы занят и потерян, не показавшись никому. Слот считает сам
 // рендер, тем же порядком приоритетов, а не второй его копией.
 let _secretaryOfferSlotFree = false;
-let _secretaryNextRuntime = null, _secretaryNextAccount = null;
+let _secretaryNextRuntime = null, _secretaryNextAccount = null, _secretaryNextEpoch = null;
 function secretaryNextSnapshot() {
   return { now: attentionNow(), today: todayStr(), utcOffsetMinutes: -new Date().getTimezoneOffset(), dayClosed: dayClosed(),
     episodes: State.attentionEpisodes, tasks: State.tasks, habits: State.habits, habitlog: State.habitlog, settings: State.settings,
@@ -24116,9 +24123,9 @@ function secretaryNextSnapshot() {
 function secretaryNextRuntime() {
   const R = window.SecretaryNextMovesRuntimeV1;
   if (!R || !window.SecretaryNextMovesProducerV1 || !State.me?.id) return null;
-  if (_secretaryNextAccount !== State.me.id) {
-    _secretaryNextRuntime?.dispose(); _secretaryNextAccount = State.me.id;
-    _secretaryNextRuntime = R.create({ account: () => State.me?.id, snapshot: secretaryNextSnapshot, id: () => crypto.randomUUID(),
+  if (_secretaryNextAccount !== State.me.id || _secretaryNextEpoch !== Store._writeEpoch) {
+    _secretaryNextRuntime?.dispose(); _secretaryNextAccount = State.me.id; _secretaryNextEpoch = Store._writeEpoch;
+    _secretaryNextRuntime = R.create({ account: () => State.me?.id, epoch: () => Store._writeEpoch, snapshot: secretaryNextSnapshot, id: () => crypto.randomUUID(),
       visible: () => State.phase === 'app' && State.view === 'today' && !document.hidden,
       storage: sessionStorage, fetch: (...args) => fetch(...args), changed: () => { if (State.phase === 'app') render(); },
       expired: handleAccountSessionExpired, open: secretaryNextOpenAction });
@@ -30726,9 +30733,12 @@ async function onClick(e) {
     if (!q || !/^([01]\d|2[0-3]):[0-5]\d$/.test(at)) { toast(t('Выбери точное время.')); return; }
     if (!win) { toast(t('Назови конкретный результат.')); winInput?.focus(); return; }
     if (!beginCommitmentUiAction(el)) return;
+    const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+    const isCurrent = () => accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch;
     try {
       const saved = el.dataset.mode === 'revise' ? await reviseQuestCommitment(q, at, win) : await takeQuestCommitment(q, at, win);
-      if (!saved) { toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); return; }
+      if (!isCurrent()) return;
+      if (!saved) { toast(window.SecretaryNextMovesUIV1.copy('secretary.v2.commitment.unconfirmed', lang())); render(); return; }
       closeAccountDialog('quest-commitment-modal', { restoreFocus: false });
       toast('⚔️ ' + t(el.dataset.mode === 'revise' ? 'Граница пересмотрена без штрафа.' : 'Граница принята. Никакой ставки — только выбранный финиш.'));
       try { sfx('confirm'); } catch {}
@@ -30738,9 +30748,13 @@ async function onClick(e) {
     const q = questById(id); if (!q) return;
     if (!confirm(t('Снять эту границу? Квест останется на месте, XP и золото не изменятся.'))) return;
     if (!beginCommitmentUiAction(el)) return;
+    const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+    const isCurrent = () => accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch;
     try {
-      if (await releaseQuestCommitment(q)) { toast(t('Обязательство снято бесплатно. История сохранена.')); render(); }
-      else toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
+      const saved = await releaseQuestCommitment(q);
+      if (!isCurrent()) return;
+      if (saved) { toast(t('Обязательство снято бесплатно. История сохранена.')); render(); }
+      else { toast(window.SecretaryNextMovesUIV1.copy('secretary.v2.commitment.unconfirmed', lang())); render(); }
     } finally { endCommitmentUiAction(el); }
   } else if (action === 'commitment-close') {
     closeAccountDialog('quest-commitment-modal');

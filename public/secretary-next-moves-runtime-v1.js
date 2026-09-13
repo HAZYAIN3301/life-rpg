@@ -7,6 +7,7 @@
   'use strict';
   function create(env) {
     const accountId = String(env.account());
+    const epoch = env.epoch?.();
     const key = 'satoru.secretary.next.' + accountId;
     let clientId;
     try { clientId = env.storage.getItem(key + '.client'); } catch {}
@@ -14,7 +15,7 @@
     let timer = null, heldTimer = null, decisionTimer = null, decisionAt = null, disposed = false;
     let projectionError = null, lastDay = null, deferred = null, lastSignal = null;
     try { const saved = JSON.parse(env.storage.getItem(key + '.open') || 'null'); if (root.SecretaryNextMovesClientV1.validAcceptedReceipt(saved)) deferred = saved; } catch {}
-    const sameAccount = () => !disposed && String(env.account()) === accountId;
+    const sameAccount = () => !disposed && String(env.account()) === accountId && env.epoch?.() === epoch;
     const visible = () => !env.visible || env.visible();
     const client = root.SecretaryNextMovesClientV1.create({
       accountId, clientId, requestId: () => 'req-' + env.id(), currentAccount: () => sameAccount() ? env.account() : null,
@@ -68,6 +69,11 @@
         env.changed(); return false;
       }
       const current = root.SecretaryNextMovesProducerV1.build(snapshot);
+      if (current.ok && !root.SecretaryNextMovesProducerV1.actionLinkCurrent(current.context, receipt.action)) {
+        deferred = null; projectionError = 'stale_target';
+        try { env.storage.removeItem(key + '.open'); } catch {}
+        env.changed(); return false;
+      }
       if (receipt.action.type === 'evening_transition_open' && current.ok
         && (!current.context.eveningContract?.dailyReminder || current.context.eveningContract.eveningTimeLocal !== receipt.action.args.boundaryLocal)) {
         deferred = null; projectionError = 'stale_evening';
@@ -94,11 +100,11 @@
       const projected = root.SecretaryNextMovesProducerV1.build(snapshot);
       if (!projected.ok) { const changed = projectionError !== projected.error; projectionError = projected.error; if (changed) env.changed(); return false; }
       const clearedError = !!projectionError; projectionError = null;
-      const { lapse, plannedStart, eveningContract, tonightSchedule, activeSession, guide, firstValue } = projected.context;
+      const { lapse, plannedStart, eveningContract, tonightSchedule, activeSession, guide, firstValue, commitmentItems } = projected.context;
       const signal = JSON.stringify([snapshot.today, snapshot.dayClosed, lapse?.eventKey, lapse?.originalRef, lapse?.originalStillActionable,
         plannedStart?.taskRef, plannedStart?.plannedAtLocal, plannedStart?.startedToday, plannedStart?.doneToday,
         eveningContract?.eveningTimeLocal, eveningContract?.dailyReminder, tonightSchedule?.busyUntilAt,
-        activeSession.active, guide.active, firstValue.pending]);
+        activeSession.active, guide.active, firstValue.pending, commitmentItems.map(item => item.commitmentBasis)]);
       const changedSignal = signal !== lastSignal;
       lastSignal = signal;
       scheduleDecision(projected, snapshot);
@@ -124,8 +130,18 @@
       return true;
     }
     async function retry() {
+      if (!sameAccount()) return false;
       if (deferred) return openConfirmed(deferred);
       if (client.pending()) return respond(client.pending().outcome);
+      const offer = client.state().offer;
+      if (offer) {
+        const current = root.SecretaryNextMovesProducerV1.build(env.snapshot());
+        if (current.ok && !root.SecretaryNextMovesProducerV1.offerLinkCurrent(current.context, offer)) {
+          const receipt = await client.outcome('expired');
+          if (!receipt || !sameAccount()) return false;
+          client.invalidate();
+        }
+      }
       return load(true);
     }
     function invalidate() { projectionError = null; client.invalidate(); }

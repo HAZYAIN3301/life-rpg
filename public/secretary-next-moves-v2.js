@@ -275,7 +275,7 @@
         'habitMinimum ← habit.atomic.twoMin владельца привычек',
         'plannedStart.taskRef ← Quests/Days, если исходное дело — задача',
         'restMenu ← RestProfileV1.pickForLowResource',
-        'commitmentItems ← CommitmentV1.dueOn(state, today, mode)',
+        'commitmentItems ← validated CommitmentV2 due steps with explicit owner task links',
         'eveningContract ← settings.secretary — только чтобы НЕ звать в работу после своей же границы',
       ]),
     }),
@@ -295,7 +295,7 @@
       scopes: Object.freeze([SCOPES.QUESTS, SCOPES.COMMITMENTS, SCOPES.HABITS, SCOPES.DEADLINE]),
       producers: Object.freeze([
         'plannedStart ← сохранённый quest/day-entry с plannedAtLocal (HH:MM) и taskRef',
-        'commitmentItems ← CommitmentV1.dueOn(...) — уговор kind:"step" как маленький вход',
+        'commitmentItems ← validated CommitmentV2 due steps with explicit owner task links',
         'habitMinimum ← habit.atomic.twoMin — альтернатива «сделать минимум»',
         'externalDeadline ← подтверждённый пользователем дедлайн (source:"user_confirmed")',
       ]),
@@ -519,7 +519,7 @@
       confidence,
       reasonCode: urgent ? 'planned_start_due_soon' : 'planned_start_window',
       about: { day: inp.localDay, targetRef },
-      action: { type: ACTIONS.TASK_OPEN, args: { targetRef, size: 'planned', day: inp.localDay } },
+      action: { type: ACTIONS.TASK_OPEN, args: taskArgs(inp, targetRef, 'planned') },
       copy: {
         eyebrowKey: 'secretary.v2.planned_start.eyebrow',
         titleKey: 'secretary.v2.planned_start.title',
@@ -532,10 +532,10 @@
         ? [{
           id: 'minimum',
           labelKey: 'secretary.v2.common.do_minimum',
-          action: { type: ACTIONS.TASK_OPEN, args: { targetRef: minimum.ref, size: 'minimum', day: inp.localDay } },
+          action: { type: ACTIONS.TASK_OPEN, args: taskArgs(inp, minimum.ref, 'minimum') },
         }]
         : [],
-      quote: quoteFromCommitments(inp.commitmentItems, ['step', 'edge']),
+      quote: quoteFromCommitments(inp.commitmentItems, targetRef),
     };
   }
 
@@ -641,7 +641,7 @@
         confidence: baseConfidence,
         reasonCode: source === 'user_confirmed' ? 'return_after_confirmed_escape' : 'return_after_measured_boundary',
         about: { day: inp.localDay, targetRef: minimum.ref, basisDay: lapse.day },
-        action: { type: ACTIONS.TASK_OPEN, args: { targetRef: minimum.ref, size: 'minimum', day: inp.localDay } },
+        action: { type: ACTIONS.TASK_OPEN, args: taskArgs(inp, minimum.ref, 'minimum') },
         copy: {
           eyebrowKey: 'secretary.v2.return.eyebrow',
           titleKey: 'secretary.v2.return.title.minimum',
@@ -657,7 +657,7 @@
             action: { type: ACTIONS.REST_START, args: { activityRef: rest.ref, minutes: rest.minutes, day: inp.localDay } },
           }]
           : [],
-        quote: quoteFromCommitments(inp.commitmentItems, ['step', 'care', 'anchor']),
+        quote: quoteFromCommitments(inp.commitmentItems, minimum.ref),
       };
     }
 
@@ -724,8 +724,8 @@
       }
     }
     const items = Array.isArray(inp.commitmentItems) ? inp.commitmentItems : [];
-    const step = items.find((i) => i && i.kind === 'step' && refOf(i.id));
-    if (step) return { ref: refOf(step.id), from: 'commitment.step' };
+    const step = items.find((i) => linkedStep(i, i?.taskRef));
+    if (step) return { ref: step.taskRef, from: 'commitment.step' };
     const plan = inp.plannedStart;
     if (plan && typeof plan === 'object' && refOf(plan.minimumRef)) {
       return { ref: refOf(plan.minimumRef), from: 'plannedStart.minimumRef' };
@@ -750,18 +750,25 @@
    * Слова самого человека. Только из его собственных живых уговоров — они account-owned
    * и написаны им. Ничего из заметок, документов, AI и чужого текста сюда не попадает.
    */
-  function quoteFromCommitments(items, kinds) {
+  function linkedStep(item, targetRef) {
+    return !!item && item.kind === 'step' && /^quest:[A-Za-z0-9_-]{1,74}$/.test(targetRef || '')
+      && item.taskRef === targetRef && item.id === targetRef
+      && typeof item.commitmentBasis === 'string' && item.commitmentBasis.length > 0 && item.commitmentBasis.length <= 1024;
+  }
+  function taskArgs(inp, targetRef, size) {
+    const item = (Array.isArray(inp.commitmentItems) ? inp.commitmentItems : []).find(item => linkedStep(item, targetRef));
+    return { targetRef, size, day: inp.localDay, ...(item ? { commitmentBasis: item.commitmentBasis } : {}) };
+  }
+  function quoteFromCommitments(items, targetRef) {
     if (!Array.isArray(items)) return null;
-    for (const kind of kinds) {
-      const hit = items.find((i) => i && i.kind === kind && typeof i.title === 'string' && i.title.trim() && refOf(i.id));
-      if (hit) {
-        return {
-          id: refOf(hit.id),
-          title: String(hit.title).slice(0, 80),
-          win: typeof hit.win === 'string' ? String(hit.win).slice(0, 120) : '',
-          source: 'own_commitment',
-        };
-      }
+    const hit = items.find((i) => linkedStep(i, targetRef) && typeof i.title === 'string' && i.title.trim());
+    if (hit) {
+      return {
+        id: refOf(hit.id),
+        title: String(hit.title).slice(0, 80),
+        win: typeof hit.win === 'string' ? String(hit.win).slice(0, 120) : '',
+        source: 'own_commitment',
+      };
     }
     return null;
   }

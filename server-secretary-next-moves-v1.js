@@ -40,7 +40,9 @@ function failure(code, status = 422) { const e = new Error(code); e.code = code;
 function empty() { return { version: 1, nextMoves: Policy.emptyLedger(), delivery: { offers: {}, requests: {} } }; }
 function validAction(action) {
   if (!object(action) || !object(action.args) || !Policy.isDay(action.args.day)) return false;
-  if (action.type === 'task_open_prepared') return Producer.validOriginalRef(action.args.targetRef) && ['minimum', 'planned'].includes(action.args.size);
+  if (action.type === 'task_open_prepared') return Producer.validOriginalRef(action.args.targetRef) && ['minimum', 'planned'].includes(action.args.size)
+    && (action.args.commitmentBasis === undefined || /^quest:/.test(action.args.targetRef)
+      && typeof action.args.commitmentBasis === 'string' && action.args.commitmentBasis.length > 0 && action.args.commitmentBasis.length <= 1024);
   if (action.type === 'evening_transition_open') return typeof action.args.boundaryLocal === 'string'
     && /^([01]\d|2[0-3]):[0-5]\d$/.test(action.args.boundaryLocal)
     && Object.keys(action.args).every(key => ['day', 'boundaryLocal'].includes(key));
@@ -177,7 +179,7 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     const guide = settings.guideV3;
     if (guide != null && !object(guide)) failure('invalid_secretary_state');
     const result = Producer.build({ now, today, utcOffsetMinutes: offset, lapse: context.lapse ?? null,
-      settings, tasks: plannedTaskRef ? tasks.filter((task) => 'quest:' + task.id === plannedTaskRef) : tasks, habits, habitlog,
+      settings, tasks, plannedTaskRef, habits, habitlog,
       activeSession: context.activeSession.active,
       guideActive: context.guide.active || !!(guide && guide.enabled !== false && guide.currentChapter),
       firstValueStatus: context.firstValue.pending ? 'new' : firstValue?.status,
@@ -255,7 +257,8 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
       const current = snapshot(uid, { activeSession: { active: false }, guide: { active: false }, firstValue: { pending: false }, lapse: null },
         now, today, offset, ref);
       if (!current.plannedStart || current.plannedStart.taskRef !== ref
-        || current.plannedStart.plannedAtLocal !== row.offer.about.planned.startTime) return false;
+        || current.plannedStart.plannedAtLocal !== row.offer.about.planned.startTime
+        || !Producer.offerLinkCurrent(current, row.offer)) return false;
       const permission = Policy.decide({ ...current, now, today, utcOffsetMinutes: offset,
         invocation: 'manual', availableChannels: ['card'], enabledCapabilities: ['planned-start'], ledger: Policy.emptyLedger() });
       return permission.ok && permission.offer && stable(permission.offer.action) === stable(action);
@@ -263,6 +266,7 @@ function createService({ userDir, durableWrite, recoverAccount = () => {} }) {
     const context = snapshot(uid, { activeSession: { active: false }, guide: { active: false }, firstValue: { pending: false },
       lapse: { confirmed: true, source: 'user_confirmed', eventKey: 'attention:revalidate',
         day: today, endedAt: now, originalRef: ref, screenEpisode: false, observedAt: now } }, now, today, offset);
+    if (!Producer.offerLinkCurrent(context, row.offer)) return false;
     const permission = Policy.decide({ ...context, now, today, utcOffsetMinutes: offset,
       invocation: 'manual', availableChannels: ['card'], enabledCapabilities: ['after-lapse-return'], ledger: Policy.emptyLedger() });
     return permission.ok && permission.offer && stable(permission.offer.action) === stable(action);

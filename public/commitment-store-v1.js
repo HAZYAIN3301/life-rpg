@@ -204,6 +204,12 @@
     if (!validateCommitmentState(data.settings.commitmentsV1)) return false;
     return validateTaskGraph(data.tasks, data.settings.commitmentsV1);
   }
+  // The existing owner endpoint acknowledges only after its settings/tasks WAL
+  // transaction is durable. HTTP success without this body is not a saved pair.
+  function commitReceiptValid(receipt) {
+    return isRecord(receipt) && receipt.ok === true && Array.isArray(receipt.files)
+      && receipt.files.length === 2 && receipt.files[0] === 'settings' && receipt.files[1] === 'tasks';
+  }
 
   return Object.freeze({
     VERSION,
@@ -214,5 +220,6 @@
     validateCommitmentState,
     validateTaskGraph,
     validateCommitPayload,
+    commitReceiptValid,
   });
 });

@@ -4,10 +4,11 @@
  */
 (function exposeSecretaryNextMovesProducer(root, factory) {
   const get = (name, file) => root && root[name] || (typeof require === 'function' ? require(file) : null);
-  const api = factory(get('AttentionSessionV1', './attention-session-v1.js'), get('RestProfileV1', './rest-profile-v1.js'), get('HabitTwoMinuteV1', './habit-two-minute-v1.js'));
+  const api = factory(get('AttentionSessionV1', './attention-session-v1.js'), get('RestProfileV1', './rest-profile-v1.js'), get('HabitTwoMinuteV1', './habit-two-minute-v1.js'),
+    get('CommitmentV2', './commitment-v2.js'), get('CommitmentStoreV1', './commitment-store-v1.js'));
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.SecretaryNextMovesProducerV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildProducer(Session, Rest, HabitMinimum) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildProducer(Session, Rest, HabitMinimum, Commitments, CommitmentStore) {
   'use strict';
   const VERSION = '1.0.0';
   const WINDOW_MINUTES = 180;
@@ -131,6 +132,46 @@
     return twoMin ? { type, row, twoMin } : null;
   }
 
+  // Read the existing explicit task.commitmentId relation. A commitment id alone
+  // is never an executable task link; its finish boundary is never a start time.
+  function linkedCommitments(snapshot) {
+    const raw = snapshot.settings?.commitmentsV1;
+    if (!Commitments || !CommitmentStore || !raw || !ownerRows(snapshot.tasks)
+      || !CommitmentStore.validateCommitmentState(raw)
+      || !CommitmentStore.validateTaskGraph(snapshot.tasks, raw)) return [];
+    const migration = Commitments.migrate(raw);
+    if (migration.dropped.length) return [];
+    const state = migration.state;
+    return Commitments.dueOn(state, snapshot.today, state.mode).flatMap(item => {
+      if (item.kind !== 'step' || item.archivedAt || Commitments.outcomeOf(state, item.id, snapshot.today)) return [];
+      const task = snapshot.tasks.find(row => row.commitmentId === item.id && item.id === 'quest:' + row.id);
+      if (!task || task.date !== snapshot.today || !resolveOriginal(snapshot, item.id)) return [];
+      // Exact bounded current-state value, not an authorization token or a hash.
+      // History length also detects ordinary release/reopen edits; it is not a
+      // monotonic transaction revision (the existing history is capped at 30).
+      const commitmentBasis = JSON.stringify([item.id, item.title, item.win, item.edge,
+        item.decidedOn || null, item.revisedOn || null, item.history.length]);
+      return [{ id: item.id, taskRef: item.id, kind: 'step', title: item.title, win: item.win, commitmentBasis }];
+    });
+  }
+  function actionLinkCurrent(context, action) {
+    if (action?.type !== 'task_open_prepared') return true;
+    const basis = action.args?.commitmentBasis;
+    if (basis === undefined) return true;
+    return typeof basis === 'string' && context?.commitmentItems?.some(item =>
+      item.taskRef === action.args.targetRef && item.commitmentBasis === basis) === true;
+  }
+  function offerLinkCurrent(context, offer) {
+    const action = offer?.primary?.action;
+    if (!actionLinkCurrent(context, action)) return false;
+    const quote = offer?.quote;
+    if (!quote) return true;
+    const item = context?.commitmentItems?.find(item => item.taskRef === action?.args?.targetRef
+      && item.commitmentBasis === action.args.commitmentBasis);
+    return !!item && quote.source === 'own_commitment' && quote.id === item.id
+      && quote.title === item.title && quote.win === item.win;
+  }
+
   function projectEpisode(episode, snapshot, nowMs) {
     if (!object(episode) || !opaqueId(episode.id)) return null;
     const start = parseIso(episode.startedAt), end = parseIso(episode.endedAt);
@@ -227,17 +268,16 @@
         restMenu = { recipeRef: chosen.id, minutes: chosen.defaultMinutes, screenMode: { offline: 'no_screen', device: 'screen', mixed: 'either' }[chosen.mode], observedAt: snapshot.now };
       }
     }
-    const schedule = plannedSchedule(snapshot, nowMs);
+    const schedule = plannedSchedule(snapshot.plannedTaskRef
+      ? { ...snapshot, tasks: snapshot.tasks.filter(task => 'quest:' + task.id === snapshot.plannedTaskRef) } : snapshot, nowMs);
     const evening = eveningSchedule(snapshot, nowMs, eveningContract);
     const nextDecisionAt = [schedule.nextDecisionAt, evening.nextDecisionAt].filter(Boolean).sort()[0] || null;
     return { ok: true, nextDecisionAt, context: {
       lapse, habitMinimum, restMenu, eveningContract, tonightSchedule: evening.tonightSchedule, plannedStart: schedule.plannedStart,
-      // settings.commitmentsV1 is now CommitmentV2. Raw V1 step ids cannot be
-      // executed as tasks; no invented link or lossy V2 -> V1 conversion.
-      commitmentItems: [],
+      commitmentItems: linkedCommitments(snapshot),
       guide: { active: snapshot.guideActive }, activeSession: { active: snapshot.activeSession },
       firstValue: { pending: snapshot.firstValueStatus != null && !['first_value_reached', 'completed', 'deferred'].includes(snapshot.firstValueStatus) },
     } };
   }
-  return Object.freeze({ VERSION, WINDOW_MINUTES, validOriginalRef, validDay, parseIso, resolveOriginal, build });
+  return Object.freeze({ VERSION, WINDOW_MINUTES, validOriginalRef, validDay, parseIso, resolveOriginal, linkedCommitments, actionLinkCurrent, offerLinkCurrent, build });
 });

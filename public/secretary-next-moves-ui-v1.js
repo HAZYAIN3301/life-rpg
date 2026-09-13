@@ -61,6 +61,8 @@
     'common.deferred': ['Открытие отложено. Когда будешь готов, повтори.', 'Opening is paused. Retry when you are ready.', 'Das Öffnen wartet. Versuche es erneut, wenn du bereit bist.', 'Відкриття відкладено. Коли будеш готовий, повтори.', 'La apertura está pendiente. Reintenta cuando quieras continuar.'],
     'common.prepared': ['Достаточно открыть дело и выбрать маленький шаг.', 'Open the task and choose a small step.', 'Öffne die Aufgabe und wähle einen kleinen Schritt.', 'Достатньо відкрити справу й обрати маленький крок.', 'Abre la tarea y elige un paso pequeño.'],
     'common.own_words': ['Твои слова', 'Your words', 'Deine Worte', 'Твої слова', 'Tus palabras'],
+    'commitment.hint': ['После отмеченного отвлечения Тень сможет предложить вернуться к этому делу и показать выбранный результат.', 'After a distraction you have recorded, Shadow can offer to return to this task and show your chosen result.', 'Nach einer von dir vermerkten Ablenkung kann der Schatten die Rückkehr zu dieser Aufgabe vorschlagen und dein gewähltes Ergebnis zeigen.', 'Після позначеного відволікання Тінь зможе запропонувати повернутися до цієї справи й показати обраний результат.', 'Después de una distracción que hayas registrado, Sombra puede proponerte volver a esta tarea y mostrar el resultado que elegiste.'],
+    'commitment.unconfirmed': ['Не удалось подтвердить сохранение. Повтори попытку или обнови страницу, чтобы проверить границу.', 'Saving could not be confirmed. Retry or refresh the page to check the boundary.', 'Das Speichern wurde nicht bestätigt. Versuche es erneut oder lade die Seite neu, um die Grenze zu prüfen.', 'Не вдалося підтвердити збереження. Повтори спробу або онови сторінку, щоб перевірити межу.', 'No se pudo confirmar el guardado. Reintenta o actualiza la página para comprobar el límite.'],
   };
   const COPY = Object.freeze(Object.fromEntries(LANGS.map((lang, i) => [lang, Object.freeze(Object.fromEntries(Object.entries(rows).map(([key, values]) => ['secretary.v2.' + key, Persona?.secretaryCopy('secretary.v2.' + key, lang) || values[i]])))])));
   const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -88,9 +90,11 @@
   function render(state, lang, snapshot) {
     const offer = state.offer;
     if (!offer) return state.error ? errorHTML(state.error, lang) : '';
+    const projected = Producer?.build(snapshot);
+    if (projected?.ok && !Producer.offerLinkCurrent(projected.context, offer)) return errorHTML('stale_target', lang);
     const ref = offer.primary.action.args.targetRef;
     const named = ref ? target(ref, snapshot) : null;
-    const quote = offer.quote?.title ? `<p class="secretary-offer-quote">${label('common.own_words', lang)}: <span data-noi18n>${esc(offer.quote.title)}</span></p>` : '';
+    const quote = offer.quote?.title && projected?.ok ? `<p class="secretary-offer-quote">${label('common.own_words', lang)}: <span data-noi18n>${esc(offer.quote.title)}${offer.quote.win ? `<br>${esc(offer.quote.win)}` : ''}</span></p>` : '';
     return `<div class="secretary-offer" data-secretary-next-offer="${esc(offer.offerId)}" aria-busy="${state.busy}">
       <p><b>${esc(copy(offer.copy.titleKey, lang))}</b></p>
       ${named ? `<p data-noi18n><b>${esc(named.title)}</b>${named.minimum ? `<br>${esc(named.minimum)}` : ''}</p>` : ''}
