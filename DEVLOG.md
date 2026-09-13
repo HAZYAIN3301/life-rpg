@@ -1,5 +1,61 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-13] v261 — предметы, утренний повтор, связанные задачи и privacy
+
+**Кандидат проверен; push/deploy разрешены владельцем.** Факт публикации конкретного
+SHA и production verification будет добавлен после Railway. CACHE satoru-v261,
+изменённые browser pins 20260913-critical-v261-1; новый morning helper загружается
+до app.js и входит в offline SHELL. Server-only router/policy не подключены вторым
+browser engine. Privacy assets также входят в SHELL, ZIP расширения остаётся 0.6.0.
+
+- OWNERSHIP-WRITES-V261.md: проверка ordinary settings/Commitment/economy/feature/
+  Board/goals writers до записи; exact catalog grants только от server purchase
+  или chest issuer. Сохранены legacy/imported tokens и relic metadata, starter,
+  законные purchase/chest/import/reset/admin restore/repair. Generic purchases
+  не стирает/переоценивает исторический дебит. Новые inventory отказы — 422,
+  локализованы и не включают общий account-conflict guard. XP/gold/import и title
+  owners не менялись; общий wallet/credit provenance остаётся P0.
+- MORNING-OUTCOME-V261.md: frozen body в sessionStorage, точная receipt в прежней
+  строке secretary-ledger; идентичный повтор возвращает receipt без записи файла.
+  Выбор не скрывает карточку и не открывает действие до подтверждения. Guards
+  account/epoch, timeout включая body, deferred open и recovery corrupt local
+  pending. Старый совместимый HTTP-протокол сохранён.
+- COMMITMENT-TASK-LINKS-V261.md: явная связь существующей task с V2 boundary,
+  сохранённый результат в карточке, fresh server check перед accepted и current
+  State check перед поздним открытием. Finish time не становится planned start.
+  Pair writer требует точную receipt и две CAS попытки; третий принудительный
+  base:'server' исключён. Новая подсказка на 5 языках. После визуальной проверки
+  label/input разделены в мобильной форме, полный размер поля и кнопки сохранён.
+- STORE-PUBLICATION-V261.md: публичная privacy на RU/EN/DE/UK/ES с English fallback,
+  ссылка с установки сохраняет язык, описаны фактические local data/permissions/
+  bridge/self-test. Магазин ещё не submitted: доступный кабинет показывает вход
+  Google, рабочий Brave отклонил browser tool. Владелец получил одну инструкцию
+  входа; отсутствие аккаунта не утверждается. Publisher/email/declarations не выдуманы.
+
+**Проверки:** final full suite **2733/2733 PASS**, 0 skipped, 67401ms. Реальные HTTP,
+WAL/SIGKILL, ownership/replay/account guards; старые source-only CAS assertions
+заменены исполнением настоящих writer/handler, проверки не ослаблены. Syntax и
+diff checks PASS. Privacy, карточка связанной задачи и диалог границы — по 20
+сочетаний пяти языков, dark/light и 375/1280; без горизонтального overflow.
+Карточка/диалог: CTA 44px, фокус клавиатуры, локализованная подсказка и сохранённая
+личная цитата. Privacy дополнительно проверена с 200% text-size и контрастом.
+Потерянный реальный HTTP200 morning → два одинаковых POST → deferred receipt →
+открытие после завершения мешающего обучения без третьего POST. Связанная задача
+открывается после persisted accepted; сохранённая через UI revision делает старую
+карточку stale, retry оставляет persisted expired и не открывает задачу.
+Inventory отказ через actual commitEquipment: RU/EN понятное сообщение, server
+settings неизменны, global lock false. Five-language code branches — VM tests.
+Receipt: art-factory/critical-path-v261/qa-receipt.json. Все записи на отдельных
+локальных synthetic accounts; authenticated production writes не выполнялись.
+
+**Остаток:** общий wallet/provenance и title owners; полный First Value (в QA
+обнаружены старая неполная локализация и raw user_choice), остальные push,
+внешние материалы/45-дневная история, store signed install/update. После accepted
+нет дополнительного remote-refresh RPC; мгновенная видимость правок другого
+устройства не обещается. Полный visual QA продукта, художественная приёмка канона
+и паузы avatar/Rest Profile не закрыты этим срезом. Критический план и разделение
+Claude обновлены; готовые task links/morning пакеты не поручать повторно.
+
 ## [2026-09-12] v260 — серверные сундуки, Chrome/Brave и принятый характер Тени
 
 **Опубликовано 12.09 23:41 CEST:** `b4b4150f1db47c40dceae258e3441710501b260e`.

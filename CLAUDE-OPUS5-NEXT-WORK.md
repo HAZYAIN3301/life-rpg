@@ -1,5 +1,11 @@
 # Задания для Claude Code Opus 5
 
+**Дельта v261:** Codex подключил явные CommitmentV2 task links к готовым ходам
+секретаря и исправил legacy morning receipt retry. Эти пакеты не повторять.
+Ordinary inventory/purchase-history guard и privacy расширения тоже готовы;
+конкретный deploy/QA — верх DEVLOG. Полный First Value и остальные push остаются
+в очереди критического плана. Пакеты №2/№3 не передавать заново.
+
 **Дельта v260:** принята узкая текстовая основа Тени (ответ владельца «Да»),
 подключена Codex в существующий runtime. SHADOW-CHARACTER-V260.md; готовые
 производственные тексты — art-factory/shadow-character-v260. Это не приёмка всей

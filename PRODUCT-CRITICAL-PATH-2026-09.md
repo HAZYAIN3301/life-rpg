@@ -1,5 +1,12 @@
 # Satoru: критический путь к полноценному продукту
 
+**Продолжение 13.09 — v261:** закрыт обход выдачи предметов через ordinary settings
+и стирания дебита через generic purchases. Существующие/imported предметы сохраняются;
+политика личного XP/gold/import не ограничена. Утренний выбор получил точный повтор
+и открытие после receipt. Явные CommitmentV2 task links показывают собственный результат
+и не открывают локально устаревшую связь. Privacy расширения готова; магазин ждёт входа.
+Подробности/QA/release — верх DEVLOG. Полный wallet и художественная приёмка не закрыты.
+
 **Продолжение 12.09 — v260:** сервер выбирает и атомарно сохраняет ежедневный
 сундук вместе с private receipt/cursor; повтор и старый импорт не расходуют попытку
 снова. Chrome/Brave получили проверку реальных разрешений/правил и отдельную
@@ -24,10 +31,10 @@ receipts/QA — верх DEVLOG. Экономические правила пе�
 | Пункт плана | Подтверждённое состояние | Следующий остаток |
 |---|---|---|
 | P0, награда рейда | v250: receipt и XP boost опубликованы | Общая экономика остаётся отдельным P0 |
-| P0, сохранение/экономика | v251–v253: WAL/exact-CAS, цены/баланс; v258: admission; v259: атомарный import/reset; v260: server chest issuer/private cursor | Generic/import/settings-only экономические права, mint и общий wallet; receipts — верх DEVLOG |
-| P1, три хода Тени | v254 возврат, v255 planned-start, v256 evening-close опубликованы | CommitmentV2 task links, полный First Value, остальные push, legacy morning outcome retry |
+| P0, сохранение/экономика | v251–v253 WAL; v258 admission; v259 import/reset; v260 server chest; v261 ordinary inventory/purchase-history guard | Общий wallet/credit provenance, title owners и единый реестр начислений; личный import contract сохранён |
+| P1, три хода Тени | v254 возврат, v255 planned-start, v256 evening-close; v261 CommitmentV2 task links и legacy morning receipt retry | Полный First Value, остальные push; после accepted локальная проверка не заменяет мгновенное обновление с другого устройства |
 | P1, привычки | Редактор/отметки/минимум имеют подтверждённую запись | Наблюдаемый trigger одной привычки и помощь по нему |
-| P1, расширение | v260: Chrome/Brave ZIP 0.6.0, подключение, свежий status/readback и real native boundary test | Кабинет владельца, store submission, настоящий permission prompt, обычный Reload и signed install/update |
+| P1, расширение | v260 Chrome/Brave ZIP 0.6.0 и native boundary test; v261 публичная privacy на пяти языках | Вход в кабинет, store submission, настоящий permission prompt, обычный Reload и signed install/update |
 | P1, гайд/навыки | Главы и task links существуют | Полный first-value путь, добровольный повторный вход, практика → критерий навыка |
 | P1, Вдохновение | v257: admission подключён, девять текстов/пять языков, подтверждённые записи | Восемь внешних материалов на проверке, 45-дневная история и сетевой recheck |
 | P1/P2, дуо/личный мир | v249/v250: дуо и надёжная награда | Встречи/доставка, конечная экспедиция, желанные видимые покупки |

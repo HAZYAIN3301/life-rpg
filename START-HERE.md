@@ -3,7 +3,19 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Текущий checkpoint 12.09, v260:** три завершённых технических среза:
+**Текущий checkpoint 13.09, v261:** ordinary inventory writes и generic purchase
+history защищены; legacy morning choice повторяется по точной durable receipt;
+явная связь CommitmentV2→task подключена к карточке Тени и проверяется перед
+открытием. Исправлена мобильная форма границы. Готова публичная privacy-страница
+расширения на пяти языках; отправка в store ждёт входа владельца в кабинет.
+Контракты OWNERSHIP-WRITES-V261.md, MORNING-OUTCOME-V261.md,
+COMMITMENT-TASK-LINKS-V261.md, STORE-PUBLICATION-V261.md. CACHE satoru-v261.
+Проверки/факт публикации и SHA — верх DEVLOG; browser receipt —
+art-factory/critical-path-v261/qa-receipt.json. Следующая очередь — верх критического
+плана: общий wallet/credit provenance, полный First Value, остальные push.
+Личный XP/gold/import и title owners не изменены; avatar/Rest Profile на паузе.
+
+**Предыдущий checkpoint 12.09, v260:** три завершённых технических среза:
 серверные сундуки (CHEST-REWARDS-V260.md), установка/самопроверка Chrome и Brave
 (extensions/satoru-attention/store-kit-v260/SUBMISSION.md), принятая текстовая
 основа Тени (SHADOW-CHARACTER-V260.md). **2621/2621 tests PASS**, 96/96 профильных

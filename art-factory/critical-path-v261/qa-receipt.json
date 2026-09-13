@@ -1,0 +1,32 @@
+{
+  "date": "2026-09-13",
+  "release": "v261",
+  "environment": "isolated local DATA_DIR; CUA in-app browser; synthetic accounts only",
+  "productionAuthenticatedWrites": false,
+  "privacy": {
+    "matrix": "RU/EN/DE/UK/ES × 375/1280 × dark/light: 20 combinations",
+    "pass": true,
+    "checks": ["7 sections", "no horizontal overflow", "44px controls and links", "visible keyboard focus", "German install link preserves language", "static English fallback", "200% text-size at fixed 375/1280 in five locales", "no console errors on final rechecks"],
+    "lightTheme": "isolated CSS fixture; no owner browser preference changes",
+    "minimumMeasuredSecondaryContrast": 5.08
+  },
+  "morning": {
+    "pass": true,
+    "checks": ["real claimed morning card", "server HTTP200 deliberately lost", "unconfirmed error with no premature dialog", "two identical POST bodies", "receipt retained while First Value blocks opening", "after actual defer action: return dialog opens without third POST", "phone dark error and visible keyboard focus", "reduced-motion CSS fixture"],
+    "persistedOutcome": "accepted in the existing secretary-ledger.json"
+  },
+  "commitment": {
+    "pass": true,
+    "cardMatrix": "20 combinations: five languages, 375/1280, dark/light; saved quote remains unchanged, no overflow, CTA 44px within subpixel tolerance",
+    "dialogMatrix": "20 combinations: translated hint, 44px save button, dialog inside viewport and no horizontal overflow",
+    "checks": ["real pair-write seed and persisted attention lapse", "existing prepared-task dialog opens the linked task after accepted", "no start inferred from finish time", "real revise form saves a new result", "old card changes to stale error", "retry does not open task", "phone field labels and full-width inputs repaired after screenshot review", "keyboard focus returns to task actions"],
+    "limitation": "After accepted, the execution check uses the current owner State; there is no additional remote-refresh RPC. Full product zoom/accessibility matrix is not claimed."
+  },
+  "inventory": {
+    "pass": true,
+    "checks": ["actual commitEquipment caller and real server denial", "RU and EN localized refusal visible", "server settings unchanged", "no account conflict flag for inventory422", "language changes still save after refusal"],
+    "fixtureNote": "Reusing one rejected button payload after changing server settings correctly produced CAS409. A fresh form confirmed inventory422 without an account lock; that stale fixture result is not counted as a localized inventory pass. Five-language code/error branches are covered by the actual-app VM tests."
+  },
+  "store": { "submitted": false, "blocker": "Available developer dashboard shows Google sign-in; owner handoff pending." },
+  "knownUnchangedDebt": ["First Value copy still contains Russian in other locales and raw user_choice", "full product visual QA", "Chrome Web Store signed install/update", "avatar and Rest Profile remain paused"]
+}

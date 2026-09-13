@@ -1,5 +1,22 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v261, ordinary inventory/purchases:** settings writers не создают платные
+  предметы/реликвии и generic purchases не стирает дебит. Законные purchase/chest,
+  starter, import/reset/restore/repair сохранены. OWNERSHIP-WRITES-V261.md.
+- [x] **v261, утренний повтор:** frozen pending, точная квитанция в прежнем ledger,
+  повтор без второй записи; открытие после подтверждения, account/epoch guards.
+  MORNING-OUTCOME-V261.md.
+- [x] **v261, CommitmentV2→task:** явная сохранённая связь, собственный результат
+  в карточке, проверка до accepted и позднего открытия; pair receipt/CAS исправлены.
+  Мобильная форма с отдельными полями. COMMITMENT-TASK-LINKS-V261.md.
+- [x] **v261, privacy расширения:** пять языков и English fallback, доступная
+  публичная страница. Store submission ждёт входа, STORE-PUBLICATION-V261.md.
+- [ ] **Следующий P0 после v261:** общий wallet/credit provenance и title owners;
+  личный XP/gold/import contract остаётся прежним. Не вводить ограничения по умолчанию.
+- [ ] **First Value, обнаружено на browser QA v261:** незавершённая локализация
+  карточек и raw `user_choice` в пояснении. Закрывать в полном First Value срезе;
+  текущая публикация не означает готовность всего onboarding.
+
 - [x] **v260, серверная выдача сундуков:** сохранённые дела, server entropy,
   private cursor/receipt в том же WAL, строгий клиентский receipt, повтор без
   второго приза, счётчики после импорта/reload, пять локалей и account guards.
@@ -10,12 +27,12 @@
 - [x] **v260, принятый характер Тени:** единая текстовая политика и 5 локалей;
   отсутствие записей об отдыхе не выдаётся за усталость. 3 рекламы + 3 эпизода
   в art-factory/shadow-character-v260; видео/арт не произведены.
-- [ ] **Следующий P0 после v260:** generic/settings-only начисления и права,
+- [ ] **Исторический остаток v260, уточнён v261:** generic/settings-only начисления,
   единый wallet/provenance. Перенос личного XP/gold/предметов не ограничивать
   без отдельного осмысленного решения владельца. Private server-issued награды
   защищать отдельно; решения — OWNER-DECISIONS-2026-09.md.
-- [ ] **Публикация Chrome Web Store:** готовый store kit; нужен кабинет владельца,
-  контакт/URL privacy и owner declarations, затем signed install/update QA.
+- [ ] **Публикация Chrome Web Store:** store kit и privacy URL готовы; нужен вход
+  владельца, фактические поля/declarations кабинета, затем signed install/update QA.
 
 - [x] **v259, целостность импорта/сброса:** все portable files в общем WAL,
   подписанный preview/current revisions, стабильный повтор и строгий receipt;
@@ -61,8 +78,8 @@
   Runtime `52a124f` опубликован; Railway app/TTS success, 12/12 production bytes
   совпали 11.09 00:09 CEST. Остальные capability ниже остаются открытыми.
 - [ ] **Остаток №2:** RestProfile runtime/menu остаётся на паузе владельца;
-  CommitmentV2 task links и полный First Value ещё не подключены. Остальные v2 push
-  каналы и legacy morning outcome frozen replay также не закрыты. Вечер уже в v256.
+  полный First Value и остальные v2 push каналы ещё не завершены.
+  CommitmentV2 task links и legacy morning frozen replay закрыты v261. Вечер в v256.
 - [ ] **Остаток №3 supply:** внешнее воспроизведение материалов не подтверждено;
   периодический сетевой recheck и полная 45-дневная история показов ещё не подключены.
   Допуск и запись runtime уже в v257; reviewQueue пока конечная очередь оператора.
