@@ -35,6 +35,9 @@ const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
 const AccountImportV1 = require('./public/account-import-v1.js');
 const ChestClaimV1 = require('./public/chest-claim-v1.js');
 const ChestRewardServiceV1 = require('./server-chest-rewards-v1.js');
+const SettingsInventoryPolicyV1 = require('./public/settings-inventory-policy-v1.js');
+// Only explicit import/reset/restoration callers possess this authority.
+const INVENTORY_REPLACEMENT = Symbol('inventory replacement');
 const ShadowPersonaV1 = require('./public/shadow-persona-v1.js');
 const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
@@ -2613,7 +2616,7 @@ function portableImportSignature(uid, ticket) {
     + AccountImportV1.canonical(body)).digest('hex');
 }
 function portableImportTransition(uid, payload, names, actual, base) {
-  const graph = assertAccountGraphTransition(uid, { base, data: payload.data });
+  const graph = assertAccountGraphTransition(uid, { base, data: payload.data }, INVENTORY_REPLACEMENT);
   validatePortableImportRefs(uid, payload.data);
   const data = Object.fromEntries(names.map(name => [name, Object.hasOwn(payload.data, name) ? payload.data[name]
     : actual[name].exists ? actual[name].value : name === 'tasks' ? [] : {}]));
@@ -2663,8 +2666,8 @@ function importPortableAccountData(uid, payload) {
 
 const EconomyWriteV1 = require('./public/economy-write-v1.js');
 const PurchasePolicyV1 = require('./public/purchase-policy-v1.js');
-function assertPurchaseTransition(uid, data) {
-  if (!Object.hasOwn(data, 'purchases')) return;
+function assertPurchaseTransition(uid, data, rejectionStatus = 409) {
+  if (!Object.hasOwn(data, 'purchases')) return [];
   const files = commitmentActualFiles(uid, ['settings', 'tasks', 'goals', 'purchases', 'rewards', 'lootbox', 'habitlog', 'episodes', 'skilltree']);
   const value = (name, fallback) => files[name].exists ? files[name].value : fallback;
   const user = loadUsers().find(u => u.id === uid);
@@ -2674,7 +2677,13 @@ function assertPurchaseTransition(uid, data) {
     adminGold: user?.isAdmin ? adminGoldBalance(uid) : 0, partyGold: PartyRewardPolicyV1.gold(partyRewards.snapshot(uid)) };
   context.earnedGold = PurchasePolicyV1.earnedGold(context);
   const result = PurchasePolicyV1.validate(context, data);
-  if (!result.ok) throw commitmentBoundaryError(result.reason, 409);
+  if (!result.ok) throw commitmentBoundaryError(result.reason, rejectionStatus);
+  // The historical prefix cannot issue items again. Validation above admits
+  // each new row's price, saved balance, level, ownership and exact additions.
+  return data.purchases.slice(context.purchases.length).flatMap(row => {
+    const kind = ['gear', 'cosmetic', 'den'].find(kind => Object.hasOwn(row, kind + 'Id'));
+    return kind ? [{ kind, id: row[kind + 'Id'] }] : [];
+  });
 }
 const ECONOMY_COMMIT_TYPES = Object.freeze({ ...EconomyWriteV1.TYPES });
 function economyValueValid(name, value) {
@@ -2704,7 +2713,10 @@ function commitDailyChest(uid, payload) {
       const names = COMMITMENT_JOURNAL_ALLOWED_NAMES.filter(n => COMMITMENT_PAIR_NAMES.includes(n) || Object.hasOwn(result, n));
       const data = Object.fromEntries(names.map(n => [n, Object.hasOwn(result, n) ? result[n]
         : actual[n].exists ? actual[n].value : n === 'tasks' ? [] : {}]));
-      assertAccountGraphTransition(uid, { base: { settings: actual.settings, tasks: actual.tasks }, data });
+      // This callback receives only the issuer's already validated receipt.
+      const prize = result[ChestRewardServiceV1.LEDGER_FILE].receipts.at(-1).prize;
+      const grants = prize.type === 'cosmetic_capsule' ? [{ kind: 'cosmetic', id: prize.cosmeticId }] : [];
+      assertAccountGraphTransition(uid, { base: { settings: actual.settings, tasks: actual.tasks }, data }, grants);
       commitCommitmentGraphDurable(uid, { names, actual: Object.fromEntries(names.map(n => [n, actual[n]])), data });
     },
   });
@@ -2722,8 +2734,8 @@ function commitEconomyData(uid, payload) {
   if (decision === 'invalid') throw new Error('invalid_economy_commit');
   if (decision === 'conflict') throw commitmentBoundaryError('economy_revision_conflict', 409);
   if (decision !== 'replay') {
-    const graph = assertAccountGraphTransition(uid, payload);
-    assertPurchaseTransition(uid, payload.data);
+    const grants = assertPurchaseTransition(uid, payload.data);
+    const graph = assertAccountGraphTransition(uid, payload, grants);
     const data = Object.fromEntries(allNames.map((n) => [n, Object.hasOwn(payload.data, n) ? payload.data[n]
       : actual[n].exists ? actual[n].value : n === 'tasks' ? [] : {}]));
     if (graph.protected) Object.assign(data, graph.pair);
@@ -2781,8 +2793,8 @@ function commitFeatureSnapshotData(uid, payload, kind) {
   if (decision === 'invalid') throw new Error(invalid);
   if (decision === 'conflict') throw commitmentBoundaryError('commitment_revision_conflict', 409);
   if (decision !== 'replay') {
-    const graph = assertAccountGraphTransition(uid, payload);
-    assertPurchaseTransition(uid, payload.data);
+    const grants = assertPurchaseTransition(uid, payload.data);
+    const graph = assertAccountGraphTransition(uid, payload, grants);
     const data = Object.fromEntries(allNames.map(n => [n, Object.hasOwn(payload.data, n) ? payload.data[n]
       : actual[n].exists ? actual[n].value : n === 'tasks' ? [] : {}]));
     if (graph.protected) Object.assign(data, graph.pair);
@@ -3127,7 +3139,14 @@ function commitmentGraphPresent(settings, tasks) {
     hasOwn(task, 'commitmentId') || hasOwn(task, 'oath')
   )));
 }
-function assertAccountGraphTransition(uid, payload) {
+function assertSettingsInventoryTransition(uid, before, after, authority) {
+  if (authority === INVENTORY_REPLACEMENT) return;
+  const user = loadUsers().find(user => user.id === uid);
+  const result = SettingsInventoryPolicyV1.validate({ settings: before, tier: user ? entitlement(user).tier : 'free' },
+    after, authority);
+  if (!result.ok) throw commitmentBoundaryError(result.reason, 422);
+}
+function assertAccountGraphTransition(uid, payload, inventoryAuthority) {
   const data = payload && payload.data;
   if (!data || typeof data !== 'object' || Array.isArray(data)) {
     throw commitmentBoundaryError('invalid_commitment_graph', 400);
@@ -3144,7 +3163,11 @@ function assertAccountGraphTransition(uid, payload) {
   };
   const protectedGraph = commitmentGraphPresent(currentSettings, currentTasks)
     || commitmentGraphPresent(pair.settings, pair.tasks);
-  if (!protectedGraph) return { protected: false, touched: true, actual, pair };
+  if (!protectedGraph) {
+    // Settings-only/legacy writes have no graph CAS but still own inventory.
+    if (touchesSettings) assertSettingsInventoryTransition(uid, currentSettings, pair.settings, inventoryAuthority);
+    return { protected: false, touched: true, actual, pair };
+  }
   // Примирение. Забор нужен, чтобы не потерять чужую запись, — но когда клиент уже
   // перечитал состояние с сервера, пересобрал изменение на нём и всё равно получил отказ,
   // забор перестаёт защищать и начинает запирать (см. DEVLOG 03.09). В этом случае клиент
@@ -3240,6 +3263,7 @@ function assertAccountGraphTransition(uid, payload) {
   if (!CommitmentStoreV1.validateCommitPayload({ base, data: pair })) {
     throw commitmentBoundaryError('invalid_commitment_graph', 400);
   }
+  if (touchesSettings) assertSettingsInventoryTransition(uid, currentSettings, pair.settings, inventoryAuthority);
   return { protected: true, touched: true, actual, pair };
 }
 function goalGraphBaseValid(base) {
@@ -3259,6 +3283,7 @@ function assertGoalGraphTransition(uid, payload) {
       throw commitmentBoundaryError('commitment_revision_conflict', 409);
     }
   }
+  assertSettingsInventoryTransition(uid, actualFiles.settings.exists ? actualFiles.settings.value : {}, data.settings);
   const protectedGraph = commitmentGraphPresent(
     actualFiles.settings.exists ? actualFiles.settings.value : {},
     actualFiles.tasks.exists ? actualFiles.tasks.value : [],
@@ -6514,6 +6539,19 @@ const server = http.createServer(async (req, res) => {
           try { recoverCommitmentJournal(uid); }
           catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
         }
+        if (name === 'purchases') {
+          try {
+            const current = commitmentActualFiles(uid, ['purchases']).purchases;
+            // An unchanged legacy history remains saveable even if old
+            // rows predate the current catalogue. Only a new transition needs
+            // admission; import/reset/admin restore keep replacement rights.
+            if (!current.exists || EconomyWriteV1.canonical(current.value) !== EconomyWriteV1.canonical(parsed))
+              assertPurchaseTransition(uid, { purchases: parsed }, 422);
+          } catch (error) {
+            if (sendCommitmentBoundaryError(res, error)) return;
+            throw error;
+          }
+        }
         // Между загрузкой карточки профиля и её сохранением человек мог удалить
         // структурную запись через /api/ai/memory. Перечитываем файл непосредственно
         // перед синхронной записью и не даём устаревшему PUT воскресить удалённое.
@@ -6637,7 +6675,7 @@ const server = http.createServer(async (req, res) => {
           assertAccountGraphTransition(am[1], {
             base: { settings: actual.settings, tasks: actual.tasks },
             data: { [name]: candidate },
-          });
+          }, INVENTORY_REPLACEMENT);
         }
         backupFile(dir, name); // снимок текущего перед откатом
         fs.copyFileSync(bfile, path.join(dir, name + '.json'));
