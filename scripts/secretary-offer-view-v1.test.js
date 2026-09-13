@@ -138,7 +138,7 @@ test('one decision-maker for the morning: the local detector is gone', () => {
 });
 
 test('both answers are recorded, and dismiss is an equal button', () => {
-  assert.match(APP, /if \(el\.dataset\.secretaryAccept === '1'\) reportSecretaryOutcome\('accepted'\);/);
+  assert.match(APP, /if \(el\.dataset\.secretaryAccept === '1'\) \{ await reportSecretaryOutcome\('accepted'\); return; \}/);
   assert.match(APP, /action === 'secretary-offer-accept'[\s\S]{0,90}reportSecretaryOutcome\('accepted'\)/);
   assert.match(APP, /action === 'secretary-offer-dismiss'[\s\S]{0,90}reportSecretaryOutcome\('dismissed'\)/);
   const at = APP.indexOf('function secretaryOfferHTML');
@@ -148,12 +148,11 @@ test('both answers are recorded, and dismiss is an equal button', () => {
   assert.match(CSS, /\.secretary-offer \{/);
 });
 
-test('the outcome is written even if the answer never reaches the server', () => {
+test('the outcome delegates to the frozen receipt runtime without hiding the offer early', () => {
   const at = APP.indexOf('async function reportSecretaryOutcome');
   const body = APP.slice(at, APP.indexOf('\nfunction secretaryOfferHTML', at));
-  // карточка убирается сразу; сеть может упасть, но второй раз то же самое не показывается
-  assert.ok(body.indexOf('State.secretaryOffer = null;') < body.indexOf("'/api/secretary/offer'"));
-  assert.match(body, /catch \(error\) \{ console\.error\('secretary outcome', error\); \}/);
+  assert.match(body, /runtime\?\.respond\(state, offer\)/);
+  assert.doesNotMatch(body, /State\.secretaryOffer = null|fetch\(/);
 });
 
 test('the offer copy reaches every language', () => {

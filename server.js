@@ -21,6 +21,7 @@ const DamageRepairV1 = require('./public/damage-repair-v1.js');
 const FounderPassV1 = require('./public/founder-pass-v1.js');
 const SecretaryEventsV1 = require('./public/secretary-events-v1.js');
 const SecretaryRouterV1 = require('./public/secretary-router-v1.js');
+const MorningOutcomeV1 = require('./public/morning-outcome-v1.js');
 const BulkUndoV1 = require('./public/bulk-undo-v1.js');
 const CommitmentV2 = require('./public/commitment-v2.js');
 const SecretaryExperimentV1 = require('./public/secretary-experiment-v1.js');
@@ -4862,7 +4863,7 @@ const server = http.createServer(async (req, res) => {
       try {
         const value = sanitize(JSON.parse(fs.readFileSync(file, 'utf8')));
         return value ? { value, error: '' } : { value: null, error: 'invalid' };
-      } catch { return { value: null, error: 'invalid' }; }
+      } catch (error) { return { value: null, error: error instanceof SyntaxError ? 'invalid' : 'read' }; }
     };
     const readLog = () => readChecked(logFile, SecretaryEventsV1.sanitizeLog, SecretaryEventsV1.emptyLog);
     const readLedger = () => readChecked(ledgerFile, SecretaryRouterV1.sanitizeLedger, SecretaryRouterV1.emptyLedger);
@@ -4926,14 +4927,39 @@ const server = http.createServer(async (req, res) => {
 
     if (u === '/api/secretary/offer' && req.method === 'POST') {
       let body = {}; try { body = JSON.parse(await readBody(req, 4 * 1024)); } catch {}
+      if (sessionUserId(req) !== uid) return sendJson(res, 401, { error: 'session_expired' });
       const led = readLedger();
-      if (led.error) return sendJson(res, 422, { error: 'invalid_secretary_state' });
+      if (led.error) return sendJson(res, led.error === 'read' ? 500 : 422,
+        { error: led.error === 'read' ? 'secretary_read_failed' : 'invalid_secretary_state' });
+      if (body && Object.prototype.hasOwnProperty.call(body, 'version')) {
+        if (!MorningOutcomeV1.validBody(body)) return sendJson(res, 400, { error: 'bad_outcome' });
+        if (body.accountId !== uid) return sendJson(res, 403, { error: 'account_changed' });
+        // The terminal receipt and cooldown share this one atomic legacy file.
+        // A stored receipt is sufficient for replay after the claim is pruned.
+        let claims = null;
+        if (!led.value.delivered[body.cooldownKey]?.receipt) {
+          const stored = readChecked(path.join(dir, 'secretary-claims.json'), SecretaryClaimV1.sanitizeClaims, SecretaryClaimV1.emptyClaims);
+          if (stored.error) return sendJson(res, stored.error === 'read' ? 500 : 422,
+            { error: stored.error === 'read' ? 'secretary_read_failed' : 'invalid_secretary_state' });
+          claims = stored.value;
+        }
+        const result = MorningOutcomeV1.prepare(led.value, claims, body, uid, new Date().toISOString());
+        if (result.ledger) {
+          try { persist(ledgerFile, 'secretary-ledger', result.ledger); }
+          catch { return sendJson(res, 500, { error: 'save_failed' }); }
+        }
+        return sendJson(res, result.status, result.body);
+      }
+      if (!body || typeof body !== 'object' || Array.isArray(body)) return sendJson(res, 400, { error: 'bad_outcome' });
       const state = String(body.state || '');
       const offer = { cooldownKey: String(body.cooldownKey || '').slice(0, 160) };
       if (!offer.cooldownKey) return sendJson(res, 400, { error: 'no_offer' });
       // Статус проверяем ДО вызова: `mark` всегда возвращает новый объект, поэтому
       // сравнение результата по идентичности молча пропускало любой мусор.
       if (SecretaryRouterV1.OFFER_STATES.indexOf(state) < 0) return sendJson(res, 400, { error: 'bad_state' });
+      const confirmed = led.value.delivered[offer.cooldownKey]?.receipt;
+      if (confirmed) return sendJson(res, confirmed.state === state ? 200 : 409,
+        confirmed.state === state ? { ok: true } : { error: 'terminal_outcome' });
       const next = SecretaryRouterV1.mark(led.value, offer, state, new Date().toISOString());
       try { persist(ledgerFile, 'secretary-ledger', next); }
       catch { return sendJson(res, 500, { error: 'save_failed' }); }

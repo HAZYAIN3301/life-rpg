@@ -24113,6 +24113,34 @@ function attentionPendingReturn() {
 // рендер, тем же порядком приоритетов, а не второй его копией.
 let _secretaryOfferSlotFree = false;
 let _secretaryNextRuntime = null, _secretaryNextAccount = null, _secretaryNextEpoch = null;
+let _morningOutcome = null, _morningOutcomeScope = null;
+function morningOutcomeRuntime() {
+  const M = window.MorningOutcomeV1;
+  if (!M || !State.me?.id) return null;
+  const scope = JSON.stringify([State.me.id, Store._writeEpoch]);
+  if (scope !== _morningOutcomeScope) {
+    _morningOutcome?.dispose(); _morningOutcomeScope = scope;
+    _morningOutcome = M.create({ scope: () => ({ accountId: State.me?.id, epoch: Store._writeEpoch }),
+      storage: sessionStorage, fetch: (...args) => fetch(...args), today: todayStr,
+      changed: () => { if (State.phase === 'app') render(); }, expired: handleAccountSessionExpired,
+      committed: () => { State.secretaryOffer = null; },
+      skipped: () => { State.secretaryOffer = null; },
+      canOpen: () => {
+        const snapshot = secretaryNextSnapshot();
+        return State.phase === 'app' && State.view === 'today' && !document.hidden && !snapshot.dayClosed
+          && !snapshot.activeSession && !snapshot.guideActive
+          && !['new', 'intent_known', 'action_ready', 'action_started'].includes(snapshot.firstValueStatus);
+      },
+      open: action => {
+        if (action === 'attention-open-return') return openAttentionReturn();
+        if (action === 'recovery-open') return openRecoveryLauncher();
+        if (action === 'evening-open') return openEveningLanding();
+        return false;
+      },
+    });
+  }
+  return _morningOutcome;
+}
 function secretaryNextSnapshot() {
   return { now: attentionNow(), today: todayStr(), utcOffsetMinutes: -new Date().getTimezoneOffset(), dayClosed: dayClosed(),
     episodes: State.attentionEpisodes, tasks: State.tasks, habits: State.habits, habitlog: State.habitlog, settings: State.settings,
@@ -24126,13 +24154,21 @@ function secretaryNextRuntime() {
   if (_secretaryNextAccount !== State.me.id || _secretaryNextEpoch !== Store._writeEpoch) {
     _secretaryNextRuntime?.dispose(); _secretaryNextAccount = State.me.id; _secretaryNextEpoch = Store._writeEpoch;
     _secretaryNextRuntime = R.create({ account: () => State.me?.id, epoch: () => Store._writeEpoch, snapshot: secretaryNextSnapshot, id: () => crypto.randomUUID(),
-      visible: () => State.phase === 'app' && State.view === 'today' && !document.hidden,
+      visible: () => State.phase === 'app' && State.view === 'today' && !document.hidden
+        && !morningOutcomeRuntime()?.state().pending && !morningOutcomeRuntime()?.state().error,
       storage: sessionStorage, fetch: (...args) => fetch(...args), changed: () => { if (State.phase === 'app') render(); },
       expired: handleAccountSessionExpired, open: secretaryNextOpenAction });
   }
   return _secretaryNextRuntime;
 }
 function secretaryNextHTML() {
+  const morning = morningOutcomeRuntime()?.state();
+  if (morning?.pending || morning?.error) {
+    if (morning.busy) return `<div class="secretary-next-error" role="status" aria-busy="true"><p>${esc(window.SecretaryNextMovesUIV1.copy('secretary.v2.common.saving', lang()))}</p></div>`;
+    const UI = window.SecretaryNextMovesUIV1;
+    return UI.errorHTML(morning.error, lang()) + (morning.canSkip
+      ? `<button type="button" class="btn ghost" data-action="secretary-morning-skip">${esc(UI.copy('secretary.v2.morning.continue', lang()))}</button>` : '');
+  }
   const runtime = secretaryNextRuntime();
   if (State.secretaryOffer?.error) return window.SecretaryNextMovesUIV1.errorHTML(State.secretaryOffer.error, lang());
   return runtime ? window.SecretaryNextMovesUIV1.render(runtime.state(), lang(), secretaryNextSnapshot()) : '';
@@ -24159,6 +24195,8 @@ function secretaryEveningRespond(choice) {
   else { State.calDate = addDays(snapshot.today, 1); State.view = 'calendar'; render(); }
 }
 async function loadSecretaryOffer() {
+  const morning = morningOutcomeRuntime()?.state();
+  if (morning?.pending || morning?.error) return;
   const runtime = secretaryNextRuntime();
   if (!runtime) return;
   if (await runtime.load()) await loadLegacySecretaryOffer();
@@ -24169,18 +24207,21 @@ function secretaryOfferView() {
 }
 async function loadLegacySecretaryOffer() {
   const V = window.SecretaryOfferViewV1;
+  if (morningOutcomeRuntime()?.state().unavailable) return;
   if (!V || State._secretaryOfferBusy || State.secretaryOffer !== undefined) return;
   const accountId = State.me?.id;
+  const epoch = Store._writeEpoch;
+  const current = () => State.me?.id === accountId && Store._writeEpoch === epoch;
   State._secretaryOfferBusy = true;
   try {
     const response = await fetch('/api/secretary', {
       headers: { 'X-Local-Day': todayStr(), 'X-Tz-Offset': String(-new Date().getTimezoneOffset()), 'X-Channel': 'card' },
     });
-    if (State.me?.id !== accountId) return;
+    if (!current()) return;
     if (response.status === 401) { handleAccountSessionExpired(); return; }
     if (!response.ok) throw new Error(response.status === 422 ? 'invalid_secretary_state' : 'network');
     const data = await response.json();
-    if (State.me?.id !== accountId) return;
+    if (!current()) return;
     if (data?.offer === null) { State.secretaryOffer = null; return; }
     const view = V.presentOffer(data && data.offer);
     if (!view) throw new Error('invalid_response');
@@ -24188,21 +24229,22 @@ async function loadLegacySecretaryOffer() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ offerId: view.offerId, channel: 'card' }),
     });
-    if (State.me?.id !== accountId) return;
+    if (!current()) return;
     if (claim.status === 409) { State.secretaryOffer = null; return; }
+    if (claim.status === 401) { handleAccountSessionExpired(); return; }
     if (claim.status !== 200) throw new Error(claim.status === 422 ? 'invalid_secretary_state' : 'network');
     const claimed = await claim.json().catch(() => ({}));
-    if (State.me?.id !== accountId) return;
+    if (!current()) return;
     if (!claimed || typeof claimed.token !== 'string' || !claimed.token) throw new Error('invalid_response');
-    State.secretaryOffer = { view, token: claimed.token };
+    State.secretaryOffer = { view, token: claimed.token, accountId, epoch };
     render();
     // Показ состоялся. Заявка закрывается сразу, чтобы пуш знал: это утро занято
     // карточкой, и второго одинакового обращения не будет.
     settleSecretaryClaim(view.offerId, claimed.token, 'delivered');
   } catch (error) {
     console.error('secretary offer', error);
-    if (State.me?.id === accountId) State.secretaryOffer = { error: error.message || 'network' };
-  } finally { if (State.me?.id === accountId) { State._secretaryOfferBusy = false; render(); } }
+    if (current()) State.secretaryOffer = { error: error.message || 'network' };
+  } finally { if (current()) { State._secretaryOfferBusy = false; render(); } }
 }
 async function settleSecretaryClaim(offerId, token, outcome) {
   try {
@@ -24215,16 +24257,10 @@ async function settleSecretaryClaim(offerId, token, outcome) {
 // Исход хода пишется всегда — и на принятие, и на отказ. Без него кулдаун не
 // сработает и то же предложение вернётся завтра как новое.
 async function reportSecretaryOutcome(state) {
-  const pending = State.secretaryOffer;
-  if (!pending || !pending.view) return;
-  const { cooldownKey } = pending.view;
-  State.secretaryOffer = null;
-  try {
-    await fetch('/api/secretary/offer', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cooldownKey, state }),
-    });
-  } catch (error) { console.error('secretary outcome', error); }
+  const runtime = morningOutcomeRuntime(), offer = State.secretaryOffer;
+  if (!runtime?.state().pending && offer?.view
+    && (offer.accountId !== State.me?.id || offer.epoch !== Store._writeEpoch)) return false;
+  return runtime?.respond(state, offer) || false;
 }
 function secretaryOfferHTML(view) {
   const quote = view.quote
@@ -29488,15 +29524,17 @@ async function onClick(e) {
   if (action === 'secretary-next-dismiss') { await secretaryNextRuntime()?.respond('dismissed'); return; }
   if (action.startsWith('secretary-evening-')) { secretaryEveningRespond(action.slice('secretary-evening-'.length)); return; }
   if (action === 'secretary-next-retry') {
-    if (State.secretaryOffer?.error) { State.secretaryOffer = undefined; await loadLegacySecretaryOffer(); }
+    const morning = morningOutcomeRuntime();
+    if (morning?.state().pending || morning?.state().error) await morning.retry();
+    else if (State.secretaryOffer?.error) { State.secretaryOffer = undefined; await loadLegacySecretaryOffer(); }
     else await secretaryNextRuntime()?.retry();
     return;
   }
+  if (action === 'secretary-morning-skip') { morningOutcomeRuntime()?.skipUnreadable(); return; }
   if (el.closest('[data-secretary-prepared]') && action !== 'close-attention-dialog') closeAttentionDialog({ restoreFocus: false, force: true });
 
-  // Ход открывает существующую поверхность своим обычным действием; здесь только
-  // записывается исход, иначе кулдаун не сработает и предложение вернётся завтра.
-  if (el.dataset.secretaryAccept === '1') reportSecretaryOutcome('accepted');
+  // The runtime opens the existing surface only after the exact durable receipt.
+  if (el.dataset.secretaryAccept === '1') { await reportSecretaryOutcome('accepted'); return; }
   if (action === 'secretary-offer-accept') { await reportSecretaryOutcome('accepted'); render(); return; }
   if (action === 'secretary-offer-dismiss') { await reportSecretaryOutcome('dismissed'); render(); return; }
 
@@ -32016,6 +32054,7 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  _morningOutcome?.dispose(); _morningOutcome = null; _morningOutcomeScope = null;
   _secretaryNextRuntime?.dispose(); _secretaryNextRuntime = null; _secretaryNextAccount = null; _secretaryOfferSlotFree = false;
   State._partyRewardCycle = null; State._partyClaimBusy = false;
   Store.cancelPending();

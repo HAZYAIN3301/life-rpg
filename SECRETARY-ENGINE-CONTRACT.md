@@ -112,6 +112,11 @@ state ему не передаётся: клиентский reader — толь
 
 `state` ∈ `offered | accepted | dismissed`. Другое → `400 bad_state`.
 
+Дополнение v261: текущий UI отправляет version/accountId/offerId/token вместе с
+accepted/dismissed и ждёт точную квитанцию перед открытием. Повтор после потери ответа
+не переписывает исход; старый body остаётся совместимым. Полный additive protocol,
+ошибки и tab recovery: [MORNING-OUTCOME-V261.md](MORNING-OUTCOME-V261.md).
+
 ### `POST /api/secretary/claim`
 
 **Обязательно перед показом.** Ход один, поверхностей две, и живут они в разных

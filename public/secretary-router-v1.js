@@ -35,10 +35,12 @@
   const Events = root && root.SecretaryEventsV1
     ? root.SecretaryEventsV1
     : (typeof require === 'function' ? require('./secretary-events-v1.js') : null);
-  const api = factory(Events);
+  const Morning = root && root.MorningOutcomeV1
+    ? root.MorningOutcomeV1 : (typeof require === 'function' ? require('./morning-outcome-v1.js') : null);
+  const api = factory(Events, Morning);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.SecretaryRouterV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildSecretaryRouter(Events) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildSecretaryRouter(Events, Morning) {
   'use strict';
 
   const VERSION = '1.0.0';
@@ -125,6 +127,11 @@
       const state = OFFER_STATES.indexOf(String(row.state)) >= 0 ? String(row.state) : '';
       if (!at || !state) return null;
       delivered[k] = { at, state };
+      if (Object.prototype.hasOwnProperty.call(row, 'receipt')) {
+        const receipt = Morning && Morning.storedReceipt(row.receipt, k, row);
+        if (!receipt) return null;
+        delivered[k].receipt = receipt;
+      }
     }
     return { version: 1, delivered };
   }
@@ -309,6 +316,8 @@
     if (typeof nowIso !== 'string' || isNaN(Date.parse(nowIso))) return base;
     const at = nowIso;
     const delivered = Object.assign({}, base.delivered);
+    // A late push or old client cannot overwrite a confirmed human decision.
+    if (delivered[offer.cooldownKey]?.receipt) return base;
     delivered[offer.cooldownKey] = { at, state: String(state) };
     return { version: 1, delivered };
   }

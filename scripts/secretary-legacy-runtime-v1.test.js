@@ -18,9 +18,11 @@ function deferred() { let resolve; const promise = new Promise(r => { resolve = 
 
 function harness(responses) {
   const State = { me: { id: 'alice' }, secretaryOffer: undefined, _secretaryOfferBusy: false };
+  const Store = { _writeEpoch: 1 };
   const calls = [], settled = [], errors = [];
   let renders = 0, expired = 0;
-  const sandbox = vm.createContext({ State, Date,
+  const sandbox = vm.createContext({ State, Store, Date,
+    morningOutcomeRuntime: () => null,
     window: { SecretaryOfferViewV1: { presentOffer: raw => raw?.offerId === rawOffer.offerId ? view : null } },
     todayStr: () => '2026-09-10',
     fetch: async (route, options) => {
@@ -32,7 +34,7 @@ function harness(responses) {
     settleSecretaryClaim: (...args) => settled.push(args), console: { error: (...args) => errors.push(args) },
   });
   vm.runInContext(source, sandbox);
-  return { State, calls, settled, errors, load: () => sandbox.loadLegacySecretaryOffer(), renders: () => renders, expired: () => expired,
+  return { State, Store, calls, settled, errors, load: () => sandbox.loadLegacySecretaryOffer(), renders: () => renders, expired: () => expired,
     switchAccount: () => { State.me = { id: 'bob' }; State.secretaryOffer = undefined; State._secretaryOfferBusy = false; } };
 }
 
@@ -112,4 +114,17 @@ test('late 401 for the previous account cannot expire the new account session', 
   const work = h.load(); h.switchAccount(); pending.resolve(response(401, { error: 'not logged in' })); await work;
   assert.equal(h.expired(), 0); assert.equal(h.State.secretaryOffer, undefined); assert.equal(h.renders(), 0);
   const current = harness([response(401, {})]); await current.load(); assert.equal(current.expired(), 1);
+});
+
+test('same-account epoch change suppresses late GET/claim and their 401 responses', async () => {
+  for (const phase of ['get', 'claim']) for (const status of [200, 401]) {
+    const d = deferred();
+    const h = harness(phase === 'get' ? [d.promise] : [response(200, { offer: rawOffer }), d.promise]);
+    const work = h.load(); await tick(); h.Store._writeEpoch += 1;
+    h.State.secretaryOffer = undefined; h.State._secretaryOfferBusy = false;
+    d.resolve(response(status, phase === 'get' ? { offer: rawOffer } : { token: 'old-token' })); await work;
+    assert.equal(h.State.secretaryOffer, undefined); assert.equal(h.settled.length, 0); assert.equal(h.expired(), 0); assert.equal(h.renders(), 0);
+  }
+  const h = harness([response(200, { offer: rawOffer }), response(401, {})]); await h.load();
+  assert.equal(h.expired(), 1, 'current claim 401 is handled just like current GET 401');
 });

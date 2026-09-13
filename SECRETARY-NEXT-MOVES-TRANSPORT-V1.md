@@ -166,8 +166,9 @@ server expiry возвращает тому же владельцу успешн
 Локальный автоматический return-dialog после escaped заменён этим каналом с claim;
 ручной возврат остаётся в «Другой поддержке». После отказа он не занимает главный слот.
 Legacy GET/claim теперь показывает ошибки чтения/422/malformed и retry через ту же
-поверхность; только явный null/409 означает молчание. Legacy morning outcome transport
-остаётся прежним и ещё не имеет нового frozen pending replay.
+поверхность; только явный null/409 означает молчание. Morning outcome дополнен
+frozen pending replay и receipt-before-open в [MORNING-OUTCOME-V261.md](MORNING-OUTCOME-V261.md).
+Он использует существующий legacy ledger и не заменяет v2 requests/claims.
 
 ### Browser v255: planned-start
 
