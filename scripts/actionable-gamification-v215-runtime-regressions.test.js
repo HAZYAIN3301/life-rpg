@@ -2,14 +2,15 @@
 
 /* Targeted v215 runtime regressions.
  *
- * These are intentionally source contracts: the browser shell is not a CommonJS
- * module, so extracting the small controller bodies catches wiring regressions
- * without inventing a DOM/network harness for the whole application.
+ * The browser shell is not a CommonJS module. Source contracts check broad
+ * wiring; extracted small controllers exercise outcome and busy-state behavior
+ * without a DOM/network harness for the whole application.
  */
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const SecretaryUI = require('../public/secretary-next-moves-ui-v1.js');
 
 const APP = fs.readFileSync(path.join(__dirname, '..', 'public', 'app.js'), 'utf8');
 
@@ -135,7 +136,7 @@ test('bulk amnesty is available only on the Trust path', () => {
   assert.match(source, /['"]trust['"]/, 'bulk amnesty path gate does not name Trust');
 });
 
-test('commitment dialog uses the shared dialog mount and exposes busy/error state', () => {
+test('commitment dialog uses the shared dialog mount and exposes busy/error state', async () => {
   const dialog = functionSource(APP, 'openQuestCommitmentDialog');
   assert.match(dialog, /mountAccountDialog\s*\(/, 'commitment dialog bypasses shared focus/inert handling');
   const confirm = actionHandler('commitment-confirm', 'commitment-release');
@@ -145,8 +146,36 @@ test('commitment dialog uses the shared dialog mount and exposes busy/error stat
   assert.match(busy, /disabled\s*=\s*true/, 'commitment confirmation does not disable its control while saving');
   assert.match(busy, /aria-busy/, 'commitment confirmation does not expose its saving state');
 
-  const release = actionHandler('commitment-release', 'delete-task');
-  assert.match(release, /(?:if\s*\(\s*!saved\s*\)|else)\s*toast\s*\(/, 'commitment release silently swallows a failed save');
+  const release = actionHandler('commitment-release', 'commitment-close');
+  const endBusy = functionSource(APP, 'endCommitmentUiAction');
+  for (const locale of SecretaryUI.LANGS) {
+    const messages = [], attributes = new Map();
+    let finishSave, renders = 0;
+    const pending = new Promise(resolve => { finishSave = resolve; });
+    const el = { disabled: false, isConnected: true,
+      setAttribute: (key, value) => attributes.set(key, value), removeAttribute: key => attributes.delete(key) };
+    const env = {
+      State: { me: { id: 'owner' } }, Store: { _writeEpoch: 1 },
+      window: { SecretaryNextMovesUIV1: SecretaryUI }, lang: () => locale,
+      questById: id => ({ id }), confirm: () => true, t: value => value,
+      toast: value => messages.push(value), render: () => { renders++; },
+      releaseQuestCommitment: () => pending,
+    };
+    // actionHandler excludes the closing brace before the next else-if.
+    const run = Function(...Object.keys(env), 'let _commitmentUiBusy = null;\n' + busy + '\n' + endBusy
+      + '\nreturn async function run(action, id, el) { ' + release + '} };')(...Object.values(env));
+    const result = run('commitment-release', 'q', el);
+    assert.equal(el.disabled, true, locale);
+    assert.equal(attributes.get('aria-busy'), 'true', locale);
+    assert.deepEqual(messages, [], 'no premature acknowledgment while saving');
+    finishSave(false); await result;
+    assert.deepEqual(messages, [SecretaryUI.copy('secretary.v2.commitment.unconfirmed', locale)],
+      'a failed/unknown save remains visible and does not claim that nothing changed');
+    assert.ok(messages[0].length > 0, locale);
+    assert.equal(renders, 1, 'refreshed owner data is visible after an unconfirmed save');
+    assert.equal(el.disabled, false, locale);
+    assert.equal(attributes.has('aria-busy'), false, 'the failure path releases its busy state');
+  }
 });
 
 test('backdated completion toast is emitted only after a successful save', () => {

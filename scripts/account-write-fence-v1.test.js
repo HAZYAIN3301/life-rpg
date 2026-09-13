@@ -2,6 +2,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const Commitments = require('../public/commitment-v2.js');
+const CommitmentStore = require('../public/commitment-store-v1.js');
 
 const ROOT = path.resolve(__dirname, '..');
 const APP = fs.readFileSync(path.join(ROOT, 'public', 'app.js'), 'utf8');
@@ -103,7 +105,7 @@ test('409 несёт два разных факта, и «обнови стра�
   assert.ok(fn.length > 0);
 });
 
-test('устаревшая база — повод перечитать и пересобрать, а не отказать человеку', () => {
+test('устаревшая база перечитывается один раз; новая гонка не разрешает перезаписать чужую запись', async () => {
   // Аккаунт открыт на трёх устройствах: чужая запись делает базу устаревшей постоянно.
   // Отказ с советом перезагрузиться означает потерю набранного и круг: пока человек
   // перезагружается, другое устройство пишет снова.
@@ -119,19 +121,69 @@ test('устаревшая база — повод перечитать и пе�
 
   const commitAt = APP.indexOf('async function commitmentDataCommit');
   const commit = APP.slice(commitAt, APP.indexOf('\nasync function takeQuestCommitment'));
-  assert.match(commit, /for \(let attempt = 0; attempt < 3; attempt \+= 1\)/,
-    'три попытки: обычная, на перечитанной базе и примирение');
-  assert.match(commit, /attempt === 2 \? \{ base: 'server', data: candidate \}/,
-    'третья попытка просит сервер построить базу самому — иначе тупик остаётся');
-  assert.match(commit, /attempt < 2 && response\.status === 409/,
-    'перечитывание пробуется на обеих неудачных попытках, а не только на первой');
-  assert.match(commit, /commitment_revision_conflict/,
-    'повторяется только настоящий конфликт: повреждённый файл повтором не лечится');
-  // Ключевое: на второй попытке изменение собирается заново, а не досылается старое.
-  const buildCalls = commit.match(/const candidate = build\(\{/g) || [];
-  assert.equal(buildCalls.length, 1, 'build внутри цикла — значит пересобирается каждую попытку');
-  assert.ok(commit.indexOf('for (let attempt') < commit.indexOf('const candidate = build({'),
-    'пересборка обязана быть внутри цикла, иначе повтор затрёт чужую запись');
+  // Execute the actual writer with the real schema/receipt validator. Merely
+  // finding a loop in the source cannot prove which base is sent after a race.
+  for (const outcome of ['saved', 'malformed_receipt', 'second_conflict', 'corrupt']) {
+    const State = { me: { id: 'owner' }, settings: { commitmentsV1: {
+      version: 2, mode: 'default', log: {}, items: [{
+        id: 'quest:q', kind: 'step', title: 'Draft', win: 'Original result',
+        edge: { kind: 'time', at: '15:00' }, core: true, modes: [], history: [],
+      }],
+    } }, tasks: [{ id: 'q', title: 'Draft', done: false, commitmentId: 'quest:q' }] };
+    const snapshot = () => ({ settings: { exists: true, value: structuredClone(State.settings) },
+      tasks: { exists: true, value: structuredClone(State.tasks) } });
+    let base = snapshot(), refreshes = 0, builds = 0, remembered = 0;
+    const sent = [];
+    const Store = { _writeEpoch: 7, runExclusive: async (slots, operation) => {
+      assert.deepEqual(slots, ['settings', 'tasks']);
+      return operation({ writeEpoch: 7, accountId: 'owner' });
+    } };
+    const env = {
+      window: { CommitmentStoreV1: CommitmentStore }, State, Store, structuredClone,
+      commitmentEngine: () => Commitments, commitmentMigration: raw => Commitments.migrate(raw),
+      taskWriteAllowed: () => true, settingsWriteAllowed: () => true,
+      validateSettingsPayload: value => !!value, validateTasksPayload: Array.isArray,
+      commitmentWriteBase: () => structuredClone(base), t: value => value, toast: () => {},
+      handleAccountSessionExpired: () => assert.fail('unexpected expiry'),
+      commitmentBoundaryCode: async response => response.code,
+      commitmentBoundaryRejected: async response => response.status === 409,
+      refreshCommitmentWriteBase: async owner => {
+        assert.deepEqual(owner, { writeEpoch: 7, accountId: 'owner' }); refreshes++;
+        const fresh = { settings: { ...structuredClone(State.settings), otherDevice: 'preserve me' },
+          tasks: structuredClone(State.tasks) };
+        base = { settings: { exists: true, value: fresh.settings }, tasks: { exists: true, value: fresh.tasks } };
+        return fresh;
+      },
+      rememberDedicatedCommitSlots: () => { remembered++; return true; },
+      fetch: async (url, init) => {
+        assert.equal(url, '/api/commitments/commit');
+        const payload = JSON.parse(init.body); sent.push(payload);
+        assert.equal(CommitmentStore.validateCommitPayload(payload), true);
+        assert.notEqual(payload.base, 'server', 'a race never authorizes a blind overwrite');
+        if (sent.length === 1 || outcome === 'second_conflict') return {
+          ok: false, status: 409, code: outcome === 'corrupt' ? 'commitment_data_corrupt' : 'commitment_revision_conflict',
+        };
+        assert.equal(sent.length, 2, 'only one rebuild is permitted');
+        assert.equal(payload.base.settings.value.otherDevice, 'preserve me', 'retry uses the refreshed base');
+        assert.equal(payload.data.settings.otherDevice, 'preserve me', 'retry preserves concurrent data');
+        return { ok: true, status: 200, json: async () => {
+          assert.equal(remembered, 0, 'HTTP success cannot advance CAS slots before the durable body');
+          assert.equal(State.settings.commitmentsV1.items[0].win, 'Original result', 'candidate is not applied before the receipt');
+          return outcome === 'malformed_receipt' ? { ok: true } : { ok: true, files: ['settings', 'tasks'] };
+        } };
+      },
+    };
+    const write = Function(...Object.keys(env), commit + '; return commitmentDataCommit;')(...Object.values(env));
+    const result = await write(({ settings, tasks }) => {
+      builds++; settings.commitmentsV1.items[0].win = 'Chosen result'; return { settings, tasks };
+    });
+    assert.equal(result, outcome === 'saved', outcome);
+    assert.equal(sent.length, outcome === 'corrupt' ? 1 : 2, outcome);
+    assert.equal(refreshes, outcome === 'corrupt' ? 0 : 1, outcome);
+    assert.equal(builds, sent.length, 'each attempt rebuilds instead of replaying the stale candidate');
+    assert.equal(remembered, outcome === 'saved' ? 1 : 0, outcome);
+    assert.equal(State.settings.commitmentsV1.items[0].win, outcome === 'saved' ? 'Chosen result' : 'Original result', outcome);
+  }
 });
 
 test('примирение снимает только сверку версий, а не защиту графа', () => {
