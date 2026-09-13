@@ -70,6 +70,7 @@ function harness(modes = [], locale = 'en') {
       if (typeof mode === 'object' && mode !== null) return mode;
       if (mode === 500 || mode === 401) return response(mode, { error: 'test_failure' });
       if (typeof mode === 'string' && mode.startsWith('purchase_')) return response(409, { error: mode });
+      if (typeof mode === 'string' && mode.startsWith('inventory_')) return response(422, { error: mode });
       if (mode === 'invalid_purchase_equipment') return response(409, { error: mode });
       if (mode === 'offline') throw Error('offline before write');
       const decision = Economy.decide(server, payload.data, payload.economyBase);
@@ -113,7 +114,9 @@ function unchangedScope(h, saved) {
 }
 
 const CODES = ['purchase_level_required', 'purchase_progress_unavailable', 'purchase_pro_required',
-  'purchase_ownership_changed', 'purchase_relics_changed', 'invalid_purchase_equipment', 'purchase_credit_changed'];
+  'purchase_ownership_changed', 'purchase_relics_changed', 'invalid_purchase_equipment', 'purchase_credit_changed',
+  'inventory_ownership_changed', 'inventory_relics_changed', 'inventory_invalid_selection',
+  'inventory_pro_required', 'inventory_state_not_supported', 'inventory_invalid_grant'];
 for (const locale of ['ru', 'en', 'de', 'uk', 'es']) {
   test(`${locale}: all admission refusals retain their exact localized reason without a generic CAS conflict`, async () => {
     for (const code of CODES) {
@@ -200,26 +203,26 @@ for (const mode of [500, 'lost']) {
 }
 
 for (const scope of ['account', 'epoch']) {
-  for (const outcome of [401, 409, 500, 200, 'lost']) {
+  for (const outcome of [401, 409, 422, 500, 200, 'lost']) {
     test(`late ${outcome} after ${scope} change cannot affect auth, conflict, snapshots or UI`, async () => {
       const held = deferred(), h = harness([() => held.promise]);
       const pending = h.run(); await turn(); const saved = changeScope(h, scope);
       if (outcome === 'lost') held.reject(Error('late error'));
       else held.resolve(response(outcome, outcome === 200 ? { ok: true, snapshots: { ...h.initialSnapshots, purchases: snapshot(h.candidate.purchases) } }
-        : { error: 'purchase_level_required' }));
+        : { error: outcome === 422 ? 'inventory_invalid_selection' : 'purchase_level_required' }));
       assert.equal(await pending, false); unchangedScope(h, saved);
       assert.equal(await h.run(), false, 'same frozen candidate cannot be resubmitted by another scope');
       assert.equal(h.calls.length, 1);
     });
   }
-  for (const status of [200, 409]) {
+  for (const status of [200, 409, 422]) {
     test(`late ${status} JSON after ${scope} change is checked again before effects`, async () => {
       const held = deferred();
       const h = harness([() => ({ status, ok: status === 200, json: () => held.promise,
         clone() { return { json: () => held.promise }; } })]);
       const pending = h.run(); await turn(); const saved = changeScope(h, scope);
       held.resolve(status === 200 ? { ok: true, snapshots: { ...h.initialSnapshots, purchases: snapshot(h.candidate.purchases) } }
-        : { error: 'purchase_pro_required' });
+        : { error: status === 422 ? 'inventory_invalid_selection' : 'purchase_pro_required' });
       assert.equal(await pending, false); unchangedScope(h, saved);
     });
   }

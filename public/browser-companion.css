@@ -66,6 +66,7 @@ h1 { max-width: 820px; margin: 0; font-size: clamp(2.4rem, 7vw, 5.5rem); line-he
 .bc-install aside b { color: var(--text); }
 .bc-limit { max-width: 780px; margin: 72px auto 0; text-align: center; }
 .bc-limit p { color: var(--muted); line-height: 1.7; }
+.bc-limit a.bc-privacy-link { color: var(--text) !important; background: transparent; padding: 8px; font-weight: 600; text-decoration: underline; text-underline-offset: .2em; }
 #bc-toast { position: fixed; inset: auto 16px 16px; width: fit-content; max-width: calc(100% - 32px); margin: auto; padding: 12px 16px; border: 1px solid var(--line); border-radius: 12px; color: var(--text); background: var(--surface-2); box-shadow: var(--shadow); opacity: 0; transform: translateY(8px); pointer-events: none; transition: .2s ease; }
 #bc-toast.on { opacity: 1; transform: translateY(0); }
 a:focus-visible, button:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }

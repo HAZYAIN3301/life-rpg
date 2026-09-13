@@ -40,6 +40,11 @@
   };
   Object.assign(en, connectionCopy.en);
   for (const lang of ['ru', 'de', 'uk', 'es']) Object.assign(patches[lang], connectionCopy[lang]);
+  en.privacyPolicy = 'Extension privacy';
+  patches.ru.privacyPolicy = 'Конфиденциальность расширения';
+  patches.de.privacyPolicy = 'Datenschutz der Erweiterung';
+  patches.uk.privacyPolicy = 'Конфіденційність розширення';
+  patches.es.privacyPolicy = 'Privacidad de la extensión';
   en.updatesLead = 'After an approved store release, Chrome and Brave can apply updates. No store release is published here yet. Test ZIPs use manual Reload.';
   patches.ru.updatesLead = 'После одобренной публикации Chrome и Brave смогут получать обновления из магазина. Опубликованной версии здесь пока нет. Тестовый ZIP обновляется вручную через Reload.';
   patches.de.updatesLead = 'Nach einer freigegebenen Store-Veröffentlichung können Chrome und Brave Updates erhalten. Hier ist noch keine Store-Version veröffentlicht. Test-ZIPs werden manuell neu geladen.';
@@ -149,6 +154,8 @@
       if (copy) node.textContent = copy;
     });
     languageSelect.value = language;
+    const privacyLink = document.querySelector('[data-copy="privacyPolicy"]');
+    if (privacyLink) privacyLink.href = '/browser-companion-privacy.html?lang=' + language;
     selectBrowser(selectedBrowser, false);
     renderConnection();
   }

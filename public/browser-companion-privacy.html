@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Satoru Attention applies the website boundaries and optional content filters you choose in your browser. This notice covers the extension; the Satoru account website has separate data flows.">
+  <title>Privacy in Satoru Attention</title>
+  <link rel="icon" href="browser-companion-icon-v1.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="browser-companion.css?v=20260913-critical-v261-1">
+  <link rel="stylesheet" href="browser-companion-privacy-v1.css?v=20260913-critical-v261-1">
+</head>
+<body>
+  <header class="bc-top">
+    <a class="bc-brand" href="/browser-companion.html"><img src="browser-companion-icon-v1.png" width="42" height="42" alt=""><b>Satoru Attention</b></a>
+    <label class="bc-language"><span data-policy="language">Language</span>
+      <select id="policy-language"><option value="en">English</option><option value="ru">Русский</option><option value="de">Deutsch</option><option value="uk">Українська</option><option value="es">Español</option></select>
+    </label>
+  </header>
+  <main class="policy">
+    <a id="policy-back" href="/browser-companion.html" data-policy="back">Installation</a>
+    <h1 data-policy="title">Privacy in Satoru Attention</h1>
+    <p data-policy="date">Updated 13 September 2026 · Extension 0.6.0</p>
+    <p data-policy="lead">Satoru Attention applies the website boundaries and optional content filters you choose in your browser. This notice covers the extension; the Satoru account website has separate data flows.</p>
+    <section><h2 data-policy="localTitle">What stays in your browser</h2><p data-policy="local">Local extension storage holds your rules, configured hostnames, entry scenarios, daily budgets, cooldowns, pending changes, emergency-access budget, active session and up to 100 minimal session outcomes. An active session can contain the task detail, topic and expected outcome you enter. Emergency reasons are checked when used and are not saved as free text.</p></section>
+    <section><h2 data-policy="addressesTitle">How website addresses are used</h2><p data-policy="addresses">The extension processes permitted addresses to apply a boundary or content rule. It can briefly keep an attempted address in memory to return you to the same page. It does not save a browsing-history log or read your browser history database, cookies, page titles, watched items or account credentials.</p></section>
+    <section><h2 data-policy="bridgeTitle">What the Satoru page can see</h2><p data-policy="bridge">On the exact Satoru production website, a local content script exposes the extension version, enabled/permitted site counts, limited session status (service category, phase, mode and time remaining), rule-application status and the latest boundary-test state and time. Site addresses, rules, task details, topics, purposes, outcomes and browsing history are not sent through this connection.</p><p data-policy="bridgeAction">The page can open extension settings. It cannot change rules, start sessions or tests, or change your Satoru account through this connection.</p></section>
+    <section><h2 data-policy="testTitle">When you test a boundary</h2><p data-policy="test">A test you start opens one configured site's homepage in a new tab. If blocking fails, the site can load and receive the normal browser request. One local test record keeps the result, times, extension version, rule fingerprint and test-tab ID. Changing the rules or version invalidates the old result. The Satoru page receives only the bounded test state and time.</p></section>
+    <section><h2 data-policy="permissionsTitle">Permissions and removal</h2><p data-policy="permissions">Installation grants access only to Satoru's exact production origin. Adding a website asks for that hostname over HTTP/HTTPS. Turning on optional category protection separately requests all-site HTTP/HTTPS access so local filtering can work. You can remove permissions, disable or uninstall the extension in your browser.</p><p data-policy="removal">Uninstalling removes local extension storage. Any separate browser or profile backups are managed by your browser. There is no extension cloud sync, analytics, remote executable code or separate network upload endpoint.</p></section>
+    <section><h2 data-policy="useTitle">How the data is used</h2><p data-policy="use">Data is used for the chosen browser boundaries and their status. Extension data is not sold or used for advertising, credit decisions or unrelated profiling.</p></section>
+    <section><h2 data-policy="supportTitle">Project and support</h2><p data-policy="supportText">Satoru Attention is maintained in the public HAZYAIN3301/life-rpg project. You can report a technical problem there. GitHub issues are public: do not include passwords, account archives or private browsing details.</p></section>
+    <a class="policy-support" href="https://github.com/HAZYAIN3301/life-rpg/issues" rel="noreferrer" data-policy="support">Open project support</a>
+  </main>
+  <script src="browser-companion-privacy-v1.js?v=20260913-critical-v261-1"></script>
+</body>
+</html>

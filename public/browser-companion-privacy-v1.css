@@ -1,0 +1,11 @@
+/* Readable extension notice; shares the existing installation-page palette. */
+.policy { max-width: 68ch; padding-top: 24px; line-height: 1.5; overflow-wrap: anywhere; }
+.policy h1 { margin: 24px 0 16px; font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.12; letter-spacing: 0; }
+.policy h2 { margin: 0 0 12px; font-size: 1.25rem; line-height: 1.35; letter-spacing: 0; }
+.policy p { margin: 0 0 16px; }
+.policy [data-policy="date"] { color: var(--muted); }
+.policy section { padding-top: 24px; border-top: 1px solid var(--line); margin-top: 24px; }
+.policy > a { display: inline-flex; align-items: center; min-height: 44px; color: var(--text); text-underline-offset: .2em; }
+.bc-top { max-width: 68ch; flex-wrap: wrap; gap: 8px 16px; }
+.bc-brand { min-width: 0; }
+@media (max-width: 760px) { .bc-language > span { position: static; width: auto; height: auto; overflow: visible; clip: auto; } }

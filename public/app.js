@@ -12269,7 +12269,7 @@ async function economyCommit(data) {
       });
       if (!current()) return false;
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (response.status === 409 && window.PurchaseFeedbackV1) {
+      if ([409, 422].includes(response.status) && window.PurchaseFeedbackV1) {
         let rejection; try { rejection = await response.clone().json(); } catch {}
         if (!current()) return false;
         if (window.PurchaseFeedbackV1.text(rejection?.error, lang())) { request.failure = rejection.error; return false; }
