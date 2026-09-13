@@ -1,0 +1,411 @@
+{
+  "checkedAt": "2026-09-13T10:42:34.482Z",
+  "sha": "1175476f771361574813099399f6f19e59364706",
+  "origin": "https://life-rpg-production-416a.up.railway.app",
+  "status": "success",
+  "railway": [
+    {
+      "context": "brilliant-amazement - piper-tts",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/5805cd49-5d30-4dcf-a4fb-3f1bb5cca666?id=8fd8edc1-b6b0-420c-a823-e02e54e2f4b5&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f",
+      "updated_at": "2026-09-13T10:41:58Z"
+    },
+    {
+      "context": "brilliant-amazement - life-rpg",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/7a8e0c26-8a60-4bcc-ade2-f9f2e0f7ac7c?id=1057a9a7-595e-4e9a-bfe0-3344cb9d8045&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f",
+      "updated_at": "2026-09-13T10:42:09Z"
+    }
+  ],
+  "files": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "localSha256": "2f799c83ad4d6138e128797365abe85c7b5c763115a1590e5dea6478ef64dc1d",
+      "liveSha256": "2f799c83ad4d6138e128797365abe85c7b5c763115a1590e5dea6478ef64dc1d",
+      "match": true
+    },
+    {
+      "file": "app.js",
+      "status": 200,
+      "localSha256": "bce3adcd5fcafbeb4b9b0ee31e08fcac9d83d8ed45115e0386f7e88270b3c396",
+      "liveSha256": "bce3adcd5fcafbeb4b9b0ee31e08fcac9d83d8ed45115e0386f7e88270b3c396",
+      "match": true
+    },
+    {
+      "file": "styles.css",
+      "status": 200,
+      "localSha256": "6ca7c4e37a8fc72aab3b0761d6f170465b1383558cb712dd2e7e667eb1f6d716",
+      "liveSha256": "6ca7c4e37a8fc72aab3b0761d6f170465b1383558cb712dd2e7e667eb1f6d716",
+      "match": true
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "localSha256": "5a9ac2d186f37dd996d26de8f6fffd6ade39dde35ec7e6f328f2ed6fb8fd9ae5",
+      "liveSha256": "5a9ac2d186f37dd996d26de8f6fffd6ade39dde35ec7e6f328f2ed6fb8fd9ae5",
+      "match": true
+    },
+    {
+      "file": "attention-controller-v1.js",
+      "status": 200,
+      "localSha256": "78b27a6b8e9d2bdb770c54df13c141e72c8ac902d95d9ea214a44a00f6007521",
+      "liveSha256": "78b27a6b8e9d2bdb770c54df13c141e72c8ac902d95d9ea214a44a00f6007521",
+      "match": true
+    },
+    {
+      "file": "attention-episode-v1.js",
+      "status": 200,
+      "localSha256": "9f5cc1aad832128971c8545f7f8cb6b88ef4ac8173e7aa279f43de965a65902a",
+      "liveSha256": "9f5cc1aad832128971c8545f7f8cb6b88ef4ac8173e7aa279f43de965a65902a",
+      "match": true
+    },
+    {
+      "file": "attention-session-v1.js",
+      "status": 200,
+      "localSha256": "45cc8ea30c3fc8ccf18fea7e6a40c7de5c94efc95723cc55841b43e6effaf1f3",
+      "liveSha256": "45cc8ea30c3fc8ccf18fea7e6a40c7de5c94efc95723cc55841b43e6effaf1f3",
+      "match": true
+    },
+    {
+      "file": "secretary-router-v1.js",
+      "status": 200,
+      "localSha256": "f43ccffd326abd06414bab2119fe4ec8a5bfc1360a7d596f325820a1560aaeec",
+      "liveSha256": "f43ccffd326abd06414bab2119fe4ec8a5bfc1360a7d596f325820a1560aaeec",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-producer-v1.js",
+      "status": 200,
+      "localSha256": "ee5fac5051c5ab743e68b07d1a301b30907162efa14a641e04bfd8d53230052d",
+      "liveSha256": "ee5fac5051c5ab743e68b07d1a301b30907162efa14a641e04bfd8d53230052d",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-client-v1.js",
+      "status": 200,
+      "localSha256": "38c37beb3ca98c32415abc633585324bc744bbbabcd682162890b10dbf311ae2",
+      "liveSha256": "38c37beb3ca98c32415abc633585324bc744bbbabcd682162890b10dbf311ae2",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-runtime-v1.js",
+      "status": 200,
+      "localSha256": "d9b1484c017eb4e98431376cbc59a1fe1c17abff0a022cd82c6a8216bf7613de",
+      "liveSha256": "d9b1484c017eb4e98431376cbc59a1fe1c17abff0a022cd82c6a8216bf7613de",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-ui-v1.js",
+      "status": 200,
+      "localSha256": "6fe0c1f01fefbb1b7e476b7deb8c9968f540350e06a0ae0193088af041e4d3c1",
+      "liveSha256": "6fe0c1f01fefbb1b7e476b7deb8c9968f540350e06a0ae0193088af041e4d3c1",
+      "match": true
+    },
+    {
+      "file": "secretary-next-moves-v2.js",
+      "status": 200,
+      "localSha256": "8765b9a164dfde534175197da2cb02dd9bf47ec2563eed7235f445b6cd932e99",
+      "liveSha256": "8765b9a164dfde534175197da2cb02dd9bf47ec2563eed7235f445b6cd932e99",
+      "match": true
+    },
+    {
+      "file": "evening-writes-v1.js",
+      "status": 200,
+      "localSha256": "f59b0e7a4ef6e7b67ecc5900903febc6a375e3de6de3553adab3b6275cfdefb2",
+      "liveSha256": "f59b0e7a4ef6e7b67ecc5900903febc6a375e3de6de3553adab3b6275cfdefb2",
+      "match": true
+    },
+    {
+      "file": "attention-ui-v1.js",
+      "status": 200,
+      "localSha256": "202f9bcac6ddf861382de08cf47a2e126b67db6a8491e2f5faade1bc676fc1e5",
+      "liveSha256": "202f9bcac6ddf861382de08cf47a2e126b67db6a8491e2f5faade1bc676fc1e5",
+      "match": true
+    },
+    {
+      "file": "inspiration-catalog-v1.js",
+      "status": 200,
+      "localSha256": "3a731bffd489435616f707038b3a156732fade0b95442234b8fa85eefde7d827",
+      "liveSha256": "3a731bffd489435616f707038b3a156732fade0b95442234b8fa85eefde7d827",
+      "match": true
+    },
+    {
+      "file": "inspiration-supply-policy-v1.js",
+      "status": 200,
+      "localSha256": "68e8a199c7552b43eae6aba58f8bf82e59103799160eba977d38fbe27f69988a",
+      "liveSha256": "68e8a199c7552b43eae6aba58f8bf82e59103799160eba977d38fbe27f69988a",
+      "match": true
+    },
+    {
+      "file": "inspiration-supply-batch-v1.js",
+      "status": 200,
+      "localSha256": "8b7b4a8d3f65cd8d0f1b7132b11db813ba09cbcc92a50255bd428f97e4484e8d",
+      "liveSha256": "8b7b4a8d3f65cd8d0f1b7132b11db813ba09cbcc92a50255bd428f97e4484e8d",
+      "match": true
+    },
+    {
+      "file": "inspiration-supply-runtime-v1.js",
+      "status": 200,
+      "localSha256": "b28f5ebab51a8355dd1c03b6e00fce5aa9a81c071b1a7b2ad9701cb7ba3045c3",
+      "liveSha256": "b28f5ebab51a8355dd1c03b6e00fce5aa9a81c071b1a7b2ad9701cb7ba3045c3",
+      "match": true
+    },
+    {
+      "file": "inspiration-supply-ui-v1.js",
+      "status": 200,
+      "localSha256": "96c5244beb6e00e6f14cd54e260d93f312579ccfe797fd8e68d550ae1c33dfee",
+      "liveSha256": "96c5244beb6e00e6f14cd54e260d93f312579ccfe797fd8e68d550ae1c33dfee",
+      "match": true
+    },
+    {
+      "file": "return-shelf-ui-v1.js",
+      "status": 200,
+      "localSha256": "b8690b3464080a57d6e3db6d28e44ce0bb38524311fe27f9b351c58ddac2c114",
+      "liveSha256": "b8690b3464080a57d6e3db6d28e44ce0bb38524311fe27f9b351c58ddac2c114",
+      "match": true
+    },
+    {
+      "file": "economy-write-v1.js",
+      "status": 200,
+      "localSha256": "2ceefc99f64e48034d860b2941f836df102d0b6de7a91f70225a5d60bccb393a",
+      "liveSha256": "2ceefc99f64e48034d860b2941f836df102d0b6de7a91f70225a5d60bccb393a",
+      "match": true
+    },
+    {
+      "file": "purchase-policy-v1.js",
+      "status": 200,
+      "localSha256": "19616b3c6964bdc8a18a3c920a4cdcedd733be8908ab0acd8abb979b926e15da",
+      "liveSha256": "19616b3c6964bdc8a18a3c920a4cdcedd733be8908ab0acd8abb979b926e15da",
+      "match": true
+    },
+    {
+      "file": "personal-progress-v1.js",
+      "status": 200,
+      "localSha256": "70f92f267a03b1040fab17a2be544b469f8fe2ddc155294e43a3cc0cc7682c16",
+      "liveSha256": "70f92f267a03b1040fab17a2be544b469f8fe2ddc155294e43a3cc0cc7682c16",
+      "match": true
+    },
+    {
+      "file": "purchase-entitlement-v1.js",
+      "status": 200,
+      "localSha256": "23b775cb50a47bf8c019db83294711ee5cd1cdee0a8c70e583dca2ebf427e6c3",
+      "liveSha256": "23b775cb50a47bf8c019db83294711ee5cd1cdee0a8c70e583dca2ebf427e6c3",
+      "match": true
+    },
+    {
+      "file": "purchase-feedback-v1.js",
+      "status": 200,
+      "localSha256": "e6ed0c481e9bad02256fe0d5163b44adcff7f2a63cfa758050e809db1746f27d",
+      "liveSha256": "e6ed0c481e9bad02256fe0d5163b44adcff7f2a63cfa758050e809db1746f27d",
+      "match": true
+    },
+    {
+      "file": "account-import-v1.js",
+      "status": 200,
+      "localSha256": "dbc1c1fbdc4a741e40b6e5257881fe6d4c0d19762823736e9020bab0e19fcd78",
+      "liveSha256": "dbc1c1fbdc4a741e40b6e5257881fe6d4c0d19762823736e9020bab0e19fcd78",
+      "match": true
+    },
+    {
+      "file": "commitment-journal-v1.js",
+      "status": 200,
+      "localSha256": "bddd4761b8d7145f828dcaed5db4d96966848f12b615c09b7f5d321dd5dd02eb",
+      "liveSha256": "bddd4761b8d7145f828dcaed5db4d96966848f12b615c09b7f5d321dd5dd02eb",
+      "match": true
+    },
+    {
+      "file": "shadow-persona-v1.js",
+      "status": 200,
+      "localSha256": "d5cfc34c8b948ed848052fe17f0282789146dfd3f1f641e9e83acf4d5fef4870",
+      "liveSha256": "d5cfc34c8b948ed848052fe17f0282789146dfd3f1f641e9e83acf4d5fef4870",
+      "match": true
+    },
+    {
+      "file": "reward-catalog-v1.js",
+      "status": 200,
+      "localSha256": "c25f9fc3f8ff9c76711b81a97ed34b7de9d5dd34c090cc8c299c4b8292d108e5",
+      "liveSha256": "c25f9fc3f8ff9c76711b81a97ed34b7de9d5dd34c090cc8c299c4b8292d108e5",
+      "match": true
+    },
+    {
+      "file": "chest-reward-policy-v1.js",
+      "status": 200,
+      "localSha256": "80dd2a9405c058a6d40cc6eadaabf1aa62df6bfb2b2be4c52140935e48e3ab64",
+      "liveSha256": "80dd2a9405c058a6d40cc6eadaabf1aa62df6bfb2b2be4c52140935e48e3ab64",
+      "match": true
+    },
+    {
+      "file": "chest-claim-v1.js",
+      "status": 200,
+      "localSha256": "0b2c8ac986c64da5e5730d9067bf7aa63b527bdbdcb8fd4370685d9edefa908b",
+      "liveSha256": "0b2c8ac986c64da5e5730d9067bf7aa63b527bdbdcb8fd4370685d9edefa908b",
+      "match": true
+    },
+    {
+      "file": "chest-claim-runtime-v1.js",
+      "status": 200,
+      "localSha256": "dbda94fb7195fddc0f4b87750bf263665fdda5ae6d753b0a6225d4b6259462e2",
+      "liveSha256": "dbda94fb7195fddc0f4b87750bf263665fdda5ae6d753b0a6225d4b6259462e2",
+      "match": true
+    },
+    {
+      "file": "browser-companion-status-v1.js",
+      "status": 200,
+      "localSha256": "91dd76a138ccbd69ace4c2111f8a71c4345c4ead462feac169307a527f1fe9a5",
+      "liveSha256": "91dd76a138ccbd69ace4c2111f8a71c4345c4ead462feac169307a527f1fe9a5",
+      "match": true
+    },
+    {
+      "file": "browser-companion.html",
+      "status": 200,
+      "localSha256": "07f70b79949425b767b48fc1971e235fe88d10dc506dc5e51a0aeba63065b054",
+      "liveSha256": "07f70b79949425b767b48fc1971e235fe88d10dc506dc5e51a0aeba63065b054",
+      "match": true
+    },
+    {
+      "file": "browser-companion.css",
+      "status": 200,
+      "localSha256": "7dc17ce26d5046d7ccd2e98af83d274941e3004384edcbe228412e48916bf1de",
+      "liveSha256": "7dc17ce26d5046d7ccd2e98af83d274941e3004384edcbe228412e48916bf1de",
+      "match": true
+    },
+    {
+      "file": "browser-companion-landing-v1.js",
+      "status": 200,
+      "localSha256": "a4e07a0398a5cf8f6232805bc9c074b49df7e9bdb076b2b1236da1913b3c2c02",
+      "liveSha256": "a4e07a0398a5cf8f6232805bc9c074b49df7e9bdb076b2b1236da1913b3c2c02",
+      "match": true
+    },
+    {
+      "file": "downloads/satoru-attention-chromium-v260.zip",
+      "status": 200,
+      "localSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "liveSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "match": true
+    },
+    {
+      "file": "downloads/satoru-attention-chrome-store-v260.zip",
+      "status": 200,
+      "localSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "liveSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "match": true
+    },
+    {
+      "file": "downloads/satoru-attention-v260.zip",
+      "status": 200,
+      "localSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "liveSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "match": true
+    },
+    {
+      "file": "downloads/satoru-attention-store-v260.zip",
+      "status": 200,
+      "localSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "liveSha256": "8a8b1cb158fb3c893dcfd6d8cb64fcc810bfe56d119973a429152b213dfde5b6",
+      "match": true
+    },
+    {
+      "file": "morning-outcome-v1.js",
+      "status": 200,
+      "localSha256": "b307f6e7182f9880aa37fe1d387a8d9411a1159329d2e350079c27c5d8528e5c",
+      "liveSha256": "b307f6e7182f9880aa37fe1d387a8d9411a1159329d2e350079c27c5d8528e5c",
+      "match": true
+    },
+    {
+      "file": "commitment-store-v1.js",
+      "status": 200,
+      "localSha256": "ab80e509fc67d404001bd04a2d3c1707a9d06177d9a892d8e8966459fc6622bc",
+      "liveSha256": "ab80e509fc67d404001bd04a2d3c1707a9d06177d9a892d8e8966459fc6622bc",
+      "match": true
+    },
+    {
+      "file": "settings-inventory-policy-v1.js",
+      "status": 200,
+      "localSha256": "10e645207c56d6e929505e887072063c1b323fba46ca5a47f2dd4b78d7b92b29",
+      "liveSha256": "10e645207c56d6e929505e887072063c1b323fba46ca5a47f2dd4b78d7b92b29",
+      "match": true
+    },
+    {
+      "file": "browser-companion-privacy.html",
+      "status": 200,
+      "localSha256": "7bc1890d0c6e3a55003a3347a12f67e3ff2b478b49bf430e89e89e475abf1768",
+      "liveSha256": "7bc1890d0c6e3a55003a3347a12f67e3ff2b478b49bf430e89e89e475abf1768",
+      "match": true
+    },
+    {
+      "file": "browser-companion-privacy-v1.js",
+      "status": 200,
+      "localSha256": "adaf6a4f1f84939c0a8a6ac99cd26cfc50569a4ba865051b12bce28b6e2b6edb",
+      "liveSha256": "adaf6a4f1f84939c0a8a6ac99cd26cfc50569a4ba865051b12bce28b6e2b6edb",
+      "match": true
+    },
+    {
+      "file": "browser-companion-privacy-v1.css",
+      "status": 200,
+      "localSha256": "764a1b98de07a24151ba9193f179a2fb1d87b920699190a772edef7e084fcc54",
+      "liveSha256": "764a1b98de07a24151ba9193f179a2fb1d87b920699190a772edef7e084fcc54",
+      "match": true
+    }
+  ],
+  "endpoints": [
+    {
+      "path": "/api/auth/profiles",
+      "method": "GET",
+      "expected": 200,
+      "status": 200,
+      "pass": true
+    },
+    {
+      "path": "/api/secretary/next-moves",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    },
+    {
+      "path": "/api/secretary/offer",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    },
+    {
+      "path": "/api/commitments/commit",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    },
+    {
+      "path": "/api/economy/commit",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    },
+    {
+      "path": "/api/rewards/chest",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    },
+    {
+      "path": "/api/account/import/preview",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    },
+    {
+      "path": "/api/account/import",
+      "method": "POST",
+      "expected": 401,
+      "status": 401,
+      "pass": true
+    }
+  ],
+  "pass": true,
+  "authenticatedProductionScenario": "Not run; functional scenarios verified on isolated synthetic local account."
+}

@@ -2,8 +2,15 @@
 
 ## [2026-09-13] v261 — предметы, утренний повтор, связанные задачи и privacy
 
-**Кандидат проверен; push/deploy разрешены владельцем.** Факт публикации конкретного
-SHA и production verification будет добавлен после Railway. CACHE satoru-v261,
+**Опубликовано 13.09 12:42 CEST:** `1175476f771361574813099399f6f19e59364706`.
+Railway app `1057a9a7-595e-4e9a-bfe0-3344cb9d8045` и TTS
+`8fd8edc1-b6b0-420c-a823-e02e54e2f4b5` success с первой сборки. **47/47 production
+bytes** совпали 10:42:34 UTC, включая новый morning helper, commitment store,
+inventory policy, privacy и четыре ZIP. Profiles 200; protected secretary offer/
+next-moves/Commitment/economy/chest/import/preview без сессии 401.
+Receipt: art-factory/critical-path-v261/release-receipt.json. Production IAB:
+готовая privacy RU и login с v261 pins без console errors/overflow; записи живого
+аккаунта не выполнялись. CACHE satoru-v261,
 изменённые browser pins 20260913-critical-v261-1; новый morning helper загружается
 до app.js и входит в offline SHELL. Server-only router/policy не подключены вторым
 browser engine. Privacy assets также входят в SHELL, ZIP расширения остаётся 0.6.0.

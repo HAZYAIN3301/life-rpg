@@ -10,7 +10,8 @@ history защищены; legacy morning choice повторяется по то
 расширения на пяти языках; отправка в store ждёт входа владельца в кабинет.
 Контракты OWNERSHIP-WRITES-V261.md, MORNING-OUTCOME-V261.md,
 COMMITMENT-TASK-LINKS-V261.md, STORE-PUBLICATION-V261.md. CACHE satoru-v261.
-Проверки/факт публикации и SHA — верх DEVLOG; browser receipt —
+Опубликован `1175476`: оба Railway services success, 47/47 production bytes
+13.09 10:42:34 UTC; **2733/2733 tests PASS**. Подробности — верх DEVLOG; browser receipt —
 art-factory/critical-path-v261/qa-receipt.json. Следующая очередь — верх критического
 плана: общий wallet/credit provenance, полный First Value, остальные push.
 Личный XP/gold/import и title owners не изменены; avatar/Rest Profile на паузе.

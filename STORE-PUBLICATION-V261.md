@@ -4,7 +4,10 @@
 0.6.0: готовые ZIP/скриншоты/иконка и точная SHA256 — store-kit-v260.
 Новая страница не требует пересборки или смены версии ZIP.
 
-## Готовые адреса после deployment v261
+## Опубликованные адреса, v261
+
+Deployment `1175476` verified 13.09 10:42:34 UTC: оба Railway services success,
+47/47 bytes, включая privacy. Production browser открыл русский текст без ошибок.
 
 - Privacy: https://life-rpg-production-416a.up.railway.app/browser-companion-privacy.html
 - Установка: https://life-rpg-production-416a.up.railway.app/browser-companion.html
@@ -49,4 +52,5 @@ GitHub repo PUBLIC и issues включены, проверено gh 13.09; пр
 обычные policy links используют основной текст и подчёркивание.
 Страница не подключает account runtime, bridge, аналитику или внешние шрифты.
 
-Факт deployment/production-byte verification фиксируется в DEVLOG и release receipt.
+Факт deployment/production-byte verification записан в DEVLOG и
+art-factory/critical-path-v261/release-receipt.json.
