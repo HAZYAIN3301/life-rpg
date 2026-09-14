@@ -58,7 +58,8 @@ art-factory/traveller-appearance-v2-20260820/. Каждая проверена �
 `BACKLOG — копия.md` в корне оставлен: он не совпадает ни с одной из последних
 100 ревизий BACKLOG.md, то есть это не артефакт rebase, а чья-то ручная копия.
 
-Опубликовано `13853fa`: Railway deployment `6431058063` **success** 14.09 05:31:47 UTC,
+Опубликовано `13853fa` (план) и `20ccb86` (решения владельца): Railway deployments
+`6431058063` **success** 14.09 05:31:47 UTC и `6431272742` **success** 05:53:02 UTC,
 production 200, 8/8 shell bytes совпали с master. Срез docs-only, поэтому совпадение
 байтов ожидаемо и само по себе не доказывает деплой — доказывает статус deployment.
 Railway CLI в этой сессии не авторизован; статус прочитан через GitHub deployments API.
