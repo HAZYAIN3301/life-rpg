@@ -32373,41 +32373,9 @@ async function initApp() {
   State.timer = loadTimer();
   if (State.timer) { State.timer.phase = State.timer.phase || 'work'; if (State.timer.phaseStartElapsed === undefined) State.timer.phaseStartElapsed = 0; updatePill(focusInfo()); if (State.timer.running) startTick(); }
   checkAchievements(true);
-  // Deep-link от ярлыков приложения (manifest shortcuts): ?view=goals → открыть вкладку
-  try {
-    const params = new URLSearchParams(location.search), view = params.get('view'), goalId = params.get('goal');
-    if (view && VIEWS[view]) State.view = view;
-    if (State.view === 'goals' && goalId && goalById(goalId)) { State._goalDeepLinkId = goalId; State._goalOpenId = goalId; State._goalsFocusAfterCommit = '#goal-detail-title'; }
-  } catch {}
-  // Ярлыки-действия (?do=dayrec|capture|gate|return): долгий тап/Shortcut → сразу в действие.
-  // Бэклог «Трение» (fb_mrnivhqrssjx): ноль тапов между «открыл» и «делаю». URL чистим, чтобы
-  // перезагрузка не повторяла действие.
-  try {
-    const sp = new URLSearchParams(location.search), act = sp.get('do');
-    if (act === 'dayrec' || act === 'capture') {
-      State.view = 'today';
-      setTimeout(() => {
-        try {
-          if (act === 'dayrec') { openDayRecap(); track('shortcut:dayrec'); }
-          else { const inp = document.querySelector('#capture-form input[name="text"]'); if (inp) inp.focus(); track('shortcut:capture'); }
-        } catch {}
-      }, 350);
-      sp.delete('do'); history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
-    } else if (act === 'gate' || act === 'return' || act === 'finish') {
-      const source = String(sp.get('source') || '').trim().toLowerCase();
-      const rawTarget = String(sp.get('app') || '').slice(0, 80);
-      const extensionTarget = source === 'extension' ? browserCompanionTarget(rawTarget) : null;
-      // Extension links are a closed, open-only vocabulary. A suffix such as
-      // `tiktok.com.evil`, an unknown source, or an extension `finish` request
-      // is consumed but never reaches a dialog or a write path.
-      if (!source) State._attentionDeepLink = { action: act, target: rawTarget, source: 'shortcut' };
-      else if (source === 'extension' && (act === 'gate' || act === 'return') && extensionTarget) {
-        State._attentionDeepLink = { action: act, target: extensionTarget.label, targetId: extensionTarget.id, source: 'extension' };
-      }
-      ['do', 'app', 'source', 'userId', 'outcome', 'session', 'permission', 'redirect'].forEach((key) => sp.delete(key));
-      history.replaceState(null, '', location.pathname + (sp.toString() ? '?' + sp : '') + location.hash);
-    }
-  } catch {}
+  // Вход по ссылке. Разбор, закрытый словарь и очистка адреса произошли в
+  // captureEntryRoute() ещё до экрана входа; здесь только применение.
+  applyEntryRoute();
   // Возврат с OAuth Strava → открыть Настройки + тост, и почистить URL от ?strava=...
   try {
     const sp = new URLSearchParams(location.search), sv = sp.get('strava');
@@ -33112,7 +33080,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v261';
+const PWA_CACHE_VERSION = 'satoru-v262';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -33184,7 +33152,88 @@ function initPWA() {
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); _deferredInstall = e; if (State.view === 'settings') render(); });
   window.addEventListener('appinstalled', () => { _deferredInstall = null; toast(t('📲 Satoru установлен!')); });
 }
+// ---- Вход по ссылке: ярлык, расширение, Universal Link, App Intent, виджет ----
+// Разбор и словарь живут в app-entry-routes-v1.js; здесь только хранение и эффект.
+const ENTRY_ROUTE_KEY = 'satoru:entry-route';
+
+// Намерение живёт в адресной строке ровно один момент. Экран входа, анкета или
+// перезагрузка его стирали: раньше разбор происходил внутри загрузки уже вошедшего
+// человека, и тап «открой возврат» с истёкшей сессией пропадал совсем. Поэтому
+// читаем один раз до всего остального, паркуем на время входа и убираем из адреса,
+// чтобы перезагрузка не повторила действие и токеноподобные параметры не попали
+// в историю браузера и в Referer.
+function captureEntryRoute() {
+  if (!window.AppEntryRoutesV1) return;
+  let plan = null;
+  try {
+    plan = AppEntryRoutesV1.parse(location.search, {
+      views: VIEWS, resolveExtensionTarget: browserCompanionTarget,
+    });
+  } catch { return; }
+  if (!plan) return;
+  // Паркуется только действие. Вид и цель остаются в адресе и переживают вход сами.
+  const record = AppEntryRoutesV1.park({ intent: plan.intent }, Date.now());
+  try {
+    if (record) sessionStorage.setItem(ENTRY_ROUTE_KEY, JSON.stringify(record));
+  } catch {}
+  const current = String(location.search || '').replace(/^\?/, '');
+  if (plan.cleanedSearch !== current) {
+    try {
+      history.replaceState(null, '', location.pathname
+        + (plan.cleanedSearch ? '?' + plan.cleanedSearch : '') + location.hash);
+    } catch {}
+  }
+}
+
+// Забрать припаркованное действие. Запись удаляется до применения: перезагрузка
+// после открытого захода не должна открыть его второй раз.
+function takeEntryIntent() {
+  if (!window.AppEntryRoutesV1) return null;
+  let raw = null;
+  try { raw = sessionStorage.getItem(ENTRY_ROUTE_KEY); } catch { return null; }
+  if (!raw) return null;
+  try { sessionStorage.removeItem(ENTRY_ROUTE_KEY); } catch {}
+  let record = null;
+  try { record = JSON.parse(raw); } catch { return null; }
+  const back = AppEntryRoutesV1.unpark(record, Date.now());
+  return back.plan ? back.plan.intent : null;
+}
+
+function applyEntryRoute() {
+  if (!window.AppEntryRoutesV1) return;
+  let plan = null;
+  try { plan = AppEntryRoutesV1.parse(location.search, { views: VIEWS }); } catch {}
+  if (plan) {
+    if (plan.view && VIEWS[plan.view]) State.view = plan.view;
+    if (State.view === 'goals' && plan.goalId && goalById(plan.goalId)) {
+      State._goalDeepLinkId = plan.goalId; State._goalOpenId = plan.goalId;
+      State._goalsFocusAfterCommit = '#goal-detail-title';
+    }
+  }
+  const intent = takeEntryIntent();
+  if (!intent) return;
+  // Ноль тапов между «открыл» и «делаю» — бэклог «Трение» (fb_mrnivhqrssjx).
+  if (intent.action === 'dayrec' || intent.action === 'capture') {
+    State.view = 'today';
+    setTimeout(() => {
+      try {
+        if (intent.action === 'dayrec') { openDayRecap(); track('shortcut:dayrec'); }
+        else {
+          const inp = document.querySelector('#capture-form input[name="text"]');
+          if (inp) inp.focus();
+          track('shortcut:capture');
+        }
+      } catch {}
+    }, 350);
+    return;
+  }
+  State._attentionDeepLink = intent.source === 'extension'
+    ? { action: intent.action, target: intent.target, targetId: intent.targetId, source: 'extension' }
+    : { action: intent.action, target: intent.target, source: 'shortcut' };
+}
+
 async function init() {
+  captureEntryRoute();
   initPWA();
   initBrowserCompanionBridge();
   initSystemThemeListener();

@@ -24,7 +24,7 @@ test('attention engine, controller and renderer load before app and stay in the 
     assert.equal((SW.match(new RegExp(`'${file.replaceAll('.', '\\.')}'`, 'g')) || []).length, 1, `${file} must appear once in SHELL`);
   }
   assert.ok(INDEX.indexOf('src="app.js') > prior, 'app.js must run after every attention dependency');
-  assert.match(SW, /const CACHE = 'satoru-v261'/);
+  assert.match(SW, /const CACHE = 'satoru-v262'/);
 });
 
 test('client uses the dedicated checked envelope and never generic attention data files', () => {
@@ -65,7 +65,9 @@ test('server independently enforces ownership, whitelist, bounded payload and li
 });
 
 test('gate, boundary, return and session cleanup are wired without reward mechanics', () => {
-  assert.match(APP, /act === 'gate' \|\| act === 'return'/);
+  // Словарь входа переехал в app-entry-routes-v1.js; app.js только применяет его.
+  assert.match(APP, /applyEntryRoute\(\)/);
+  assert.deepEqual(require('../public/app-entry-routes-v1.js').EXTENSION_VERBS.slice(), ['gate', 'return']);
   assert.match(APP, /scheduleAttentionBoundary\(\)/);
   assert.match(APP, /openAttentionReturn\(/);
   assert.match(APP, /clearAllData\(\)[\s\S]{0,2200}State\.attentionMode = 'local'/);

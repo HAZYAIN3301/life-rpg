@@ -83,15 +83,39 @@ test('status response patches only companion surfaces and preserves Settings dra
 });
 
 test('extension deep links have a closed source, action and app vocabulary', () => {
-  const routing = between(APP, '// Ярлыки-действия', '// Возврат с OAuth Strava');
-  assert.match(routing, /source === 'extension'/);
-  assert.match(routing, /\(act === 'gate' \|\| act === 'return'\)/);
-  assert.doesNotMatch(routing, /source === 'extension'[\s\S]{0,180}act === 'finish'/);
-  assert.match(routing, /browserCompanionTarget\(rawTarget\)/);
+  // The routing moved out of app.js into app-entry-routes-v1.js, so the same
+  // guarantee is now asserted against behaviour instead of against source text.
+  const EntryRoutes = require('../public/app-entry-routes-v1.js');
+  const targets = require('node:vm');
+  const context = { Date, Set, Object, window: { BrowserCompanionStatusV1: require('../public/browser-companion-status-v1.js') } };
+  targets.createContext(context);
+  targets.runInContext(
+    `${between(APP, 'const BROWSER_COMPANION_TARGETS', 'function browserCompanionRequestId')}\nthis.target = browserCompanionTarget;`,
+    context,
+  );
+  const parse = (search) => EntryRoutes.parse(search, {
+    views: ['today'], resolveExtensionTarget: context.target,
+  });
+
+  // The extension may ask to open a gate or a return, and nothing else.
+  assert.equal(parse('?do=gate&app=tiktok&source=extension').intent.action, 'gate');
+  assert.equal(parse('?do=return&app=tiktok&source=extension').intent.action, 'return');
+  assert.equal(parse('?do=finish&app=tiktok&source=extension').intent, null);
+  assert.equal(parse('?do=finish&app=tiktok&source=extension').refusal, 'verb_not_allowed_for_source');
+  // A source the product does not know is refused rather than trusted.
+  assert.equal(parse('?do=gate&app=tiktok&source=whatever').refusal, 'unknown_source');
+  // A suffix of a known site is a different domain and never reaches a dialog.
+  assert.equal(parse('?do=gate&app=tiktok.com.evil&source=extension').refusal, 'unknown_target');
+  // The label shown to the person comes from the app's own table, not the URL.
+  assert.equal(parse('?do=gate&app=tiktok&source=extension').intent.target, 'TikTok');
+
   for (const forbidden of ['userId', 'outcome', 'session', 'permission', 'redirect']) {
-    assert.match(routing, new RegExp(`'${forbidden}'`), `${forbidden} must be consumed, never trusted`);
+    const plan = parse(`?do=gate&source=extension&app=tiktok&${forbidden}=x&keep=1`);
+    assert.equal(plan.cleanedSearch, 'keep=1', `${forbidden} must be consumed, never trusted`);
   }
-  assert.match(routing, /history\.replaceState/);
+  // The address bar is still cleaned before anything can replay it.
+  assert.match(APP, /function captureEntryRoute\(\)[\s\S]{0,1200}history\.replaceState/);
+  assert.match(APP, /resolveExtensionTarget: browserCompanionTarget/);
 });
 
 test('companion stays a single progressive Settings row, not another Today panel', () => {
