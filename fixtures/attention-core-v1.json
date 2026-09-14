@@ -1,30 +1,87 @@
 {
   "version": 1,
   "purpose": "Language-neutral conformance corpus for the attention core. A native port runs these same cases and must produce the same answers. It pins current behaviour so a second implementation cannot drift silently; it is not an independent specification and does not prove the JavaScript is right.",
-  "contract": "APPLE-PRE-PAYMENT-PLAN-2026-09.md §B4; modules public/attention-policy-v1.js, public/attention-session-v1.js",
+  "contract": "APPLE-PRE-PAYMENT-PLAN-2026-09.md §B4; modules public/attention-policy-v1.js, public/attention-session-v1.js, public/attention-episode-v1.js",
   "states": {
     "twoPolicies": {
       "version": 1,
       "policies": [
         {
-          "id": "tiktok", "name": "TikTok",
+          "id": "tiktok",
+          "name": "TikTok",
           "purposes": [
-            { "purpose": "publish", "enabled": true, "defaultMinutes": 12, "maxMinutes": 12, "mode": "control", "extensions": 1, "extensionMinutes": 5 },
-            { "purpose": "unsure", "enabled": true, "defaultMinutes": 5, "maxMinutes": 5, "mode": "control", "extensions": 0, "extensionMinutes": 5 },
-            { "purpose": "research", "enabled": true, "defaultMinutes": 10, "maxMinutes": 10, "mode": "adaptive", "extensions": 1, "extensionMinutes": 5, "requiresTopic": true, "outcome": "" }
+            {
+              "purpose": "publish",
+              "enabled": true,
+              "defaultMinutes": 12,
+              "maxMinutes": 12,
+              "mode": "control",
+              "extensions": 1,
+              "extensionMinutes": 5
+            },
+            {
+              "purpose": "unsure",
+              "enabled": true,
+              "defaultMinutes": 5,
+              "maxMinutes": 5,
+              "mode": "control",
+              "extensions": 0,
+              "extensionMinutes": 5
+            },
+            {
+              "purpose": "research",
+              "enabled": true,
+              "defaultMinutes": 10,
+              "maxMinutes": 10,
+              "mode": "adaptive",
+              "extensions": 1,
+              "extensionMinutes": 5,
+              "requiresTopic": true,
+              "outcome": ""
+            }
           ],
-          "emergency": { "passes": 1, "perDays": 7, "delaySeconds": 90 },
-          "modes": [], "sync": false
+          "emergency": {
+            "passes": 1,
+            "perDays": 7,
+            "delaySeconds": 90
+          },
+          "modes": [],
+          "sync": false
         },
         {
-          "id": "yt", "name": "YouTube",
+          "id": "yt",
+          "name": "YouTube",
           "purposes": [
-            { "purpose": "rest", "enabled": true, "defaultMinutes": 20, "maxMinutes": 20, "mode": "trust", "extensions": 1, "extensionMinutes": 5 },
-            { "purpose": "watch", "enabled": false, "defaultMinutes": 20, "maxMinutes": 20, "mode": "trust", "extensions": 0, "extensionMinutes": 5 }
+            {
+              "purpose": "rest",
+              "enabled": true,
+              "defaultMinutes": 20,
+              "maxMinutes": 20,
+              "mode": "trust",
+              "extensions": 1,
+              "extensionMinutes": 5
+            },
+            {
+              "purpose": "watch",
+              "enabled": false,
+              "defaultMinutes": 20,
+              "maxMinutes": 20,
+              "mode": "trust",
+              "extensions": 0,
+              "extensionMinutes": 5
+            }
           ],
-          "quietHours": { "from": "23:00", "to": "07:00" },
-          "emergency": { "passes": 1, "perDays": 7, "delaySeconds": 90 },
-          "modes": [], "sync": false
+          "quietHours": {
+            "from": "23:00",
+            "to": "07:00"
+          },
+          "emergency": {
+            "passes": 1,
+            "perDays": 7,
+            "delaySeconds": 90
+          },
+          "modes": [],
+          "sync": false
         }
       ]
     },
@@ -32,10 +89,15 @@
       "version": 1,
       "sessions": [
         {
-          "id": "s1", "policyId": "tiktok", "purpose": "publish",
+          "id": "s1",
+          "policyId": "tiktok",
+          "purpose": "publish",
           "startedAt": "2026-09-14T10:00:00.000Z",
-          "plannedMinutes": 12, "mode": "control",
-          "extensionsAllowed": 1, "extensionMinutes": 5, "extensions": [],
+          "plannedMinutes": 12,
+          "mode": "control",
+          "extensionsAllowed": 1,
+          "extensionMinutes": 5,
+          "extensions": [],
           "expectedOutcome": "ролик опубликован"
         }
       ]
@@ -44,12 +106,207 @@
       "version": 1,
       "sessions": [
         {
-          "id": "s1", "policyId": "tiktok", "purpose": "publish",
+          "id": "s1",
+          "policyId": "tiktok",
+          "purpose": "publish",
           "startedAt": "2026-09-14T10:00:00.000Z",
-          "plannedMinutes": 12, "mode": "control",
-          "extensionsAllowed": 1, "extensionMinutes": 5,
-          "extensions": [{ "at": "2026-09-14T10:11:00.000Z", "minutes": 5 }],
+          "plannedMinutes": 12,
+          "mode": "control",
+          "extensionsAllowed": 1,
+          "extensionMinutes": 5,
+          "extensions": [
+            {
+              "at": "2026-09-14T10:11:00.000Z",
+              "minutes": 5
+            }
+          ],
           "expectedOutcome": "ролик опубликован"
+        }
+      ]
+    },
+    "journal": {
+      "version": 1,
+      "episodes": [
+        {
+          "id": "e1",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-10T10:00:00.000Z",
+          "endedAt": "2026-09-10T10:20:00.000Z",
+          "outcome": "done",
+          "plannedMinutes": 12,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e2",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-11T10:00:00.000Z",
+          "endedAt": "2026-09-11T10:20:00.000Z",
+          "outcome": "done",
+          "plannedMinutes": 12,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e3",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-12T10:00:00.000Z",
+          "endedAt": "2026-09-12T10:20:00.000Z",
+          "outcome": "done",
+          "plannedMinutes": 12,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e4",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-13T10:00:00.000Z",
+          "endedAt": "2026-09-13T10:20:00.000Z",
+          "outcome": "done",
+          "plannedMinutes": 12,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e5",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-13T10:00:00.000Z",
+          "endedAt": "2026-09-13T10:20:00.000Z",
+          "outcome": "escaped",
+          "plannedMinutes": 12,
+          "actualMinutes": 40,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e6",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-12T10:00:00.000Z",
+          "endedAt": "2026-09-12T10:20:00.000Z",
+          "outcome": "unknown",
+          "plannedMinutes": 12,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e7",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-13T10:00:00.000Z",
+          "endedAt": "2026-09-13T10:20:00.000Z",
+          "outcome": "unknown",
+          "plannedMinutes": 12,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e8",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-08-20T10:00:00.000Z",
+          "endedAt": "2026-08-20T10:20:00.000Z",
+          "outcome": "escaped",
+          "plannedMinutes": 12,
+          "actualMinutes": 600,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e9",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "rest",
+          "startedAt": "2026-09-12T10:00:00.000Z",
+          "endedAt": "2026-09-12T10:20:00.000Z",
+          "outcome": "escaped",
+          "plannedMinutes": 12,
+          "actualMinutes": 20,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e10",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "rest",
+          "startedAt": "2026-09-13T10:00:00.000Z",
+          "endedAt": "2026-09-13T10:20:00.000Z",
+          "outcome": "escaped",
+          "plannedMinutes": 12,
+          "actualMinutes": 30,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "e11",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "watch",
+          "startedAt": "2026-09-13T10:00:00.000Z",
+          "endedAt": "2026-09-13T10:20:00.000Z",
+          "outcome": "escaped",
+          "plannedMinutes": 12,
+          "actualMinutes": 50,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "ios"
+        },
+        {
+          "id": "e12",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-13T11:00:00.000Z",
+          "endedAt": "2026-09-13T11:10:00.000Z",
+          "outcome": "unknown",
+          "plannedMinutes": 10,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "satoru-watch-os"
+        }
+      ]
+    },
+    "returned": {
+      "version": 1,
+      "episodes": [
+        {
+          "id": "r1",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-13T10:00:00.000Z",
+          "endedAt": "2026-09-13T10:20:00.000Z",
+          "returnedAt": "2026-09-13T10:47:00.000Z",
+          "outcome": "done",
+          "plannedMinutes": 12,
+          "actualMinutes": 20,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
+        },
+        {
+          "id": "r2",
+          "sourcePolicyId": "tiktok",
+          "declaredPurpose": "publish",
+          "startedAt": "2026-09-13T10:00:00.000Z",
+          "endedAt": "2026-09-13T10:20:00.000Z",
+          "outcome": "done",
+          "plannedMinutes": 12,
+          "actualMinutes": 20,
+          "extensionCount": 0,
+          "emergencyUsed": false,
+          "source": "manual"
         }
       ]
     }
@@ -58,235 +315,730 @@
     {
       "id": "canOpen/allows a work purpose once an outcome is named",
       "why": "A work session must declare what it is for; that is the whole point of the gate.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["tiktok", "publish", { "expectedOutcome": "ролик опубликован" }],
-      "expect": { "ok": true }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "tiktok",
+        "publish",
+        {
+          "expectedOutcome": "ролик опубликован"
+        }
+      ],
+      "expect": {
+        "ok": true
+      }
     },
     {
       "id": "canOpen/refuses a work purpose with no outcome",
       "why": "Opening without naming the outcome would make the later honest report meaningless.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["tiktok", "publish", {}],
-      "expect": { "ok": false, "reason": "outcome_required" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "tiktok",
+        "publish",
+        {}
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "outcome_required"
+      }
     },
     {
       "id": "canOpen/refuses an unknown policy",
       "why": "A native shield must not invent a rule for an app the person never chose.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["instagram", "publish", { "expectedOutcome": "x" }],
-      "expect": { "ok": false, "reason": "no_policy" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "instagram",
+        "publish",
+        {
+          "expectedOutcome": "x"
+        }
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "no_policy"
+      }
     },
     {
       "id": "canOpen/refuses a purpose the person disabled",
       "why": "A disabled rule is a decision, not an omission.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["yt", "watch", {}],
-      "expect": { "ok": false, "reason": "purpose_disabled" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "yt",
+        "watch",
+        {}
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "purpose_disabled"
+      }
     },
     {
       "id": "canOpen/refuses a purpose that has no rule at all",
       "why": "Absence of a rule is refused as purpose_disabled, not as no_policy.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["yt", "publish", { "expectedOutcome": "x" }],
-      "expect": { "ok": false, "reason": "purpose_disabled" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "yt",
+        "publish",
+        {
+          "expectedOutcome": "x"
+        }
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "purpose_disabled"
+      }
     },
     {
       "id": "canOpen/refuses \"not sure why\" under control",
       "why": "\"I don't know why I'm opening this\" is exactly the entry the boundary exists for.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["tiktok", "unsure", {}],
-      "expect": { "ok": false, "reason": "unsure_in_control" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "tiktok",
+        "unsure",
+        {}
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "unsure_in_control"
+      }
     },
     {
       "id": "canOpen/refuses a topic-requiring rule with no topic",
       "why": "Research without a named topic is the shape doomscrolling takes when it wants permission.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["tiktok", "research", { "expectedOutcome": "конспект" }],
-      "expect": { "ok": false, "reason": "topic_required" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "tiktok",
+        "research",
+        {
+          "expectedOutcome": "конспект"
+        }
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "topic_required"
+      }
     },
     {
       "id": "canOpen/allows the same rule once a topic is named",
       "why": "The refusal must be liftable by the person, not permanent.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["tiktok", "research", { "topic": "монтаж", "expectedOutcome": "конспект" }],
-      "expect": { "ok": true }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "tiktok",
+        "research",
+        {
+          "topic": "монтаж",
+          "expectedOutcome": "конспект"
+        }
+      ],
+      "expect": {
+        "ok": true
+      }
     },
     {
       "id": "canOpen/quiet hours refuse inside the window",
       "why": "The window wraps past midnight; 23:30 is inside 23:00-07:00.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["yt", "rest", { "now": "23:30" }],
-      "expect": { "ok": false, "reason": "quiet_hours" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "yt",
+        "rest",
+        {
+          "now": "23:30"
+        }
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "quiet_hours"
+      }
     },
     {
       "id": "canOpen/quiet hours still refuse just before the end",
       "why": "06:59 is the last refused minute of a wrapping window.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["yt", "rest", { "now": "06:59" }],
-      "expect": { "ok": false, "reason": "quiet_hours" }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "yt",
+        "rest",
+        {
+          "now": "06:59"
+        }
+      ],
+      "expect": {
+        "ok": false,
+        "reason": "quiet_hours"
+      }
     },
     {
       "id": "canOpen/quiet hours end exactly at the boundary",
       "why": "07:00 is allowed: the end of the window is exclusive.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["yt", "rest", { "now": "07:00" }],
-      "expect": { "ok": true }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "yt",
+        "rest",
+        {
+          "now": "07:00"
+        }
+      ],
+      "expect": {
+        "ok": true
+      }
     },
     {
       "id": "canOpen/rest needs no declared outcome",
       "why": "Rest is not work. Demanding a deliverable from rest would be the product lying about itself.",
-      "module": "policy", "fn": "canOpen", "state": "twoPolicies",
-      "args": ["yt", "rest", { "now": "12:00" }],
-      "expect": { "ok": true }
+      "module": "policy",
+      "fn": "canOpen",
+      "state": "twoPolicies",
+      "args": [
+        "yt",
+        "rest",
+        {
+          "now": "12:00"
+        }
+      ],
+      "expect": {
+        "ok": true
+      }
     },
     {
       "id": "inQuietHours/wrapping window covers the small hours",
       "why": "02:00 is inside 23:00-07:00 even though it is numerically below both ends.",
-      "module": "policy", "fn": "inQuietHours", "policyFromState": ["twoPolicies", "yt"],
-      "args": ["02:00"],
+      "module": "policy",
+      "fn": "inQuietHours",
+      "policyFromState": [
+        "twoPolicies",
+        "yt"
+      ],
+      "args": [
+        "02:00"
+      ],
       "expect": true
     },
     {
       "id": "inQuietHours/wrapping window ends in the morning",
       "why": "08:00 is outside the window.",
-      "module": "policy", "fn": "inQuietHours", "policyFromState": ["twoPolicies", "yt"],
-      "args": ["08:00"],
+      "module": "policy",
+      "fn": "inQuietHours",
+      "policyFromState": [
+        "twoPolicies",
+        "yt"
+      ],
+      "args": [
+        "08:00"
+      ],
       "expect": false
     },
     {
       "id": "grantedMinutes/planned time only when nothing was extended",
       "why": "The deadline a native shield enforces is derived from this number.",
-      "module": "session", "fn": "grantedMinutes", "sessionFromState": ["openControlSession", "s1"],
+      "module": "session",
+      "fn": "grantedMinutes",
+      "sessionFromState": [
+        "openControlSession",
+        "s1"
+      ],
       "args": [],
       "expect": 12
     },
     {
       "id": "grantedMinutes/extensions add to the grant",
       "why": "An extension moves the deadline; it does not start a second session.",
-      "module": "session", "fn": "grantedMinutes", "sessionFromState": ["extendedSession", "s1"],
+      "module": "session",
+      "fn": "grantedMinutes",
+      "sessionFromState": [
+        "extendedSession",
+        "s1"
+      ],
       "args": [],
       "expect": 17
     },
     {
       "id": "deadlineAt/start plus the whole grant",
       "why": "Both implementations must agree on the instant, to the millisecond.",
-      "module": "session", "fn": "deadlineAt", "sessionFromState": ["extendedSession", "s1"],
+      "module": "session",
+      "fn": "deadlineAt",
+      "sessionFromState": [
+        "extendedSession",
+        "s1"
+      ],
       "args": [],
       "expect": "2026-09-14T10:17:00.000Z"
     },
     {
       "id": "remainingMs/counts down in real milliseconds",
       "why": "Seven minutes left at 10:05 of a twelve minute window.",
-      "module": "session", "fn": "remainingMs", "sessionFromState": ["openControlSession", "s1"],
-      "args": ["2026-09-14T10:05:00.000Z"],
+      "module": "session",
+      "fn": "remainingMs",
+      "sessionFromState": [
+        "openControlSession",
+        "s1"
+      ],
+      "args": [
+        "2026-09-14T10:05:00.000Z"
+      ],
       "expect": 420000
     },
     {
       "id": "isOver/the deadline instant itself counts as over",
       "why": "A shield that waits for strictly-greater would leave a one-tick hole.",
-      "module": "session", "fn": "isOver", "sessionFromState": ["openControlSession", "s1"],
-      "args": ["2026-09-14T10:12:00.000Z"],
+      "module": "session",
+      "fn": "isOver",
+      "sessionFromState": [
+        "openControlSession",
+        "s1"
+      ],
+      "args": [
+        "2026-09-14T10:12:00.000Z"
+      ],
       "expect": true
     },
     {
       "id": "isOver/not over one millisecond earlier",
       "why": "The other side of the same edge.",
-      "module": "session", "fn": "isOver", "sessionFromState": ["openControlSession", "s1"],
-      "args": ["2026-09-14T10:11:59.999Z"],
+      "module": "session",
+      "fn": "isOver",
+      "sessionFromState": [
+        "openControlSession",
+        "s1"
+      ],
+      "args": [
+        "2026-09-14T10:11:59.999Z"
+      ],
       "expect": false
     },
     {
       "id": "isOver/an unreadable clock is not treated as over",
       "why": "Fail open. A missing or malformed clock must not slam a boundary shut.",
-      "module": "session", "fn": "isOver", "sessionFromState": ["openControlSession", "s1"],
-      "args": ["не время"],
+      "module": "session",
+      "fn": "isOver",
+      "sessionFromState": [
+        "openControlSession",
+        "s1"
+      ],
+      "args": [
+        "не время"
+      ],
       "expect": false
     },
     {
       "id": "canExtend/an unused extension is available",
       "why": "The person was promised one extension.",
-      "module": "session", "fn": "canExtend", "sessionFromState": ["openControlSession", "s1"],
+      "module": "session",
+      "fn": "canExtend",
+      "sessionFromState": [
+        "openControlSession",
+        "s1"
+      ],
       "args": [],
       "expect": true
     },
     {
       "id": "canExtend/a spent extension is not available again",
       "why": "One extension, then the boundary the person chose. Otherwise it is a continue button.",
-      "module": "session", "fn": "canExtend", "sessionFromState": ["extendedSession", "s1"],
+      "module": "session",
+      "fn": "canExtend",
+      "sessionFromState": [
+        "extendedSession",
+        "s1"
+      ],
       "args": [],
       "expect": false
     },
     {
       "id": "boundaryOptions/what the boundary screen may offer at the deadline",
       "why": "This is the exact shape a native shield screen reads. escaped is never set here: only the person says they were carried away.",
-      "module": "session", "fn": "boundaryOptions", "sessionFromState": ["openControlSession", "s1"],
-      "args": ["2026-09-14T10:12:00.000Z"],
-      "expect": { "over": true, "remainingMs": 0, "canExtend": true, "extensionsLeft": 1, "hardStop": true, "seq": 0 }
+      "module": "session",
+      "fn": "boundaryOptions",
+      "sessionFromState": [
+        "openControlSession",
+        "s1"
+      ],
+      "args": [
+        "2026-09-14T10:12:00.000Z"
+      ],
+      "expect": {
+        "over": true,
+        "remainingMs": 0,
+        "canExtend": true,
+        "extensionsLeft": 1,
+        "hardStop": true,
+        "seq": 0
+      }
     },
     {
       "id": "boundaryOptions/after the extension there is nothing left to offer",
       "why": "hardStop stays true under control; extensionsLeft reaching zero is what makes the boundary real.",
-      "module": "session", "fn": "boundaryOptions", "sessionFromState": ["extendedSession", "s1"],
-      "args": ["2026-09-14T10:17:00.000Z"],
-      "expect": { "over": true, "remainingMs": 0, "canExtend": false, "extensionsLeft": 0, "hardStop": true, "seq": 1 }
+      "module": "session",
+      "fn": "boundaryOptions",
+      "sessionFromState": [
+        "extendedSession",
+        "s1"
+      ],
+      "args": [
+        "2026-09-14T10:17:00.000Z"
+      ],
+      "expect": {
+        "over": true,
+        "remainingMs": 0,
+        "canExtend": false,
+        "extensionsLeft": 0,
+        "hardStop": true,
+        "seq": 1
+      }
     },
     {
       "id": "start/refuses a second open session",
       "why": "Two live boundaries on one device is a contradiction, not a feature.",
-      "module": "session", "fn": "start", "state": "openControlSession",
+      "module": "session",
+      "fn": "start",
+      "state": "openControlSession",
       "args": [
-        { "id": "s2", "policyId": "yt", "purpose": "rest", "plannedMinutes": 20, "mode": "trust" },
+        {
+          "id": "s2",
+          "policyId": "yt",
+          "purpose": "rest",
+          "plannedMinutes": 20,
+          "mode": "trust"
+        },
         "2026-09-14T10:05:00.000Z"
       ],
-      "expect": { "ok": false, "error": "already_open" }
+      "expect": {
+        "ok": false,
+        "error": "already_open"
+      }
     },
     {
       "id": "extend/refuses a stale sequence number",
       "why": "Two devices asking for the same extension must not both get one.",
-      "module": "session", "fn": "extend", "state": "openControlSession",
-      "args": ["s1", { "seq": 1 }, "2026-09-14T10:11:00.000Z"],
-      "expect": { "ok": false, "error": "stale" }
+      "module": "session",
+      "fn": "extend",
+      "state": "openControlSession",
+      "args": [
+        "s1",
+        {
+          "seq": 1
+        },
+        "2026-09-14T10:11:00.000Z"
+      ],
+      "expect": {
+        "ok": false,
+        "error": "stale"
+      }
     },
     {
       "id": "extend/accepts the matching sequence number",
       "why": "The same request with the sequence the caller actually saw.",
-      "module": "session", "fn": "extend", "state": "openControlSession",
-      "args": ["s1", { "seq": 0 }, "2026-09-14T10:11:00.000Z"],
-      "expect": { "ok": true }
+      "module": "session",
+      "fn": "extend",
+      "state": "openControlSession",
+      "args": [
+        "s1",
+        {
+          "seq": 0
+        },
+        "2026-09-14T10:11:00.000Z"
+      ],
+      "expect": {
+        "ok": true
+      }
     },
     {
       "id": "extend/refuses when no extension is left",
       "why": "The budget is per session and it is already spent.",
-      "module": "session", "fn": "extend", "state": "extendedSession",
-      "args": ["s1", { "seq": 1 }, "2026-09-14T10:16:00.000Z"],
-      "expect": { "ok": false, "error": "no_extensions_left" }
+      "module": "session",
+      "fn": "extend",
+      "state": "extendedSession",
+      "args": [
+        "s1",
+        {
+          "seq": 1
+        },
+        "2026-09-14T10:16:00.000Z"
+      ],
+      "expect": {
+        "ok": false,
+        "error": "no_extensions_left"
+      }
     },
     {
       "id": "close/an unknown outcome degrades to unknown rather than failing",
       "why": "A native client from an older release may report a word this server does not know; the session still closes.",
-      "module": "session", "fn": "close", "state": "openControlSession",
-      "args": ["s1", "совершенно_новый_исход", "2026-09-14T10:12:00.000Z"],
-      "expectSessionField": { "outcome": "unknown", "endedAt": "2026-09-14T10:12:00.000Z" }
+      "module": "session",
+      "fn": "close",
+      "state": "openControlSession",
+      "args": [
+        "s1",
+        "совершенно_новый_исход",
+        "2026-09-14T10:12:00.000Z"
+      ],
+      "expectSessionField": {
+        "outcome": "unknown",
+        "endedAt": "2026-09-14T10:12:00.000Z"
+      }
     },
     {
       "id": "close/refuses to close twice",
       "why": "A retry must not rewrite a finished episode.",
-      "module": "session", "fn": "closeTwice", "state": "openControlSession",
-      "args": ["s1", "done", "2026-09-14T10:12:00.000Z"],
-      "expect": { "ok": false, "error": "already_closed" }
+      "module": "session",
+      "fn": "closeTwice",
+      "state": "openControlSession",
+      "args": [
+        "s1",
+        "done",
+        "2026-09-14T10:12:00.000Z"
+      ],
+      "expect": {
+        "ok": false,
+        "error": "already_closed"
+      }
     },
     {
       "id": "toEpisode/a closed session becomes one journal record",
       "why": "This is the only bridge from the session module to the episode journal, and the only shape a native adapter should send.",
-      "module": "session", "fn": "closeThenEpisode", "state": "openControlSession",
-      "args": ["s1", "done", "2026-09-14T10:12:00.000Z"],
+      "module": "session",
+      "fn": "closeThenEpisode",
+      "state": "openControlSession",
+      "args": [
+        "s1",
+        "done",
+        "2026-09-14T10:12:00.000Z"
+      ],
       "expect": {
-        "id": "s1", "sourcePolicyId": "tiktok",
-        "startedAt": "2026-09-14T10:00:00.000Z", "endedAt": "2026-09-14T10:12:00.000Z",
-        "declaredPurpose": "publish", "plannedMinutes": 12, "actualMinutes": 12,
-        "outcome": "done", "extensionCount": 0, "emergencyUsed": false,
+        "id": "s1",
+        "sourcePolicyId": "tiktok",
+        "startedAt": "2026-09-14T10:00:00.000Z",
+        "endedAt": "2026-09-14T10:12:00.000Z",
+        "declaredPurpose": "publish",
+        "plannedMinutes": 12,
+        "actualMinutes": 12,
+        "outcome": "done",
+        "extensionCount": 0,
+        "emergencyUsed": false,
         "expectedOutcome": "ролик опубликован"
       }
+    },
+    {
+      "id": "outcomes/the journal accepts exactly four words",
+      "why": "A native adapter that invents a fifth outcome must be caught here, not in production data.",
+      "module": "episode",
+      "fn": "outcomeVocabulary",
+      "args": [],
+      "expect": [
+        "done",
+        "rested",
+        "escaped",
+        "unknown"
+      ]
+    },
+    {
+      "id": "calibration/refuses a ratio while the evidence is thin",
+      "why": "One observation out of one is arithmetically 100% and a lie about the person.",
+      "module": "episode",
+      "fn": "calibration",
+      "state": "journal",
+      "args": [
+        "tiktok",
+        "rest",
+        "2026-09-14T12:00:00.000Z"
+      ],
+      "expect": {
+        "purpose": "rest",
+        "windowDays": 14,
+        "total": 2,
+        "silent": 0,
+        "recorded": 2,
+        "offPlan": 2,
+        "enough": false,
+        "minRecorded": 5,
+        "ratio": null
+      }
+    },
+    {
+      "id": "calibration/an unmarked session counts for neither side",
+      "why": "Silence is not evidence of a lapse, so unknown stays out of the denominator and is reported separately.",
+      "module": "episode",
+      "fn": "calibration",
+      "state": "journal",
+      "args": [
+        "tiktok",
+        "publish",
+        "2026-09-14T12:00:00.000Z"
+      ],
+      "expect": {
+        "purpose": "publish",
+        "windowDays": 14,
+        "total": 8,
+        "silent": 3,
+        "recorded": 5,
+        "offPlan": 1,
+        "enough": true,
+        "minRecorded": 5,
+        "ratio": 0.2
+      }
+    },
+    {
+      "id": "calibration/an episode older than the window is not counted",
+      "why": "The 13.08 lapse is real history but outside the 14-day window, and must not weigh on today.",
+      "module": "episode",
+      "fn": "calibration",
+      "state": "journal",
+      "args": [
+        "tiktok",
+        "publish",
+        "2026-09-14T12:00:00.000Z"
+      ],
+      "expect": {
+        "total": 8
+      }
+    },
+    {
+      "id": "calibration/a narrower window narrows the evidence",
+      "why": "The window is a parameter; a native client asking for 2 days must get 2 days.",
+      "module": "episode",
+      "fn": "calibration",
+      "state": "journal",
+      "args": [
+        "tiktok",
+        "publish",
+        "2026-09-14T12:00:00.000Z",
+        2
+      ],
+      "expect": {
+        "windowDays": 2,
+        "total": 4,
+        "silent": 2,
+        "recorded": 2,
+        "offPlan": 1,
+        "enough": false,
+        "ratio": null
+      }
+    },
+    {
+      "id": "suggestions/offers only purposes with enough evidence and a real lapse",
+      "why": "Suggesting a rule change from three observations is the product guessing and calling it data.",
+      "module": "episode",
+      "fn": "suggestionPurposes",
+      "state": "journal",
+      "args": [
+        "tiktok",
+        "2026-09-14T12:00:00.000Z"
+      ],
+      "expect": [
+        "publish"
+      ]
+    },
+    {
+      "id": "escapeMedian/even count averages the two middle values",
+      "why": "Four lapses of 20, 30, 40 and 50 minutes give 35 — the two middle values averaged, not the mean of all four.",
+      "module": "episode",
+      "fn": "escapeLengthMedianMin",
+      "state": "journal",
+      "args": [
+        "2026-09-14T12:00:00.000Z"
+      ],
+      "expect": 35
+    },
+    {
+      "id": "escapeMedian/counts every policy, not just one",
+      "why": "Four lapses inside the window across publish, rest and watch. The metric is about the person, not one app.",
+      "module": "episode",
+      "fn": "escapeCount",
+      "state": "journal",
+      "args": [
+        "2026-09-14T12:00:00.000Z"
+      ],
+      "expect": 4
+    },
+    {
+      "id": "escapeMedian/no lapses in the window is null, not zero",
+      "why": "Zero would read as \"no lapses ever\" and quietly become a streak to protect.",
+      "module": "episode",
+      "fn": "escapeLengthMedianMin",
+      "state": "journal",
+      "args": [
+        "2026-01-01T00:00:00.000Z"
+      ],
+      "expect": null
+    },
+    {
+      "id": "returnLatency/minutes between leaving and coming back",
+      "why": "The number the return screen is built on: 10:20 to 10:47 is 27 minutes.",
+      "module": "episode",
+      "fn": "returnLatencyMin",
+      "state": "returned",
+      "episodeId": "r1",
+      "args": [],
+      "expect": 27
+    },
+    {
+      "id": "returnLatency/no return recorded is null, not zero",
+      "why": "A missing return is unknown, not instant. Zero here would silently claim the person came straight back.",
+      "module": "episode",
+      "fn": "returnLatencyMin",
+      "state": "returned",
+      "episodeId": "r2",
+      "args": [],
+      "expect": null
+    },
+    {
+      "id": "record/a replayed episode updates in place instead of duplicating",
+      "why": "A native companion retrying delivery must not create a second copy of the same lapse.",
+      "module": "episode",
+      "fn": "recordTwiceCount",
+      "state": "journal",
+      "args": [],
+      "expect": 12
+    },
+    {
+      "id": "source/an unknown platform degrades to manual",
+      "why": "ios and android are known. A platform this build has never heard of is recorded honestly as hand-entered rather than trusted as a device report.",
+      "module": "episode",
+      "fn": "sourceOf",
+      "state": "journal",
+      "args": [],
+      "expect": "manual",
+      "episodeId": "e12"
+    },
+    {
+      "id": "escapeMedian/odd count takes the middle value",
+      "why": "A two-day window leaves three lapses of 30, 40 and 50 minutes, and the median is the middle one.",
+      "module": "episode",
+      "fn": "escapeLengthMedianMin",
+      "state": "journal",
+      "args": [
+        "2026-09-14T12:00:00.000Z",
+        2
+      ],
+      "expect": 40
+    },
+    {
+      "id": "source/a known platform is preserved",
+      "why": "The iOS adapter must be able to say the report came from the device, or the journal cannot distinguish a device fact from a memory.",
+      "module": "episode",
+      "fn": "sourceOf",
+      "state": "journal",
+      "episodeId": "e11",
+      "args": [],
+      "expect": "ios"
     }
   ]
 }

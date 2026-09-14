@@ -16,20 +16,21 @@ const path = require('node:path');
 
 const PolicyV1 = require('../public/attention-policy-v1.js');
 const SessionV1 = require('../public/attention-session-v1.js');
+const EpisodeV1 = require('../public/attention-episode-v1.js');
 
 const CORPUS = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'fixtures', 'attention-core-v1.json'), 'utf8'));
+const MODULES = { policy: PolicyV1, session: SessionV1, episode: EpisodeV1 };
 
 function stateFor(name, module) {
   const raw = CORPUS.states[name];
   assert.ok(raw, `корпус ссылается на несуществующее состояние ${name}`);
-  const copy = JSON.parse(JSON.stringify(raw));
-  return module === 'policy' ? PolicyV1.normalize(copy) : SessionV1.normalize(copy);
+  return MODULES[module].normalize(JSON.parse(JSON.stringify(raw)));
 }
 
 // Ответ сверяется по перечисленным ключам, а не целиком: корпус описывает то,
 // что обязано совпасть между реализациями, и не притворяется снимком всего.
 function assertSubset(actual, expected, id) {
-  if (expected === null || typeof expected !== 'object') {
+  if (expected === null || typeof expected !== 'object' || Array.isArray(expected)) {
     assert.deepEqual(actual, expected, id);
     return;
   }
@@ -57,9 +58,35 @@ function run(entry) {
     return SessionV1[fn](session, ...args);
   }
 
+  // Словарь — свойство модуля, а не состояния, поэтому отвечает до его загрузки.
+  if (fn === 'outcomeVocabulary') return EpisodeV1.OUTCOMES.slice();
+
   const state = stateFor(entry.state, mod);
 
+  if (entry.episodeId) {
+    const episode = EpisodeV1.byId(state, entry.episodeId);
+    assert.ok(episode, `${entry.id}: эпизод ${entry.episodeId} не найден`);
+    if (fn === 'sourceOf') return episode.source;
+    return EpisodeV1[fn](episode, ...args);
+  }
+
   // Составные случаи, где смысл именно в последовательности вызовов.
+  if (fn === 'suggestionPurposes') {
+    return EpisodeV1.suggestions(state, ...args).map((item) => item.purpose);
+  }
+  if (fn === 'escapeCount') {
+    // Знаменатель медианы: сколько срывов вообще попало в окно.
+    const [nowIso, days] = args;
+    return state.episodes.filter((e) => e.outcome === 'escaped'
+      && EpisodeV1.forPurpose(state, e.sourcePolicyId, e.declaredPurpose, nowIso, days).some((x) => x.id === e.id)).length;
+  }
+  if (fn === 'recordTwiceCount') {
+    // Повтор доставки того же эпизода обновляет запись на месте.
+    const existing = state.episodes[0];
+    const again = EpisodeV1.record(state, { ...existing, outcome: 'done' });
+    assert.equal(again.ok, true, `${entry.id}: повтор должен приниматься`);
+    return again.state.episodes.length;
+  }
   if (fn === 'closeTwice') {
     const first = SessionV1.close(state, args[0], args[1], args[2]);
     assert.equal(first.ok, true, `${entry.id}: первое закрытие должно проходить`);
@@ -71,19 +98,19 @@ function run(entry) {
     return SessionV1.toEpisode(closed.session);
   }
 
-  const target = mod === 'policy' ? PolicyV1 : SessionV1;
+  const target = MODULES[mod];
   assert.equal(typeof target[fn], 'function', `${entry.id}: нет функции ${mod}.${fn}`);
   return target[fn](state, ...args);
 }
 
 test('корпус описывает сам себя и не содержит дублей', () => {
   assert.equal(CORPUS.version, 1);
-  assert.ok(Array.isArray(CORPUS.cases) && CORPUS.cases.length >= 25, 'корпус слишком мал, чтобы что-то гарантировать');
+  assert.ok(Array.isArray(CORPUS.cases) && CORPUS.cases.length >= 45, 'корпус слишком мал, чтобы что-то гарантировать');
   const ids = CORPUS.cases.map((c) => c.id);
   assert.equal(new Set(ids).size, ids.length, 'идентификаторы случаев должны быть уникальны');
   for (const entry of CORPUS.cases) {
     assert.ok(entry.why && entry.why.length > 20, `${entry.id}: случай без объяснения бесполезен при портировании`);
-    assert.ok(['policy', 'session'].includes(entry.module), `${entry.id}: неизвестный модуль`);
+    assert.ok(['policy', 'session', 'episode'].includes(entry.module), `${entry.id}: неизвестный модуль`);
   }
 });
 
