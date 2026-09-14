@@ -45,6 +45,7 @@ const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
 const NativeAssociationV1 = require('./public/native-association-v1.js');
+const AttentionRevisionV1 = require('./public/attention-revision-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -5430,7 +5431,13 @@ const server = http.createServer(async (req, res) => {
     const readNow = () => { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch { return null; } };
 
     if (u === '/api/attention' && req.method === 'GET') {
-      return sendJson(res, 200, readNow() || attentionEmpty());
+      const value = readNow() || attentionEmpty();
+      // Метка едет заголовком, а не полем: форма конверта не меняется, и клиент
+      // прошлой сборки её просто не заметит.
+      return send(res, 200, JSON.stringify(value), {
+        'Content-Type': MIME['.json'], 'Cache-Control': 'no-store',
+        'X-Attention-Revision': AttentionRevisionV1.of(value),
+      });
     }
 
     if (u === '/api/attention' && req.method === 'PUT') {
@@ -5444,6 +5451,21 @@ const server = http.createServer(async (req, res) => {
       // клиент, который не смог загрузить и «сохраняет» пустоту. Ровно так в этом
       // проекте уже терялись данные. Требуем явного намерения.
       const cur = attentionSanitize(readNow()) || attentionEmpty();
+
+      // Exact-CAS. Раньше этого не было, и два клиента, прочитавшие одно состояние,
+      // сохраняли каждый своё: запись второго молча стирала правило первого, оба
+      // запроса отвечали 200. Забор ниже ловил только полное обнуление, но не
+      // потерю отдельного правила. Клиент присылает метку того, что он читал.
+      const currentRevision = AttentionRevisionV1.of(readNow());
+      const decision = AttentionRevisionV1.decide(body.base, currentRevision);
+      if (decision === 'invalid') return sendJson(res, 400, { error: 'invalid_attention_base' });
+      if (decision === 'conflict') {
+        // Отказ называет текущую метку, чтобы клиент перечитал и пересобрал
+        // изменение на актуальном состоянии, а не гадал.
+        return sendJson(res, 409, { error: 'attention_revision_conflict', revision: currentRevision, have: {
+          policies: cur.policies.length, sessions: cur.sessions.length, episodes: cur.episodes.length } });
+      }
+
       const shrinks = (a, b) => a.length > 0 && b.length === 0;
       if (!body.allowEmpty && (shrinks(cur.policies, next.policies)
         || shrinks(cur.episodes, next.episodes) || shrinks(cur.sessions, next.sessions))) {
@@ -5455,7 +5477,7 @@ const server = http.createServer(async (req, res) => {
         backupFile(userDataDir(uid), 'attention');
         writeJsonAtomic(file, next);
       } catch (e) { console.error('[attention]', e && e.message); return sendJson(res, 500, { error: 'save_failed' }); }
-      return sendJson(res, 200, { ok: true, counts: {
+      return sendJson(res, 200, { ok: true, revision: AttentionRevisionV1.of(next), counts: {
         policies: next.policies.length, sessions: next.sessions.length, episodes: next.episodes.length } });
     }
 
@@ -5481,7 +5503,8 @@ const server = http.createServer(async (req, res) => {
         backupFile(userDataDir(uid), 'attention');
         writeJsonAtomic(file, cur);
       } catch (e) { console.error('[attention]', e && e.message); return sendJson(res, 500, { error: 'save_failed' }); }
-      return sendJson(res, 200, { ok: true, stored: ep.id, total: cur.episodes.length });
+      return sendJson(res, 200, { ok: true, stored: ep.id, total: cur.episodes.length,
+        revision: AttentionRevisionV1.of(cur) });
     }
 
     return sendJson(res, 405, { error: 'method not allowed' });

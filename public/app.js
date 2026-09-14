@@ -539,6 +539,9 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  'Данные изменились на другом устройстве. Обнови страницу — твоя правка не сохранена.': { en: 'The data changed on another device. Reload the page — your edit was not saved.', de: 'Die Daten haben sich auf einem anderen Gerät geändert. Lade die Seite neu — deine Änderung wurde nicht gespeichert.', uk: 'Дані змінилися на іншому пристрої. Онови сторінку — твоя правка не збережена.', es: 'Los datos cambiaron en otro dispositivo. Recarga la página; tu cambio no se guardó.' },
+  // ── Внимание: конфликт записи между устройствами ──
+  '⚠️ Данные изменились на другом устройстве. Обнови страницу — твоя правка не сохранена.': { en: '⚠️ The data changed on another device. Reload the page — your edit was not saved.', de: '⚠️ Die Daten haben sich auf einem anderen Gerät geändert. Lade die Seite neu — deine Änderung wurde nicht gespeichert.', uk: '⚠️ Дані змінилися на іншому пристрої. Онови сторінку — твоя правка не збережена.', es: '⚠️ Los datos cambiaron en otro dispositivo. Recarga la página; tu cambio no se guardó.' },
   // Строка итога дня собирается из двух t(): «Квестов:» в словаре был, а «привычек»
   // в нижнем регистре — нет (есть только «Привычек»), и на экране выходило
   // «Quests: 0/2 · привычек 0/2» — половина по-английски, половина по-русски.
@@ -5639,6 +5642,9 @@ const AttentionStore = {
     try { localStorage.setItem(this.key(), JSON.stringify(value)); return true; }
     catch (error) { console.error('attention local save', error); return false; }
   },
+  // Метка последнего прочитанного состояния сервера. Она же уезжает обратно как
+  // база: без неё две вкладки, прочитавшие одно состояние, молча затирали друг друга.
+  _revision: null,
   async readServer() {
     try {
       const response = await fetch('/api/attention');
@@ -5647,6 +5653,10 @@ const AttentionStore = {
       const value = await response.json();
       const C = window.AttentionControllerV1;
       if (!C || !C.validateEnvelope(value)) return { value: null, error: 'invalid' };
+      // Заголовку доверяем, но считать умеем и сами: старый сервер его не шлёт.
+      const R = window.AttentionRevisionV1;
+      this._revision = response.headers.get('X-Attention-Revision') || (R ? R.of(value) : null);
+      State._attentionConflict = false;
       return { value, error: '' };
     } catch (error) {
       console.error('attention load', error);
@@ -5671,11 +5681,34 @@ const AttentionStore = {
   },
   async putServer(value, allowEmpty = false) {
     try {
+      const body = { data: value, allowEmpty: !!allowEmpty };
+      if (this._revision) body.base = this._revision;
       const response = await fetch('/api/attention', {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: value, allowEmpty: !!allowEmpty }),
+        method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
+      if (response.status === 409) {
+        const detail = await response.json().catch(() => null);
+        if (detail && detail.error === 'attention_revision_conflict') {
+          // Чужая запись пришла раньше нашей. Ничего не сохранено, и говорить об
+          // этом надо вслух: молчаливая потеря правила — ровно то, что чинится.
+          this._revision = detail.revision || null;
+          State._attentionLoadError = 'conflict';
+          State._attentionConflict = true;
+          // Диалог объяснит сам через attentionStatus. Тост нужен только тогда,
+          // когда объяснять больше негде: два сообщения об одном отказе — шум.
+          if (!document.querySelector('#attention-dialog-overlay [data-attention-status]')) {
+            toast(t('⚠️ Данные изменились на другом устройстве. Обнови страницу — твоя правка не сохранена.'));
+          }
+          return false;
+        }
+        throw new Error('save 409');
+      }
       if (!response.ok) throw new Error('save ' + response.status);
+      const saved = await response.json().catch(() => null);
+      const R = window.AttentionRevisionV1;
+      this._revision = (saved && saved.revision) || (R ? R.of(value) : null);
+      State._attentionConflict = false;
       return true;
     } catch (error) { console.error('attention save', error); toast(t('⚠️ Не удалось сохранить')); return false; }
   },
@@ -7263,7 +7296,7 @@ const State = {
   _accountDataLoadErrors: {}, _accountDataLoadBusy: false, _accountDataWriteBlockedNoticeAt: 0,
   attentionMode: 'local', attentionPolicies: null, attentionSessions: null, attentionEpisodes: null,
   _attentionLoadError: '', _attentionLoadBusy: false, _attentionWriteBlockedNoticeAt: 0,
-  _attentionDeepLink: null, _attentionReturnIndex: 0,
+  _attentionDeepLink: null, _attentionReturnIndex: 0, _attentionConflict: false,
   _secretaryExperimentBusy: false, _secretaryExperimentSetupOpen: false, _secretaryExperimentFeedbackDraft: null,
   // undefined — ход ещё не спрашивали; null — движок промолчал; объект — ход заявлен и показан.
   secretaryOffer: undefined, _secretaryOfferBusy: false,
@@ -24848,7 +24881,13 @@ function showAttentionDialog(screen, viewModel, options = {}) {
 function attentionStatus(message, isError = false) {
   const status = document.querySelector('#attention-dialog-overlay [data-attention-status]');
   if (!status) return;
-  status.textContent = t(message); status.dataset.error = isError ? 'true' : 'false';
+  // Конфликт объясняет себя сам. Общее «повтори попытку» здесь было бы неправдой:
+  // повтор не поможет, пока вкладка держит устаревшее состояние, и человек будет
+  // жать кнопку, пока не решит, что приложение сломано.
+  const text = isError && State._attentionConflict
+    ? 'Данные изменились на другом устройстве. Обнови страницу — твоя правка не сохранена.'
+    : message;
+  status.textContent = t(text); status.dataset.error = isError ? 'true' : 'false';
 }
 function attentionBusy(busy) {
   document.querySelectorAll('#attention-dialog-overlay :is(button,input,select,textarea)').forEach((node) => { node.disabled = !!busy; });
@@ -33080,7 +33119,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v262';
+const PWA_CACHE_VERSION = 'satoru-v263';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
