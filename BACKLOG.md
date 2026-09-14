@@ -1,5 +1,18 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [ ] **Apple до оплаты, план 14.09:** APPLE-PRE-PAYMENT-PLAN-2026-09.md.
+  Заявку на Family Controls до оплаты подать нельзя (нужен App ID в платном
+  разделе), поэтому до-оплатная работа сокращает окно после оплаты. Открыто:
+  `/.well-known` association routes (сейчас 404), контракт сессии устройства
+  (сегодня только кука), `public/app-entry-routes-v1.js`, корпус
+  `fixtures/attention-core-v1.json`, `GET /api/version` (сейчас 404), единый
+  контракт адаптера принуждения. Машина не готова: 0 подписей, 0 симуляторов.
+  Решения владельца (§7) не приняты; ничего из списка не реализовано.
+- [ ] **Проверить writer внимания:** `attention.json` пишется обычным
+  `writeJsonAtomic` и отсутствует в FEATURE-WRITES-V253.md. Выяснить, мигрировал
+  ли он на общий WAL/exact-CAS, и закрыть до появления нативных адаптеров.
+  Это вопрос из планирования 14.09, не подтверждённый дефект.
+
 - [x] **v261, ordinary inventory/purchases:** settings writers не создают платные
   предметы/реликвии и generic purchases не стирает дебит. Законные purchase/chest,
   starter, import/reset/restore/repair сохранены. OWNERSHIP-WRITES-V261.md.
