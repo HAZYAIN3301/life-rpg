@@ -44,6 +44,7 @@ const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
+const NativeAssociationV1 = require('./public/native-association-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -100,6 +101,38 @@ const DATA_DIR = process.env.DATA_DIR
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4317;
 const HOST = process.env.HOST || (process.env.PORT ? '0.0.0.0' : '127.0.0.1');
 const BRAVE_SEARCH_API_KEY = String(process.env.BRAVE_SEARCH_API_KEY || '').trim();
+
+// ---- Native platform association ----
+// Apple and Google fetch `/.well-known/...` through their own CDNs and cache the
+// answer. Both identifiers arrive as deployment environment, not as code, so the
+// Apple Team ID that only exists after the paid membership lands as one dashboard
+// variable rather than a release. Until it is set these routes 404 on purpose:
+// a cached malformed document is worse than a cached absence.
+const APPLE_ASSOCIATION = NativeAssociationV1.appleConfig({
+  appIds: process.env.APPLE_APP_IDS,
+  paths: process.env.APPLE_APPLINK_PATHS,
+});
+const ANDROID_ASSOCIATION = NativeAssociationV1.androidConfig({
+  packageName: process.env.ANDROID_PACKAGE,
+  fingerprints: process.env.ANDROID_CERT_SHA256,
+});
+const APPLE_ASSOCIATION_BODY = NativeAssociationV1.serialize(NativeAssociationV1.appleDocument(APPLE_ASSOCIATION));
+const ANDROID_ASSOCIATION_BODY = NativeAssociationV1.serialize(NativeAssociationV1.androidDocument(ANDROID_ASSOCIATION));
+for (const [name, parsed] of [['apple', APPLE_ASSOCIATION], ['android', ANDROID_ASSOCIATION]]) {
+  if (!parsed.ok && parsed.reason !== 'not_configured') {
+    console.error(`[association] ${name} association is configured but refused: ${parsed.reason}`);
+  }
+}
+
+// The shell version a client is expected to be running. Read once at boot from
+// the service worker, which is the single place this project bumps it.
+const SHELL_CACHE_VERSION = (() => {
+  try {
+    const source = fs.readFileSync(path.join(ROOT, 'public', 'sw.js'), 'utf8');
+    const found = /const CACHE = '([^']{1,64})'/.exec(source);
+    return found ? found[1] : '';
+  } catch { return ''; }
+})();
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -4055,6 +4088,48 @@ async function handleShadowTts(req, res, user) {
 const server = http.createServer(async (req, res) => {
   const u = req.url || '/';
   if (req.method === 'OPTIONS') return send(res, 204, '');
+
+  // ---- Native association and server capabilities ----
+  // Declared before auth, recovery and static so a query string cannot change the
+  // answer, a session cannot be required for a file the platform fetches
+  // anonymously, and nobody can shadow these paths by dropping a file in public/.
+  {
+    const route = u.split('?')[0];
+    if (route === '/.well-known/apple-app-site-association' || route === '/.well-known/assetlinks.json') {
+      if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
+      const body = route === '/.well-known/assetlinks.json' ? ANDROID_ASSOCIATION_BODY : APPLE_ASSOCIATION_BODY;
+      if (!body) return send(res, 404, 'Not found');
+      return send(res, 200, req.method === 'HEAD' ? '' : body, {
+        // Apple rejects anything but `application/json` here, and a charset
+        // parameter has historically been enough to make the fetch fail.
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=3600',
+        'Access-Control-Allow-Origin': '*',
+      });
+    }
+    if (route === '/api/version') {
+      if (req.method !== 'GET' && req.method !== 'HEAD') return send(res, 405, 'Method not allowed');
+      // A native client ships through review and can lag this server by weeks, so
+      // it needs to ask what exists instead of guessing from its own build date.
+      // Everything here is already public; no secret, account or count is exposed.
+      const payload = {
+        app: 'satoru',
+        shellCache: SHELL_CACHE_VERSION,
+        commit: String(process.env.RAILWAY_GIT_COMMIT_SHA || '').trim().slice(0, 40),
+        serverTime: new Date().toISOString(),
+        capabilities: {
+          attentionEpisodeIntake: true,
+          attentionLocalModeRefusal: true,
+          webPush: true,
+          deviceSessions: false,
+          appleAppSiteAssociation: Boolean(APPLE_ASSOCIATION_BODY),
+          androidAssetLinks: Boolean(ANDROID_ASSOCIATION_BODY),
+        },
+      };
+      if (req.method === 'HEAD') return send(res, 200, '', { 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' });
+      return send(res, 200, JSON.stringify(payload), { 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' });
+    }
+  }
 
   // A crashed import may include shelf, attention, profile and day data as well
   // as the original protected pair. Every authenticated domain endpoint must

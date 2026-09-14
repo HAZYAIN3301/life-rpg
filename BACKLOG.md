@@ -1,5 +1,10 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **B1+B5, association и версия сервера:** `/.well-known/apple-app-site-association`,
+  `/.well-known/assetlinks.json` и `GET /api/version`. Идентификаторы приходят
+  окружением, не кодом; ненастроенное и невалидное одинаково дают честный 404.
+  NATIVE-ASSOCIATION-V1.md; 21 тест, полный npm test 2754/2754.
+  Настоящий Universal Link на устройстве не проверен — нужен Team ID и iPhone.
 - [ ] **Apple до оплаты, план 14.09:** APPLE-PRE-PAYMENT-PLAN-2026-09.md.
   Заявку на Family Controls до оплаты подать нельзя (нужен App ID в платном
   разделе), поэтому до-оплатная работа сокращает окно после оплаты. Открыто:
