@@ -37,12 +37,20 @@
   покупать сейчас, нативный код вне папки Obsidian Vault. Первый срез B1, затем B3.
   B2: отдельное «да» получено 17.09 (§7.4).
   Ничего из списка ещё не реализовано.
-- [ ] **Купить домен Satoru и подключить к Railway.** Блокирует содержимое AASA,
-  Bundle ID, privacy/support URL и метаданные App Store. RDAP 14.09: `satoru.life`,
-  `satoru.app`, `satoru.dev` заняты; свободны `satoru.io`, `satoru.day`,
-  `getsatoru.com`. Перед покупкой проверить заново. Действие владельца.
-  RDAP 17.09: `satoru.io` **уже занят**; свободны `getsatoru.com`, `getsatoru.app`,
-  `satoru.day`, `satoruapp.com`, `usesatoru.com`, `trysatoru.com`.
+- [x] **Домен Satoru куплен 17.09: `satoruapp.com`** (Cloudflare Registrar, DNS на
+  Cloudflare, до 17.09.2027 — нужно автопродление). Bundle ID предложены в §A3 плана Apple.
+- [ ] **Подключить `satoruapp.com` к Railway — действие владельца.** Railway → проект →
+  сервис приложения (не TTS) → Settings → Networking → Public Networking → Custom Domain →
+  `satoruapp.com`. Railway выдаст CNAME и TXT — оба обязательны. Cloudflare → DNS →
+  CNAME `@` на выданный адрес и TXT как выдан; **Proxy status: DNS only (серое облако)** —
+  сертификат выпускает Railway, а AASA не должен упираться в защиту Cloudflare от ботов
+  при запросе с CDN Apple. После выпуска сертификата проверить `/api/version` на новом домене.
+- [ ] **Team ID в `APPLE_APP_IDS`.** Значение: `<TeamID>.com.satoruapp.satoru`; Team ID —
+  developer.apple.com → Account → Membership details. После этого AASA на обоих адресах
+  перестаёт быть 404.
+- [ ] **Переезд веб-пользователей на `satoruapp.com`.** Отдельный срез: расширение жёстко
+  привязано к старому адресу, а кука, localStorage и установленная PWA живут на нём.
+  Старый адрес не выключать и не перенаправлять до обновления расширения.
 - [x] **v263, exact-CAS журнала внимания:** вопрос оказался дефектом и
   воспроизведён — запись второго устройства молча стирала правило первого, оба
   запроса отвечали 200. Закрыто: `base`/`X-Attention-Revision`, 409 с актуальной

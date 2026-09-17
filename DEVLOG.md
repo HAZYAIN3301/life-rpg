@@ -1,5 +1,31 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-17] Домен `satoruapp.com` куплен, Bundle ID предложены
+
+Только документы.
+
+**Домен.** Владелец купил `satoruapp.com` у Cloudflare Registrar; DNS на Cloudflare,
+срок до 17.09.2027. Это закрывает §A2 плана Apple. Cloudflare умеет CNAME на корень
+домена, поэтому Railway подключается к самому `satoruapp.com`, а не только к `www`.
+Шаги подключения — в BACKLOG; рекомендовано DNS only, чтобы сертификат выпускал Railway,
+а запрос AASA с CDN Apple не упирался в защиту от ботов.
+
+**Старый адрес остаётся.** Найдено по коду: браузерное расширение жёстко привязано к
+`life-rpg-production-416a.up.railway.app` в `bridge.js`, `core.js` и `block.html`, а
+кука, localStorage и установленная PWA вошедших пользователей живут на нём. Переезд
+веб-пользователей — отдельный срез с обновлением расширения; до него старый адрес не
+выключать и не перенаправлять.
+
+**Bundle ID** (§A3): `com.satoruapp.satoru`, расширения Screen Time
+`…DeviceActivityMonitor`, `…ShieldConfiguration`, `…ShieldAction`, App Group
+`group.com.satoruapp.satoru`. Окончательно фиксируются регистрацией App ID владельцем.
+Черновик заявки на Family Controls дополнен ссылкой на форму и списком Bundle ID: Apple
+принимает заявку отдельно на каждый из них.
+
+**Дальше.** Владелец: подключить домен к Railway, прислать Team ID, зарегистрировать App ID
+и подать заявки. Агент: внести `APPLE_APP_IDS`-значение в инструкции и проверить AASA на
+новом домене после подключения.
+
 ## [2026-09-17] v264 — сессии устройства, серверная часть
 
 Контракт — DEVICE-SESSIONS-V264.md. Экрана пока нет, CACHE не менялся (`satoru-v263`).

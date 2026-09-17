@@ -7,7 +7,7 @@
 `Authorization: Bearer` рядом с кукой для нативного приложения, виджета и Screen Time;
 регистрация только по куке, вращение ключа обновления с отзывом при повторе, привязка к
 версии сессии. Экрана в Настройках ещё нет, CACHE не менялся. Apple Developer оплачен
-16.09; домен выбран, покупка за владельцем. Вход для нового чата по-прежнему AGENTS.md.
+16.09; домен `satoruapp.com` куплен 17.09, Bundle ID `com.satoruapp.satoru` предложен. Вход для нового чата по-прежнему AGENTS.md.
 
 **Checkpoint 13.09, v261:** ordinary inventory writes и generic purchase
 history защищены; legacy morning choice повторяется по точной durable receipt;

@@ -10,8 +10,20 @@
 
 ## Куда подавать
 
-Форма запроса Family Controls (Distribution) — раздел на developer.apple.com,
-«Request the Family Controls entitlement». Требуется существующий App ID.
+Форма запроса Family Controls (Distribution):
+https://developer.apple.com/contact/request/family-controls-distribution
+Требуется существующий App ID. **Заявка подаётся отдельно на каждый Bundle ID и на каждое
+расширение Screen Time** (обновлено 17.09):
+
+- `com.satoruapp.satoru` — приложение;
+- `com.satoruapp.satoru.DeviceActivityMonitor`;
+- `com.satoruapp.satoru.ShieldConfiguration`;
+- `com.satoruapp.satoru.ShieldAction`.
+
+Сайт для заявки и App Store: `https://satoruapp.com` (куплен 17.09). Порядок: сначала
+зарегистрировать App ID с capability Family Controls, затем подать заявки. Ответ Apple —
+от нескольких дней до нескольких недель, поэтому подавать сразу после регистрации App ID.
+Разработка на своём iPhone работает и без одобрения.
 
 Три отдельные вещи, не путать:
 - `com.apple.developer.family-controls` — базовый, даёт picker/shield/schedules;
