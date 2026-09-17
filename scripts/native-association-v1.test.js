@@ -216,8 +216,8 @@ test('сервер: /api/version отвечает без сессии и не в
   assert.equal(body.shellCache, /const CACHE = '([^']+)'/.exec(sw)[1]);
   assert.equal(typeof body.serverTime, 'string');
   assert.equal(Number.isNaN(Date.parse(body.serverTime)), false);
-  // Возможности отражают факт, а не намерение: токенов устройства ещё нет.
-  assert.equal(body.capabilities.deviceSessions, false);
+  // Возможности отражают факт, а не намерение: токены устройства есть с v264.
+  assert.equal(body.capabilities.deviceSessions, true);
   assert.equal(body.capabilities.attentionEpisodeIntake, true);
   assert.equal(body.capabilities.appleAppSiteAssociation, true);
   assert.equal(body.capabilities.androidAssetLinks, false);

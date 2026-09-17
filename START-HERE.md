@@ -3,7 +3,13 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Текущий checkpoint 13.09, v261:** ordinary inventory writes и generic purchase
+**Checkpoint 17.09, v264 — сессии устройства, сервер:** DEVICE-SESSIONS-V264.md.
+`Authorization: Bearer` рядом с кукой для нативного приложения, виджета и Screen Time;
+регистрация только по куке, вращение ключа обновления с отзывом при повторе, привязка к
+версии сессии. Экрана в Настройках ещё нет, CACHE не менялся. Apple Developer оплачен
+16.09; домен выбран, покупка за владельцем. Вход для нового чата по-прежнему AGENTS.md.
+
+**Checkpoint 13.09, v261:** ordinary inventory writes и generic purchase
 history защищены; legacy morning choice повторяется по точной durable receipt;
 явная связь CommitmentV2→task подключена к карточке Тени и проверяется перед
 открытием. Исправлена мобильная форма границы. Готова публичная privacy-страница

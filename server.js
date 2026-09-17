@@ -29,6 +29,7 @@ const SecretaryClaimV1 = require('./public/secretary-claim-v1.js');
 const SecretaryNextMovesServiceV1 = require('./server-secretary-next-moves-v1.js');
 const GoalResolveV1 = require('./public/goal-resolve-v1.js');
 const ServerUserRegistryV1 = require('./server-user-registry-v1.js');
+const ServerDeviceSessionsV1 = require('./server-device-sessions-v1.js');
 const AccountProfileV1 = require('./public/account-profile-v1.js');
 const CommitmentStoreV1 = require('./public/commitment-store-v1.js');
 const CommitmentJournalV1 = require('./public/commitment-journal-v1.js');
@@ -1813,6 +1814,10 @@ const AUTH_RULES = {
   register: { ip: 5,  id: 0,  windowMs: 60000 },   // регистрация создаёт папку на диске
   reset:    { ip: 10, id: 5,  windowMs: 60000 },   // подбор кода восстановления
   forgot:   { ip: 10, id: 0,  windowMs: 60000 },   // письма (у самой отправки есть свой кулдаун)
+  // Сессии устройства (DEVICE-SESSIONS-V264.md). Регистрация требует живую куку, поэтому
+  // лимит здесь от шума, а не от перебора; обновление ходит раз в 15 минут на устройство.
+  'device-register': { ip: 10, id: 0, windowMs: 60000 },
+  'device-refresh':  { ip: 60, id: 0, windowMs: 60000 },
 };
 // За обратным прокси Railway настоящий адрес приходит в x-forwarded-for. Берём ПЕРВЫЙ элемент:
 // последующие может дописать кто угодно, а первый ставит сам прокси.
@@ -2080,7 +2085,63 @@ function parseCookies(req) {
   });
   return out;
 }
-function sessionUserId(req) { return verifySession(parseCookies(req)[SESSION_COOKIE]); }
+function cookieUserId(req) { return verifySession(parseCookies(req)[SESSION_COOKIE]); }
+
+// ---- Сессии устройства: Authorization: Bearer рядом с кукой (DEVICE-SESSIONS-V264.md) ----
+// Нативному приложению, виджету, App Intent и расширению Screen Time кука недоступна.
+// Файл устройств лежит в папке пользователя, но не входит ни в переносимые файлы, ни в
+// DATA_NAMES админки, ни в бэкапы: это секреты входа, а не данные аккаунта. Удаление
+// аккаунта уносит его вместе с папкой.
+const DEVICES_FILE = (uid) => path.join(userDataDir(uid), 'devices.json');
+const deviceSessions = ServerDeviceSessionsV1.create({
+  read(uid) {
+    try { return fs.readFileSync(DEVICES_FILE(uid), 'utf8'); }
+    catch (error) { if (error && error.code === 'ENOENT') return null; throw error; }
+  },
+  write(uid, value) { writeJsonAtomic(DEVICES_FILE(uid), value); },
+  // SECRET читается в момент вызова: он назначается при старте, позже этого места.
+  sign(payload) { return crypto.createHmac('sha256', SECRET).update(payload).digest('hex'); },
+  randomHex(bytes) { return crypto.randomBytes(bytes).toString('hex'); },
+  randomSecret() { return crypto.randomBytes(32).toString('base64url'); },
+  now() { return Date.now(); },
+  equal(a, b) {
+    if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false;
+    return crypto.timingSafeEqual(Buffer.from(a, 'hex'), Buffer.from(b, 'hex'));
+  },
+});
+const DEVICE_ERROR_STATUS = {
+  not_authorized: 401, invalid_token: 401, device_revoked: 401,
+  confirmation_required: 400, name_required: 400,
+  forbidden: 403, not_found: 404, too_many_devices: 409,
+  write_failed: 500, devices_unreadable: 503,
+};
+function bearerAccessToken(req) {
+  const match = String(req.headers.authorization || '').match(/^Bearer ([A-Za-z0-9._-]{1,200})$/);
+  return match ? match[1] : '';
+}
+function deviceAccess(req) {
+  const token = bearerAccessToken(req);
+  if (!token) return null;
+  return deviceSessions.verifyAccess(token, (uid) => loadUsers().find((item) => item.id === uid) || null);
+}
+// Кука проверяется первой и не ослабляется. Токен устройства даёт ровно те права, что были
+// у сессии, из которой устройство зарегистрировано, и умирает вместе с её версией.
+function sessionUserId(req) {
+  const uid = cookieUserId(req);
+  if (uid) return uid;
+  const access = deviceAccess(req);
+  return access ? access.uid : null;
+}
+function sendDeviceResult(res, result, headers) {
+  if (result.ok) {
+    const { ok, ...body } = result;
+    res.writeHead(200, Object.assign({ 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' }, headers || {}));
+    return res.end(JSON.stringify(Object.assign({ ok: true }, body)));
+  }
+  const body = { error: result.error };
+  if (result.reason) body.reason = result.reason;
+  return sendJson(res, DEVICE_ERROR_STATUS[result.error] || 500, body);
+}
 function secureCookieSuffix(req) {
   const proto = String(req && req.headers && req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
   return proto === 'https' || (req && req.socket && req.socket.encrypted) ? '; Secure' : '';
@@ -4122,7 +4183,7 @@ const server = http.createServer(async (req, res) => {
           attentionEpisodeIntake: true,
           attentionLocalModeRefusal: true,
           webPush: true,
-          deviceSessions: false,
+          deviceSessions: true,
           appleAppSiteAssociation: Boolean(APPLE_ASSOCIATION_BODY),
           androidAssetLinks: Boolean(ANDROID_ASSOCIATION_BODY),
         },
@@ -4336,6 +4397,67 @@ const server = http.createServer(async (req, res) => {
       const token = makeSession(user);
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
       return res.end(JSON.stringify(Object.assign({ ok: true, recoveryCode }, publicUser(user))));
+    }
+
+    // ---- Сессии устройства (DEVICE-SESSIONS-V264.md) ----
+
+    // GET /api/auth/devices — список устройств; кука или токен устройства
+    if (u === '/api/auth/devices' && req.method === 'GET') {
+      const cookieUid = cookieUserId(req);
+      const access = cookieUid ? null : deviceAccess(req);
+      const uid = cookieUid || (access && access.uid);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const user = loadUsers().find((item) => item.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'user not found' });
+      return sendDeviceResult(res, deviceSessions.list(user, access ? access.deviceId : null));
+    }
+
+    // POST /api/auth/devices/register — «запомнить это устройство»; ТОЛЬКО из сессии по куке.
+    // Токен устройства не может выпустить другое устройство.
+    if (u === '/api/auth/devices/register' && req.method === 'POST') {
+      const uid = cookieUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      { const wait = authRateLimited(req, 'device-register'); if (wait) return tooManyAuth(res, wait); }
+      const users = loadUsers(); const user = users.find((item) => item.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'user not found' });
+      let headers = null;
+      if (!user.sessionVersion) {
+        // Старая кука без версии: как при входе, заводим версию и перевыдаём куку.
+        rotateSessionVersion(user); saveUsers(users);
+        headers = { 'Set-Cookie': setCookieHeader(req, makeSession(user)) };
+      }
+      return sendDeviceResult(res, deviceSessions.register(user, body), headers);
+    }
+
+    // POST /api/auth/devices/refresh — новый access и новый refresh; куки не нужно
+    if (u === '/api/auth/devices/refresh' && req.method === 'POST') {
+      { const wait = authRateLimited(req, 'device-refresh'); if (wait) return tooManyAuth(res, wait); }
+      return sendDeviceResult(res, deviceSessions.refresh(body.refreshToken,
+        (id) => loadUsers().find((item) => item.id === id) || null));
+    }
+
+    // POST /api/auth/devices/revoke — по куке любое своё устройство, токеном — только себя
+    if (u === '/api/auth/devices/revoke' && req.method === 'POST') {
+      const cookieUid = cookieUserId(req);
+      const access = cookieUid ? null : deviceAccess(req);
+      const uid = cookieUid || (access && access.uid);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const user = loadUsers().find((item) => item.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'user not found' });
+      return sendDeviceResult(res, deviceSessions.revoke(user, body.deviceId,
+        { actorDeviceId: access ? access.deviceId : null }));
+    }
+
+    // POST /api/auth/devices/revoke-all и /ack — только по куке. Подтверждение нового
+    // устройства по его же токену позволило бы вору погасить уведомление о себе.
+    if ((u === '/api/auth/devices/revoke-all' || u === '/api/auth/devices/ack') && req.method === 'POST') {
+      const uid = cookieUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const user = loadUsers().find((item) => item.id === uid);
+      if (!user) return sendJson(res, 401, { error: 'user not found' });
+      return sendDeviceResult(res, u === '/api/auth/devices/ack'
+        ? deviceSessions.acknowledge(user, body.deviceId)
+        : deviceSessions.revokeAll(user));
     }
 
     // POST /api/auth/logout
