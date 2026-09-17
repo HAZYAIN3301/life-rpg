@@ -39,12 +39,17 @@
   Ничего из списка ещё не реализовано.
 - [x] **Домен Satoru куплен 17.09: `satoruapp.com`** (Cloudflare Registrar, DNS на
   Cloudflare, до 17.09.2027 — нужно автопродление). Bundle ID предложены в §A3 плана Apple.
-- [ ] **Подключить `satoruapp.com` к Railway — действие владельца.** Railway → проект →
-  сервис приложения (не TTS) → Settings → Networking → Public Networking → Custom Domain →
-  `satoruapp.com`. Railway выдаст CNAME и TXT — оба обязательны. Cloudflare → DNS →
-  CNAME `@` на выданный адрес и TXT как выдан; **Proxy status: DNS only (серое облако)** —
-  сертификат выпускает Railway, а AASA не должен упираться в защиту Cloudflare от ботов
-  при запросе с CDN Apple. После выпуска сертификата проверить `/api/version` на новом домене.
+- [x] **`satoruapp.com` подключён к Railway 17.09.** Проверено: HTTPS 200, сертификат
+  Let's Encrypt на `satoruapp.com`, `/api/version` отдаёт тот же коммит, что старый адрес,
+  `http://` → 301 на `https://`, AASA честно 404 до Team ID, старый адрес работает.
+  Замечено: CNAME оставлен проксированным (оранжевое облако, `server: cloudflare`) —
+  работает, но рекомендовано DNS only, см. пункт ниже. `www` не настроен — сейчас не нужен.
+- [ ] **Перевести CNAME `satoruapp.com` в DNS only.** Причина прежняя: запрос AASA с CDN
+  Apple не должен зависеть от проверок Cloudflare. Если прокси оставлять — SSL/TLS
+  режим строго Full. После переключения проверить статус домена в Railway и `/api/version`.
+- [ ] **Членство Apple Developer в обработке (17.09: «Pending»).** Оплата отправлена 16.09;
+  Apple обещает до 48 часов. Регистрация App ID и заявки на Family Controls ждут активного
+  членства. Если больше 48 часов — Developer Support с Enrollment ID.
 - [ ] **Team ID в `APPLE_APP_IDS`.** Значение: `<TeamID>.com.satoruapp.satoru`; Team ID —
   developer.apple.com → Account → Membership details. После этого AASA на обоих адресах
   перестаёт быть 404.

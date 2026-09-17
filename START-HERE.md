@@ -6,8 +6,7 @@
 **Checkpoint 17.09, v264 — сессии устройства, сервер:** DEVICE-SESSIONS-V264.md.
 `Authorization: Bearer` рядом с кукой для нативного приложения, виджета и Screen Time;
 регистрация только по куке, вращение ключа обновления с отзывом при повторе, привязка к
-версии сессии. Экрана в Настройках ещё нет, CACHE не менялся. Apple Developer оплачен
-16.09; домен `satoruapp.com` куплен 17.09, Bundle ID `com.satoruapp.satoru` предложен. Вход для нового чата по-прежнему AGENTS.md.
+версии сессии. Экрана в Настройках ещё нет, CACHE не менялся. Оплата Apple Developer отправлена 16.09, 17.09 членство ещё «Pending» (Apple: до 48 часов) — App ID и заявки на Family Controls ждут его. Домен `satoruapp.com` куплен и подключён 17.09, Bundle ID `com.satoruapp.satoru` предложен. Вход для нового чата по-прежнему AGENTS.md.
 
 **Checkpoint 13.09, v261:** ordinary inventory writes и generic purchase
 history защищены; legacy morning choice повторяется по точной durable receipt;
