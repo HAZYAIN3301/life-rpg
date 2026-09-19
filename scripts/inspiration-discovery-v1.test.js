@@ -46,6 +46,30 @@ test('disabled, unconfigured and missing durable storage never call search or st
   assert.equal(touched, 0);
 });
 
+test('UTC rollover keeps disabled, unconfigured and needs-taste responses on the requested local day', async () => {
+  for (const [at, dayKey] of [['2026-09-18T23:30:00.000Z', '2026-09-19'], ['2026-09-19T00:30:00.000Z', '2026-09-18']]) {
+    for (const status of ['disabled', 'unconfigured', 'needs_taste']) {
+      let searched = 0, written = 0, read = 0;
+      const service = Discovery.createService({ now: () => at,
+        apiKey: status === 'unconfigured' ? '' : 'test-only-key',
+        requestJson: () => { searched++; },
+        readAccount: () => { read++; return null; },
+        writeAccount: () => { written++; return { ok: true }; },
+      });
+      const profile = taste({ discoveryEnabled: status !== 'disabled', visualTaste: '', customInterests: '', videoReferences: [] });
+      const result = await service.daily({ accountId: 'one', profile, dayKey });
+      assert.equal(result.status, status); assert.equal(result.dayKey, dayKey);
+      assert.deepEqual(result.candidates, []); assert.equal(searched, 0); assert.equal(written, 0);
+      assert.equal(read, status === 'needs_taste' ? 1 : 0);
+      if (status === 'needs_taste') assert.equal(result.quotaDayKey, at.slice(0, 10), 'quota stays on UTC');
+      for (const invalidDay of ['2026-02-30', '2026-09-22']) {
+        const invalid = await service.daily({ accountId: 'one', profile, dayKey: invalidDay });
+        assert.equal(invalid.status, 'invalid_day'); assert.equal(invalid.dayKey, null);
+      }
+    }
+  }
+});
+
 test('only explicit visual taste and reference wording shape two distinct bounded queries', () => {
   const first = taste({ goals: ['SECRET_GOAL'], notes: 'SECRET_DIARY', name: 'SECRET_NAME', city: 'SECRET_CITY', history: 'SECRET_HISTORY',
     visualTaste: 'silver monochrome brutalist concrete quiet angular shadows',

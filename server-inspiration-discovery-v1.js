@@ -389,9 +389,14 @@ function createInspirationDiscoveryService(rawOptions = {}) {
 
   async function daily(input = {}) {
     const at = dateValue(now());
-    const dayKey = at ? at.toISOString().slice(0, 10) : null;
-    if (!dayKey) return result(null, 'invalid_time', null);
-    if (!plain(input)) return result(null, 'invalid_account', dayKey);
+    const utcDayKey = at ? at.toISOString().slice(0, 10) : null;
+    if (!utcDayKey) return result(null, 'invalid_time', null);
+    if (!plain(input)) return result(null, 'invalid_account', utcDayKey);
+    // Even states that need no provider/storage call belong to the requested
+    // local day. Otherwise a client near midnight rejects a valid unavailable
+    // provider response as belonging to yesterday and cannot show its fallback.
+    const dayKey = input.dayKey === undefined ? utcDayKey : input.dayKey;
+    if (!realDay(dayKey) || Math.abs(dayNumber(dayKey) - dayNumber(utcDayKey)) > 1) return result(null, 'invalid_day', null);
     const accountId = text(input.accountId, 120);
     if (!accountId || accountId !== input.accountId || !/^[a-z0-9_-]+$/i.test(accountId)) return result(null, 'invalid_account', dayKey);
     const setup = status({ profile: input.profile });
