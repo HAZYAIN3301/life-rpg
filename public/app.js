@@ -25498,10 +25498,127 @@ function inspirationImportDevice() {
 function inspirationCatalog() {
   const result = inspirationSupply(); return result.ok ? result.catalog : [];
 }
-function inspirationSupply(profile = inspirationProfileState()) {
+function inspirationSupply(profile = inspirationProfileState(), pending = []) {
   const R = window.InspirationSupplyRuntimeV1;
-  return R ? R.ensureDigest({ profile, day: todayStr(), now: new Date().toISOString(), locale: lang() })
+  const stored = State.settings?.inspirationFinds;
+  const finds = Array.isArray(stored) ? stored : stored?.candidates;
+  const rawFinds = Array.isArray(finds) ? finds.slice(-120).map((item) => ({ ...item,
+    delivery: { ...item.delivery, sourceUrl: item.delivery?.sourceUrl || item.sourceUrl,
+      embedUrl: item.delivery?.embedUrl || item.embedUrl, assetPath: item.delivery?.assetPath || item.assetPath } })) : [];
+  return R ? R.ensureDigest({ profile, day: todayStr(), now: new Date().toISOString(), locale: lang(),
+    candidates: R.candidates().concat(window.InspirationVisualBatchV1?.CANDIDATES || [],
+      rawFinds, Array.isArray(pending) ? pending.slice(0, 3) : []),
+    ctx: { maxSharePerSource: 1 } })
     : { ok: false, error: 'supply_not_loaded' };
+}
+function inspirationVisualCopy(key) { return window.InspirationVisualCopyV1?.copy(key, lang()) || t(key); }
+function inspirationProfileEqual(left, right) { return JSON.stringify(left) === JSON.stringify(right); }
+function inspirationDailyReceipt(profile = State.settings?.inspiration) {
+  const P = inspirationProfileEngine(), value = P?.normalize(profile);
+  return !!(value?.digest && value.digest.day === todayStr()
+    && value.digest.ids.every((id) => value.shownHistory.some((row) => row.id === id && row.day === todayStr())));
+}
+let _inspirationGeneration = 0, _inspirationSetupGeneration = 0;
+let _inspirationPrepareWork = null, _inspirationMetadataWork = null;
+function cancelInspirationWork() {
+  _inspirationGeneration += 1; _inspirationSetupGeneration += 1;
+  _inspirationPrepareWork?.controller.abort(); _inspirationPrepareWork = null;
+  _inspirationMetadataWork?.abort(); _inspirationMetadataWork = null;
+  State._inspirationDigestPending = ''; State._inspirationSetupResolving = false;
+  window.InspirationPlayerV1?.close({ restoreFocus: false });
+}
+async function inspirationJSON(url, body, signal, timeoutMs = 20000) {
+  const controller = new AbortController(), abort = () => controller.abort();
+  signal?.addEventListener('abort', abort, { once: true });
+  if (signal?.aborted) controller.abort();
+  const timer = setTimeout(abort, timeoutMs);
+  try {
+    const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body), signal: controller.signal });
+    const data = await response.json().catch(() => null);
+    return { response, data };
+  } finally { clearTimeout(timer); signal?.removeEventListener('abort', abort); }
+}
+async function enrichInspirationFinds(rows, { signal, active }) {
+  const M = window.InspirationMediaV1, finds = rows.slice(0, 3);
+  if (!M) return finds;
+  for (let start = 0; start < finds.length; start += 2) {
+    if (!active() || signal.aborted) return [];
+    const results = await Promise.all(finds.slice(start, start + 2).map(async (candidate) => {
+      const source = M.parseSource(candidate.delivery?.sourceUrl || candidate.sourceUrl);
+      if (!source) return candidate;
+      try {
+        const { response, data } = await inspirationJSON('/api/inspiration/metadata', { url: source.url }, signal, 8500);
+        if (!active() || signal.aborted || !response.ok || data?.status !== 'resolved' || data.source?.url !== source.url) return candidate;
+        const imageUrl = M.safeImage(data.thumbnailUrl, source.provider);
+        return { ...candidate, ...(imageUrl ? { imageUrl, imageWidth: data.thumbnailWidth, imageHeight: data.thumbnailHeight } : {}),
+          ...(typeof data.checkedAt === 'string' && Number.isFinite(Date.parse(data.checkedAt)) ? { lastCheckedAt: data.checkedAt } : {}),
+          mediaType: data.mediaType,
+          ...(data.authorName ? { authorName: data.authorName, attributionRole: data.attributionKind } : {}) };
+      } catch { return candidate; }
+    }));
+    if (!active() || signal.aborted) return [];
+    finds.splice(start, results.length, ...results);
+  }
+  return finds;
+}
+async function prepareInspirationDigest({ retry = false } = {}) {
+  const P = inspirationProfileEngine();
+  if (!P || !State.me?.id || State.view !== 'shelf' || State._inspirationSetupOpen
+    || !State.settings?.inspiration?.configured || State._settingsLoadError || State._shelfLoadError
+    || State._shelfBusy || State._inspirationSetupResolving || _inspirationPrepareWork || inspirationDailyReceipt()
+    || State._inspirationDigestPending === 'error' && !retry) return false;
+  const accountId = String(State.me.id), writeEpoch = Store._writeEpoch, day = todayStr();
+  const base = P.normalize(State.settings.inspiration), generation = ++_inspirationGeneration;
+  const controller = new AbortController(), work = { controller, generation };
+  _inspirationPrepareWork = work;
+  const active = () => !controller.signal.aborted && _inspirationGeneration === generation
+    && accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch
+    && State.view === 'shelf' && !State._inspirationSetupOpen && day === todayStr()
+    && inspirationProfileEqual(P.normalize(State.settings?.inspiration), base);
+  State._inspirationDigestPending = 'loading'; State._shelfError = ''; render();
+  try {
+    let candidate = State._inspirationDailyAttempt;
+    if (!candidate || candidate.accountId !== accountId || candidate.day !== day
+      || !inspirationProfileEqual(candidate.base, base)) candidate = null;
+    if (!candidate) {
+      let finds = [];
+      if (base.discoveryEnabled && base.digest?.day !== day) {
+        const { response, data } = await inspirationJSON('/api/inspiration/discovery', { dayKey: day }, controller.signal);
+        if (!active()) return false;
+        if (response.status === 401) { handleAccountSessionExpired(); return false; }
+        if (!response.ok || !data || typeof data.providerAvailable !== 'boolean'
+          || !Array.isArray(data.candidates) || data.candidates.length > 3 || data.dayKey !== day) throw new Error('discovery_receipt');
+        State._inspirationDiscoveryAvailable = data.providerAvailable;
+        State._inspirationDiscoveryStatus = data.status;
+        if (!['ready', 'partial', 'empty', 'unconfigured', 'needs_taste'].includes(data.status)
+          || data.status === 'unconfigured' && data.providerAvailable) throw new Error('discovery_unavailable');
+        finds = await enrichInspirationFinds(data.candidates, { signal: controller.signal, active });
+      } else if (!base.discoveryEnabled) {
+        State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = 'disabled';
+      }
+      if (!active()) return false;
+      const ensured = inspirationSupply(base, finds);
+      if (!ensured.ok) throw new Error('supply');
+      candidate = { accountId, day, base, profile: P.recordShown(ensured.profile, day), finds };
+      State._inspirationDailyAttempt = candidate;
+    }
+    if (!active()) return false;
+    const saved = await persistInspirationProfile(candidate.profile, { finds: candidate.finds, guard: active });
+    if (accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch || _inspirationGeneration !== generation) return false;
+    if (!saved) throw new Error('profile_receipt');
+    State._inspirationDailyAttempt = null; State._inspirationDigestPending = '';
+    return true;
+  } catch (error) {
+    if (active()) State._inspirationDigestPending = 'error';
+    return false;
+  } finally {
+    if (_inspirationPrepareWork === work) {
+      _inspirationPrepareWork = null;
+      if (State._inspirationDigestPending === 'loading') State._inspirationDigestPending = '';
+      render();
+    }
+  }
 }
 function inspirationSupplyCopy(key) {
   return window.InspirationSupplyUIV1?.copy(key, lang()) || t('Не удалось загрузить Вдохновение');
@@ -25662,6 +25779,8 @@ async function startInspirationLinkImport(value) {
 }
 function inspirationFormatFromContent(value) {
   const raw = String(value || '').trim(), lower = raw.toLowerCase();
+  const source = window.InspirationMediaV1?.parseSource(raw);
+  if (source) return source.format;
   if (!/^https?:\/\//i.test(raw)) return 'quote';
   if (/\.(?:png|jpe?g|webp|gif)(?:\?|#|$)/i.test(lower)) return 'image';
   if (/\.(?:mp3|m4a|ogg|wav)(?:\?|#|$)|podcast|spotify\.com|podcasts?\./i.test(lower)) return 'podcast';
@@ -25678,6 +25797,14 @@ function inspirationYoutubeEmbed(url) {
     }
     return /^[A-Za-z0-9_-]{6,20}$/.test(id) ? `https://www.youtube-nocookie.com/embed/${id}` : '';
   } catch { return ''; }
+}
+function inspirationPersonalMedia(item) {
+  const M = window.InspirationMediaV1, source = M?.parseSource(item.url || item.sourceUrl);
+  const embedUrl = source ? M.buildEmbed(source) : inspirationYoutubeEmbed(item.url);
+  return { ...item, provider: source?.provider || '', sourceUrl: source?.url || item.url || '', embedUrl,
+    imageUrl: source ? M.safeImage(item.imageUrl, source.provider) : '',
+    format: source?.format || item.format || inspirationFormatFromContent(item.url),
+    mediaPolicy: embedUrl ? 'iframe' : item.url ? 'link' : 'text' };
 }
 function shelfViewModel() {
   const S = shelfEngine(), UI = window.ReturnShelfUIV1, P = inspirationProfileEngine();
@@ -25697,15 +25824,17 @@ function shelfViewModel() {
   )) };
   const savedCatalogIds = new Set(state.items.filter((item) => !item.archivedOn).map((item) => item.catalogId).filter(Boolean));
   const feedbackById = new Map((activeProfile.feedback || []).map((entry) => [entry.itemId, entry]));
-  const items = ensured.items.map((item) => ({ ...item, reason: P.reason(item, visibleProfile),
+  const digestPending = profile.configured && !inspirationDailyReceipt() ? State._inspirationDigestPending || 'loading' : '';
+  const items = (digestPending ? [] : ensured.items).map((item) => ({ ...item, reason: P.reason(item, visibleProfile),
     done: !!(activeProfile.digest && activeProfile.digest.doneIds.includes(item.id)), saved: savedCatalogIds.has(item.id),
     feedbackVerdict: feedbackById.get(item.id)?.verdict || '', feedbackReason: feedbackById.get(item.id)?.reason || '' }));
   const enrich = (item) => {
     item = window.InspirationSupplyRuntimeV1.resolveSaved(item, catalog);
     const catalogItem = item.catalogItem || null;
     const format = item.format || (catalogItem && catalogItem.format) || inspirationFormatFromContent(item.url || item.note || '');
-    const embedUrl = catalogItem ? catalogItem.embedUrl : item.supplyUnavailable ? '' : inspirationYoutubeEmbed(item.url);
-    return { ...item, title: catalogItem ? catalogItem.title : item.title,
+    const personal = !catalogItem && !item.supplyUnavailable ? inspirationPersonalMedia(item) : item;
+    const embedUrl = catalogItem ? catalogItem.embedUrl : item.supplyUnavailable ? '' : personal.embedUrl;
+    return { ...personal, title: catalogItem ? catalogItem.title : item.title,
       why: catalogItem ? t(item.why) : item.why, format, catalogItem,
       embedUrl, mediaPolicy: item.supplyUnavailable ? 'unavailable' : catalogItem ? catalogItem.mediaPolicy : (embedUrl ? 'iframe' : item.url ? 'link' : 'text'),
       linkLabel: shelfLinkLabel(item) };
@@ -25719,7 +25848,9 @@ function shelfViewModel() {
     importGuideOpen: !!State._inspirationImportGuideOpen, importDevice: inspirationImportDevice(),
     feedbackDraft: State._inspirationFeedbackDraft || null,
     supplyReport: ensured.report, supplyLocale: ensured.locale, unavailableIds: ensured.unavailableIds,
-    profileBusy: State._shelfBusy === 'profile',
+    digestPending, discoveryAvailable: State._inspirationDiscoveryAvailable ?? null,
+    discoveryStatus: State._inspirationDiscoveryStatus || '',
+    profileBusy: State._shelfBusy === 'profile' || !!State._inspirationSetupResolving,
     items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
     saved, savedCount: saved.length, archived, composerOpen: State._shelfComposerOpen,
     errorMessage: State._shelfError,
@@ -25815,9 +25946,14 @@ function inspirationDraftFromSetupForm(form) {
   const videoReferences = Array.from(form.querySelectorAll('[data-inspiration-reference-row]')).map((row) => {
     const url = String(row.querySelector('[name="referenceUrl"]')?.value || '').trim();
     const why = String(row.querySelector('[name="referenceWhy"]')?.value || '').trim();
-    return { url, why, interestIds: inspirationSemanticIds(why) };
+    const prior = base.videoReferences.find((reference) => reference.url === url);
+    const title = String(row.querySelector('[name="referenceTitle"]')?.value || '').trim();
+    return { ...(prior || {}), url, title, why, interestIds: inspirationSemanticIds(`${title} ${why}`) };
   }).filter((reference) => reference.url).slice(0, P.MAX_VIDEO_REFERENCES || 10);
-  return P.normalize({ ...base, interests: P.uniqueInterests(interests), customInterests, formats, blocked, videoReferences });
+  const visualTaste = String(form.elements.visualTaste?.value || '').slice(0, 600);
+  const discoveryEnabled = form.elements.discoveryEnabled?.checked === true;
+  return P.normalize({ ...base, interests: P.uniqueInterests(interests), customInterests, visualTaste,
+    discoveryEnabled, formats, blocked, videoReferences });
 }
 
 let _inspirationDraftSaveTimer = null;
@@ -25869,25 +26005,35 @@ async function flushInspirationSetupDraft(form = document.getElementById('inspir
   return draft ? persistInspirationSetupDraft(draft) : true;
 }
 
-async function enrichInspirationVideoReferences(profile) {
-  const P = inspirationProfileEngine(), I = inspirationImportEngine();
-  if (!P || !I || !profile?.videoReferences?.length) return profile;
-  const tiktokLinks = profile.videoReferences.map((reference) => I.cleanTikTokLink(reference.url)).filter(Boolean);
-  if (!tiktokLinks.length) return profile;
-  try {
-    const metadata = await I.resolveTikTokLinks(tiktokLinks);
-    const byUrl = new Map(metadata.map((entry) => [I.cleanTikTokLink(entry.url), entry]));
-    return P.normalize({ ...profile, videoReferences: profile.videoReferences.map((reference) => {
-      const key = I.cleanTikTokLink(reference.url), entry = byUrl.get(key);
-      if (!entry) return reference;
-      const title = String(entry.title || '').trim();
-      return { ...reference, url: key || reference.url, title,
-        interestIds: inspirationSemanticIds(`${title} ${entry.author_name || ''} ${reference.why || ''}`) };
-    }) });
-  } catch { return profile; }
+async function enrichInspirationVideoReferences(profile, { signal, active = () => true } = {}) {
+  const P = inspirationProfileEngine(), M = window.InspirationMediaV1;
+  if (!P || !M || !profile?.videoReferences?.length) return profile;
+  const references = profile.videoReferences.slice(0, 10);
+  for (let start = 0; start < references.length; start += 2) {
+    if (signal?.aborted || !active()) return null;
+    const results = await Promise.all(references.slice(start, start + 2).map(async (reference) => {
+      const source = M.parseSource(reference.url);
+      if (!source) return reference;
+      try {
+        const { response, data } = await inspirationJSON('/api/inspiration/metadata', { url: source.url }, signal, 8500);
+        if (!active() || signal?.aborted) return reference;
+        if (response.status === 401) { handleAccountSessionExpired(); return reference; }
+        if (!response.ok || data?.status !== 'resolved' || data.source?.url !== source.url) return reference;
+        const title = reference.title || String(data.title || '').trim();
+        const imageUrl = M.safeImage(data.thumbnailUrl, source.provider);
+        return { ...reference, url: source.url, title, imageUrl, authorName: data.authorName || '',
+          mediaFormat: source.provider === 'tiktok' ? 'edit' : data.mediaType === 'image' ? 'image' : undefined,
+          metadataAt: data.checkedAt, interestIds: inspirationSemanticIds(`${title} ${reference.why || ''}`) };
+      } catch { return reference; }
+    }));
+    if (signal?.aborted || !active()) return null;
+    references.splice(start, results.length, ...results);
+  }
+  return P.normalize({ ...profile, videoReferences: references });
 }
 function openInspirationSetup(mode = 'edit', form = null) {
   const P = inspirationProfileEngine(); if (!P) return;
+  cancelInspirationWork();
   let draft = form ? inspirationDraftFromSetupForm(form)
     : (inspirationStoredDraft() || P.normalize(State.settings?.inspiration || P.emptyProfile()));
   if (!draft) draft = P.emptyProfile();
@@ -25900,53 +26046,99 @@ function openInspirationSetup(mode = 'edit', form = null) {
   sfx('open'); render();
 }
 async function closeInspirationSetup(form = document.getElementById('inspiration-setup-form')) {
+  cancelInspirationWork();
   const saved = await flushInspirationSetupDraft(form);
   if (!saved) return;
   State._inspirationDraft = null; State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false; State._shelfError = '';
   State._shelfFocusAfterCommit = '[data-action="inspiration-setup-edit"], #return-shelf-title';
   sfx('close'); render();
 }
-async function persistInspirationProfile(rawProfile, { closeSetup = false, focus = '#return-shelf-title', toastKey = '' } = {}) {
+function inspirationProfileReceipt(data, profile) {
+  if (!data || data.ok !== true || data.kind !== 'inspiration-profile' || data.version !== 1
+    || typeof data.replay !== 'boolean' || !data.snapshots || Array.isArray(data.snapshots)) return false;
+  const settings = data.snapshots.settings, tasks = data.snapshots.tasks;
+  if (!settings || settings.exists !== true || !validateSettingsPayload(settings.value)
+    || !tasks || typeof tasks.exists !== 'boolean'
+    || tasks.exists && !validateTasksPayload(tasks.value) || !tasks.exists && tasks.value !== null) return false;
+  return inspirationProfileEqual(settings.value.inspiration, profile);
+}
+async function persistInspirationProfile(rawProfile, { closeSetup = false, focus = '#return-shelf-title', toastKey = '', finds = [], guard = () => true } = {}) {
   const P = inspirationProfileEngine(); if (!P || !State.settings || State._shelfBusy) return false;
-  const accountId = State.me?.id, writeEpoch = Store._writeEpoch;
-  const profile = P.normalize(rawProfile);
+  if (!pwaWriteAllowed('inspirationProfile', true) || !settingsWriteAllowed('inspirationProfile', true)
+    || !taskWriteAllowed('inspirationProfile', true) || !accountDataWriteAllowed('settings', 'inspirationProfile', true)) return false;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  const profile = P.normalize(rawProfile), base = P.normalize(State.settings.inspiration);
+  const baseDraft = structuredClone(State.settings.inspirationDraft ?? null);
+  const active = () => accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch && guard()
+    && inspirationProfileEqual(P.normalize(State.settings?.inspiration), base)
+    && (!closeSetup || inspirationProfileEqual(State.settings?.inspirationDraft ?? null, baseDraft));
+  if (!active()) return false;
   State._shelfBusy = 'profile'; State._shelfError = ''; render();
-  const saved = await Store.updateNow('settings', (current) => {
-    const base = current && typeof current === 'object' && !Array.isArray(current)
-      ? structuredClone(current) : structuredClone(State.settings);
-    base.inspiration = profile; delete base.inspirationDraft; return base;
-  }, (committed) => { State.settings = committed; return true; });
-  if (State.me?.id !== accountId || Store._writeEpoch !== writeEpoch) return false;
+  let saved = false;
+  try {
+    saved = await Store.runExclusive(['settings', 'tasks'], async (scope) => {
+      if (!active()) return false;
+      const payload = { base, profile, finds: Array.isArray(finds) ? finds.slice(0, 3) : [] };
+      if (closeSetup) payload.baseDraft = baseDraft;
+      const { response, data } = await inspirationJSON('/api/inspiration/profile', payload);
+      if (!active()) return false;
+      if (response.status === 401) { handleAccountSessionExpired(); return false; }
+      if (!response.ok || !inspirationProfileReceipt(data, profile)) return false;
+      const settings = data.snapshots.settings, tasks = data.snapshots.tasks;
+      if (!rememberDedicatedCommitSlots({ settings: settings.value, ...(tasks.exists ? { tasks: tasks.value } : {}) }, scope)) return false;
+      Store._persisted.settings = structuredClone(settings); Store._persisted.tasks = structuredClone(tasks);
+      State.settings = structuredClone(settings.value);
+      State.tasks = tasks.exists ? structuredClone(tasks.value) : [];
+      return true;
+    });
+  } catch { saved = false; }
+  if (String(State.me?.id || '') !== accountId || Store._writeEpoch !== writeEpoch) return false;
   State._shelfBusy = '';
   if (!saved) {
     State._shelfError = inspirationSupplyCopy('save_error');
     State._shelfFocusAfterCommit = focus; render(); toast(t(State._shelfError)); return false;
   }
-  rememberInspirationLocalDraft(null);
-  State._inspirationDraft = null;
+  if (closeSetup) { rememberInspirationLocalDraft(null); State._inspirationDraft = null; }
   if (closeSetup) { State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false; }
   State._shelfError = ''; State._shelfFocusAfterCommit = focus; render();
   if (toastKey) toast(t(toastKey));
   return true;
 }
 async function saveInspirationSetup(form) {
-  const P = inspirationProfileEngine(); if (!P || State._shelfBusy) return;
-  const accountId = State.me?.id, writeEpoch = Store._writeEpoch;
+  const P = inspirationProfileEngine(); if (!P || State._shelfBusy || State._inspirationSetupResolving) return;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
   clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
   let draft = inspirationDraftFromSetupForm(form);
   if (!draft || !draft.interests.length) { shelfFormStatus('Выбери хотя бы один интерес или добавь свой.', true); return; }
   if (!draft.formats.length) { shelfFormStatus('Выбери хотя бы один формат.', true); return; }
-  if (draft.videoReferences.length) {
-    shelfFormStatus('Анализирую видео-референсы…');
-    draft = await enrichInspirationVideoReferences(draft);
-  }
-  if (State.me?.id !== accountId || Store._writeEpoch !== writeEpoch) return;
-  const configured = P.configure(draft);
-  const ensured = inspirationSupply(configured);
-  if (!ensured.ok) { shelfFormStatus(inspirationSupplyCopy('module_error'), true); return; }
-  shelfFormStatus('Сохраняю…');
-  if (await persistInspirationProfile(ensured.profile, { closeSetup: true, focus: '.inspiration-profile-summary', toastKey: 'Подборка настроена' })) {
-    sfx('confirm'); track('inspiration:configured');
+  cancelInspirationWork();
+  const generation = _inspirationSetupGeneration, controller = new AbortController();
+  _inspirationMetadataWork = controller;
+  const active = () => !controller.signal.aborted && generation === _inspirationSetupGeneration
+    && accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch;
+  State._inspirationSetupResolving = true; State._inspirationDraft = draft; rememberInspirationLocalDraft(draft);
+  const controls = Array.from(form.querySelectorAll?.('button,input,select,textarea') || []);
+  const disabled = controls.map((node) => node.disabled); controls.forEach((node) => { node.disabled = true; });
+  try {
+    if (draft.videoReferences.length) {
+      shelfFormStatus(inspirationVisualCopy('Читаю подписи и изображения источников…'));
+      draft = await enrichInspirationVideoReferences(draft, { signal: controller.signal, active });
+    }
+    if (!active() || !draft) return;
+    State._inspirationDraft = draft; rememberInspirationLocalDraft(draft);
+    const configured = P.configure(draft);
+    if (!inspirationSupply(configured).ok) { shelfFormStatus(inspirationSupplyCopy('module_error'), true); return; }
+    shelfFormStatus('Сохраняю…');
+    if (await persistInspirationProfile(configured, { closeSetup: true, guard: active,
+      focus: '.inspiration-profile-summary', toastKey: 'Подборка настроена' })) {
+      State._inspirationDailyAttempt = null; sfx('confirm'); track('inspiration:configured');
+    }
+  } finally {
+    if (active()) {
+      State._inspirationSetupResolving = false; _inspirationMetadataWork = null;
+      controls.forEach((node, index) => { node.disabled = disabled[index]; });
+      render();
+    }
   }
 }
 function inspirationActionItem(id) {
@@ -25957,11 +26149,11 @@ function inspirationActionItem(id) {
   if (saved.catalogId) return window.InspirationSupplyRuntimeV1
     ? window.InspirationSupplyRuntimeV1.resolveSaved(saved, catalog)
     : { ...saved, supplyUnavailable: true, mediaPolicy: 'unavailable', embedUrl: '', imageUrl: '', sourceUrl: '', rightsUrl: '' };
-  return { ...saved, embedUrl: inspirationYoutubeEmbed(saved.url),
-    mediaPolicy: inspirationYoutubeEmbed(saved.url) ? 'iframe' : saved.url ? 'link' : 'text' };
+  return inspirationPersonalMedia(saved);
 }
 async function markInspirationDone(id) {
   const P = inspirationProfileEngine(), item = inspirationActionItem(id); if (!P || !item || item.supplyUnavailable || State._shelfBusy) return;
+  if (!inspirationDailyReceipt()) return;
   const ensured = inspirationSupply(inspirationProfileState());
   if (!ensured.ok) { toast(inspirationSupplyCopy('module_error')); return; }
   if (!ensured.profile.digest?.ids.includes(item.id) || ensured.profile.digest.doneIds.includes(item.id)) return;
@@ -25973,6 +26165,7 @@ async function markInspirationDone(id) {
 async function recordInspirationFeedback(id, verdict, reason = '') {
   const P = inspirationProfileEngine(), item = inspirationActionItem(id);
   if (!P || !item || item.supplyUnavailable || !P.VERDICTS.includes(verdict) || State._shelfBusy) return;
+  if (!inspirationDailyReceipt()) return;
   const ensured = inspirationSupply(inspirationProfileState());
   if (!ensured.ok) { toast(inspirationSupplyCopy('module_error')); return; }
   const next = P.recordFeedback(ensured.profile, item, verdict, todayStr(), reason);
@@ -26021,26 +26214,64 @@ async function saveInspirationCatalogItem(id) {
   State.shelf = local.state; State._shelfError = ''; State._shelfFocusAfterCommit = `[data-inspiration-id="${CSS.escape(item.id)}"] [data-action="inspiration-save"]`;
   render(); sfx('confirm'); toast(t('Материал сохранён')); track('inspiration:save');
 }
-function inspirationEmbedAllowed(value) {
+function inspirationEmbedAllowed(value, source) {
+  if (window.InspirationMediaV1?.isAllowedEmbed(value, source)) return true;
   try {
     const url = new URL(String(value || ''));
     return url.protocol === 'https:' && ['www.youtube-nocookie.com', 'www.nps.gov', 'www.dvidshub.net'].includes(url.hostname)
-      && !url.searchParams.has('autoplay');
+      && !url.username && !url.password && !url.port && !url.searchParams.has('autoplay');
   } catch { return false; }
 }
 function playInspirationEmbed(id, opener) {
-  const item = inspirationActionItem(id), url = item && item.embedUrl;
+  const item = inspirationActionItem(id);
   if (item?.supplyUnavailable) { toast(inspirationSupplyCopy('unavailable')); return; }
   const host = document.querySelector(`[data-inspiration-media="${CSS.escape(String(id))}"]`);
-  if (!item || !host || !inspirationEmbedAllowed(url) || host.querySelector('.inspiration-embed')) return;
-  const layer = document.createElement('div'); layer.className = 'inspiration-embed';
-  layer.innerHTML = `<iframe src="${esc(url)}" title="${esc(item.title)}" loading="eager" referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-presentation" allow="fullscreen; picture-in-picture" allowfullscreen></iframe><button type="button" data-action="inspiration-media-close" aria-label="${t('Закрыть видео')}">✕</button>`;
-  layer._returnFocus = opener; host.appendChild(layer); sfx('open'); layer.querySelector('button')?.focus();
+  if (window.InspirationPlayerV1?.open({ host, item, opener, copy: inspirationVisualCopy, allowLegacy: inspirationEmbedAllowed })) sfx('open');
 }
-function closeInspirationEmbed(button) {
-  const layer = button && button.closest('.inspiration-embed'); if (!layer) return;
-  const returnFocus = layer._returnFocus; layer.remove(); sfx('close');
-  if (returnFocus && returnFocus.isConnected) returnFocus.focus();
+function closeInspirationEmbed() { window.InspirationPlayerV1?.close(); sfx('close'); }
+function previewInspirationReference(button) {
+  const form = button?.closest('#inspiration-setup-form'), index = Number(button?.dataset.referenceIndex);
+  if (!form || !Number.isInteger(index) || index < 0 || index >= 10) return;
+  const row = Array.from(form.querySelectorAll('[data-inspiration-reference-row]'))[index];
+  if (!row) return;
+  const item = inspirationPersonalMedia({ url: String(row.querySelector('[name="referenceUrl"]')?.value || '').trim(),
+    title: String(row.querySelector('[name="referenceTitle"]')?.value || '').trim() });
+  const host = row.querySelector(`[data-inspiration-media="reference-${index}"]`);
+  if (window.InspirationPlayerV1?.open({ host, item, opener: button, copy: inspirationVisualCopy, allowLegacy: inspirationEmbedAllowed })) sfx('open');
+}
+function bindInspirationImageFallbacks() {
+  const M = window.InspirationMediaV1; if (!M) return;
+  for (const img of document.querySelectorAll('.inspiration-visual-image, .inspiration-reference-preview img')) {
+    if (img.dataset.inspirationErrorBound) continue;
+    img.dataset.inspirationErrorBound = 'true';
+    img.addEventListener('error', async () => {
+      const host = img.closest('[data-inspiration-media]') || img.parentElement;
+      const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch, generation = _inspirationGeneration;
+      const id = host?.dataset.inspirationMedia, item = id && !id.startsWith('reference-') ? inspirationActionItem(id) : null;
+      const source = M.parseSource(item?.sourceUrl || item?.url);
+      const active = () => img.isConnected && accountId === String(State.me?.id || '') && epoch === Store._writeEpoch && generation === _inspirationGeneration;
+      if (source?.provider === 'tiktok') {
+        const key = source.url;
+        State._inspirationPosterAttempts ||= {};
+        if (!State._inspirationPosterAttempts[key]) {
+          State._inspirationPosterAttempts[key] = true;
+          try {
+            const { response, data } = await inspirationJSON('/api/inspiration/metadata', { url: key }, undefined, 8500);
+            const fresh = response.ok && data?.status === 'resolved' && data.source?.url === key && M.safeImage(data.thumbnailUrl, 'tiktok');
+            if (active() && fresh && fresh !== img.src) {
+              img.dataset.inspirationErrorBound = ''; img.src = fresh; bindInspirationImageFallbacks(); return;
+            }
+          } catch {}
+        }
+      }
+      if (!active()) return;
+      img.remove(); host?.classList.remove('has-image'); host?.classList.add('has-no-image');
+      let status = host?.querySelector('[data-media-status]');
+      if (!status && host) { status = document.createElement('p'); status.setAttribute('data-media-status', ''); status.setAttribute('role', 'status'); host.appendChild(status); }
+      if (status) status.textContent = inspirationVisualCopy('Предпросмотр недоступен. Открой материал из источника.');
+    }, { once: true });
+    if (img.complete && !img.naturalWidth) img.dispatchEvent(new Event('error'));
+  }
 }
 function playInspirationMotion(id, button) {
   const host = document.querySelector(`[data-inspiration-media="${CSS.escape(String(id))}"]`); if (!host) return;
@@ -27231,6 +27462,16 @@ function waitForViewImages(root, maxWait = 650) {
   ]);
 }
 function afterMainCommit() {
+  try {
+    window.InspirationPlayerV1?.sync();
+    if (State.view !== 'shelf') {
+      if (_inspirationPrepareWork || _inspirationMetadataWork) cancelInspirationWork();
+      window.InspirationPlayerV1?.close({ restoreFocus: false });
+    } else {
+      bindInspirationImageFallbacks();
+      if (!State._inspirationSetupOpen) void prepareInspirationDigest();
+    }
+  } catch {}
   try { kickCompVideo(); } catch {}
   try {
     if (State.view === 'den' && window.TravellerRoomV4) {
@@ -29738,6 +29979,8 @@ async function onClick(e) {
   if (action === 'inspiration-setup-manual') { openInspirationSetup('manual'); return; }
   if (action === 'inspiration-setup-edit') { openInspirationSetup('edit'); return; }
   if (action === 'inspiration-setup-close') { await closeInspirationSetup(el.closest('form')); return; }
+  if (action === 'inspiration-digest-retry') { await prepareInspirationDigest({ retry: true }); return; }
+  if (action === 'inspiration-reference-preview') { previewInspirationReference(el); return; }
   if (action === 'inspiration-reference-add') {
     const form = el.closest('#inspiration-setup-form'), list = form?.querySelector('[data-inspiration-reference-list]');
     const template = form?.querySelector('#inspiration-reference-template');
@@ -32093,6 +32336,9 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  cancelInspirationWork();
+  State._inspirationDailyAttempt = null; State._inspirationPosterAttempts = null;
+  State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = '';
   _morningOutcome?.dispose(); _morningOutcome = null; _morningOutcomeScope = null;
   _secretaryNextRuntime?.dispose(); _secretaryNextRuntime = null; _secretaryNextAccount = null; _secretaryOfferSlotFree = false;
   State._partyRewardCycle = null; State._partyClaimBusy = false;
