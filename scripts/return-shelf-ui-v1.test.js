@@ -8,6 +8,8 @@ const path = require('node:path');
 const UI = require('../public/return-shelf-ui-v1.js');
 const Profile = require('../public/inspiration-profile-v1.js');
 const Catalog = require('../public/inspiration-catalog-v1.js');
+const Media = require('../public/inspiration-media-v1.js');
+const VisualCopy = require('../public/inspiration-visual-copy-v1.js');
 const t = (value) => value;
 
 function configuredProfile() {
@@ -73,8 +75,12 @@ test('главная Подборка конечна: ровно три карт
   assert.equal((html.match(/data-action="inspiration-done"/g) || []).length, 3);
   assert.equal((html.match(/data-verdict="more"/g) || []).length, 3);
   assert.equal((html.match(/data-verdict="not_for_me"/g) || []).length, 3);
-  assert.equal((html.match(/class="inspiration-item-more"/g) || []).length, 3,
-    'feedback и source должны жить в secondary menu, а не в ряду primary controls');
+  assert.equal((html.match(/class="inspiration-style-feedback"/g) || []).length, 3,
+    'style feedback is visible on every card');
+  for (const menu of html.matchAll(/<details\b[\s\S]*?<\/details>/g)) {
+    assert.doesNotMatch(menu[0], /data-action="inspiration-feedback-open"/,
+      'style feedback must not be hidden in a menu');
+  }
   assert.match(html, /Подборка/);
   assert.match(html, /Сохранённое/);
   assert.match(html, /Почему здесь/);
@@ -134,19 +140,113 @@ test('настройка делает интересы и форматы явн�
   assert.doesNotMatch(html, /name="url"|name="kind"|name="why"|Тип материала|Экспорт/);
 });
 
-test('настройка принимает до 10 мотивирующих видео и необязательное объяснение', () => {
+test('настройка принимает фото и эдиты с необязательным объяснением', () => {
   const profile = Profile.normalize({ ...configuredProfile(), videoReferences: [
     { url: 'https://www.tiktok.com/@maker/video/1234567890', why: 'Нравится упорство и темп монтажа' },
   ] });
   const html = UI.render(ready({ setupOpen: true, profile }), t);
-  assert.match(html, /Видео, которые тебя мотивируют/);
+  assert.match(html, /Референсы: фото и эдиты/);
   assert.match(html, /data-inspiration-reference-count>1 \/ 10/);
   assert.match(html, /name="referenceUrl"[^>]+value="https:\/\/www\.tiktok\.com\/@maker\/video\/1234567890"/);
   assert.match(html, /name="referenceWhy"[\s\S]*Нравится упорство и темп монтажа/);
   assert.match(html, /maxlength="320"/);
   assert.match(html, /data-action="inspiration-reference-add"/);
   assert.match(html, /data-action="inspiration-reference-remove"/);
-  assert.match(html, /Видео не загружаются в Satoru/);
+  assert.match(html, /Фото и видео остаются у источника/);
+});
+
+test('настройка восстанавливает визуальный вкус, подпись референса и явный opt-in', () => {
+  const reference = {
+    url: 'https://www.pinterest.com/pin/354658539408264219/',
+    title: 'Мой <личный> образ', why: 'Зелёный свет & тишина',
+    imageUrl: 'https://i.pinimg.com/564x/b3/6e/78/b36e78c729e4291048afa0720c13428e.jpg',
+  };
+  const profile = { ...configuredProfile(), visualTaste: 'Тишина <script> и комиксы', discoveryEnabled: true, videoReferences: [reference] };
+  const html = UI.render(ready({ setupOpen: true, profile }), t);
+  assert.match(html, /name="visualTaste"[^>]+maxlength="600"[^>]*>Тишина &lt;script&gt; и комиксы/);
+  assert.match(html, /name="discoveryEnabled" checked/);
+  assert.match(html, /name="referenceTitle" value="Мой &lt;личный&gt; образ"/);
+  assert.match(html, /data-inspiration-media="reference-0"/);
+  assert.match(html, /data-action="inspiration-reference-preview" data-reference-index="0"/);
+  assert.match(html, /<img src="https:\/\/i\.pinimg\.com\//);
+  assert.doesNotMatch(html, /<iframe|<script>/);
+  const defaultHtml = UI.render(ready({ setupOpen: true }), t);
+  assert.doesNotMatch(defaultHtml, /name="discoveryEnabled" checked/);
+  const tenHtml = UI.render(ready({ setupOpen: true, profile: { ...profile, videoReferences: Array(10).fill(reference) } }), t);
+  assert.match(tenHtml, /data-inspiration-reference-count>10 \/ 10/);
+  assert.match(tenHtml, /data-action="inspiration-reference-add" disabled/);
+});
+
+test('Pinterest и TikTok показывают настоящие картинки, а подпись идёт после изображения', () => {
+  const pinUrl = 'https://www.pinterest.com/pin/354658539408264219/';
+  const tiktokUrl = 'https://www.tiktok.com/@maker/video/7647936071673629973';
+  const pinImage = 'https://i.pinimg.com/564x/b3/6e/78/b36e78c729e4291048afa0720c13428e.jpg';
+  const poster = 'https://p16.muscdn.com/obj/tos-maliva-p-0068/abcdefgh1234';
+  const html = UI.render(ready({ items: [
+    digestItem('pin', 'image', { sourceUrl: pinUrl, imageUrl: pinImage, mediaPolicy: 'iframe', embedUrl: Media.buildEmbed(pinUrl) }),
+    digestItem('edit', 'edit', { sourceUrl: tiktokUrl, imageUrl: poster, mediaPolicy: 'iframe', embedUrl: Media.buildEmbed(tiktokUrl) }),
+  ], digestTotal: 2 }), t);
+  assert.equal((html.match(/class="inspiration-visual-image"/g) || []).length, 2);
+  assert.match(html, /is-media is-pinterest has-image/);
+  assert.match(html, /is-media is-tiktok has-image/);
+  assert.match(html, /data-action="inspiration-play" data-id="edit"[^>]*>.*Смотреть эдит/);
+  assert.match(html, /data-noi18n>Pinterest<\/span>/);
+  assert.match(html, /data-noi18n>TikTok<\/span>/);
+  assert.ok(html.indexOf('src="' + pinImage) < html.indexOf('id="inspiration-item-pin"'));
+  assert.doesNotMatch(html, /inspiration-art|<iframe|<video|autoplay|<a\b/);
+});
+
+test('непроверенные HTTPS-картинки и неверный embed не становятся медиа', () => {
+  const sourceUrl = 'https://www.pinterest.com/pin/354658539408264219/';
+  for (const imageUrl of ['https://example.test/photo.jpg', 'https://i.pinimg.com.evil.test/564x/photo.jpg', 'https://science.nasa.gov@evil.test/photo.jpg', 'javascript:alert(1)']) {
+    const html = UI.render(ready({ items: [digestItem('unsafe', 'image', {
+      sourceUrl, imageUrl, mediaPolicy: 'iframe', embedUrl: 'https://assets.pinterest.com/ext/embed.html?id=140244975883750646',
+    })] }), t);
+    assert.doesNotMatch(html, /<img\b|inspiration-art|data-action="inspiration-play"/);
+    assert.match(html, /Предпросмотр недоступен/);
+  }
+});
+
+test('подборка скрыта до durable receipt и при ошибке доступен явный повтор', () => {
+  for (const digestPending of ['loading', 'error']) {
+    const html = UI.render(ready({ digestPending, digestDone: true }), t);
+    assert.doesNotMatch(html, /<article\b|data-action="inspiration-play"|data-action="inspiration-save"|На сегодня всё/);
+    if (digestPending === 'loading') {
+      assert.match(html, /aria-busy="true"/);
+      assert.match(html, /Готовлю твою подборку/);
+    } else {
+      assert.match(html, /role="alert"/);
+      assert.match(html, /data-action="inspiration-digest-retry"/);
+    }
+  }
+  assert.equal((UI.render(ready({ digestPending: '' }), t).match(/<article\b/g) || []).length, 3);
+});
+
+test('неподключённый поиск отличается от временного отказа настроенного сервиса', () => {
+  const unavailable = UI.render(ready({ discoveryAvailable: false }), t);
+  assert.match(unavailable, /Поиск новых находок сейчас не подключён/);
+  assert.match(unavailable, /подборка из каталога/);
+  for (const discoveryStatus of ['provider_error', 'provider_auth', 'provider_rate_limited', 'unavailable', 'storage_error']) {
+    const failed = UI.render(ready({ discoveryAvailable: true, discoveryStatus }), t);
+    assert.match(failed, /Новые находки пока не загрузились/);
+    assert.doesNotMatch(failed, /Поиск новых находок сейчас не подключён/);
+    assert.equal((failed.match(/<article\b/g) || []).length, 3, 'saved cards survive a discovery error');
+  }
+});
+
+test('новые UI-сообщения переведены на пять языков, личные ответы остаются без перевода', () => {
+  const locales = ['ru', 'en', 'de', 'uk', 'es'];
+  const keys = Object.keys(VisualCopy.COPY.ru);
+  for (const locale of locales) {
+    for (const key of keys) assert.ok(VisualCopy.copy(key, locale), locale + ': ' + key);
+    const html = UI.render(ready({ setupOpen: true, supplyLocale: locale,
+      profile: { ...configuredProfile(), visualTaste: 'Личный ответ & образ', videoReferences: [{ url: 'https://example.test/reference', title: 'Непереводимый заголовок' }] },
+    }), (key) => `base:${key}`);
+    assert.ok(html.includes(VisualCopy.copy('Твой визуальный вкус', locale)));
+    assert.match(html, />Личный ответ &amp; образ<\/textarea>/);
+    assert.match(html, /name="referenceTitle" value="Непереводимый заголовок"/);
+    assert.doesNotMatch(html, /base:Личный ответ|base:Непереводимый/);
+  }
 });
 
 test('редактор возвращает сохранённые ответы и честно сообщает об автосохранении', () => {

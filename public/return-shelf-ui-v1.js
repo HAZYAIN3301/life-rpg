@@ -4,14 +4,17 @@
  * autoplay, scrolling pagination, reward counters, popularity or randomization.
  */
 (function exposeReturnShelfUI(root, factory) {
-  const api = factory(typeof module === 'object' && module.exports
-    ? require('./inspiration-supply-ui-v1.js') : root.InspirationSupplyUIV1);
+  const commonJS = typeof module === 'object' && module.exports;
+  const api = factory(
+    commonJS ? require('./inspiration-supply-ui-v1.js') : root.InspirationSupplyUIV1,
+    commonJS ? require('./inspiration-media-v1.js') : root.InspirationMediaV1,
+    commonJS ? require('./inspiration-visual-copy-v1.js') : root.InspirationVisualCopyV1);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.ReturnShelfUIV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI(SupplyUI) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI(SupplyUI, Media, VisualCopy) {
   'use strict';
 
-  const VERSION = '2.2.0';
+  const VERSION = '2.3.0';
   const SECTIONS = Object.freeze(['today', 'saved']);
   const FORMATS = Object.freeze(['edit', 'video', 'image', 'quote', 'podcast']);
   const FORMAT_COPY = Object.freeze({
@@ -34,9 +37,21 @@
     try { return new URL(String(url)).hostname.replace(/^www\./, '').slice(0, 80); }
     catch { return ''; }
   }
-  function safeImage(url) {
-    try { const parsed = new URL(String(url)); return parsed.protocol === 'https:' ? parsed.href : ''; }
+  function safeImage(url, provider) {
+    const image = Media && Media.safeImage(url, provider);
+    if (image) return image;
+    try {
+      const parsed = new URL(String(url));
+      return parsed.protocol === 'https:' && parsed.hostname === 'science.nasa.gov'
+        && !parsed.username && !parsed.password && !parsed.port && !parsed.search && !parsed.hash
+        && /^\/wp-content\/uploads\/[\w/.-]+\.(?:jpe?g|png|webp)$/i.test(parsed.pathname) ? parsed.href : '';
+    }
     catch { return ''; }
+  }
+  function mediaSource(item) { return Media ? Media.parseSource(item.sourceUrl || item.url) : null; }
+  function providerLabel(item) {
+    const source = mediaSource(item);
+    return source ? (source.provider === 'tiktok' ? 'TikTok' : 'Pinterest') : String(item.provider || '');
   }
 
   function shellHead(t, actions = '') {
@@ -157,11 +172,18 @@
     const moreChips = suggestions.length > 6 ? `<details class="inspiration-more-topics"><summary>${tr(t, 'Ещё темы')} · ${suggestions.length - 6}</summary><div class="inspiration-choices">${suggestions.slice(6).map(chip).join('')}</div></details>` : '';
     const formatChoices = FORMATS.map((format) => `<label class="inspiration-format-choice${formats.includes(format) ? ' is-selected' : ''}"><input type="checkbox" name="format" value="${format}" ${formats.includes(format) ? 'checked' : ''}><span aria-hidden="true" data-format="${format}"></span><b>${tr(t, formatLabel(format))}</b></label>`).join('');
     const references = rows(profile.videoReferences, 10);
-    const referenceRow = (reference = {}) => `<div class="inspiration-reference-row" data-inspiration-reference-row>
-      <label class="inspiration-reference-url"><span>${tr(t, 'Ссылка на видео')}</span><input type="url" name="referenceUrl" value="${esc(reference.url)}" maxlength="1000" placeholder="${tr(t, 'TikTok, YouTube, Reels или другая видеоссылка')}" inputmode="url" autocomplete="url"></label>
+    const referenceRow = (reference = {}, index = 0) => {
+      const source = mediaSource(reference);
+      const image = safeImage(reference.imageUrl, source && source.provider);
+      const preview = source || image ? `<div class="inspiration-reference-preview${source ? ` is-${source.provider}` : ''}" data-inspiration-media="reference-${index}">${image ? `<img src="${esc(image)}" alt="${esc(reference.title)}" loading="lazy" referrerpolicy="no-referrer">` : ''}${source ? `<button type="button" class="btn ghost sm" data-action="inspiration-reference-preview" data-reference-index="${index}">${tr(t, 'Показать референс')}</button>` : ''}</div>` : '';
+      return `<div class="inspiration-reference-row" data-inspiration-reference-row>
+      ${preview}
+      <label class="inspiration-reference-url"><span>${tr(t, 'Ссылка на пин или видео')}</span><input type="url" name="referenceUrl" value="${esc(reference.url)}" maxlength="1000" placeholder="${tr(t, 'Pinterest, TikTok, YouTube…')}" inputmode="url" autocomplete="url"></label>
+      <label class="inspiration-reference-title"><span>${tr(t, 'Что изображено?')}</span><input name="referenceTitle" value="${esc(reference.title)}" maxlength="240" placeholder="${tr(t, 'Например: Человек-паук за работой')}" autocomplete="off"></label>
       <details class="inspiration-reference-why"${reference.why ? ' open' : ''}><summary>${tr(t, 'Почему цепляет?')} <span>${tr(t, 'необязательно')}</span></summary><label><span class="sr-only">${tr(t, 'Почему это мотивирует?')}</span><textarea name="referenceWhy" rows="2" maxlength="320" placeholder="${tr(t, 'Что именно здесь тебя цепляет?')}">${esc(reference.why)}</textarea></label></details>
-      <button type="button" class="inspiration-reference-remove" data-action="inspiration-reference-remove" aria-label="${tr(t, 'Удалить видео')}">✕</button>
+      <button type="button" class="inspiration-reference-remove" data-action="inspiration-reference-remove" aria-label="${tr(t, 'Удалить референс')}">✕</button>
     </div>`;
+    };
     const referenceRows = (references.length ? references : [{}]).map(referenceRow).join('');
     // Custom wording is an answer in its own right, not a disposable tag-entry
     // buffer. Restoring it makes the editor truthful on the second visit.
@@ -174,11 +196,16 @@
       <label class="inspiration-free"><span>${tr(t, 'Добавить свои темы')}</span><input name="customInterests" value="${esc(manual)}" maxlength="300" placeholder="${tr(t, 'Spider-Verse, Re:Zero, путешествия…')}" autocomplete="off"></label></fieldset>
       <fieldset><legend><b>2</b><span>${tr(t, 'Что показывать')}</span><small>${tr(t, 'Можно выбрать несколько форматов.')}</small></legend><div class="inspiration-format-choices">${formatChoices}</div>
       <details class="inspiration-setup-more"><summary>${tr(t, 'Что не показывать')}</summary><label class="inspiration-free"><span>${tr(t, 'Исключить темы')}</span><input name="blocked" value="${esc((profile.blocked || []).join(', '))}" maxlength="300" placeholder="${tr(t, 'Необязательно. Например: hustle, сравнение тел, политика.')}" autocomplete="off"></label></details></fieldset>
-      <fieldset class="inspiration-reference-fieldset"><legend><b>3</b><span>${tr(t, 'Видео, которые тебя мотивируют')}</span><small>${tr(t, 'Необязательно · до 10 ссылок.')}</small></legend>
-      <div class="inspiration-reference-head"><details class="inspiration-reference-storage"><summary>${tr(t, 'Как хранятся ссылки')}</summary><p>${tr(t, 'Видео не загружаются в Satoru. Сохраняются только ссылки и твои объяснения.')}</p></details><output data-inspiration-reference-count>${references.length} / 10</output></div>
+      <fieldset class="inspiration-reference-fieldset"><legend><b>3</b><span>${tr(t, 'Референсы: фото и эдиты')}</span><small>${tr(t, 'Необязательно · до 10 ссылок.')}</small></legend>
+      <p class="inspiration-reference-intro">${tr(t, 'Ссылки задают вкус. Новые находки подбираются отдельно; твои примеры не выдаются за открытия.')}</p>
+      <div class="inspiration-reference-head"><details class="inspiration-reference-storage"><summary>${tr(t, 'Как хранятся ссылки')}</summary><p>${tr(t, 'Фото и видео остаются у источника. В Satoru сохраняются ссылки, подписи и твои объяснения.')}</p></details><output data-inspiration-reference-count>${references.length} / 10</output></div>
       <div class="inspiration-reference-list" data-inspiration-reference-list>${referenceRows}</div>
-      <button type="button" class="btn ghost sm inspiration-reference-add" data-action="inspiration-reference-add" ${references.length >= 10 ? 'disabled' : ''}>+ ${tr(t, 'Добавить видео')}</button>
+      <button type="button" class="btn ghost sm inspiration-reference-add" data-action="inspiration-reference-add" ${references.length >= 10 ? 'disabled' : ''}>+ ${tr(t, 'Добавить референс')}</button>
       <template id="inspiration-reference-template">${referenceRow({})}</template></fieldset>
+      <fieldset class="inspiration-taste-fieldset"><legend><b>4</b><span>${tr(t, 'Твой визуальный вкус')}</span><small>${tr(t, 'Какие образы, настроение, цвет, монтаж тебе близки?')}</small></legend>
+      <label class="inspiration-free"><span class="sr-only">${tr(t, 'Твой визуальный вкус')}</span><textarea name="visualTaste" rows="3" maxlength="600" placeholder="${tr(t, 'Например: комиксы о повседневности, зал среди зелени, горы и приключенческие коллажи.')}">${esc(profile.visualTaste)}</textarea></label>
+      <label class="inspiration-discovery-choice"><input type="checkbox" name="discoveryEnabled" ${profile.discoveryEnabled === true ? 'checked' : ''}><span><b>${tr(t, 'Искать новые пины и эдиты по моему вкусу')}</b><small>${tr(t, 'Поисковому сервису передаются только описанные здесь темы и стиль. До трёх находок на день.')}</small></span></label>
+      ${renderDiscoveryStatus(vm, t)}</fieldset>
       <p class="inspiration-privacy">${tr(t, 'Интересы принадлежат твоему аккаунту. Satoru использует их только для конечной подборки и не публикует.')}</p>
       <p class="return-shelf-form-status" data-shelf-form-status role="status" aria-live="polite">${tr(t, 'Черновик сохраняется автоматически')}</p>
       <div class="inspiration-setup-actions"><button type="button" class="btn ghost" data-action="inspiration-setup-import-satoru">${tr(t, 'Добавить из Satoru')}</button><button type="submit" class="btn">${tr(t, submitLabel)}</button></div>
@@ -186,14 +213,24 @@
   }
 
   function mediaControl(item, t) {
-    if (item.mediaPolicy === 'iframe' && item.embedUrl) return `<button type="button" class="inspiration-play" data-action="inspiration-play" data-id="${esc(item.id)}" aria-label="${tr(t, formatAction(item.format))}: ${esc(item.title)}"><span aria-hidden="true">▶</span>${tr(t, formatAction(item.format))}</button>`;
+    const source = mediaSource(item);
+    if (source && item.mediaPolicy === 'iframe' && Media.isAllowedEmbed(item.embedUrl, source.url)) {
+      const action = source.provider === 'tiktok' ? 'Смотреть эдит' : 'Рассмотреть';
+      return `<button type="button" class="inspiration-play" data-action="inspiration-play" data-id="${esc(item.id)}" aria-label="${tr(t, action)}: ${esc(item.title)}"><span aria-hidden="true">${source.provider === 'tiktok' ? '▶' : '↗'}</span>${tr(t, action)}</button>`;
+    }
+    if (!source && item.mediaPolicy === 'iframe' && item.embedUrl) return `<button type="button" class="inspiration-play" data-action="inspiration-play" data-id="${esc(item.id)}" aria-label="${tr(t, formatAction(item.format))}: ${esc(item.title)}"><span aria-hidden="true">▶</span>${tr(t, formatAction(item.format))}</button>`;
     if (item.mediaPolicy === 'link' && (item.sourceUrl || item.url)) return `<button type="button" class="inspiration-play" data-action="inspiration-open-source" data-id="${esc(item.id)}"><span aria-hidden="true">↗</span>${tr(t, item.format === 'podcast' ? 'Открыть выпуск' : 'Открыть источник')}</button>`;
     return '';
   }
 
   function renderVisual(item, t) {
-    const imageUrl = item.format === 'image' ? safeImage(item.imageUrl) : '';
+    const source = mediaSource(item);
+    const imageUrl = safeImage(item.imageUrl, source && source.provider);
     const image = imageUrl ? `<img class="inspiration-visual-image" src="${esc(imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
+    if (source || image) {
+      return `<div class="inspiration-media-card"><div class="inspiration-visual is-media${source ? ` is-${source.provider}` : ''}${image ? ' has-image' : ' has-no-image'}" data-inspiration-media="${esc(item.id)}">${image}${image ? '' : `<p class="inspiration-media-unavailable">${tr(t, 'Предпросмотр недоступен. Открой материал из источника.')}</p>`}${mediaControl(item, t)}</div>
+      <div class="inspiration-media-caption"><span class="inspiration-media-provider" data-noi18n>${esc(providerLabel(item))}</span><h3 id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</h3>${item.body ? `<p data-noi18n>${esc(item.body)}</p>` : ''}</div></div>`;
+    }
     const quote = item.format === 'quote' ? `<blockquote id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</blockquote>` : '';
     const body = item.format === 'quote' ? `<p class="inspiration-attribution" data-noi18n>${esc(item.body)}</p>` : `<div class="inspiration-visual-copy"><h3 id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</h3><p data-noi18n>${esc(item.body)}</p></div>`;
     return `<div class="inspiration-visual is-${esc(item.visual || item.format || 'link')}" data-inspiration-media="${esc(item.id)}">${image}<div class="inspiration-art" aria-hidden="true"><i></i><i></i><b></b></div>${quote}${body}${mediaControl(item, t)}</div>`;
@@ -209,16 +246,17 @@
       <div class="inspiration-item-meta"><span>${tr(t, formatLabel(item.format))}${item.durationLabel ? ` · ${esc(item.durationLabel)}` : ''}</span><span>${index + 1} ${tr(t, 'из')} ${Number(vm.digestTotal) || 3}</span></div>
       ${renderVisual(item, t)}
       <div class="inspiration-why"><span>${tr(t, 'Почему здесь')}</span><b data-noi18n>${esc(reason)}</b>${rights}</div>
+      <div class="inspiration-style-feedback" role="group" aria-label="${tr(t, 'Настроить подборку')}">
+        <button type="button" class="inspiration-menu-action${verdict === 'more' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="more" data-id="${esc(item.id)}" aria-pressed="${verdict === 'more'}">${tr(t, 'Понравился стиль')}</button>
+        <button type="button" class="inspiration-menu-action${verdict === 'not_for_me' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="not_for_me" data-id="${esc(item.id)}" aria-pressed="${verdict === 'not_for_me'}">${tr(t, 'Не мой стиль')}</button>
+      </div>
       <div class="inspiration-item-actions">
         <button type="button" class="btn${done ? ' ghost' : ''}" data-action="inspiration-done" data-id="${esc(item.id)}" ${done || vm.profileBusy ? 'disabled' : ''}>${done ? tr(t, 'Просмотрено ✓') : tr(t, 'Дальше')}</button>
         <button type="button" class="inspiration-save" data-action="inspiration-save" data-id="${esc(item.id)}" ${saved || vm.profileBusy ? 'disabled' : ''}>${saved ? tr(t, 'Сохранено') : tr(t, 'Сохранить')}</button>
-        <details class="inspiration-item-more"><summary aria-label="${tr(t, 'Ещё действия')}">•••</summary><div role="group" aria-label="${tr(t, 'Настроить подборку')}">
-          <button type="button" class="inspiration-menu-action${verdict === 'more' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="more" data-id="${esc(item.id)}" aria-pressed="${verdict === 'more'}">${tr(t, 'Понравилось')}</button>
-          <button type="button" class="inspiration-menu-action${verdict === 'not_for_me' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="not_for_me" data-id="${esc(item.id)}" aria-pressed="${verdict === 'not_for_me'}">${tr(t, 'Не понравилось')}</button>${sourceAction}
-        </div></details>
+        ${sourceAction ? `<details class="inspiration-item-more"><summary aria-label="${tr(t, 'Ещё действия')}">•••</summary><div>${sourceAction}</div></details>` : ''}
       </div>
       ${editingFeedback ? `<section class="inspiration-feedback-reason" aria-label="${tr(t, 'Почему? Необязательно')}">
-        <header><span class="is-${esc(draft.verdict)}">${tr(t, draft.verdict === 'more' ? 'Понравилось' : 'Не понравилось')}</span><button type="button" data-action="inspiration-feedback-cancel" aria-label="${tr(t, 'Отмена')}">✕</button></header>
+        <header><span class="is-${esc(draft.verdict)}">${tr(t, draft.verdict === 'more' ? 'Понравился стиль' : 'Не мой стиль')}</span><button type="button" data-action="inspiration-feedback-cancel" aria-label="${tr(t, 'Отмена')}">✕</button></header>
         <label><b>${tr(t, 'Почему? Необязательно')}</b><small>${tr(t, 'Объясни, что именно сработало или не сработало — так следующие подборки станут точнее.')}</small>
         <textarea rows="3" maxlength="320" data-inspiration-feedback-reason placeholder="${tr(t, 'Например: нравится темп, музыка и ощущение большого пути')}">${esc(draft.reason)}</textarea></label>
         <div><button type="button" class="btn ghost sm" data-action="inspiration-feedback-skip" ${vm.profileBusy ? 'disabled' : ''} data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Без объяснения')}</button><button type="button" class="btn sm" data-action="inspiration-feedback-save" ${vm.profileBusy ? 'disabled' : ''} data-id="${esc(item.id)}" data-verdict="${esc(draft.verdict)}">${tr(t, 'Сохранить ответ')}</button></div>
@@ -226,20 +264,35 @@
     </article>`;
   }
 
+  function renderDiscoveryStatus(vm, t) {
+    const unavailable = vm.discoveryAvailable === false;
+    const failed = ['error', 'failed', 'timeout', 'rate_limited', 'unavailable', 'provider_error', 'provider_auth', 'provider_rate_limited', 'storage_error'].includes(vm.discoveryStatus);
+    const message = unavailable ? 'Поиск новых находок сейчас не подключён. Доступна подборка из каталога.'
+      : failed ? 'Новые находки пока не загрузились. Сохранённая подборка остаётся на месте.'
+      : vm.discoveryStatus === 'needs_taste' ? 'Добавь описание вкуса или референсы, чтобы поиск стал точнее.'
+      : vm.discoveryStatus === 'daily_limit' ? 'На сегодня поиск завершён. Новые находки появятся в другой день.' : '';
+    return message ? `<p class="inspiration-discovery-status" role="status">${tr(t, message)}</p>` : '';
+  }
+
   function renderDaily(vm, t) {
     const items = rows(vm.items, 3);
     const interests = rows(vm.profile && vm.profile.interests, 8);
     const summary = `<div class="inspiration-profile-summary"><div>${interests.slice(0, 5).map((item) => `<span data-noi18n>${esc(item.label)}</span>`).join('')}${interests.length > 5 ? `<span>+${interests.length - 5}</span>` : ''}</div><button type="button" class="btn ghost sm" data-action="inspiration-setup-edit">${tr(t, 'Настроить')}</button></div>`;
+    const discovery = renderDiscoveryStatus(vm, t);
+    // The list remains private until the settings receipt has fixed today's
+    // selection. A failed save must never expose a provisional set of cards.
+    if (vm.digestPending === 'loading') return `${summary}${discovery}<div class="card inspiration-state inspiration-digest-pending" role="status" aria-live="polite" aria-busy="true"><h3>${tr(t, 'Готовлю твою подборку…')}</h3></div>`;
+    if (vm.digestPending === 'error') return `${summary}${discovery}<div class="card inspiration-state is-error" role="alert"><h3>${tr(t, 'Не удалось подготовить подборку. Попробуй ещё раз.')}</h3><button type="button" class="btn" data-action="inspiration-digest-retry" ${vm.profileBusy ? 'disabled' : ''}>${tr(t, 'Повторить загрузку подборки')}</button></div>`;
     const noticeKey = SupplyUI ? SupplyUI.notice(vm.supplyReport, vm.unavailableIds) : '';
     const notice = noticeKey ? `<p class="muted" role="status" data-noi18n>${supplyCopy(noticeKey, vm)}</p>` : '';
     if (!items.length) {
       const report = vm.supplyReport;
       const title = report ? supplyCopy(report.emptyReason || 'no_matching_material', vm) : tr(t, 'Для этих интересов пока нет безопасных материалов');
       const detail = report ? supplyCopy('empty_detail', vm) : tr(t, 'Измени форматы или добавь своё. Мы не подставляем случайные ссылки только ради заполнения экрана.');
-      return `${summary}${notice}<div class="card inspiration-state" role="status"><h3 data-noi18n>${title}</h3><p data-noi18n>${detail}</p><button type="button" class="btn" data-action="inspiration-setup-edit">${tr(t, 'Изменить интересы')}</button></div>`;
+      return `${summary}${discovery}${notice}<div class="card inspiration-state" role="status"><h3 data-noi18n>${title}</h3><p data-noi18n>${detail}</p><button type="button" class="btn" data-action="inspiration-setup-edit">${tr(t, 'Изменить интересы')}</button></div>`;
     }
     const terminal = vm.digestDone ? `<section class="card inspiration-terminal" role="status"><span aria-hidden="true">✓</span><div><h3>${tr(t, 'На сегодня всё')}</h3><p>${tr(t, 'Подборка закончилась. Никакого «ещё одного». Можно вернуться к своему дню.')}</p></div><button type="button" class="btn" data-action="goto-today">${tr(t, 'К делам')}</button></section>` : '';
-    return `${summary}${notice}<div class="inspiration-digest${vm.animateEntry ? ' should-enter' : ''}" aria-label="${tr(t, 'Подборка на сегодня')}">${items.map((item, index) => renderDigestItem(item, index, vm, t)).join('')}</div>${terminal}`;
+    return `${summary}${discovery}${notice}<div class="inspiration-digest${vm.animateEntry ? ' should-enter' : ''}" aria-label="${tr(t, 'Подборка на сегодня')}">${items.map((item, index) => renderDigestItem(item, index, vm, t)).join('')}</div>${terminal}`;
   }
 
   function renderQuickAdd(vm, t) {
@@ -270,6 +323,8 @@
   }
 
   function renderReady(vm, t) {
+    const baseTranslate = t;
+    t = (key) => (VisualCopy && VisualCopy.copy(key, vm.supplyLocale)) || (typeof baseTranslate === 'function' ? baseTranslate(key) : key);
     const configured = !!(vm.profile && vm.profile.configured);
     const setup = !!vm.setupOpen;
     const actions = configured ? `<button type="button" class="btn ghost inspiration-settings-button" data-action="inspiration-setup-edit" aria-label="${tr(t, 'Настроить интересы')}">${tr(t, 'Интересы')}</button>` : '';
