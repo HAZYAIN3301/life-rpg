@@ -5536,15 +5536,22 @@ const Store = {
           });
           if (staleWrite()) return false;
           if (response.status === 401) { handleAccountSessionExpired(); return false; }
-          // Устаревшая база — не отказ. Запись с другого устройства значит только то, что
-          // пару надо пересобрать на свежей серверной правде и попробовать ещё раз. Послать
-          // старый payload повторно значит затереть чужую запись, поэтому пересборка.
-          if (response.status === 409
+          // Устаревшая база — не отказ: перечитать сервер и собрать пару заново, ОДИН раз.
+          // Записываемая половина — от человека, попутная — свежая серверная: взять её из
+          // живого State значило бы положить устаревшую копию поверх свежей при СВЕЖЕЙ базе,
+          // и сверка версий этого бы не заметила. Второй конфликт остаётся конфликтом:
+          // base: 'server' здесь больше не шлём — он мог затереть чужую одновременную правку
+          // (так же решено для commitmentDataCommit, COMMITMENT-TASK-LINKS-V261.md).
+          const freshServer = response.status === 409
             && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
-            && await refreshCommitmentWriteBase({ writeEpoch, accountId })) {
+            ? await refreshCommitmentWriteBase({ writeEpoch, accountId }) : null;
+          if (staleWrite()) return false;
+          if (freshServer) {
             const freshBase = commitmentWriteBase();
-            const freshPair = commitmentWriteData(name, value);
-            const fresh = freshBase && freshPair ? { base: freshBase, data: freshPair } : null;
+            const freshPair = name === 'settings'
+              ? { settings: structuredClone(value), tasks: structuredClone(freshServer.tasks) }
+              : { settings: structuredClone(freshServer.settings), tasks: structuredClone(value) };
+            const fresh = freshBase ? { base: freshBase, data: freshPair } : null;
             if (fresh && validator.validateCommitPayload(fresh)) {
               pair = freshPair;
               sentBase = freshBase;
@@ -5553,27 +5560,12 @@ const Store = {
               });
               if (staleWrite()) return false;
               if (response.status === 401) { handleAccountSessionExpired(); return false; }
-            }
-          }
-          // Примирение, как в commitmentDataCommit: если и пересборка на свежей базе
-          // получила отказ, базу строит сам сервер. Иначе аккаунт заперт навсегда.
-          const freshServer = response.status === 409
-            && await commitmentBoundaryCode(response) === 'commitment_revision_conflict'
-            ? await refreshCommitmentWriteBase({ writeEpoch, accountId }) : null;
-          if (freshServer) {
-            // Записываемая половина — от человека, попутная — свежая серверная.
-            const freshPair = name === 'settings'
-              ? { settings: structuredClone(value), tasks: structuredClone(freshServer.tasks) }
-              : { settings: structuredClone(freshServer.settings), tasks: structuredClone(value) };
-            if (validateSettingsPayload(freshPair.settings) && validateTasksPayload(freshPair.tasks)) {
-              pair = freshPair; sentBase = null;
-              response = await fetch('/api/commitments/commit', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ base: 'server', data: freshPair }),
-              });
-              if (staleWrite()) return false;
-              if (response.status === 401) { handleAccountSessionExpired(); return false; }
-              if (response.ok) console.warn('[конфликт] примирение: запись прошла на серверной базе');
+              // Попутная половина теперь серверная — живое состояние обязано ей соответствовать,
+              // иначе следующая запись снова понесёт устаревшую копию.
+              if (response.ok) {
+                if (name === 'settings') State.tasks = structuredClone(freshServer.tasks);
+                else State.settings = structuredClone(freshServer.settings);
+              }
             }
           }
           if (staleWrite()) return false;
@@ -16383,8 +16375,12 @@ function chatUserContext(query = '') {
   // между обновлениями, и без этой оговорки вчерашняя выжимка спорила бы с сегодняшним фактом.
   const pText = ensureProfile().text.trim();
   const pBlock = pText ? `\nПРОФИЛЬ (память между сессиями; если расходится с данными ниже — верь данным):\n${pText}\n` : '';
+  // «Кем ты хочешь стать?» — флагманский вопрос привычек. Человек ответил на него о себе,
+  // а секретарь этого не знал: поле читал только собственный заголовок экрана привычек.
+  const identity = String((State.settings && State.settings.identityGoal) || '').trim().slice(0, 200);
+  const idBlock = identity ? `\nКЕМ ЧЕЛОВЕК ХОЧЕТ СТАТЬ (его собственные слова; опирайся на них в совете, не пересказывай):\n${identity}\n` : '';
   return `КОНТЕКСТ ЮЗЕРА: уровень персонажа ${lvl}; сферы: ${spheres || '(нет)'}; импорт опыта ${noImports ? 'НЕ сделан' : 'сделан'}.
-${pBlock}${stateNowContext()}${assistantFileContext()}
+${pBlock}${idBlock}${stateNowContext()}${assistantFileContext()}
 
 ${assistantObjectContext(query)}
 
@@ -33119,7 +33115,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v263';
+const PWA_CACHE_VERSION = 'satoru-v264';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

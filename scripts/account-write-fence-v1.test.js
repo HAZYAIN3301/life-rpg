@@ -204,3 +204,32 @@ test('примирение снимает только сверку версий
   assert.match(after, /base = reconcile \? \{ settings: actual\.settings, tasks: actual\.tasks \}/,
     'базой становится то, что сервер читает сам, а не то, что прислал клиент');
 });
+
+test('🔴 клиент не шлёт base: server и не везёт устаревшую попутную половину', () => {
+  // Примирение на клиенте затирало чужую одновременную правку: сверка версий пропускалась.
+  // Но убрать его мало. Повтор после конфликта собирал пару через commitmentWriteData, а та
+  // берёт попутную половину из ЖИВОГО State — при свежей базе сверка проходила, и устаревший
+  // список задач ложился поверх свежего. Так фоновая запись настроек с одного устройства
+  // стирала квест, только что созданный на другом (перепроверка 19.09).
+  const bodies = APP.match(/JSON\.stringify\(\{\s*base:\s*'server'/g) || [];
+  assert.equal(bodies.length, 0, 'клиент не должен просить сервер пропустить сверку версий');
+  const at = APP.indexOf('const freshServer = response.status === 409');
+  assert.notEqual(at, -1, 'повтор после конфликта должен перечитать сервер');
+  const retry = APP.slice(at, at + 1800);
+  assert.match(retry, /settings: structuredClone\(value\), tasks: structuredClone\(freshServer\.tasks\)/,
+    'при записи настроек попутные задачи берутся с сервера, а не из State');
+  assert.match(retry, /settings: structuredClone\(freshServer\.settings\), tasks: structuredClone\(value\)/,
+    'при записи задач попутные настройки берутся с сервера');
+  assert.match(retry, /\{ base: freshBase, data: freshPair \}/, 'база настоящая — сверка версий остаётся');
+  assert.doesNotMatch(APP.slice(at, at + 4000), /commitmentWriteData\(name, value\)/,
+    'в повторе нельзя собирать пару из живого State');
+});
+
+test('ответ «кем ты хочешь стать» доходит до секретаря', () => {
+  // Правило связности: факт читается везде, где меняет решение. Тень советует человеку —
+  // значит должна знать, кем он решил стать, а не только что было в его дне.
+  const at = APP.indexOf('function chatUserContext');
+  const body = APP.slice(at, APP.indexOf('\nfunction ', at + 10));
+  assert.match(body, /State\.settings\.identityGoal/, 'контекст чата читает identityGoal');
+  assert.match(body, /\$\{idBlock\}/, 'и кладёт его в промпт');
+});
