@@ -26034,6 +26034,7 @@ async function enrichInspirationVideoReferences(profile, { signal, active = () =
 function openInspirationSetup(mode = 'edit', form = null) {
   const P = inspirationProfileEngine(); if (!P) return;
   cancelInspirationWork();
+  State._inspirationSetupAttempt = null;
   let draft = form ? inspirationDraftFromSetupForm(form)
     : (inspirationStoredDraft() || P.normalize(State.settings?.inspiration || P.emptyProfile()));
   if (!draft) draft = P.emptyProfile();
@@ -26047,6 +26048,7 @@ function openInspirationSetup(mode = 'edit', form = null) {
 }
 async function closeInspirationSetup(form = document.getElementById('inspiration-setup-form')) {
   cancelInspirationWork();
+  State._inspirationSetupAttempt = null;
   const saved = await flushInspirationSetupDraft(form);
   if (!saved) return;
   State._inspirationDraft = null; State._inspirationSetupOpen = false; State._inspirationImport = null; State._inspirationImportLinksOpen = false; State._inspirationImportGuideOpen = false; State._shelfError = '';
@@ -26107,6 +26109,7 @@ async function persistInspirationProfile(rawProfile, { closeSetup = false, focus
 async function saveInspirationSetup(form) {
   const P = inspirationProfileEngine(); if (!P || State._shelfBusy || State._inspirationSetupResolving) return;
   const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  const submittedBase = P.normalize(State.settings?.inspiration);
   clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
   let draft = inspirationDraftFromSetupForm(form);
   if (!draft || !draft.interests.length) { shelfFormStatus('Выбери хотя бы один интерес или добавь свой.', true); return; }
@@ -26114,27 +26117,38 @@ async function saveInspirationSetup(form) {
   cancelInspirationWork();
   const generation = _inspirationSetupGeneration, controller = new AbortController();
   _inspirationMetadataWork = controller;
-  const active = () => !controller.signal.aborted && generation === _inspirationSetupGeneration
+  const currentScope = () => !controller.signal.aborted && generation === _inspirationSetupGeneration
     && accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch;
+  const active = () => currentScope() && inspirationProfileEqual(P.normalize(State.settings?.inspiration), submittedBase);
+  const input = P.configure(draft), prior = State._inspirationSetupAttempt;
+  const retry = prior && prior.accountId === accountId && prior.writeEpoch === writeEpoch
+    && inspirationProfileEqual(prior.base, submittedBase)
+    && (inspirationProfileEqual(input, prior.input) || inspirationProfileEqual(input, prior.profile));
   State._inspirationSetupResolving = true; State._inspirationDraft = draft; rememberInspirationLocalDraft(draft);
   const controls = Array.from(form.querySelectorAll?.('button,input,select,textarea') || []);
   const disabled = controls.map((node) => node.disabled); controls.forEach((node) => { node.disabled = true; });
   try {
-    if (draft.videoReferences.length) {
+    if (retry) draft = prior.profile;
+    else if (draft.videoReferences.length) {
       shelfFormStatus(inspirationVisualCopy('Читаю подписи и изображения источников…'));
       draft = await enrichInspirationVideoReferences(draft, { signal: controller.signal, active });
     }
-    if (!active() || !draft) return;
+    if (!active() || !draft) {
+      if (currentScope()) State._shelfError = inspirationSupplyCopy('save_error');
+      return;
+    }
     State._inspirationDraft = draft; rememberInspirationLocalDraft(draft);
     const configured = P.configure(draft);
     if (!inspirationSupply(configured).ok) { shelfFormStatus(inspirationSupplyCopy('module_error'), true); return; }
+    State._inspirationSetupAttempt = { accountId, writeEpoch, base: submittedBase, input, profile: configured };
     shelfFormStatus('Сохраняю…');
     if (await persistInspirationProfile(configured, { closeSetup: true, guard: active,
       focus: '.inspiration-profile-summary', toastKey: 'Подборка настроена' })) {
-      State._inspirationDailyAttempt = null; sfx('confirm'); track('inspiration:configured');
+      State._inspirationDailyAttempt = null; State._inspirationSetupAttempt = null;
+      sfx('confirm'); track('inspiration:configured');
     }
   } finally {
-    if (active()) {
+    if (currentScope()) {
       State._inspirationSetupResolving = false; _inspirationMetadataWork = null;
       controls.forEach((node, index) => { node.disabled = disabled[index]; });
       render();
@@ -32338,6 +32352,7 @@ function flushSettingsForm() { return SettingsAutosave.flush(); }
 function clearAllData() {
   cancelInspirationWork();
   State._inspirationDailyAttempt = null; State._inspirationPosterAttempts = null;
+  State._inspirationSetupAttempt = null;
   State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = '';
   _morningOutcome?.dispose(); _morningOutcome = null; _morningOutcomeScope = null;
   _secretaryNextRuntime?.dispose(); _secretaryNextRuntime = null; _secretaryNextAccount = null; _secretaryOfferSlotFree = false;

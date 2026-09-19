@@ -521,3 +521,35 @@ test('insufficient discovery taste gets a truthful catalog fallback rather than 
   assert.equal(h.State._inspirationDiscoveryStatus, 'needs_taste'); assert.equal(h.State._inspirationDigestPending, '');
   assert.equal(h.ctx.inspirationDailyReceipt(), true);
 });
+for (const change of ['taste', 'optout', 'shown']) test(`setup enrichment cannot overwrite newer persisted ${change}`, async () => {
+  const h = harness(); let release;
+  h.State.settings.inspiration.discoveryEnabled = true;
+  h.ctx.enrichInspirationVideoReferences = draft => new Promise(resolve => { release = () => resolve(draft); });
+  const draft = { ...profile(), discoveryEnabled: true, videoReferences: [{ url: 'https://www.pinterest.com/pin/974818281863152085/' }] };
+  h.State._inspirationSetupOpen = true;
+  const action = h.ctx.saveInspirationSetup(draft);
+  if (change === 'taste') h.State.settings.inspiration.visualTaste = 'Newer style';
+  if (change === 'optout') h.State.settings.inspiration.discoveryEnabled = false;
+  if (change === 'shown') h.State.settings.inspiration.shownHistory.push({ id: 'new-receipt', day: DAY });
+  const current = clone(h.State.settings);
+  release(); await action;
+  assert.equal(h.requests.length, 0); assert.deepEqual(h.State.settings, current); assert.deepEqual(h.events, []);
+  assert.equal(h.State._inspirationSetupResolving, false); assert.ok(h.State._inspirationDraft);
+});
+test('setup lost response retries the exact enriched profile without refreshing metadataAt', async () => {
+  const h = harness({ modes: ['lost-reply'] }); let resolutions = 0;
+  h.ctx.enrichInspirationVideoReferences = async draft => {
+    resolutions++;
+    return Profile.normalize({ ...draft, videoReferences: draft.videoReferences.map(reference => ({ ...reference,
+      title: 'Official caption', metadataAt: `2026-09-11T12:00:0${resolutions}.000Z` })) });
+  };
+  const draft = { ...profile(), videoReferences: [{ url: 'https://www.pinterest.com/pin/974818281863152085/' }] };
+  h.State._inspirationSetupOpen = true;
+  await h.ctx.saveInspirationSetup(draft);
+  assert.equal(h.State._inspirationSetupOpen, true); assert.equal(resolutions, 1); assert.equal(h.events.length, 0);
+  const sent = clone(h.requests[0].payload);
+  await h.ctx.saveInspirationSetup(draft);
+  assert.equal(resolutions, 1); assert.deepEqual(h.requests[1].payload, sent);
+  assert.equal(h.State._inspirationSetupOpen, false); assert.equal(h.State._inspirationSetupResolving, false);
+  assert.equal(h.State._inspirationSetupAttempt, null); assert.deepEqual(h.events, ['inspiration:configured']);
+});
