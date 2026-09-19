@@ -16,21 +16,30 @@
       const active = current; if (!active) return;
       current = null; cancel(active.timer); window.removeEventListener('message', active.listener);
       window.removeEventListener('keydown', active.keydown);
-      active.frame.removeAttribute('src'); active.layer.remove(); active.host.classList.remove('has-player');
+      active.frame.removeAttribute('src'); active.layer.close?.(); active.layer.remove(); active.host.classList.remove('has-player');
       status(active.host, message);
       if (restoreFocus && active.opener?.isConnected) active.opener.focus();
     }
     function open({ host, item, opener, copy = (key) => key, allowLegacy = () => false } = {}) {
       if (!host || !item || item.supplyUnavailable) return false;
       const source = Media?.parseSource(item.sourceUrl || item.url), url = item.embedUrl;
-      if (source ? !Media.isAllowedEmbed(url, source) : !allowLegacy(url)) return false;
+      const imageUrl = source?.provider === 'pinterest' && item.mediaType === 'image' && Media.safeImage(item.imageUrl, 'pinterest');
+      if (!imageUrl && (source ? !Media.isAllowedEmbed(url, source) : !allowLegacy(url))) return false;
       close({ restoreFocus: false });
-      const layer = document.createElement('div'), frame = document.createElement('iframe'), button = document.createElement('button');
-      layer.className = 'inspiration-embed' + (source ? ` is-${source.provider}` : '');
-      frame.title = item.title || copy('Показать референс'); frame.loading = 'eager';
-      frame.referrerPolicy = 'strict-origin-when-cross-origin';
-      frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
-      frame.setAttribute('allow', 'fullscreen; picture-in-picture'); frame.setAttribute('allowfullscreen', '');
+      const layer = document.createElement(imageUrl ? 'dialog' : 'div');
+      const frame = document.createElement(imageUrl ? 'img' : 'iframe'), button = document.createElement('button');
+      layer.className = 'inspiration-embed' + (source ? ` is-${source.provider}` : '') + (imageUrl ? ' is-image-viewer' : '');
+      if (imageUrl) {
+        layer.setAttribute('aria-label', item.title || copy('Показать референс'));
+        layer.setAttribute('aria-modal', 'true');
+        frame.className = 'inspiration-viewer-image'; frame.alt = item.title || ''; frame.decoding = 'async';
+        layer.addEventListener('cancel', (event) => { event.preventDefault(); close(); });
+      } else {
+        frame.title = item.title || copy('Показать референс'); frame.loading = 'eager';
+        frame.referrerPolicy = 'strict-origin-when-cross-origin';
+        frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation');
+        frame.setAttribute('allow', 'fullscreen; picture-in-picture'); frame.setAttribute('allowfullscreen', '');
+      }
       button.type = 'button'; button.setAttribute('data-action', 'inspiration-media-close');
       button.setAttribute('aria-label', copy('Закрыть просмотр')); button.textContent = '✕';
       button.addEventListener('click', () => close());
@@ -51,9 +60,11 @@
       });
       current = active; window.addEventListener('message', active.listener);
       window.addEventListener('keydown', active.keydown);
-      layer.appendChild(frame); layer.appendChild(button); host.appendChild(layer); host.classList.add('has-player');
+      layer.appendChild(frame); layer.appendChild(button); (imageUrl ? document.body : host).appendChild(layer); host.classList.add('has-player');
       status(host, copy('Загрузка из источника…')); active.timer = later(fail, timeoutMs);
-      frame.src = url; button.focus(); return true;
+      frame.src = imageUrl || url;
+      if (imageUrl) { if (typeof layer.showModal === 'function') layer.showModal(); else layer.setAttribute('open', ''); }
+      button.focus(); return true;
     }
     function sync() { if (current && !current.host.isConnected) close({ restoreFocus: false }); }
     return Object.freeze({ open, close, sync });

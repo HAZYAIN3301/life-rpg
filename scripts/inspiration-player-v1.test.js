@@ -17,25 +17,27 @@ class Element {
   querySelector(selector) { return this.children.find(child => selector === '[data-media-status]' && Object.hasOwn(child.attributes, 'data-media-status')) || null; }
   remove() { this.isConnected = false; if (this.parent) this.parent.children = this.parent.children.filter(child => child !== this); }
   focus() { this.focused = true; }
+  showModal() { this.modal = true; }
+  close() { this.modal = false; }
 }
 const TIKTOK = 'https://www.tiktok.com/@example/video/7647936071673629973';
 function harness() {
   const listeners = {}, timers = new Map(); let timerId = 0;
   const window = { addEventListener(name, handler) { (listeners[name] ||= new Set()).add(handler); },
     removeEventListener(name, handler) { listeners[name]?.delete(handler); } };
-  const document = { createElement: tag => new Element(tag) };
+  const document = { createElement: tag => new Element(tag), body: new Element('body') };
   const controller = Player.createController({ document, window,
     setTimeout: callback => { timers.set(++timerId, callback); return timerId; }, clearTimeout: id => timers.delete(id) });
   const host = new Element('div'), opener = new Element('button');
   const item = { title: 'An edit', sourceUrl: TIKTOK, embedUrl: Media.buildEmbed(TIKTOK) };
   function open(options = {}) { return controller.open({ host, opener, item, ...options }); }
-  function layer() { return host.children.find(node => node.className?.startsWith('inspiration-embed')); }
+  function layer() { return host.children.concat(document.body.children).find(node => node.className?.startsWith('inspiration-embed')); }
   function event(type, value, extra = {}) {
     const message = { origin: Media.TIKTOK_ORIGIN, source: layer()?.children[0].contentWindow,
       data: { 'x-tiktok-player': true, type, value }, ...extra };
     for (const listener of [...(listeners.message || [])]) listener(message);
   }
-  return { controller, host, opener, item, open, layer, event, timers, listeners };
+  return { controller, host, opener, item, open, layer, event, timers, listeners, body: document.body };
 }
 test('viewer creates no frame until explicit open, uses exact safe params and focuses close', () => {
   const h = harness(); assert.equal(h.layer(), undefined);
@@ -95,4 +97,34 @@ test('Pinterest stays explicit and accepts only the selected single pin', () => 
   assert.match(h.layer().className, /is-pinterest/); assert.equal(h.timers.size, 1);
   h.layer().children[0].listeners.load(); assert.equal(h.timers.size, 0);
   h.controller.close(); assert.equal(h.layer(), undefined);
+});
+const IMAGE = 'https://i.pinimg.com/564x/b3/6e/78/b36e78c729e4291048afa0720c13428e.jpg';
+function imageItem(mediaType = 'image', imageUrl = IMAGE) {
+  const sourceUrl = 'https://www.pinterest.com/pin/974818281863152085/';
+  return { sourceUrl, mediaType, imageUrl, embedUrl: Media.buildEmbed(sourceUrl), title: 'A quiet room' };
+}
+test('verified static Pinterest opens a larger body dialog image with no provider iframe', () => {
+  const h = harness(); h.open({ item: imageItem() });
+  const dialog = h.layer(), [img, close] = dialog.children;
+  assert.equal(dialog.tag, 'dialog'); assert.equal(dialog.parent, h.body); assert.equal(dialog.modal, true);
+  assert.match(dialog.className, /is-image-viewer/); assert.equal(img.tag, 'img'); assert.equal(img.src, IMAGE);
+  assert.equal(img.alt, 'A quiet room'); assert.equal(close.focused, true);
+  img.listeners.load(); assert.equal(h.timers.size, 0);
+  close.listeners.click(); assert.equal(h.layer(), undefined); assert.equal(h.opener.focused, true);
+});
+test('image dialog native cancel, error and navigation each remove the viewer and listeners', () => {
+  for (const reason of ['cancel', 'error', 'navigation']) {
+    const h = harness(); h.open({ item: imageItem() }); const dialog = h.layer();
+    if (reason === 'cancel') { let prevented = false; dialog.listeners.cancel({ preventDefault() { prevented = true; } }); assert.equal(prevented, true); }
+    if (reason === 'error') dialog.children[0].listeners.error();
+    if (reason === 'navigation') { h.host.isConnected = false; h.controller.sync(); }
+    assert.equal(h.layer(), undefined, reason); assert.equal(h.listeners.message.size, 0, reason);
+    assert.equal(h.timers.size, 0, reason); assert.equal(dialog.modal, false, reason);
+  }
+});
+test('unknown Pinterest media or an untrusted image URL keeps the explicit provider embed', () => {
+  const h = harness(); h.open({ item: imageItem('unknown') }); assert.equal(h.layer().children[0].tag, 'iframe');
+  h.open({ item: imageItem('image', 'https://evil.invalid/image.jpg') }); assert.equal(h.layer().children[0].tag, 'iframe');
+  h.open({ item: imageItem() }); assert.equal(h.layer().tag, 'dialog'); assert.equal(h.host.children.filter(node => node.className?.startsWith('inspiration-embed')).length, 0);
+  h.open(); assert.equal(h.layer().children[0].tag, 'iframe'); assert.equal(h.body.children.length, 0);
 });

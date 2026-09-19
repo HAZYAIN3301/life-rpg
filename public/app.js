@@ -26272,7 +26272,10 @@ function previewInspirationReference(button) {
   if (!form || !Number.isInteger(index) || index < 0 || index >= 10) return;
   const row = Array.from(form.querySelectorAll('[data-inspiration-reference-row]'))[index];
   if (!row) return;
-  const item = inspirationPersonalMedia({ url: String(row.querySelector('[name="referenceUrl"]')?.value || '').trim(),
+  const url = String(row.querySelector('[name="referenceUrl"]')?.value || '').trim();
+  const prior = inspirationProfileState()?.videoReferences.find((reference) => reference.url === url);
+  const item = inspirationPersonalMedia({ url, imageUrl: prior?.imageUrl,
+    mediaType: prior?.mediaFormat === 'image' ? 'image' : undefined,
     title: String(row.querySelector('[name="referenceTitle"]')?.value || '').trim() });
   const host = row.querySelector(`[data-inspiration-media="reference-${index}"]`);
   if (window.InspirationPlayerV1?.open({ host, item, opener: button, copy: inspirationVisualCopy, allowLegacy: inspirationEmbedAllowed })) sfx('open');
