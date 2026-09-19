@@ -57,7 +57,7 @@ test('only explicit visual taste and reference wording shape two distinct bounde
   assert.notEqual(a[0].q, b[0].q);
   assert.match(a[0].q, /sculptural geometry/);
   assert.match(a[0].q, /architectural/);
-  assert.match(a[0].q, /monochrome|brutalist|concrete/);
+  assert.doesNotMatch(a[0].q, /monochrome|brutalist|concrete/, 'a reference query stays coherent instead of mixing a second theme');
   assert.match(b[0].q, /forest|watercolor|pastel/);
   for (const query of a) {
     assert.ok(query.q.length <= 400);
@@ -136,7 +136,8 @@ test('search metadata never invents creator, image inspection, language, duratio
     assert.equal(row.rights.downloadAllowed, false);
     assert.equal(row.lastCheckedAt, NOW);
     assert.ok(Media.isAllowedEmbed(row.delivery.embedUrl, row.delivery.sourceUrl));
-    assert.match(row.body.en, /not been verified/);
+    assert.match(row.body.en, /Found for your taste/);
+    assert.equal(row.lang, 'unknown', 'metadata does not prove even an image contains no words');
   }
   assert.equal(photo.rights.holder, 'Pinterest');
   assert.equal(photo.attributionRole, 'platform');

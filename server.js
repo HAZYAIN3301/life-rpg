@@ -47,6 +47,10 @@ const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
 const NativeAssociationV1 = require('./public/native-association-v1.js');
 const AttentionRevisionV1 = require('./public/attention-revision-v1.js');
+const InspirationProfileV1 = require('./public/inspiration-profile-v1.js');
+const InspirationProfileOwnerV1 = require('./server-inspiration-profile-v1.js');
+const InspirationDiscoveryV1 = require('./server-inspiration-discovery-v1.js');
+const InspirationMediaV1 = require('./server-inspiration-media-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -580,6 +584,41 @@ const boardV2Service = BoardV2AccountService.createService({
   readAccount: readBoardV2Account,
   writeAccount: writeBoardV2Account,
 });
+const INSPIRATION_DISCOVERY_FILE = 'inspiration-discovery.json';
+function readInspirationDiscoveryAccount(uid) {
+  try {
+    const value = JSON.parse(fs.readFileSync(path.join(userDataDir(uid), INSPIRATION_DISCOVERY_FILE), 'utf8'));
+    if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('corrupt_inspiration_discovery');
+    return value;
+  }
+  catch (error) {
+    if (error && error.code === 'ENOENT') return null;
+    throw error; // Corruption is not a fresh quota and must never be overwritten.
+  }
+}
+const inspirationDiscovery = InspirationDiscoveryV1.createInspirationDiscoveryService({
+  apiKey: BRAVE_SEARCH_API_KEY,
+  requestJson: boardV2RequestJson,
+  readAccount: readInspirationDiscoveryAccount,
+  writeAccount: (uid, value) => {
+    writeJsonDurable(path.join(userDataDir(uid), INSPIRATION_DISCOVERY_FILE), value);
+    return { ok: true };
+  },
+});
+const inspirationMetadata = InspirationMediaV1.createMetadataResolver();
+const inspirationMetadataRequests = new Map();
+function allowInspirationMetadata(uid) {
+  const now = Date.now(), cutoff = now - 60000;
+  for (const [id, times] of inspirationMetadataRequests) {
+    const recent = times.filter(at => at > cutoff);
+    if (recent.length) inspirationMetadataRequests.set(id, recent);
+    else inspirationMetadataRequests.delete(id);
+  }
+  const times = inspirationMetadataRequests.get(uid) || [];
+  if (times.length >= 20 || (!times.length && inspirationMetadataRequests.size >= 4096)) return false;
+  inspirationMetadataRequests.set(uid, times.concat(now));
+  return true;
+}
 const BOARD_V2_COMMUNITY_ACCOUNT_FILE = 'board-community.json';
 const BOARD_V2_COMMUNITY_AGGREGATE_FILE = () => path.join(DATA_DIR, 'board-community-aggregate.json');
 function readBoardV2CommunityAccount(uid) {
@@ -6659,6 +6698,85 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ---- Inspiration owner: a field-scoped CAS inside the shared account WAL ----
+  if (u === '/api/inspiration/profile' && req.method === 'POST') {
+    const failure = (status, error) => sendJson(res, status, { ok: false, kind: 'inspiration-profile', version: 1, error });
+    const uid = sessionUserId(req); if (!uid) return failure(401, 'not logged in');
+    let payload;
+    try { payload = JSON.parse(await readBody(req, InspirationProfileOwnerV1.MAX_BYTES)); }
+    catch (error) {
+      if (error && error.commitmentBoundary) return failure(error.status || 500, error.message);
+      return failure(error && error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400,
+        error && error.code === 'PAYLOAD_TOO_LARGE' ? 'inspiration_profile_too_large' : 'invalid_inspiration_profile');
+    }
+    if (sessionUserId(req) !== uid) return failure(401, 'not logged in');
+    try {
+      // There are no awaits between this read, proposal, validation and durable
+      // commit. Other account writers cannot interleave an old settings copy.
+      const actual = commitmentActualPair(uid);
+      if (!commitmentSnapshotShapeValid(actual.settings, 'object') || !commitmentSnapshotShapeValid(actual.tasks, 'array')) {
+        return failure(409, 'inspiration_settings_corrupt');
+      }
+      const decision = InspirationProfileOwnerV1.prepareCommit(actual.settings.exists ? actual.settings.value : {}, payload);
+      if (!decision.ok) return failure(decision.status, decision.error);
+      if (!decision.replay) {
+        const data = { settings: decision.settings, tasks: actual.tasks.exists ? actual.tasks.value : [] };
+        assertAccountGraphTransition(uid, { base: actual, data });
+        commitCommitmentGraphDurable(uid, { names: COMMITMENT_PAIR_NAMES.slice(), actual, data });
+      }
+      return sendJson(res, 200, { ok: true, kind: 'inspiration-profile', version: 1,
+        replay: decision.replay, snapshots: commitmentActualPair(uid) });
+    } catch (error) {
+      return failure(error && error.commitmentBoundary ? error.status || 500 : 500,
+        error && error.commitmentBoundary ? error.message : 'inspiration_profile_save_unconfirmed');
+    }
+  }
+
+  if (u === '/api/inspiration/metadata' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload;
+    try { payload = JSON.parse(await readBody(req, 8 * 1024)); }
+    catch (error) { return sendJson(res, error && error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { error: 'invalid_inspiration_metadata' }); }
+    if (sessionUserId(req) !== uid) return sendJson(res, 401, { error: 'not logged in' });
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)
+      || Object.keys(payload).join(',') !== 'url' || typeof payload.url !== 'string') {
+      return sendJson(res, 400, { error: 'invalid_inspiration_metadata' });
+    }
+    if (!allowInspirationMetadata(uid)) return sendJson(res, 429, { status: 'busy', reason: 'rate_limited', source: null });
+    const controller = new AbortController();
+    const stop = () => { if (!res.writableEnded) controller.abort(); };
+    req.once('aborted', stop); res.once('close', stop);
+    if (req.aborted || res.destroyed) controller.abort();
+    let result;
+    try { result = await inspirationMetadata.resolve(payload.url, { signal: controller.signal }); }
+    finally { req.removeListener('aborted', stop); res.removeListener('close', stop); }
+    if (res.destroyed) return;
+    return sendJson(res, result.status === 'resolved' ? 200 : result.status === 'busy' ? 429 : result.status === 'invalid' ? 400 : 502, result);
+  }
+
+  if (u === '/api/inspiration/discovery' && ['GET', 'POST'].includes(req.method)) {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    let payload = {};
+    if (req.method === 'POST') {
+      try { payload = JSON.parse(await readBody(req, 2048)); }
+      catch (error) { return sendJson(res, error && error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { error: 'invalid_inspiration_discovery' }); }
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)
+        || Object.keys(payload).some(key => key !== 'dayKey')) return sendJson(res, 400, { error: 'invalid_inspiration_discovery' });
+      if (sessionUserId(req) !== uid) return sendJson(res, 401, { error: 'not logged in' });
+    }
+    try {
+      const actual = commitmentActualPair(uid);
+      if (!commitmentSnapshotShapeValid(actual.settings, 'object')) return sendJson(res, 503, { error: 'inspiration_settings_corrupt' });
+      const profile = InspirationProfileV1.normalize(actual.settings.exists ? actual.settings.value.inspiration : null);
+      if (req.method === 'GET') return sendJson(res, 200, inspirationDiscovery.status({ profile }));
+      const result = await inspirationDiscovery.daily({ accountId: uid, profile, shown: profile.shownHistory, dayKey: payload.dayKey });
+      return sendJson(res, result.status === 'storage_error' ? 503 : result.status === 'invalid_day' ? 400 : 200, result);
+    } catch (error) {
+      if (sendCommitmentBoundaryError(res, error)) return;
+      return sendJson(res, 503, { error: 'inspiration_discovery_unavailable' });
+    }
+  }
+
   // ---- Board v2 local discovery: current account only, no client query/URL ----
   if (u === '/api/board-v2/discovery' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
@@ -6722,7 +6840,7 @@ const server = http.createServer(async (req, res) => {
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
     if (name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
-    if (name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
+    if (name === 'inspiration-discovery' || name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
 
@@ -6876,7 +6994,7 @@ const server = http.createServer(async (req, res) => {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
       let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
       const name = safeName(String(b.name || '')); if (!name) return sendJson(res, 400, { error: 'bad name' });
-      if (name === 'secretary' || name.startsWith('secretary-') || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
+      if (name === 'inspiration-discovery' || name === 'secretary' || name.startsWith('secretary-') || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
       const dir = userDataDir(am[1]);
       const bfile = path.join(backupDir(dir, name), String(b.stamp || '') + '.json');
       if (!bfile.startsWith(DATA_DIR) || !fs.existsSync(bfile)) return sendJson(res, 404, { error: 'backup not found' });

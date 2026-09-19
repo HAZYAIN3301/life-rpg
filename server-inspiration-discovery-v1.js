@@ -130,12 +130,12 @@ function buildQueries(rawProfile, dayKey) {
     const pool = compatible.length ? compatible : taste.references;
     const reference = pool.length ? pool[(day + index) % pool.length] : null;
     const interests = rotate(reference && reference.interests.length ? reference.interests : taste.interests, day + index, 2);
-    const terms = [...new Set([
-      ...rotate(taste.style, day + index * 6, 6),
-      ...(reference ? reference.title.slice(0, 4).concat(reference.why.slice(0, 6)) : []),
-      ...rotate(taste.custom, day + index * 4, 4),
-      ...interests.flatMap(value => words(value, 2)),
-    ])].slice(0, 20);
+    // Keep one coherent example per search. Global style and unrelated broad
+    // categories must not turn a specific reference into a 20-word conjunction.
+    const referenceTerms = reference ? reference.title.slice(0, 4).concat(reference.why.slice(0, 6)) : [];
+    const terms = [...new Set(referenceTerms.length >= 2 ? referenceTerms
+      : taste.style.length >= 2 ? rotate(taste.style, day + index * 6, 8)
+        : rotate(taste.custom, day + index * 6, 8))].slice(0, 10);
     const intent = provider === 'tiktok' ? 'short edit -trailer -compilation' : index % 2 ? 'visual composition' : 'photography aesthetic';
     const joined = terms.join(' ');
     const termText = joined.length <= 280 ? joined : joined.slice(0, 280).replace(/\s+\S*$/, '');
@@ -165,11 +165,11 @@ function localized(value) { return Object.fromEntries(LOCALES.map(locale => [loc
 function metadataBody(source) {
   const label = source.provider === 'pinterest' ? 'Pinterest' : 'TikTok';
   return {
-    ru: `Найдено в ${label} по твоему визуальному вкусу. Содержимое и доступность ещё не проверены.`,
-    en: `Found on ${label} from your visual taste. Content and availability have not been verified.`,
-    de: `Auf ${label} nach deinem visuellen Geschmack gefunden. Inhalt und Verfügbarkeit sind noch ungeprüft.`,
-    uk: `Знайдено в ${label} за твоїм візуальним смаком. Вміст і доступність ще не перевірені.`,
-    es: `Encontrado en ${label} según tu gusto visual. El contenido y la disponibilidad aún no se han verificado.`,
+    ru: `Найдено по твоему вкусу · ${label}`,
+    en: `Found for your taste · ${label}`,
+    de: `Nach deinem Geschmack gefunden · ${label}`,
+    uk: `Знайдено за твоїм смаком · ${label}`,
+    es: `Encontrado según tu gusto · ${label}`,
   };
 }
 
@@ -183,10 +183,12 @@ function candidateFromRow(row, query, checkedAt) {
   if (!title) return null;
   const candidate = {
     id: mediaKey(source), source: source.provider, externalId: source.id,
-    format: source.format, lang: source.provider === 'pinterest' ? 'none' : 'unknown',
+    format: source.format, lang: 'unknown',
     languageVerified: false, titleLanguage: 'unknown', durationSec: null,
     interestIds: stringList(query.interestIds, 4), tags: stringList(query.interestIds, 4),
-    keywords: stringList(query.keywords, 12, 36),
+    // Query words describe the requested taste, not this result. Repeating them
+    // here would make every returned post appear to match the same style.
+    keywords: words(title, 12),
     title: localized(title), body: metadataBody(source),
     creator: null, attributionRole: source.authorHandle ? 'poster' : 'platform',
     rights: {
