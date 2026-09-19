@@ -8,7 +8,7 @@
 явный просмотр фото/эдитов, feedback, 45-дневная история и фиксированный день.
 Пять примеров владельца не задают вкус остальных аккаунтов. Добавлены server-owned
 profile/discovery и metadata endpoints; успех только после durable typed receipt.
-Полный suite 3021/3021 PASS; браузерные факты и границы —
+Полный suite после интеграции `92f09f6` — 3023/3023 PASS; браузерные факты и границы —
 art-factory/inspiration-v265/qa-receipt.json. CACHE satoru-v265.
 Живой поиск требует BRAVE_SEARCH_API_KEY и production-проверки доступа к Brave;
 без него честно доступен каталог. Внешнее воспроизведение TikTok не подтверждено:

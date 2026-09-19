@@ -15,12 +15,19 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
+const net = require('node:net');
 
 const ROOT = path.resolve(__dirname, '..');
 
 async function startServer() {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'satoru-shelf-'));
-  const port = 49100 + (process.pid % 150);
+  const port = await new Promise((resolve, reject) => {
+    const probe = net.createServer(); probe.once('error', reject);
+    probe.listen(0, '127.0.0.1', () => {
+      const allocated = probe.address().port;
+      probe.close(error => error ? reject(error) : resolve(allocated));
+    });
+  });
   const child = spawn(process.execPath, ['server.js'], {
     cwd: ROOT,
     env: { ...process.env, HOST: '127.0.0.1', PORT: String(port), DATA_DIR: dataDir, PUSH_SCHED: 'off' },
@@ -30,7 +37,7 @@ async function startServer() {
   const base = `http://127.0.0.1:${port}`;
   for (let i = 0; i < 200; i += 1) {
     if (child.exitCode != null) throw new Error(`сервер упал: ${out}`);
-    try { if ((await fetch(`${base}/api/auth/profiles`)).ok) return { child, dataDir, base }; } catch {}
+    try { if (out.includes('Satoru запущен:') && (await fetch(`${base}/api/auth/profiles`)).ok) return { child, dataDir, base }; } catch {}
     await new Promise((r) => setTimeout(r, 30));
   }
   child.kill('SIGTERM'); throw new Error(`сервер не поднялся: ${out}`);

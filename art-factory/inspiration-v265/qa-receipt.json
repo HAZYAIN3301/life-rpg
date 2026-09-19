@@ -2,7 +2,7 @@
   "release": "v265",
   "checkedDate": "2026-09-19",
   "environment": "Isolated localhost app and synthetic account; CUA in-app Chromium browser",
-  "fullSuite": { "command": "node --test --test-concurrency=2 scripts/*.test.js", "tests": 3021, "pass": 3021, "fail": 0 },
+  "fullSuite": { "command": "node --test --test-concurrency=2 scripts/*.test.js", "tests": 3023, "pass": 3023, "fail": 0, "integratedMaster": "92f09f620b8d3d8cacad56e73ac5e33d19b1d4de" },
   "browser": {
     "viewports": [[375, 812], [1280, 900]],
     "layout": "One column mobile, three desktop; no horizontal overflow in inspected states; uncropped loaded images",

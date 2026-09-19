@@ -6,6 +6,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
+const net = require('node:net');
 
 const ROOT = path.resolve(__dirname, '..');
 const APP = fs.readFileSync(path.join(ROOT, 'public', 'app.js'), 'utf8');
@@ -14,10 +15,15 @@ const SERVER = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
 const SW = fs.readFileSync(path.join(ROOT, 'public', 'sw.js'), 'utf8');
 
 function cookieOf(response) { return (response.headers.get('set-cookie') || '').split(';')[0]; }
-let serverSequence = 0;
 async function startServer() {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'satoru-social-v125-'));
-  const port = 45800 + ((process.pid % 50) * 2) + serverSequence++;
+  const port = await new Promise((resolve, reject) => {
+    const probe = net.createServer(); probe.once('error', reject);
+    probe.listen(0, '127.0.0.1', () => {
+      const allocated = probe.address().port;
+      probe.close(error => error ? reject(error) : resolve(allocated));
+    });
+  });
   const child = spawn(process.execPath, ['server.js'], {
     cwd: ROOT,
     env: { ...process.env, HOST: '127.0.0.1', PORT: String(port), DATA_DIR: dataDir, PUSH_SCHED: 'off' },
