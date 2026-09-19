@@ -45,7 +45,17 @@
       button.addEventListener('click', () => close());
       const active = { host, layer, frame, opener, timer: null, listener: null };
       active.keydown = (event) => { if (event.key === 'Escape' && current === active) { event.preventDefault(); close(); } };
-      const fail = () => { if (current === active) close({ message: copy('Материал сейчас не открылся. Можно повторить или открыть источник.') }); };
+      const fail = () => {
+        if (current !== active) return;
+        close({ message: copy('Материал сейчас не открылся. Можно повторить или открыть источник.') });
+        if (typeof item.id === 'string' && item.id && (source || item.sourceUrl || item.url)) {
+          const fallback = document.createElement('button');
+          fallback.type = 'button'; fallback.className = 'btn btn-ghost inspiration-source-fallback';
+          fallback.setAttribute('data-action', 'inspiration-open-source'); fallback.setAttribute('data-id', item.id);
+          fallback.textContent = copy('Открыть источник');
+          host.querySelector('[data-media-status]')?.appendChild(fallback);
+        }
+      };
       active.listener = (event) => {
         if (current !== active || !source || source.provider !== 'tiktok') return;
         const message = Media.parsePlayerEvent(event, frame.contentWindow, source);

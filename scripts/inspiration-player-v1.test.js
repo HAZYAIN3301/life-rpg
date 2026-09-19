@@ -11,6 +11,8 @@ class Element {
     this.classList = { add: value => this.classes.add(value), remove: value => this.classes.delete(value) };
   }
   setAttribute(name, value) { this.attributes[name] = value; }
+  set textContent(value) { this.text = value; this.children = []; }
+  get textContent() { return this.text || ''; }
   removeAttribute(name) { delete this.attributes[name]; if (name === 'src') this.src = ''; }
   appendChild(child) { child.parent = this; this.children.push(child); }
   addEventListener(name, callback) { this.listeners[name] = callback; }
@@ -127,4 +129,20 @@ test('unknown Pinterest media or an untrusted image URL keeps the explicit provi
   h.open({ item: imageItem('image', 'https://evil.invalid/image.jpg') }); assert.equal(h.layer().children[0].tag, 'iframe');
   h.open({ item: imageItem() }); assert.equal(h.layer().tag, 'dialog'); assert.equal(h.host.children.filter(node => node.className?.startsWith('inspiration-embed')).length, 0);
   h.open(); assert.equal(h.layer().children[0].tag, 'iframe'); assert.equal(h.body.children.length, 0);
+});
+for (const reason of ['error', 'timeout']) test(`${reason} supplies one translated source action for the exact card and retry replaces it`, () => {
+  const h = harness(), item = { ...h.item, id: 'tiktok-7647936071673629973' };
+  const open = () => h.open({ item, copy: key => key === 'Открыть источник' ? 'Open source' : key });
+  const fail = () => reason === 'error' ? h.event('onPlayerError', { errorCode: 1001 }) : [...h.timers.values()][0]();
+  open(); fail();
+  let status = h.host.querySelector('[data-media-status]');
+  assert.equal(status.children.length, 1); assert.equal(status.children[0].attributes['data-action'], 'inspiration-open-source');
+  assert.equal(status.children[0].attributes['data-id'], item.id); assert.equal(status.children[0].textContent, 'Open source');
+  assert.equal(h.layer(), undefined); assert.equal(item.done, undefined);
+  open(); assert.equal(status.children.length, 0); fail(); assert.equal(status.children.length, 1);
+  open(); h.event('onStateChange', 0); assert.equal(status.children.length, 0, 'end does not masquerade as playback failure');
+});
+test('reference failure without a card id has no unusable source action', () => {
+  const h = harness(); h.open(); h.event('onPlayerError', { errorCode: 1001 });
+  assert.equal(h.host.querySelector('[data-media-status]').children.length, 0);
 });
