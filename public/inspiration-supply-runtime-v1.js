@@ -9,7 +9,7 @@
   if (root) root.InspirationSupplyRuntimeV1 = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function build(Policy, Profile, Catalog, Batch) {
   'use strict';
-  const VERSION = '1.0.0';
+  const VERSION = '1.1.0';
   function candidates() {
     return Catalog.CATALOG.map((row) => Policy.fromCatalogV1Row(row).draft).concat(Batch.CANDIDATES);
   }
@@ -36,6 +36,7 @@
     // another selector. A one-item choice is only an eligibility question.
     const matching = relevant.filter((c) => Profile.choose([byId.get(c.id)], profile, opts.day).length);
     const shown = (Array.isArray(opts.shown) ? opts.shown : []).concat(
+      profile.shownHistory,
       profile.feedback.map((row) => ({ id: row.itemId, day: row.day })),
       profile.digest && profile.digest.day !== opts.day ? profile.digest.ids.map((id) => ({ id, day: profile.digest.day })) : []);
     const eligible = Policy.eligibleToday(matching, {
@@ -69,14 +70,16 @@
       const readable = Policy.eligibleToday(prepared.admission.items, {
         day: opts.day, locales: prepared.locales, ctx: { maxSharePerSource: 1 },
       });
-      const byId = new Map(Policy.toCatalogRows(readable.pool, prepared.locale).map((r) => [r.id, r]));
+      const byId = new Map(Policy.toCatalogRows(readable.pool, prepared.locale)
+        .filter((row) => !Profile.isReference(row, profile)).map((r) => [r.id, r]));
       const items = profile.digest.ids.map((id) => byId.get(id)).filter(Boolean);
       const unavailableIds = profile.digest.ids.filter((id) => !byId.has(id));
       const report = Object.assign({}, prepared.report, {
         status: !items.length ? 'empty' : items.length < Profile.DIGEST_SIZE ? 'shortage'
           : new Set(items.map((item) => item.format)).size < Math.min(Profile.DIGEST_SIZE, profile.formats.length) ? 'thin_formats' : 'ok',
         deliverable: items.length, emptyReason: !items.length ?
-          (readable.blocked.some((r) => profile.digest.ids.includes(r.id) && r.code === Policy.BLOCK.LANGUAGE)
+          (!profile.digest.ids.length ? prepared.report.emptyReason || 'no_matching_material'
+            : readable.blocked.some((r) => profile.digest.ids.includes(r.id) && r.code === Policy.BLOCK.LANGUAGE)
             ? 'language_gap' : 'supply_unverified') : null,
       });
       return Object.assign({}, prepared, { profile, items, unavailableIds, report, fixed: true });
