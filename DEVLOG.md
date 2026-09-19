@@ -51,9 +51,13 @@ receipt, пустой день, error/ended плеера. Receipt: art-factory/i
 Обе правки и их тесты сохранены. Конфликты затрагивали номера кеша и DEVLOG:
 оставлен более новый v265, обе записи журнала сохранены. Повторный полный suite PASS.
 
-**Публикация.** В этом коммите зафиксирован проверенный кандидат. Push master и
-автоматический Railway deploy разрешены владельцем; статус точного SHA и сравнение
-production bytes на обоих доменах фиксируются отдельным release receipt после push.
+**Опубликовано.** Runtime `f27a6f5b35d9e75eda13205a887ca02e0b1c2a5b` в master;
+оба Railway services success. 19.09 19:36 UTC совпали 129/129 frontend-файлов
+на каждом из `satoruapp.com` и прежнего Railway-домена. Оба `/api/version`
+подтвердили точный SHA и satoru-v265; новые API без сессии отвечают 401.
+Production login загрузился без warning/error в browser console. Данные настоящих
+аккаунтов при QA не изменялись. Receipt: art-factory/inspiration-v265/release-receipt.json.
+Эта проверка не подтверждает Brave entitlement или успешный внешний TikTok playback.
 
 ## [2026-09-19] 🔴 Перепроверка связности: фоновая запись стирала квест с другого устройства
 

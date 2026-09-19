@@ -5,7 +5,9 @@
   конкретные мотивы/feedback, исключение своих примеров из находок, 45-дневная
   история, фиксированный пустой день; profile owner/CAS/WAL, metadata/discovery,
   native photo viewer, конечный TikTok player. 3023/3023 tests после merge master; профильный browser
-  receipt — art-factory/inspiration-v265/qa-receipt.json. Публикация проверяется отдельно.
+  receipt — art-factory/inspiration-v265/qa-receipt.json. Runtime `f27a6f5` опубликован:
+  оба Railway services success, 129/129 bytes на каждом из двух доменов совпали;
+  art-factory/inspiration-v265/release-receipt.json.
 - [ ] **Вдохновение — подключить и проверить живой поиск в production.**
   Нужен BRAVE_SEARCH_API_KEY с доступом Image/Web Search; наличие и entitlement
   пока не подтверждены. Затем проверить разные реальные вкусы, новизну и качество

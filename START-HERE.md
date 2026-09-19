@@ -13,7 +13,9 @@ art-factory/inspiration-v265/qa-receipt.json. CACHE satoru-v265.
 Живой поиск требует BRAVE_SEARCH_API_KEY и production-проверки доступа к Brave;
 без него честно доступен каталог. Внешнее воспроизведение TikTok не подтверждено:
 официальный плеер в QA вернул network error. Не выдавать metadata за playback.
-Публикация этого кандидата проверяется отдельно; итоговый receipt — DEVLOG/выход задачи.
+Опубликован runtime `f27a6f5`: оба Railway services success, 129/129 bytes
+на каждом из двух доменов совпали 19.09 19:36 UTC; точный SHA и CACHE подтверждены.
+Receipt: art-factory/inspiration-v265/release-receipt.json. Production login без console errors.
 Сессии v264 и оба адреса приложения сохранены, старый Railway URL не перенаправлять.
 
 **Checkpoint 17.09, v264 — сессии устройства, сервер:** DEVICE-SESSIONS-V264.md.
