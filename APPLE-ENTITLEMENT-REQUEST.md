@@ -62,10 +62,9 @@ R1–R3 работают без него, iOS деградирует до Shortc
 > **Why we need Family Controls:** Satoru includes a self-directed attention feature.
 > Before opening an app that the user themselves has identified as a problem for them,
 > Satoru asks what they intend to do there and for how long, and records the outcome.
-> Users have told us — and our own design research confirms — that a prompt alone is not
-> enough once a compulsive loop has already started: at that point the decision is handed
-> back to the same depleted state that could not make it. What actually helps is a limit
-> the person sets *in advance*, while resourced, and cannot trivially undo in the moment.
+> The planned iOS feature lets the person choose a short, bounded restriction in advance,
+> instead of relying only on an on-screen reminder. We are building an individual,
+> voluntary self-management tool, with no parental or remote supervision.
 >
 > We need `FamilyControls` and `ManagedSettings` to honor that limit: to let the user pick
 > their own apps through `FamilyActivityPicker`, and to shield those apps for a short,
@@ -85,13 +84,13 @@ R1–R3 работают без него, iOS деградирует до Shortc
 > Satoru stores is what the user tells it: the purpose they declared before opening an app,
 > the limit they chose, and the outcome they reported afterward. We never collect message
 > content, search queries, browsing history, watched media, screen text, or an accessibility
-> tree. Detailed usage data stays on device by default; only aggregate contract data syncs,
-> and only after a separate explicit opt-in that can be turned off at any time. Deleting the
-> account deletes all of it.
+> tree. The planned implementation keeps opaque selection tokens on the device and does
+> not depend on detailed usage access. Any synchronization of user-declared attention
+> records will require separate explicit opt-in and account-deletion support.
 >
 > **Why not an alternative API:** Screen Time is the only mechanism on iOS that can honor a
-> limit the user set for themselves. Without it we can only display a suggestion, which is
-> precisely the thing our users report does not work in the moment it matters.
+> limit the user set for themselves. Without it the app can show a reminder and record a
+> user-reported intention or outcome, but cannot shield another app.
 
 ---
 
@@ -108,6 +107,17 @@ R1–R3 работают без него, iOS деградирует до Shortc
 - Записать дату подачи здесь — срок ответа непредсказуем, и без даты через месяц никто не вспомнит.
 - Отказ **не блокирует** R1–R4. Он означает: iOS остаётся на Shortcuts-мосте (§3), Android даёт полный Control, и это честно пишется в интерфейсе, а не обещается.
 - Не менять регион Apple Account ради этой функции: затрагивает платежи, подписки и App Store, а детальную аналитику всё равно не откроет вне ЕС.
+
+**19.09.2026:** членство активно, Team ID `8Y9TR9L674`; заявки владелец ещё не подал.
+Это описание проектируемой функции: настоящий iOS shield ещё не реализован.
+Перед отправкой владелец сверяет форму Apple и фактически зарегистрированные App IDs.
+
+| Bundle ID | Дата подачи | Ответ |
+|---|---|---|
+| `com.satoruapp.satoru` | не подана | — |
+| `com.satoruapp.satoru.DeviceActivityMonitor` | не подана | — |
+| `com.satoruapp.satoru.ShieldConfiguration` | не подана | — |
+| `com.satoruapp.satoru.ShieldAction` | не подана | — |
 
 **Дата подачи:** _не подана_
 **Ответ Apple:** _—_

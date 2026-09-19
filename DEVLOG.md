@@ -1,5 +1,23 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-19] Apple активно — первый локальный iOS foundation
+
+Team ID `8Y9TR9L674` получен от владельца. Проверены Xcode 26.6, iOS 26.5 runtime,
+0 valid signing identities; создан iPhone 14 simulator. Свежий web master и
+production перед работой — `3537d2b`, CACHE v265. AASA на обоих доменах 404.
+
+Нативный код создан отдельно от Obsidian Vault: Swift Package с тестами,
+SwiftUI/WKWebView app, native settings/devices, App Intents. Симуляторная сборка
+PASS, 11 Swift Testing tests (14 parameter-expanded cases) PASS, две копии
+контрактов byte-for-byte совпали. Это только foundation C1: регистрация native
+device token выключена до B2 web notices и полного QA гибридного входа.
+Сам Swift refresh engine проверен; это не проверка настоящего Keychain на iPhone.
+
+IOS-FOUNDATION-2026-09.md фиксирует архитектуру, точный путь и остаток.
+Текст заявки Apple очищен от неподтверждённых утверждений о пользовательском
+исследовании; заявки не подавались. Web runtime не менялся, CACHE не повышается.
+Native GitHub repository не создан, первый push не разрешён; TestFlight отсутствует.
+
 ## [2026-09-19] v265 — личный визуальный вкус и настоящие Pinterest/TikTok материалы
 
 Контракт: INSPIRATION-VISUAL-V265.md. Пакеты MEDIA/TASTE-V262 интегрированы поверх

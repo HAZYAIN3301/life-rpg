@@ -1,5 +1,17 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Apple Developer: членство активно, 19.09.** Подтверждено владельцем,
+  Team ID `8Y9TR9L674`. Прежняя запись Pending ниже — история 17.09.
+- [x] **Первый локальный iOS foundation:** SwiftUI/WKWebView, Xcode project,
+  iOS 17+, native settings, подготовленное ядро Keychain/refresh, пять App Shortcuts.
+  Симуляторная сборка и core tests PASS; IOS-FOUNDATION-2026-09.md.
+- [ ] **C1 довести до постоянного native-входа:** B2 web device notices, затем
+  account-switch/logout/revocation всего гибридного клиента на тестовом сервере
+  и настоящем iPhone. Регистрация device token в текущем UI намеренно выключена.
+- [ ] **Apple внешний остаток:** четыре Family Controls requests подаёт владелец.
+  AASA 404 на обоих доменах; ожидается `APPLE_APP_IDS=8Y9TR9L674.com.satoruapp.satoru`.
+  Нет валидного сертификата подписи в проверенном keychain; TestFlight не собирался.
+
 - [x] **Вдохновение v265 — индивидуальный визуальный вкус и media UI.**
   INSPIRATION-VISUAL-V265.md: до 10 личных референсов, настоящие превью 17 постов,
   конкретные мотивы/feedback, исключение своих примеров из находок, 45-дневная
