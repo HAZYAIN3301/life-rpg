@@ -108,7 +108,7 @@ function harness({ paired = false, modes = [] } = {}) {
     'inspirationProfileState', 'inspirationYoutubeEmbed', 'inspirationFormatFromContent', 'shelfViewModel',
     'inspirationVisualCopy', 'inspirationProfileEqual', 'inspirationProfileReceipt', 'inspirationDailyReceipt',
     'inspirationJSON', 'enrichInspirationFinds', 'cancelInspirationWork', 'prepareInspirationDigest', 'inspirationPersonalMedia',
-    'persistInspirationProfile', 'saveInspirationSetup', 'inspirationActionItem', 'markInspirationDone', 'recordInspirationFeedback',
+    'persistInspirationProfile', 'persistInspirationSetupDraft', 'saveInspirationSetup', 'inspirationActionItem', 'markInspirationDone', 'recordInspirationFeedback',
     'inspirationEmbedAllowed', 'playInspirationEmbed', 'listenInspiration', 'shelfSourceTarget', 'openProtectedInspirationSource',
     'openShelfSource', 'openInspirationSource', 'openInspirationRights'];
   vm.runInContext(names.map(functionSource).join('\n') + '\n' + between('const Store = {', '// Dedicated multi-file endpoints')
@@ -552,4 +552,42 @@ test('setup lost response retries the exact enriched profile without refreshing 
   assert.equal(resolutions, 1); assert.deepEqual(h.requests[1].payload, sent);
   assert.equal(h.State._inspirationSetupOpen, false); assert.equal(h.State._inspirationSetupResolving, false);
   assert.equal(h.State._inspirationSetupAttempt, null); assert.deepEqual(h.events, ['inspiration:configured']);
+});
+test('final setup drains its own in-flight draft autosave before capturing expected draft', async () => {
+  let release, entered;
+  const gate = new Promise(resolve => { release = resolve; }), started = new Promise(resolve => { entered = resolve; });
+  const h = harness({ modes: [() => { entered(); return gate; }] }), draft = { ...profile(), visualTaste: 'Green rooms', videoReferences: [] };
+  h.State._inspirationSetupOpen = true;
+  const autosave = h.ctx.persistInspirationSetupDraft(draft); await started;
+  const submit = h.ctx.saveInspirationSetup(draft);
+  assert.equal(h.requests.length, 1); assert.equal(h.State._inspirationSetupResolving, true);
+  release(); await autosave; await submit;
+  assert.deepEqual(h.requests.map(row => row.url), ['/api/data/settings', '/api/inspiration/profile']);
+  assert.deepEqual(h.requests[1].payload.baseDraft, h.requests[0].payload.inspirationDraft);
+  assert.equal(h.State._shelfError, ''); assert.equal(h.State._inspirationSetupOpen, false);
+  assert.equal(h.State._inspirationDraftWrite, null); assert.deepEqual(h.events, ['inspiration:configured']);
+});
+test('a later draft queued after submit still conflicts instead of being silently cleared', async () => {
+  let release, entered;
+  const gate = new Promise(resolve => { release = resolve; }), started = new Promise(resolve => { entered = resolve; });
+  const h = harness({ modes: [() => { entered(); return gate; }] }), draft = { ...profile(), visualTaste: 'First style', videoReferences: [] };
+  h.State._inspirationSetupOpen = true;
+  const autosave = h.ctx.persistInspirationSetupDraft(draft); await started;
+  const submit = h.ctx.saveInspirationSetup(draft);
+  const newer = h.ctx.persistInspirationSetupDraft({ ...draft, visualTaste: 'Newer style' });
+  release(); await autosave; await newer; await submit;
+  assert.equal(h.requests.filter(row => row.url === '/api/inspiration/profile').length, 0);
+  assert.equal(h.State.settings.inspirationDraft.profile.visualTaste, 'Newer style');
+  assert.equal(h.State._inspirationSetupOpen, true); assert.deepEqual(h.events, []);
+});
+test('a genuinely newer draft during metadata resolution does not get cleared by final setup', async () => {
+  const h = harness(); let release;
+  h.ctx.enrichInspirationVideoReferences = draft => new Promise(resolve => { release = () => resolve(draft); });
+  const draft = { ...profile(), videoReferences: [{ url: 'https://www.pinterest.com/pin/974818281863152085/' }] };
+  h.State._inspirationSetupOpen = true;
+  const submit = h.ctx.saveInspirationSetup(draft);
+  h.State.settings.inspirationDraft = { version: 1, savedAt: NOW, profile: { ...draft, visualTaste: 'New form' } };
+  release(); await submit;
+  assert.equal(h.requests.length, 0); assert.equal(h.State.settings.inspirationDraft.profile.visualTaste, 'New form');
+  assert.equal(h.State._inspirationSetupOpen, true); assert.deepEqual(h.events, []);
 });

@@ -25982,11 +25982,20 @@ function captureInspirationSetupDraft(form = document.getElementById('inspiratio
 async function persistInspirationSetupDraft(draft = State._inspirationDraft) {
   if (!draft || !State.settings || State._settingsLoadError) return false;
   const envelope = { version: 1, savedAt: new Date().toISOString(), profile: draft };
-  const saved = await Store.updateNow('settings', (current) => {
+  const work = { accountId: String(State.me?.id || ''), writeEpoch: Store._writeEpoch,
+    generation: _inspirationSetupGeneration, envelope, promise: null };
+  const active = () => work.accountId === String(State.me?.id || '') && work.writeEpoch === Store._writeEpoch;
+  work.promise = Store.updateNow('settings', (current) => {
     const base = current && typeof current === 'object' && !Array.isArray(current)
       ? structuredClone(current) : structuredClone(State.settings);
     base.inspirationDraft = envelope; return base;
-  }, (committed) => { State.settings = committed; return true; });
+  }, (committed) => { if (!active()) return false; State.settings = committed; return true; });
+  State._inspirationDraftWrite = work;
+  let saved = false;
+  try { saved = await work.promise; }
+  catch { saved = false; }
+  finally { if (State._inspirationDraftWrite === work) State._inspirationDraftWrite = null; }
+  if (!active()) return false;
   if (saved) rememberInspirationLocalDraft(null);
   else shelfFormStatus('Не удалось сохранить черновик. Ответы остаются на этом экране.', true);
   return saved;
@@ -26110,6 +26119,10 @@ async function saveInspirationSetup(form) {
   const P = inspirationProfileEngine(); if (!P || State._shelfBusy || State._inspirationSetupResolving) return;
   const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
   const submittedBase = P.normalize(State.settings?.inspiration);
+  let expectedDraft = structuredClone(State.settings?.inspirationDraft ?? null);
+  const pendingDraft = State._inspirationDraftWrite;
+  const ownPendingDraft = pendingDraft && pendingDraft.accountId === accountId && pendingDraft.writeEpoch === writeEpoch
+    && pendingDraft.generation === _inspirationSetupGeneration ? pendingDraft : null;
   clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
   let draft = inspirationDraftFromSetupForm(form);
   if (!draft || !draft.interests.length) { shelfFormStatus('Выбери хотя бы один интерес или добавь свой.', true); return; }
@@ -26119,7 +26132,8 @@ async function saveInspirationSetup(form) {
   _inspirationMetadataWork = controller;
   const currentScope = () => !controller.signal.aborted && generation === _inspirationSetupGeneration
     && accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch;
-  const active = () => currentScope() && inspirationProfileEqual(P.normalize(State.settings?.inspiration), submittedBase);
+  const profileCurrent = () => currentScope() && inspirationProfileEqual(P.normalize(State.settings?.inspiration), submittedBase);
+  const active = () => profileCurrent() && inspirationProfileEqual(State.settings?.inspirationDraft ?? null, expectedDraft);
   const input = P.configure(draft), prior = State._inspirationSetupAttempt;
   const retry = prior && prior.accountId === accountId && prior.writeEpoch === writeEpoch
     && inspirationProfileEqual(prior.base, submittedBase)
@@ -26128,6 +26142,16 @@ async function saveInspirationSetup(form) {
   const controls = Array.from(form.querySelectorAll?.('button,input,select,textarea') || []);
   const disabled = controls.map((node) => node.disabled); controls.forEach((node) => { node.disabled = true; });
   try {
+    // Drain only the draft write already owned by this form at submit time.
+    // A later/different draft still conflicts instead of being silently cleared.
+    if (ownPendingDraft) {
+      const savedDraft = await ownPendingDraft.promise.catch(() => false);
+      if (!savedDraft || !profileCurrent() || !inspirationProfileEqual(State.settings?.inspirationDraft, ownPendingDraft.envelope)) {
+        if (currentScope()) State._shelfError = inspirationSupplyCopy('save_error');
+        return;
+      }
+      expectedDraft = structuredClone(ownPendingDraft.envelope);
+    }
     if (retry) draft = prior.profile;
     else if (draft.videoReferences.length) {
       shelfFormStatus(inspirationVisualCopy('Читаю подписи и изображения источников…'));
@@ -32353,6 +32377,7 @@ function clearAllData() {
   cancelInspirationWork();
   State._inspirationDailyAttempt = null; State._inspirationPosterAttempts = null;
   State._inspirationSetupAttempt = null;
+  State._inspirationDraftWrite = null;
   State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = '';
   _morningOutcome?.dispose(); _morningOutcome = null; _morningOutcomeScope = null;
   _secretaryNextRuntime?.dispose(); _secretaryNextRuntime = null; _secretaryNextAccount = null; _secretaryOfferSlotFree = false;
