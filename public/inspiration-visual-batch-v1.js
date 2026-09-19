@@ -11,7 +11,7 @@
   'use strict';
   const LOCALES = Object.freeze(['ru', 'en', 'de', 'uk', 'es']);
   const copy = (...values) => Object.freeze(Object.fromEntries(LOCALES.map((locale, i) => [locale, values[i]])));
-  // Only selected public fields from bounded official metadata, checked 13 Sep.
+  // Only selected public fields from bounded official metadata, checked 19 Sep.
   // Publisher/pinner attribution is not a claim to authorship of the photograph.
   const METADATA = Object.freeze({
     "354658539408264219": {
@@ -23,7 +23,7 @@
       "thumbnailHeight": 564,
       "mediaType": "image",
       "authorName": "kas",
-      "checkedAt": "2026-09-13T12:07:07.834Z"
+      "checkedAt": "2026-09-19T16:30:33.788Z"
     },
     "140244975883750646": {
       "provider": "pinterest",
@@ -34,7 +34,7 @@
       "thumbnailHeight": 705,
       "mediaType": "image",
       "authorName": "Andrew Massey",
-      "checkedAt": "2026-09-13T12:07:07.886Z"
+      "checkedAt": "2026-09-19T16:30:33.749Z"
     },
     "287386019967085670": {
       "provider": "pinterest",
@@ -45,7 +45,7 @@
       "thumbnailHeight": 564,
       "mediaType": "image",
       "authorName": "Inspiration Grid",
-      "checkedAt": "2026-09-13T12:07:08.132Z"
+      "checkedAt": "2026-09-19T16:30:33.975Z"
     },
     "287386019965477013": {
       "provider": "pinterest",
@@ -56,7 +56,7 @@
       "thumbnailHeight": 375,
       "mediaType": "image",
       "authorName": "Inspiration Grid",
-      "checkedAt": "2026-09-13T12:07:08.132Z"
+      "checkedAt": "2026-09-19T16:30:34.156Z"
     },
     "455145106092028927": {
       "provider": "pinterest",
@@ -67,7 +67,7 @@
       "thumbnailHeight": 480,
       "mediaType": "image",
       "authorName": "Jess Bonde",
-      "checkedAt": "2026-09-13T12:07:08.372Z"
+      "checkedAt": "2026-09-19T16:30:34.161Z"
     },
     "491736853086922533": {
       "provider": "pinterest",
@@ -78,7 +78,7 @@
       "thumbnailHeight": 705,
       "mediaType": "image",
       "authorName": "Jess Howell Photography",
-      "checkedAt": "2026-09-13T12:07:08.534Z"
+      "checkedAt": "2026-09-19T16:30:34.161Z"
     },
     "462674561688722574": {
       "provider": "pinterest",
@@ -89,7 +89,7 @@
       "thumbnailHeight": 358,
       "mediaType": "image",
       "authorName": "olivera davidoff",
-      "checkedAt": "2026-09-13T12:07:08.736Z"
+      "checkedAt": "2026-09-19T16:30:34.447Z"
     },
     "170785010862666018": {
       "provider": "pinterest",
@@ -100,7 +100,7 @@
       "thumbnailHeight": 564,
       "mediaType": "image",
       "authorName": "Adam",
-      "checkedAt": "2026-09-13T12:07:08.958Z"
+      "checkedAt": "2026-09-19T16:30:34.353Z"
     },
     "134334001376557674": {
       "provider": "pinterest",
@@ -111,40 +111,40 @@
       "thumbnailHeight": 239,
       "mediaType": "image",
       "authorName": "Nico Campbell",
-      "checkedAt": "2026-09-13T12:07:08.902Z"
+      "checkedAt": "2026-09-19T16:30:34.330Z"
     },
     "7647936071673629973": {
       "provider": "tiktok",
       "sourceUrl": "https://www.tiktok.com/@kingston.b0/video/7647936071673629973",
       "embedUrl": "https://www.tiktok.com/player/v1/7647936071673629973?autoplay=0&loop=0&rel=0&controls=1&music_info=1&description=1&closed_caption=1&native_context_menu=0",
-      "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-alisg-p-0037/ocOBErQAAX8BTFyxAAAIGxfYCPAii7i1wEcIzN~tplv-tiktokx-origin.image?dr=10395&x-expires=1789473600&x-signature=%2BIfHWKwIPZj9dbBV7g1ojamA1z4%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
+      "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-alisg-p-0037/ocOBErQAAX8BTFyxAAAIGxfYCPAii7i1wEcIzN~tplv-tiktokx-origin.image?dr=10395&x-expires=1790006400&x-signature=WgV6R43n4j1PiFui%2BCLadkHHyFI%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
       "thumbnailWidth": 1024,
       "thumbnailHeight": 576,
       "mediaType": "video",
       "authorName": "𝐊𝐈𝐍𝐆𝐒𝐓𝐎𝐍𖤍",
-      "checkedAt": "2026-09-13T12:07:09.431Z"
+      "checkedAt": "2026-09-19T16:30:34.727Z"
     },
     "7623750797154635038": {
       "provider": "tiktok",
       "sourceUrl": "https://www.tiktok.com/@beanpan_/video/7623750797154635038",
       "embedUrl": "https://www.tiktok.com/player/v1/7623750797154635038?autoplay=0&loop=0&rel=0&controls=1&music_info=1&description=1&closed_caption=1&native_context_menu=0",
-      "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-useast8-p-0068-tx2/ocYLBANiKKNfbBDtAAAoUIA5EAv0L5BaiyOiiB~tplv-tiktokx-origin.image?dr=10395&x-expires=1789473600&x-signature=1KiAjaN1thABiHbHjJp0VOmyYiQ%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
+      "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-useast8-p-0068-tx2/ocYLBANiKKNfbBDtAAAoUIA5EAv0L5BaiyOiiB~tplv-tiktokx-origin.image?dr=10395&x-expires=1790006400&x-signature=RCshvZVgsiEvOhs%2BNf06xwwVj5k%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
       "thumbnailWidth": 854,
       "thumbnailHeight": 720,
       "mediaType": "video",
       "authorName": "beanpan",
-      "checkedAt": "2026-09-13T12:07:09.703Z"
+      "checkedAt": "2026-09-19T16:30:34.720Z"
     },
     "7482465014314552598": {
       "provider": "tiktok",
       "sourceUrl": "https://www.tiktok.com/@andresixeight/video/7482465014314552598",
       "embedUrl": "https://www.tiktok.com/player/v1/7482465014314552598?autoplay=0&loop=0&rel=0&controls=1&music_info=1&description=1&closed_caption=1&native_context_menu=0",
-      "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-no1a-p-0037-no/o8Kv8CIGPDDTlugLITDhWAIBILWXer3AejQkfX~tplv-tiktokx-origin.image?dr=10395&x-expires=1789473600&x-signature=ZE85f8W9U0EhI%2FN0ajNuUlIMdvo%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
+      "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-no1a-p-0037-no/o8Kv8CIGPDDTlugLITDhWAIBILWXer3AejQkfX~tplv-tiktokx-origin.image?dr=10395&x-expires=1790006400&x-signature=kMvT041LmR6gjJcrCy%2FkFVszSwE%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
       "thumbnailWidth": 576,
       "thumbnailHeight": 1024,
       "mediaType": "video",
       "authorName": "Andre ⚡️",
-      "checkedAt": "2026-09-13T12:07:09.986Z"
+      "checkedAt": "2026-09-19T16:30:34.763Z"
     },
     "974818281863152085": {
       "provider": "pinterest",
@@ -155,7 +155,7 @@
       "thumbnailHeight": 559,
       "mediaType": "image",
       "authorName": "༺ CLAY💋",
-      "checkedAt": "2026-09-13T12:07:10.227Z"
+      "checkedAt": "2026-09-19T16:30:34.979Z"
     },
     "733523858101103384": {
       "provider": "pinterest",
@@ -166,7 +166,7 @@
       "thumbnailHeight": 1002,
       "mediaType": "image",
       "authorName": "Grégori Pablo",
-      "checkedAt": "2026-09-13T12:07:10.228Z"
+      "checkedAt": "2026-09-19T16:30:34.984Z"
     },
     "1128433250417695713": {
       "provider": "pinterest",
@@ -177,7 +177,7 @@
       "thumbnailHeight": 564,
       "mediaType": "unknown",
       "authorName": "Helaink",
-      "checkedAt": "2026-09-13T12:07:10.441Z"
+      "checkedAt": "2026-09-19T16:30:34.942Z"
     },
     "1075375217279793808": {
       "provider": "pinterest",
@@ -188,7 +188,7 @@
       "thumbnailHeight": 846,
       "mediaType": "unknown",
       "authorName": "FitFolio",
-      "checkedAt": "2026-09-13T12:07:10.428Z"
+      "checkedAt": "2026-09-19T16:30:35.166Z"
     },
     "1096063628085416862": {
       "provider": "pinterest",
@@ -199,7 +199,7 @@
       "thumbnailHeight": 772,
       "mediaType": "unknown",
       "authorName": "wolt",
-      "checkedAt": "2026-09-13T12:07:10.749Z"
+      "checkedAt": "2026-09-19T16:30:35.199Z"
     }
   });
 
@@ -313,5 +313,5 @@
       copy('Arc’teryx · горный AI-коллаж', 'Arc’teryx · an AI mountain collage', 'Arc’teryx · KI-Bergcollage', 'Arc’teryx · гірський ШІ-колаж', 'Arc’teryx · collage de montaña con IA'),
       copy('Изменённый с помощью AI образ со снежным барсом, горами и Arc’teryx.', 'An AI-altered image combining a snow leopard, mountains and Arc’teryx.', 'Ein mit KI verändertes Bild mit Schneeleopard, Bergen und Arc’teryx.', 'Змінений за допомогою ШІ образ зі сніговим барсом, горами та Arc’teryx.', 'Una imagen modificada con IA que combina un leopardo de las nieves, montañas y Arc’teryx.'), true),
   ]);
-  return Object.freeze({ VERSION: '1.0.0', ID: '2026-09-13-visual-metadata', CANDIDATES });
+  return Object.freeze({ VERSION: '1.0.0', ID: '2026-09-19-visual-metadata', CANDIDATES });
 });

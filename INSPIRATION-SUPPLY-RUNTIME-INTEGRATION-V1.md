@@ -1,5 +1,10 @@
 # Supply Вдохновения: runtime integration, 11.09.2026
 
+> Исторический срез v257. Текущий owner, metadata admission, visual supply,
+> персональный поиск и история описаны в [INSPIRATION-VISUAL-V265.md](./INSPIRATION-VISUAL-V265.md).
+> Утверждения ниже об единственном Store.updateNow и отсутствии истории относятся
+> к прежней реализации.
+
 Изолированная ветка `inspiration-integration-v1` от
 `f142bb11ebf397e1578f1dc88595d661a72c00dc` (v254). Исходные пакеты сохранены;
 сюда перенесены `bbc86d3` → `63565a5` и `3c18d772` → `230bdef`.

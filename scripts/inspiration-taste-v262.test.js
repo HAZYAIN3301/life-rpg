@@ -142,8 +142,10 @@ test('format variety is retained among comparably relevant materials', () => {
 
 test('format selection does not duplicate a material supplied more than once', () => {
   const one = image('one', { tags: ['neon'] });
-  const rows = [one, { ...one }, image('two')];
-  assert.deepEqual(Profile.choose(rows, profile({ visualTaste: 'neon' }), DAY).map((row) => row.id), ['one', 'two']);
+  const rows = [one, { ...one }, image('two', { tags: ['neon'] })];
+  const ids = Profile.choose(rows, profile({ visualTaste: 'neon' }), DAY).map((row) => row.id);
+  assert.equal(ids.length, 2);
+  assert.deepEqual(new Set(ids), new Set(['one', 'two']));
 });
 
 test('personal reference URLs are excluded from curated discovery across canonical platform forms', () => {

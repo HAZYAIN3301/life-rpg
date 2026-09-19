@@ -189,7 +189,9 @@ test('the Attention R1 locale block is complete and introduces no duplicate keys
   }
   const visibleKeys = new Set([...adapter.matchAll(/'([^'\n]*[\u0400-\u04ff][^'\n]*)'/g)].map((match) => match[1]));
   const localeKeys = new Set(rows.map(([, rawKey]) => rawKey.replace(/\\'/g, "'")));
+  const visualCopy = require('../public/inspiration-visual-copy-v1.js');
   for (const key of visibleKeys) {
-    assert.equal(localeKeys.has(key) || app.includes(`'${key}':`), true, `Attention adapter string is not localized: ${key}`);
+    const visualKey = ['ru','en','de','uk','es'].every(locale => !!visualCopy.COPY[locale][key]);
+    assert.equal(localeKeys.has(key) || app.includes(`'${key}':`) || visualKey, true, `Attention adapter string is not localized: ${key}`);
   }
 });

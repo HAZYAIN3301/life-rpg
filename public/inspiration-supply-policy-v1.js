@@ -29,9 +29,9 @@
  *    Кандидат, объявляющий и то и другое, отвергается как конфликт прав.
  *  — **Массовой выкачки TikTok/YouTube нет и не будет.** Tier `official-embed`
  *    физически не может произвести план локального хранения.
- *  — **Удалённое медиа не превращается в пустую карточку.** Недоступный или
- *    непроверенный давно материал не допускается, а не показывается с кнопкой
- *    «смотреть», которая ведёт в 404.
+ *  — **Метаданные не доказывают воспроизведение.** Свежий конкретный Pinterest
+ *    или TikTok пост допускается с официальным плеером и честной обработкой
+ *    ошибки. Удалённый или давно непроверенный материал не допускается.
  *  — **Нехватка — это отчёт, а не подмена.** Если по интересам человека материала
  *    мало, модуль возвращает меньше и называет дефицит. Добивать пачку тем, что
  *    просто оказалось под рукой, запрещено.
@@ -43,10 +43,10 @@
  * Чистый модуль: время приходит параметром, ни DOM, ни сети, ни случайности.
  */
 (function exposeInspirationSupplyPolicy(root, factory) {
-  const api = factory();
+  const api = factory(typeof module === 'object' && module.exports ? require('./inspiration-media-v1.js') : root.InspirationMediaV1);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.InspirationSupplyPolicyV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildInspirationSupplyPolicy() {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildInspirationSupplyPolicy(Media) {
   'use strict';
 
   const VERSION = '1.0.0';
@@ -56,7 +56,7 @@
   const LOCALES = Object.freeze(['ru', 'en', 'de', 'uk', 'es']);
   // `none` — материал без слов: инструментальная музыка, немой ролик, фотография.
   // Это не «неизвестно», а осознанное свойство: такой материал подходит любому языку.
-  const LANGS = Object.freeze(['ru', 'en', 'de', 'uk', 'es', 'ja', 'none']);
+  const LANGS = Object.freeze(['ru', 'en', 'de', 'uk', 'es', 'ja', 'none', 'unknown']);
 
   /* Три уровня поставки. Разница между ними — не техническая, а правовая.
    *  licensed-local  — можно положить файл к себе: своё, public domain, явная лицензия.
@@ -86,18 +86,17 @@
    * доказывает, что сервер ответил, и НЕ доказывает, что плеер проигрывает. У YouTube
    * «видео недоступно» и «встраивание запрещено» — разные ошибки, и обе приходят уже
    * внутри плеера. Поэтому для embed и ссылок `head` недостаточен. */
-  const CHECK_METHODS = Object.freeze(['playback', 'manual', 'head']);
+  const CHECK_METHODS = Object.freeze(['playback', 'manual', 'head', 'metadata']);
   const PLAYBACK_PROOFS = Object.freeze(['playback']);
 
   /* Почему материал недоступен. `temporary_error` — это «повторить проверку», а не
    * «удалено»: таймаут не является доказательством исчезновения. */
   const AVAILABILITY_REASONS = Object.freeze(['removed', 'embed_denied', 'temporary_error', 'not_checked']);
 
-  /* Фактическая граница рантайма: `inspirationEmbedAllowed()` в app.js. Держится
-   * здесь копией, и отдельный тест сверяет её с app.js — расхождение означает, что
-   * policy допустит материал, который приложение молча не покажет. */
-  const PRODUCTION_EMBED_HOSTS = Object.freeze(['www.youtube-nocookie.com', 'www.nps.gov', 'www.dvidshub.net']);
-  const PRODUCTION_IMAGE_HOSTS = Object.freeze(['science.nasa.gov']);
+  /* Рантайм использует те же хосты; для Pinterest/TikTok одного хоста мало:
+   * InspirationMediaV1 проверяет конкретный пост и параметры плеера. */
+  const PRODUCTION_EMBED_HOSTS = Object.freeze(['www.youtube-nocookie.com', 'www.nps.gov', 'www.dvidshub.net', 'assets.pinterest.com', 'www.tiktok.com']);
+  const PRODUCTION_IMAGE_HOSTS = Object.freeze(['science.nasa.gov', 'i.pinimg.com', 'p16.muscdn.com', 'p16-common-sign.tiktokcdn-eu.com']);
 
   const REJECT = Object.freeze({
     SCHEMA: 'invalid_schema',
@@ -228,12 +227,12 @@
   }
 
   function httpsUrl(value, hosts) {
-    const raw = text(value, 500);
+    const raw = text(value, 4096);
     if (!raw) return { ok: false, code: REJECT.SCHEMA };
     let url;
     try { url = new URL(raw); } catch { return { ok: false, code: REJECT.SCHEMA }; }
-    if (url.protocol !== 'https:') return { ok: false, code: REJECT.INSECURE };
-    if (url.searchParams.has('autoplay')) return { ok: false, code: REJECT.AUTOPLAY };
+    if (url.protocol !== 'https:' || url.username || url.password || url.port) return { ok: false, code: REJECT.INSECURE };
+    if (url.searchParams.has('autoplay') && !(Media && Media.isAllowedEmbed(raw))) return { ok: false, code: REJECT.AUTOPLAY };
     if (hosts && hosts.indexOf(url.hostname) < 0) return { ok: false, code: null, host: url.hostname };
     return { ok: true, url: raw, host: url.hostname };
   }
@@ -292,6 +291,10 @@
     if (policy === 'text' && embedAllowed) return fail(REJECT.RIGHTS_CONFLICT, 'у текста нет embed');
 
     const out = { id, source, externalId, format: raw.format, lang: raw.lang, interestIds: Object.freeze(interestIds), title, body };
+    for (const key of ['tags', 'keywords']) {
+      const values = Array.isArray(raw[key]) ? raw[key] : typeof raw[key] === 'string' ? raw[key].split(/[,;\n]/) : [];
+      out[key] = Object.freeze([...new Set(values.map(value => text(value,80)).filter(Boolean))].slice(0,32));
+    }
     // Translated text is readable in each complete authored locale. This must
     // never turn translated captions into a claim about an external video's audio.
     if (policy === 'text' && Array.isArray(raw.contentLocales)) {
@@ -299,6 +302,10 @@
         .filter((code) => LOCALES.includes(code) && title[code] && body[code]));
     }
     if (raw.visual) out.visual = text(raw.visual, 48);
+    for (const key of ['imageWidth', 'imageHeight']) {
+      if (Number.isInteger(raw[key]) && raw[key] > 0 && raw[key] <= 20000) out[key] = raw[key];
+    }
+    if (['image', 'video', 'unknown'].includes(raw.mediaType)) out.mediaType = raw.mediaType;
 
     if (policy === 'embed') {
       const embed = httpsUrl(delivery.embedUrl, c.embedHosts);
@@ -307,6 +314,8 @@
       const src = httpsUrl(delivery.sourceUrl, null);
       if (!src.ok) return fail(src.code || REJECT.SCHEMA, 'sourceUrl');
       out.sourceUrl = src.url;
+      if (['assets.pinterest.com', 'www.tiktok.com'].includes(new URL(embed.url).hostname)
+        && (!Media || !Media.isAllowedEmbed(embed.url,src.url))) return fail(REJECT.EMBED_HOST,'provider_source_mismatch');
     } else if (policy === 'link') {
       const src = httpsUrl(delivery.sourceUrl, null);
       if (!src.ok) return fail(src.code || REJECT.SCHEMA, 'sourceUrl');
@@ -329,6 +338,8 @@
     if (raw.imageUrl) {
       const img = httpsUrl(raw.imageUrl, c.imageHosts);
       if (!img.ok) return fail(img.code || REJECT.IMAGE_HOST, img.host || '');
+      if (['i.pinimg.com','p16.muscdn.com','p16-common-sign.tiktokcdn-eu.com'].includes(img.host)
+        && (!Media || !Media.safeImage(img.url))) return fail(REJECT.IMAGE_HOST,img.host);
       out.imageUrl = img.url;
     }
 
@@ -345,7 +356,7 @@
 
     // Длительность
     const limits = DURATION_LIMITS[raw.format];
-    if (limits) {
+    if (limits && !(raw.checkMethod === 'metadata' && source === 'tiktok' && raw.durationSec == null)) {
       const seconds = Number(raw.durationSec);
       if (!Number.isInteger(seconds) || seconds < limits[0] || seconds > limits[1]) {
         return fail(REJECT.DURATION, `${raw.format}: ${raw.durationSec}`);
@@ -420,8 +431,7 @@
       if (!res.ok) { rejected.push({ id: res.id, code: res.code, detail: res.detail }); continue; }
       const c = res.candidate;
 
-      // Доступность. `unknown` допустим только для того, что лежит у нас: там
-      // «неизвестно» невозможно по построению — файл либо есть, либо нет.
+      // Явный отказ источника всегда сильнее сохранённого превью.
       if (c.available === false) {
         // Таймаут — не доказательство удаления. Отказ в обоих случаях, но оператору
         // важно знать, повторять проверку или выбрасывать запись.
@@ -433,7 +443,11 @@
         });
         continue;
       }
-      if (c.available === 'unknown' && c.tier !== 'licensed-local') {
+      // A provider lead is not a playback receipt. Trying one specific official
+      // post is allowed; the viewer must expose loading/error and stop on end.
+      const providerLead = c.checkMethod === 'metadata' && c.delivery.policy === 'embed'
+        && ['pinterest','tiktok'].includes(c.source) && Media && Media.isAllowedEmbed(c.embedUrl,c.sourceUrl);
+      if (c.available === 'unknown' && c.tier !== 'licensed-local' && !providerLead) {
         rejected.push({ id: c.id, code: REJECT.AVAILABILITY_UNKNOWN, detail: '' }); continue;
       }
 
@@ -450,8 +464,8 @@
           continue;
         }
         // Успешный HEAD говорит, что сервер ответил, а не что плеер проигрывает.
-        const manualStatic = c.delivery.policy === 'link' && !DURATION_LIMITS[c.format] && c.checkMethod === 'manual';
-        if (PLAYBACK_PROOFS.indexOf(c.checkMethod) < 0 && !manualStatic) {
+        const manualStatic = !DURATION_LIMITS[c.format] && c.checkMethod === 'manual';
+        if (PLAYBACK_PROOFS.indexOf(c.checkMethod) < 0 && !manualStatic && !providerLead) {
           rejected.push({ id: c.id, code: REJECT.PLAYBACK_UNVERIFIED, detail: c.checkMethod });
           continue;
         }
@@ -530,7 +544,9 @@
       // Материал со словами на языке, которого человек не читает, — это не выбор,
       // а препятствие. Материал без слов подходит всегда.
       const readable = c.delivery.policy === 'text' && c.contentLocales && c.contentLocales.some((code) => locales.includes(code));
-      if (c.lang !== 'none' && locales.indexOf(c.lang) < 0 && !readable) { blocked.push({ id: c.id, code: BLOCK.LANGUAGE, detail: c.lang }); continue; }
+      const visualLead = c.lang === 'unknown' && c.checkMethod === 'metadata'
+        && ((c.source === 'tiktok' && c.format === 'edit') || (c.source === 'pinterest' && c.format === 'image'));
+      if (c.lang !== 'none' && locales.indexOf(c.lang) < 0 && !readable && !visualLead) { blocked.push({ id: c.id, code: BLOCK.LANGUAGE, detail: c.lang }); continue; }
       survivors.push(c);
     }
 
@@ -671,6 +687,8 @@
         format: row.format, lang: opts.lang || row.lang || null,
         contentLocales: opts.contentLocales || row.contentLocales,
         visual: row.visual,
+        tags: row.tags, keywords: row.keywords,
+        imageWidth: row.imageWidth, imageHeight: row.imageHeight, mediaType: row.mediaType,
         durationSec: seconds, interestIds: row.interestIds,
         title: row.title, body: row.body,
         rights: { kind, holder: row.attribution, url: row.rightsUrl, embedAllowed: opts.embedAllowed === true, downloadAllowed: kind === 'satoru-original' },
@@ -714,6 +732,7 @@
       id: c.id,
       format: c.format,
       interestIds: c.interestIds,
+      tags: c.tags || [], keywords: c.keywords || [],
       title: pick(c.title),
       body: pick(c.body),
       visual: c.visual || '',
@@ -721,12 +740,14 @@
       rightsKind: c.rights.kind,
       rightsUrl: c.rights.url || '',
       provider: c.source,
+      availabilityCheck: c.checkMethod,
       mediaPolicy: c.delivery.policy === 'embed' ? 'iframe'
         : c.delivery.policy === 'local' ? 'local'
           : c.delivery.policy === 'text' ? 'text' : c.imageUrl ? 'remote-image' : 'link',
       embedUrl: c.embedUrl || '',
       sourceUrl: c.sourceUrl || '',
       imageUrl: c.imageUrl || '',
+      imageWidth: c.imageWidth || null, imageHeight: c.imageHeight || null, mediaType: c.mediaType || 'unknown',
       assetPath: c.assetPath || '',
       durationLabel: c.durationSec === null ? '' : secondsToLabel(c.durationSec),
     }));

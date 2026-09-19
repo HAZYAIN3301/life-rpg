@@ -266,7 +266,9 @@ test('runtime хранит незавершённый профиль отдел�
   assert.match(src, /function inspirationStoredDraft\([\s\S]{0,650}State\.settings\?\.inspirationDraft/);
   assert.match(src, /function queueInspirationSetupDraft\([\s\S]{0,650}persistInspirationSetupDraft/);
   assert.match(src, /base\.inspirationDraft = envelope/);
-  assert.match(src, /base\.inspiration = profile; delete base\.inspirationDraft/);
+  assert.match(src, /payload\.baseDraft = baseDraft/);
+  const owner = fs.readFileSync(path.join(__dirname, '..', 'server-inspiration-profile-v1.js'), 'utf8');
+  assert.match(owner, /if \(deletesDraft\) delete settings\.inspirationDraft/);
   assert.match(src, /const saved = await flushInspirationSetupDraft\(form\);\s*if \(!saved\) return;/);
   assert.match(src, /#inspiration-setup-form[\s\S]{0,250}queueInspirationSetupDraft/);
   assert.match(src, /function rememberInspirationLocalDraft\([\s\S]{0,260}sessionStorage\.setItem\(inspirationLocalDraftKey\(\), JSON\.stringify\(draft\)\)/,
@@ -391,8 +393,10 @@ test('ручной YouTube в Сохранённом получает рабоч
   const end = app.indexOf('function closeInspirationEmbed', start);
   assert.ok(start >= 0 && end > start, 'не найден runtime-контур Play');
   const playablePath = app.slice(start, end);
-  assert.match(playablePath, /inspirationYoutubeEmbed\((?:item|saved)\.url\)/,
+  assert.match(playablePath, /inspirationPersonalMedia\(saved\)/,
     'UI вычисляет preview, но click обязан заново получить тот же безопасный embed URL');
+  const personal = app.slice(app.indexOf('function inspirationPersonalMedia'),app.indexOf('function shelfViewModel'));
+  assert.match(personal, /inspirationYoutubeEmbed\(item\.url\)/);
 });
 
 test('ошибка загрузки не маскируется под пустую подборку и сохраняет Retry', () => {
@@ -463,7 +467,7 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260914-attention-cas-v263-1');
+  const appAt = index.indexOf('app.js?v=20260919-inspiration-v265-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'return-shelf-v1.js']) {
@@ -471,16 +475,21 @@ test('интеграция подключает профиль и каталог
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
   for (const asset of ['inspiration-catalog-v1.js', 'inspiration-supply-policy-v1.js', 'inspiration-supply-batch-v1.js', 'inspiration-supply-runtime-v1.js', 'inspiration-supply-ui-v1.js']) {
-    assert.ok(index.includes(asset + '?v=20260912-inspiration-v257-1'));
+    const pin = ['inspiration-supply-policy-v1.js','inspiration-supply-runtime-v1.js'].includes(asset) ? '20260919-inspiration-v265-1' : '20260912-inspiration-v257-1';
+    assert.ok(index.includes(asset + '?v=' + pin));
     assert.ok(index.indexOf(asset) < uiAt);
     assert.ok(sw.includes(asset));
   }
-  assert.match(index, /inspiration-profile-v1\.js\?v=20260830-economy-art-v208-1/);
-  assert.match(index, /return-shelf-ui-v1\.js\?v=20260912-inspiration-v257-1/);
+  for (const asset of ['inspiration-profile-v1.js','inspiration-media-v1.js','inspiration-player-v1.js','inspiration-visual-batch-v1.js','inspiration-visual-copy-v1.js']) {
+    assert.ok(index.includes(asset + '?v=20260919-inspiration-v265-1'));
+    assert.ok(index.indexOf(asset) < uiAt && sw.includes(asset));
+  }
+  assert.ok(index.indexOf('inspiration-media-v1.js') < index.indexOf('inspiration-supply-policy-v1.js'));
+  assert.match(index, /return-shelf-ui-v1\.js\?v=20260919-inspiration-v265-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
-  assert.match(index, /styles\.css\?v=20260913-critical-v261-1/);
-  assert.match(sw, /satoru-v263/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v263'/);
+  assert.match(index, /styles\.css\?v=20260919-inspiration-v265-1/);
+  assert.match(sw, /satoru-v265/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v265'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {
@@ -506,7 +515,9 @@ test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gat
 test('runtime сохраняет референсы и причины feedback как обучающие сигналы, не меняя текущую тройку', () => {
   const src = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
   assert.match(src, /querySelectorAll\('\[data-inspiration-reference-row\]'\)[\s\S]{0,700}videoReferences/);
-  assert.match(src, /enrichInspirationVideoReferences[\s\S]{0,1600}resolveTikTokLinks/);
+  const enrichment = src.slice(src.indexOf('async function enrichInspirationVideoReferences'),src.indexOf('function openInspirationSetup'));
+  assert.match(enrichment, /inspirationJSON\('\/api\/inspiration\/metadata'/);
+  assert.match(enrichment, /reference\.why/);
   assert.match(src, /P\.recordFeedback\(ensured\.profile, item, verdict, todayStr\(\), reason\)/);
   assert.match(src, /action === 'inspiration-feedback-open'/);
   assert.match(src, /action === 'inspiration-feedback-skip'/);

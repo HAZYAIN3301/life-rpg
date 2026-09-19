@@ -1,5 +1,9 @@
 # Inspiration Supply v1 — чем наполнять «Вдохновение»
 
+> Текущий контракт: [INSPIRATION-VISUAL-V265.md](./INSPIRATION-VISUAL-V265.md),
+> 19.09.2026. Runtime подключён; metadata Pinterest/TikTok допускает кандидата
+> с unknown availability, но не считается playback proof. Старые статусы ниже исторические.
+
 Дата: 2026-09-09
 Статус 10.09: **policy, миграция каталога и runtime adapter подготовлены локально. Подключение app/UI и релиз — за интегратором.**
 Точный шов, границы и проверенные источники: [INSPIRATION-SUPPLY-INTEGRATION-V1.md](./INSPIRATION-SUPPLY-INTEGRATION-V1.md).

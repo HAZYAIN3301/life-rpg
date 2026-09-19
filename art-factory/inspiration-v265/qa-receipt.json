@@ -1,0 +1,35 @@
+{
+  "release": "v265",
+  "checkedDate": "2026-09-19",
+  "environment": "Isolated localhost app and synthetic account; CUA in-app Chromium browser",
+  "fullSuite": { "command": "node --test --test-concurrency=2 scripts/*.test.js", "tests": 3021, "pass": 3021, "fail": 0 },
+  "browser": {
+    "viewports": [[375, 812], [1280, 900]],
+    "layout": "One column mobile, three desktop; no horizontal overflow in inspected states; uncropped loaded images",
+    "locales": ["ru", "en", "de", "uk", "es"],
+    "themes": ["light", "dark"],
+    "captionContrastRatios": { "light": 6.32, "dark": 5.29 },
+    "touchTargets": "Inspected card buttons at least 42 CSS px high",
+    "staticPhotoViewer": "Loaded real Pinterest image in native dialog, no iframe, Escape closes and restores opener focus",
+    "references": "All five supplied Pinterest URLs, titles and previews restored after a new login",
+    "lostResponse": "Local harness allowed real profile write, then dropped its HTTP 200 response; UI reported no confirmation. Same submit succeeded and server/client profile matched",
+    "invalidReceipt": "Synthetic 200 {} rejected visibly; feedback remained pending; repeat succeeded after local server restart",
+    "empty": "No filler shown; persisted digest ids=[] and server/client profile matched",
+    "playerError": "Validated synthetic provider error removed iframe and exposed inspiration-open-source button for exact TikTok item",
+    "playerEnded": "Validated synthetic ended event removed iframe and showed finite completion message",
+    "actualExternalPlayback": "NOT CONFIRMED. Direct official TikTok player loaded poster/controls but Play returned network error. In-app iframe error/timeout handled",
+    "providerMetadata": "17/17 official metadata resolutions succeeded on 2026-09-19; this is not playback or artistic acceptance",
+    "largeText": "CSS fixture at fixed 375px viewport; 28px captions/buttons. Tabs now wrap to separate rows and page width remains 375px",
+    "reducedMotion": "CSS no-animation/transition fixture exercised; OS prefers-reduced-motion setting not emulated",
+    "cache": "Final player QA uses unique local asset query to avoid earlier development build cache; production cache version satoru-v265",
+    "localHarness": "Not shipped; temporary test server session interruptions caused local login/network errors and were resolved by restarting that server"
+  },
+  "limits": [
+    "Brave Search production key/entitlement not verified; local unconfigured status visibly uses catalogue fallback",
+    "No successful external TikTok playback claim",
+    "No pixel-based vision analysis; reference descriptions/titles provide taste signals",
+    "No artistic acceptance for every individual style or claim of perpetual variety from 17 posts",
+    "OS text scaling and OS reduced-motion setting remain separate device checks",
+    "Production release status and byte equality are recorded after publishing the exact commit"
+  ]
+}

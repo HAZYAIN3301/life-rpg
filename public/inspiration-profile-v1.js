@@ -453,6 +453,29 @@
     });
   }
 
+  // Broad categories are a starting point. Once a person describes a visual
+  // motif, a matching category alone cannot fill the finite selection. Only
+  // actual title/tags/keywords supply evidence; generic editorial captions and
+  // the search query itself do not. Sparse metadata may yield fewer finds.
+  function matchesVisualTaste(item, profile) {
+    if (!['image', 'edit'].includes(item.format)) return true;
+    const signals = meaningfulTerms([profile.visualTaste,
+      ...profile.videoReferences.flatMap(row => [row.title || '', row.why || ''])].join(' '));
+    // An explicit rejection of the described motif is a correction of taste.
+    // Keep the existing feedback ranking free to try another style instead of
+    // trapping the person in the very motif they just rejected.
+    const rejected = new Set(profile.feedback.filter(row => row.verdict === 'not_for_me')
+      .flatMap(row => meaningfulTerms([row.reason || '', ...(row.keywords || [])].join(' '))));
+    if (signals.some(term => rejected.has(term))) return true;
+    const generic = new Set(['photo','photos','image','images','picture','pictures','video','videos','edit','edits',
+      'фото','фотография','фотографии','картинка','картинки','видео','эдит','эдиты',
+      ...profile.interests.flatMap(row => meaningfulTerms(`${row.id} ${row.label}`))]);
+    const motifs = signals.filter(term => !generic.has(term));
+    if (!motifs.length) return true;
+    const detail = new Set(meaningfulTerms([item.title,...(item.keywords || []),...(item.tags || [])].join(' ')));
+    return motifs.some(term => detail.has(term));
+  }
+
   function choose(catalog, profile, day, size = DIGEST_SIZE) {
     const p = normalize(profile);
     if (!p.configured || !isDay(day)) return [];
@@ -464,7 +487,8 @@
       // match an interest the person explicitly confirmed; “not for me” hides
       // the exact item from later digests without mutating today's fixed deck.
       .filter((item) => p.formats.includes(item.format) && !hidden.has(item.id)
-        && item.interestIds.some((id) => wanted.has(id)) && !blocked(item, p) && !isReference(item, p))
+        && item.interestIds.some((id) => wanted.has(id)) && !blocked(item, p) && !isReference(item, p)
+        && matchesVisualTaste(item, p))
       .map((item) => ({ item, relevance: score(item, p, day) }))
       .sort((a, b) => b.relevance - a.relevance || a.item.id.localeCompare(b.item.id));
     const selected = [], formats = new Set();

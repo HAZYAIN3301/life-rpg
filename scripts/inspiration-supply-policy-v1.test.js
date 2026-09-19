@@ -37,17 +37,24 @@ test('форматы и локали не разошлись с профилем
 });
 
 test('allowlist встраивания совпадает с фактической границей app.js', () => {
-  // Расхождение означало бы, что policy допустит материал, который приложение
-  // молча не покажет: iframe просто не создастся, а карточка останется пустой.
-  const fn = APP.slice(APP.indexOf('function inspirationEmbedAllowed'));
-  const arr = /\[((?:\s*'[^']+',?)+)\]\s*\.includes\(url\.hostname\)/.exec(fn);
-  assert.ok(arr, 'не удалось найти список хостов в inspirationEmbedAllowed — проверь app.js');
-  const hosts = arr[1].split(',').map((s) => s.trim().replace(/^'|'$/g, '')).filter(Boolean);
-  assert.deepEqual(hosts.slice().sort(), P.PRODUCTION_EMBED_HOSTS.slice().sort());
+  const vm = require('node:vm'), Media = require('../public/inspiration-media-v1.js');
+  const start = APP.indexOf('function inspirationEmbedAllowed'), end = APP.indexOf('function playInspirationEmbed', start);
+  assert.ok(start >= 0 && end > start);
+  const context = vm.createContext({URL,window:{InspirationMediaV1:Media}});
+  vm.runInContext(APP.slice(start,end),context);
+  const posts = require('../public/inspiration-visual-batch-v1.js').CANDIDATES;
+  for (const post of posts) assert.equal(context.inspirationEmbedAllowed(post.delivery.embedUrl,post.delivery.sourceUrl),true);
+  for (const host of P.PRODUCTION_EMBED_HOSTS.filter(host => !['assets.pinterest.com','www.tiktok.com'].includes(host))) {
+    assert.equal(context.inspirationEmbedAllowed(`https://${host}/embed/test`),true);
+  }
+  assert.equal(context.inspirationEmbedAllowed('https://www.tiktok.com/explore'),false);
+  assert.equal(context.inspirationEmbedAllowed('https://assets.pinterest.com/ext/embed.html?id=974818281863152085','https://www.pinterest.com/pin/733523858101103384/'),false);
+  assert.equal(context.inspirationEmbedAllowed('https://example.com/embed/test'),false);
 });
 
 test('модуль не читает часы, сеть, DOM и состояние приложения', () => {
-  const body = SRC.split('function buildInspirationSupplyPolicy()')[1] || '';
+  const body = SRC.slice(SRC.indexOf('function buildInspirationSupplyPolicy('));
+  assert.ok(body.length > 1000);
   for (const re of [/Date\.now\s*\(/, /new\s+Date\s*\(/, /\bfetch\s*\(/, /\bdocument\b/, /\blocalStorage\b/, /['"`]\/api\//, /\bState\./, /Math\.random/]) {
     assert.ok(!re.test(body), `в теле модуля не должно быть ${re}`);
   }

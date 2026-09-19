@@ -22407,6 +22407,8 @@ details.pet-summary > :not(summary) {
 .inspiration-shell .inspiration-style-feedback :disabled { opacity: .58; cursor: default; }
 .inspiration-shell .inspiration-item-actions { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; justify-content: stretch; }
 .inspiration-shell .inspiration-item-actions .btn { font-size: var(--type-control); }
+.inspiration-shell .inspiration-tabs { flex-wrap: wrap; }
+.inspiration-shell .inspiration-tabs button { flex: 1 1 max-content; white-space: normal; overflow-wrap: anywhere; }
 .inspiration-shell .inspiration-reference-intro { margin: 0; max-inline-size: var(--measure-prose); color: var(--text-soft); font: var(--type-body)/var(--leading-prose) var(--font-ui); }
 .inspiration-shell .inspiration-reference-row {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) var(--touch-min);
@@ -22449,6 +22451,10 @@ details.pet-summary > :not(summary) {
 .inspiration-shell .has-player { min-block-size: 0; padding: 0; }
 .inspiration-shell .has-player > :not(.inspiration-embed):not([data-media-status]) { display: none; }
 .inspiration-shell [data-media-status] { margin: 0; padding: var(--sp-2); color: var(--text-soft); font: var(--type-control)/var(--leading-prose) var(--font-ui); }
+.inspiration-shell [data-media-status]:empty { display: none; }
+.inspiration-shell .inspiration-visual.has-image:has(> [data-media-status]:not(:empty)):not(.has-player) { padding-block-end: calc(var(--touch-min) + var(--sp-3) * 2); }
+.inspiration-shell .inspiration-source-fallback { display: block; margin-block-start: var(--sp-2); min-block-size: var(--touch-min); }
+.inspiration-shell .inspiration-visual.is-media > .inspiration-play > span { color: #13151b; background: #fff; }
 .inspiration-shell .inspiration-embed { position: relative; z-index: 5; inline-size: 100%; display: grid; gap: var(--sp-2); padding: var(--sp-2); color: var(--text-strong); background: var(--surface-0); }
 .inspiration-shell .inspiration-embed iframe { position: static; display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; border: 0; border-radius: var(--radius-sm); background: #000; }
 .inspiration-shell .inspiration-embed.is-tiktok iframe { aspect-ratio: 9 / 16; min-block-size: 400px; }
@@ -22459,6 +22465,24 @@ details.pet-summary > :not(summary) {
 .inspiration-shell .inspiration-embed button { min-block-size: var(--touch-min); }
 .inspiration-shell .inspiration-embed :is(.inspiration-media-close, [data-action="inspiration-media-close"]) { position: static; inline-size: auto; block-size: auto; min-block-size: var(--touch-min); justify-self: end; }
 .inspiration-shell :is(button, input, textarea, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+dialog.inspiration-embed.is-image-viewer {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  inline-size: min(96vw, 1080px);
+  max-inline-size: 96vw;
+  max-block-size: 94dvh;
+  padding: var(--sp-3);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
+  background: var(--surface-0);
+  color: var(--text-strong);
+}
+dialog.inspiration-embed.is-image-viewer[open] { display: grid; gap: var(--sp-2); }
+dialog.inspiration-embed.is-image-viewer::backdrop { background: #080a10dc; }
+.inspiration-viewer-image { display: block; inline-size: 100%; block-size: auto; max-block-size: calc(94dvh - 92px); object-fit: contain; }
+dialog.inspiration-embed.is-image-viewer button { justify-self: end; min-inline-size: var(--touch-min); min-block-size: var(--touch-min); color: var(--text-strong); background: var(--surface-1); border: 1px solid var(--line-soft); border-radius: var(--radius-md); }
+dialog.inspiration-embed.is-image-viewer button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 @media (max-width: 900px) {
   .inspiration-shell .inspiration-digest { grid-template-columns: minmax(0, 1fr); }
   .inspiration-shell .inspiration-visual.is-tiktok { max-inline-size: 430px; inline-size: 100%; justify-self: center; }

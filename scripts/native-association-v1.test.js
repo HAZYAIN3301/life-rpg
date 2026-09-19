@@ -17,6 +17,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawn } = require('node:child_process');
+const net = require('node:net');
 
 const NativeAssociationV1 = require('../public/native-association-v1.js');
 
@@ -124,7 +125,15 @@ test('модуль ничего не читает из окружения сам
 
 async function startServer(extraEnv) {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'satoru-assoc-'));
-  const port = 49200 + (process.pid % 150) + (extraEnv && extraEnv.__offset ? extraEnv.__offset : 0);
+  // OS allocation avoids another integration worker answering our readiness probe.
+  const port = await new Promise((resolve, reject) => {
+    const probe = net.createServer();
+    probe.once('error', reject);
+    probe.listen(0, '127.0.0.1', () => {
+      const allocated = probe.address().port;
+      probe.close(error => error ? reject(error) : resolve(allocated));
+    });
+  });
   const env = { ...process.env, HOST: '127.0.0.1', PORT: String(port), DATA_DIR: dataDir, PUSH_SCHED: 'off' };
   delete env.APPLE_APP_IDS; delete env.APPLE_APPLINK_PATHS;
   delete env.ANDROID_PACKAGE; delete env.ANDROID_CERT_SHA256;
@@ -134,7 +143,7 @@ async function startServer(extraEnv) {
   const base = `http://127.0.0.1:${port}`;
   for (let i = 0; i < 200; i += 1) {
     if (child.exitCode != null) throw new Error(`сервер упал: ${out}`);
-    try { if ((await fetch(`${base}/api/auth/profiles`)).ok) return { child, base, stop: () => child.kill('SIGTERM') }; } catch {}
+    try { if (out.includes('Satoru запущен:') && (await fetch(`${base}/api/auth/profiles`)).ok) return { child, base, stop: () => child.kill('SIGTERM') }; } catch {}
     await new Promise((r) => setTimeout(r, 30));
   }
   child.kill('SIGTERM'); throw new Error(`сервер не поднялся: ${out}`);

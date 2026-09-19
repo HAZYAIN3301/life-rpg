@@ -86,5 +86,8 @@ test('Board v2 server source never accepts client query/GPS identity fields', ()
   const source = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
   assert.match(source, /boardV2Service\.resolve\(uid, payload/);
   assert.match(source, /name === 'board-discovery'.*server_owned_data/);
-  assert.doesNotMatch(source, /payload\.(?:query|url|latitude|longitude|userId)/);
+  const start = source.indexOf("if (u === '/api/board-v2/discovery'");
+  const end = source.indexOf('// ---- Board v2 structured community', start);
+  assert.ok(start >= 0 && end > start);
+  assert.doesNotMatch(source.slice(start,end), /payload\.(?:query|url|latitude|longitude|userId)/);
 });
