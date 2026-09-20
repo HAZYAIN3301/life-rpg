@@ -5,9 +5,9 @@
 - [x] **Первый локальный iOS foundation:** SwiftUI/WKWebView, Xcode project,
   iOS 17+, native settings, подготовленное ядро Keychain/refresh, пять App Shortcuts.
   Симуляторная сборка и core tests PASS; IOS-FOUNDATION-2026-09.md.
-- [ ] **C1 довести до постоянного native-входа:** B2 web device notices, затем
-  account-switch/logout/revocation всего гибридного клиента на тестовом сервере
-  и настоящем iPhone. Регистрация device token в текущем UI намеренно выключена.
+- [ ] **C1 завершить device QA:** B2 notices и bound web session реализованы v266;
+  18 real Keychain/WK сценариев PASS на симуляторе, capability-gated registration.
+  Нужны подписанные iPhone/Mac, offline/Keychain errors и полный UI flow.
 - [ ] **Apple внешний остаток:** четыре Family Controls requests подаёт владелец.
   AASA 404 на обоих доменах; ожидается `APPLE_APP_IDS=8Y9TR9L674.com.satoruapp.satoru`.
   Нет валидного сертификата подписи в проверенном keychain; TestFlight не собирался.
@@ -32,9 +32,8 @@
   `Authorization: Bearer` рядом с кукой, регистрация только по куке, вращение ключа
   обновления с отзывом при повторе и окном повтора 60 с, привязка к версии сессии,
   заборы на нечитаемый файл и сбой записи. 32 теста.
-- [ ] **B2, экран в Настройках.** Список устройств, «отозвать», «отозвать все» и
-  заметное уведомление о новом устройстве с «это я» / «отозвать», пять языков.
-  Сервер готов: `GET /api/auth/devices`, `…/revoke`, `…/revoke-all`, `…/ack`.
+- [x] **B2, экран в Настройках и notices, v266.** Список, ack/revoke/revoke-all,
+  пять языков, ограниченные native permissions. DEVICE-WEB-SESSIONS-V266.md.
 - [x] **B4, корпус ядра внимания:** `fixtures/attention-core-v1.json`, 32 случая
   по политике и сессиям: причины отказа и их приоритет, окно тишины через полночь,
   дедлайн до миллисекунды, нечитаемые часы как fail-open, расход продления,

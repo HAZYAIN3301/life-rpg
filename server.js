@@ -2082,6 +2082,7 @@ function accountProfilePublicView(user) {
 //  Sessions — HMAC-signed cookie  userId.expires.signature
 // ============================================================
 const SESSION_COOKIE = 'lrpg_sess';
+const DEVICE_WEB_COOKIE = 'lrpg_device';
 const SESSION_AGE_MS = 30 * 24 * 3600 * 1000; // 30 дней
 
 function newSessionVersion() { return crypto.randomBytes(12).toString('hex'); }
@@ -2120,11 +2121,19 @@ function parseCookies(req) {
   const out = {};
   (req.headers.cookie || '').split(';').forEach(c => {
     const i = c.indexOf('=');
-    if (i > 0) out[c.slice(0, i).trim()] = decodeURIComponent(c.slice(i + 1).trim());
+    if (i > 0) {
+      try { out[c.slice(0, i).trim()] = decodeURIComponent(c.slice(i + 1).trim()); }
+      catch { out[c.slice(0, i).trim()] = ''; }
+    }
   });
   return out;
 }
-function cookieUserId(req) { return verifySession(parseCookies(req)[SESSION_COOKIE]); }
+function cookieUserId(req) {
+  const cookies = parseCookies(req);
+  // A bound webview cannot fall back to a stale full cookie after device revoke.
+  if (Object.hasOwn(cookies, DEVICE_WEB_COOKIE)) return null;
+  return verifySession(cookies[SESSION_COOKIE]);
+}
 
 // ---- Сессии устройства: Authorization: Bearer рядом с кукой (DEVICE-SESSIONS-V264.md) ----
 // Нативному приложению, виджету, App Intent и расширению Screen Time кука недоступна.
@@ -2160,8 +2169,9 @@ function bearerAccessToken(req) {
 }
 function deviceAccess(req) {
   const token = bearerAccessToken(req);
-  if (!token) return null;
-  return deviceSessions.verifyAccess(token, (uid) => loadUsers().find((item) => item.id === uid) || null);
+  const getUser = (uid) => loadUsers().find((item) => item.id === uid) || null;
+  if (token) return deviceSessions.verifyAccess(token, getUser);
+  return deviceSessions.verifyWebSession(parseCookies(req)[DEVICE_WEB_COOKIE], getUser);
 }
 // Кука проверяется первой и не ослабляется. Токен устройства даёт ровно те права, что были
 // у сессии, из которой устройство зарегистрировано, и умирает вместе с её версией.
@@ -2186,10 +2196,13 @@ function secureCookieSuffix(req) {
   return proto === 'https' || (req && req.socket && req.socket.encrypted) ? '; Secure' : '';
 }
 function setCookieHeader(req, token) {
-  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_AGE_MS / 1000)}${secureCookieSuffix(req)}`;
+  const full = `${SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_AGE_MS / 1000)}${secureCookieSuffix(req)}`;
+  return Object.hasOwn(parseCookies(req), DEVICE_WEB_COOKIE) ? [full,
+    `${DEVICE_WEB_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookieSuffix(req)}`] : full;
 }
 function clearCookieHeader(req) {
-  return `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookieSuffix(req)}`;
+  return [SESSION_COOKIE, DEVICE_WEB_COOKIE].map((name) =>
+    `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookieSuffix(req)}`);
 }
 
 function deleteAccountLifecycle(uid, users) {
@@ -4223,6 +4236,7 @@ const server = http.createServer(async (req, res) => {
           attentionLocalModeRefusal: true,
           webPush: true,
           deviceSessions: true,
+          deviceWebSessions: true,
           appleAppSiteAssociation: Boolean(APPLE_ASSOCIATION_BODY),
           androidAssetLinks: Boolean(ANDROID_ASSOCIATION_BODY),
         },
@@ -4448,7 +4462,14 @@ const server = http.createServer(async (req, res) => {
       if (!uid) return sendJson(res, 401, { error: 'not logged in' });
       const user = loadUsers().find((item) => item.id === uid);
       if (!user) return sendJson(res, 401, { error: 'user not found' });
-      return sendDeviceResult(res, deviceSessions.list(user, access ? access.deviceId : null));
+      return sendDeviceResult(res, { ...deviceSessions.list(user, access ? access.deviceId : null),
+        canManageAll: Boolean(cookieUid) });
+    }
+
+    // Native-only exchange. Cookie credentials cannot mint a bound web session.
+    if (u === '/api/auth/devices/web-session' && req.method === 'POST') {
+      return sendDeviceResult(res, deviceSessions.issueWebSession(bearerAccessToken(req),
+        (uid) => loadUsers().find((item) => item.id === uid) || null));
     }
 
     // POST /api/auth/devices/register — «запомнить это устройство»; ТОЛЬКО из сессии по куке.
@@ -4501,8 +4522,15 @@ const server = http.createServer(async (req, res) => {
 
     // POST /api/auth/logout
     if (u === '/api/auth/logout' && req.method === 'POST') {
+      const logoutUid = sessionUserId(req);
+      const bound = !cookieUserId(req) ? deviceAccess(req) : null;
+      if (bound) {
+        const user = loadUsers().find((item) => item.id === bound.uid);
+        const result = deviceSessions.revoke(user, bound.deviceId, { actorDeviceId: bound.deviceId });
+        if (!result.ok) return sendDeviceResult(res, result);
+      }
       if (body.all === true) {
-        const uid = sessionUserId(req);
+        const uid = logoutUid;
         if (!uid) return sendJson(res, 401, { error: 'not logged in' });
         const users = loadUsers(); const user = users.find((item) => item.id === uid);
         if (!user) return sendJson(res, 401, { error: 'user not found' });

@@ -22503,3 +22503,16 @@ dialog.inspiration-embed.is-image-viewer button:focus-visible { outline: 2px sol
 @media (prefers-reduced-motion: reduce) {
   .inspiration-shell *, .inspiration-shell *::before, .inspiration-shell *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+/* Device access remains visible outside Settings. */
+.device-session-notice {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: 12px; padding: 16px; margin: 12px 16px;
+  border: 1px solid var(--accent); border-radius: 12px;
+  color: var(--text); background: var(--panel);
+}
+.device-session-list { list-style: none; padding: 0; margin: 16px 0; }
+.device-session-list li { padding: 16px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.device-session-list li > strong { display: block; }
+.device-session-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.device-sessions-card > .btn { margin: 8px 8px 0 0; }
+.device-sessions-card .btn, .device-session-notice .btn { min-height: 44px; white-space: normal; }

@@ -59,6 +59,55 @@ async function account(base, email, ip) {
 
 const remember = (name = 'iPhone', platform = 'ios') => ({ remember: true, name, platform });
 
+test('bound web session shares revocation and cannot become a full login', { timeout: 30000 }, async (t) => {
+  const { base } = await withServer(t);
+  const me = await account(base, 'bound@example.test', '10.1.1.1');
+  const phone = (await api(base, '/api/auth/devices/register', { method: 'POST', cookie: me.cookie, body: remember() })).data;
+  const mint = (options) => api(base, '/api/auth/devices/web-session', { method: 'POST', ...options });
+  assert.equal((await mint({ cookie: me.cookie })).status, 401);
+  const web = await mint({ bearer: phone.accessToken });
+  assert.equal(web.status, 200);
+  const cookie = 'lrpg_device=' + web.data.webSessionToken;
+  assert.equal((await api(base, '/api/auth/me', { cookie })).data.id, me.id);
+  assert.equal((await api(base, '/api/auth/devices', { cookie })).data.canManageAll, false);
+  assert.equal((await api(base, '/api/auth/devices', { cookie: me.cookie })).data.canManageAll, true);
+  assert.equal((await mint({ cookie })).status, 401);
+  assert.equal((await mint({ bearer: web.data.webSessionToken })).status, 401);
+  for (const route of ['register', 'ack', 'revoke-all']) {
+    assert.equal((await api(base, '/api/auth/devices/' + route,
+      { method: 'POST', cookie: cookie + '; ' + me.cookie, body: { ...remember(), deviceId: phone.device.id } })).status, 401);
+  }
+  const revoked = await api(base, '/api/auth/devices/revoke',
+    { method: 'POST', cookie: me.cookie, body: { deviceId: phone.device.id } });
+  assert.equal(revoked.status, 200);
+  assert.equal((await api(base, '/api/auth/me', { cookie })).status, 401);
+  assert.equal((await api(base, '/api/auth/me', { cookie: cookie + '; ' + me.cookie })).status, 401,
+    'stale full cookie cannot bypass device revocation');
+  assert.equal((await api(base, '/api/auth/me', { cookie: me.cookie })).status, 200);
+});
+
+test('web logout revokes the native device so foreground cannot restore it', { timeout: 30000 }, async (t) => {
+  const { base } = await withServer(t);
+  const me = await account(base, 'logout@example.test', '10.1.1.2');
+  for (const all of [false, true]) {
+    const login = await api(base, '/api/auth/login', {
+      method: 'POST', body: { email: 'logout@example.test', password: 'right-pass-2026' },
+    });
+    const phone = (await api(base, '/api/auth/devices/register', {
+      method: 'POST', cookie: login.cookie, body: remember(),
+    })).data;
+    const web = (await api(base, '/api/auth/devices/web-session', { method: 'POST', bearer: phone.accessToken })).data;
+    const out = await api(base, '/api/auth/logout', {
+      method: 'POST', cookie: 'lrpg_device=' + web.webSessionToken, body: { all },
+    });
+    assert.equal(out.status, 200);
+    assert.equal((await api(base, '/api/auth/me', { bearer: phone.accessToken })).status, 401);
+    assert.equal((await api(base, '/api/auth/devices/refresh', {
+      method: 'POST', body: { refreshToken: phone.refreshToken },
+    })).status, 401);
+  }
+});
+
 async function withServer(t) {
   const rt = await startServer();
   t.after(() => { rt.child.kill('SIGTERM'); fs.rmSync(rt.dataDir, { recursive: true, force: true }); });

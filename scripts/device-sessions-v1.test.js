@@ -20,6 +20,28 @@ const D = require('../server-device-sessions-v1.js');
 const SECRET = 'test-secret-for-device-sessions';
 const T0 = Date.parse('2026-09-17T12:00:00.000Z');
 
+test('device web credentials have separate purpose, bounded lifetime and live revocation', () => {
+  const h = harness(), user = h.users.get('albert');
+  const phone = h.sessions.register(user, { remember: true, name: 'Phone', platform: 'ios' });
+  const web = h.sessions.issueWebSession(phone.accessToken, h.getUser);
+  assert.equal(web.ok, true);
+  assert.equal(h.sessions.verifyAccess(web.webSessionToken, h.getUser), null);
+  assert.equal(h.sessions.verifyWebSession(phone.accessToken, h.getUser), null);
+  assert.equal(h.sessions.refresh(web.webSessionToken, h.getUser).ok, false);
+  assert.equal(h.sessions.verifyWebSession(web.webSessionToken, h.getUser).uid, 'albert');
+  h.state.now += D.ACCESS_TTL_MS + 1;
+  assert.equal(h.sessions.verifyAccess(phone.accessToken, h.getUser), null);
+  assert.ok(h.sessions.verifyWebSession(web.webSessionToken, h.getUser));
+  user.sessionVersion = 'changed';
+  assert.equal(h.sessions.verifyWebSession(web.webSessionToken, h.getUser), null);
+  user.sessionVersion = 'v-one';
+  h.state.failRead = true;
+  assert.equal(h.sessions.verifyWebSession(web.webSessionToken, h.getUser), null);
+  h.state.failRead = false;
+  h.state.now = T0 + D.WEB_TTL_MS;
+  assert.equal(h.sessions.verifyWebSession(web.webSessionToken, h.getUser), null);
+});
+
 function harness() {
   const files = new Map();
   const state = { now: T0, failWrite: false, failRead: false, writes: 0 };

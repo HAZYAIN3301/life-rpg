@@ -22358,6 +22358,92 @@ function securityCard() {
     </div>
   </div>`;
 }
+
+// Security notice has its own account epoch; a late response cannot cross logins.
+const deviceUI = { uid: null, epoch: 0, data: null, busy: false, error: false, checked: 0 };
+function updateDeviceViews() {
+  const card = document.querySelector('.device-sessions-card');
+  const active = card?.contains(document.activeElement) ? document.activeElement : null;
+  const action = active?.dataset.action, id = active?.dataset.deviceId;
+  if (card) card.outerHTML = window.DeviceSessionsUIV1.card(deviceUI, lang());
+  const notice = document.getElementById('device-session-notice');
+  if (notice) notice.innerHTML = window.DeviceSessionsUIV1.notice(deviceUI, lang());
+  if (active) {
+    const target = Array.from(document.querySelectorAll('.device-sessions-card button')).find(
+      (button) => button.dataset.action === action && button.dataset.deviceId === id && !button.disabled);
+    (target || document.getElementById('device-sessions-title'))?.focus();
+  }
+}
+function syncDeviceAccount() {
+  const uid = State.phase === 'app' ? State.me?.id : null;
+  if (uid !== deviceUI.uid) {
+    closeAccountDialog('device-revoke-dialog', { restoreFocus: false });
+    Object.assign(deviceUI, { uid, epoch: deviceUI.epoch + 1, data: null, busy: false, error: false, checked: 0 });
+  }
+  if (uid && !deviceUI.busy && Date.now() - deviceUI.checked > 60000) void refreshDeviceSessions();
+}
+async function refreshDeviceSessions() {
+  if (!deviceUI.uid || deviceUI.busy) return;
+  const epoch = deviceUI.epoch;
+  deviceUI.busy = true; deviceUI.checked = Date.now();
+  updateDeviceViews();
+  try {
+    const response = await fetch('/api/auth/devices', { cache: 'no-store' });
+    if (epoch !== deviceUI.epoch) return;
+    if (response.status === 401) { handleAccountSessionExpired(); return; }
+    const data = await response.json();
+    if (epoch !== deviceUI.epoch) return;
+    if (!response.ok || !window.DeviceSessionsUIV1.validList(data)) throw new Error('invalid_devices');
+    deviceUI.data = data; deviceUI.error = false;
+  } catch { if (epoch === deviceUI.epoch) deviceUI.error = true; }
+  finally {
+    if (epoch === deviceUI.epoch) { deviceUI.busy = false; updateDeviceViews(); }
+  }
+}
+async function actOnDevice(action, id, confirmed = false) {
+  const UI = window.DeviceSessionsUIV1;
+  if (action === 'review') {
+    State.view = 'settings'; State.settingsSection = 'account'; render();
+    document.getElementById('device-sessions-title')?.focus(); return;
+  }
+  if (action === 'refresh') { await refreshDeviceSessions(); return; }
+  if (!deviceUI.uid || deviceUI.busy || !['ack', 'revoke', 'revoke-all'].includes(action)) return;
+  if (action !== 'ack' && !confirmed) {
+    const overlay = document.createElement('div');
+    overlay.id = 'device-revoke-dialog'; overlay.className = 'modal-overlay';
+    overlay.dataset.deviceEpoch = String(deviceUI.epoch);
+    const title = UI.text(action === 'revoke-all' ? 'confirmAll' : 'confirm', lang());
+    const name = deviceUI.data?.devices.find((device) => device.id === id)?.name || '';
+    overlay.innerHTML = `<section class="paywall-box account-dialog-box" role="dialog" aria-modal="true" aria-labelledby="device-revoke-title">
+      <h2 id="device-revoke-title" tabindex="-1">${esc(title)}</h2>
+      ${action === 'revoke' ? `<p>${esc(name)}</p>` : ''}
+      <div class="account-dialog-actions">
+      <button type="button" class="btn ghost" data-action="device-cancel">${UI.text('cancel', lang())}</button>
+      <button type="button" class="btn danger" data-action="device-confirm" data-device-operation="${action}" data-device-id="${esc(id || '')}">${UI.text(action === 'revoke-all' ? 'all' : 'revoke', lang())}</button>
+      </div></section>`;
+    mountAccountDialog(overlay, { initial: '#device-revoke-title', returnFocus: document.activeElement });
+    return;
+  }
+  const epoch = deviceUI.epoch;
+  deviceUI.busy = true; deviceUI.error = false; updateDeviceViews();
+  try {
+    const response = await fetch('/api/auth/devices/' + action, { method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deviceId: id }) });
+    if (epoch !== deviceUI.epoch) return;
+    if (response.status === 401) { handleAccountSessionExpired(); return; }
+    const receipt = await response.json();
+    if (epoch !== deviceUI.epoch) return;
+    if (!response.ok || receipt.ok !== true) throw new Error('device_write_unconfirmed');
+    deviceUI.busy = false;
+    await refreshDeviceSessions();
+  } catch {
+    if (epoch === deviceUI.epoch) { deviceUI.busy = false; deviceUI.error = true; updateDeviceViews(); }
+  }
+}
+setInterval(() => { if (document.visibilityState === 'visible') syncDeviceAccount(); }, 60000);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') syncDeviceAccount();
+});
 function showLogoutAllDialog(returnFocus = document.activeElement) {
   document.getElementById('logout-all-modal')?.remove();
   const overlay = document.createElement('div'); overlay.id = 'logout-all-modal'; overlay.className = 'modal-overlay';
@@ -26588,6 +26674,7 @@ function renderSettings() {
     ${groupStart('account', 'Профиль и доступ', 'Профиль, безопасность и подписка')}
     ${identityProfileCard()}
     ${securityCard()}
+    ${window.DeviceSessionsUIV1.card(deviceUI, lang())}
     ${subscriptionCard()}
     ${founderPassCard()}
     ${adminCard()}
@@ -27846,6 +27933,7 @@ function renderCaptureWidget(name) {
   app.innerHTML = `<div class="capture-stage" data-widget="${esc(name)}">${inner}</div>`;
 }
 function render() {
+  syncDeviceAccount();
   const capture = captureWidgetRequested();
   if (capture && State.phase === 'app') { renderCaptureWidget(capture); return; }
   if (State.phase !== 'app') { showAuthScreen(); return; }
@@ -27864,6 +27952,12 @@ function render() {
   // (тик таймера и т.п.) речь НЕ прерывает — иначе фраза рубилась бы на полуслове.
   if (_ttsBtn && _ttsView !== State.view) ttsStop();
   try { renderHeader(); } catch (e) { console.error('renderHeader', e); }
+  let deviceNotice = document.getElementById('device-session-notice');
+  if (!deviceNotice) {
+    deviceNotice = document.createElement('div'); deviceNotice.id = 'device-session-notice';
+    document.getElementById('topbar')?.after(deviceNotice);
+  }
+  deviceNotice.innerHTML = window.DeviceSessionsUIV1.notice(deviceUI, lang());
   try { renderNav(); } catch (e) { console.error('renderNav', e); }
   const main = document.getElementById('main');
   try { renderMainView(main); } catch (e) {
@@ -30159,6 +30253,14 @@ async function onClick(e) {
       render();
     }).catch(() => toast(t('Сетевая ошибка'))).finally(() => { if (el.isConnected) el.disabled = false; }); return;
   }
+  if (action === 'device-cancel') { closeAccountDialog('device-revoke-dialog'); return; }
+  if (action === 'device-confirm') {
+    const epoch = el.closest('#device-revoke-dialog')?.dataset.deviceEpoch;
+    closeAccountDialog('device-revoke-dialog');
+    if (epoch !== String(deviceUI.epoch)) return;
+    void actOnDevice(el.dataset.deviceOperation, el.dataset.deviceId, true); return;
+  }
+  if (action.startsWith('device-')) { void actOnDevice(action.slice(7), el.dataset.deviceId); return; }
   if (action === 'logout-all') {
     showLogoutAllDialog(el); return;
   }
@@ -32373,6 +32475,8 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  closeAccountDialog('device-revoke-dialog', { restoreFocus: false });
+  Object.assign(deviceUI, { uid: null, epoch: deviceUI.epoch + 1, data: null, busy: false, error: false, checked: 0 });
   cancelInspirationWork();
   State._inspirationDailyAttempt = null; State._inspirationPosterAttempts = null;
   State._inspirationSetupAttempt = null;
@@ -33404,7 +33508,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v265';
+const PWA_CACHE_VERSION = 'satoru-v266';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

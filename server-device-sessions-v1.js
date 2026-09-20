@@ -20,6 +20,7 @@
   const ACCESS_PREFIX = 'dat1';
   const REFRESH_PREFIX = 'drt1';
   const ACCESS_TTL_MS = 15 * 60 * 1000;
+  const WEB_TTL_MS = 30 * 24 * 60 * 60 * 1000;
   // A phone on a bicycle loses responses. Presenting the credential that was
   // just replaced, within this window, is a retry and rotates again; later it is
   // reuse of a copy and revokes the device.
@@ -114,21 +115,22 @@
       try { deps.write(uid, { schema: SCHEMA, devices }); return true; } catch { return false; }
     }
 
-    const accessPayload = (uid, deviceId, expRaw) => `satoru.device-access/1\n${uid}\n${deviceId}\n${expRaw}`;
+    const accessPayload = (uid, deviceId, expRaw, web = false) =>
+      `satoru.device-${web ? 'web' : 'access'}/1\n${uid}\n${deviceId}\n${expRaw}`;
 
-    function issueAccess(uid, deviceId) {
-      const expRaw = String(deps.now() + ACCESS_TTL_MS);
-      const sig = deps.sign(accessPayload(uid, deviceId, expRaw));
+    function issueAccess(uid, deviceId, web = false) {
+      const expRaw = String(deps.now() + (web ? WEB_TTL_MS : ACCESS_TTL_MS));
+      const sig = deps.sign(accessPayload(uid, deviceId, expRaw, web));
       return {
-        token: `${ACCESS_PREFIX}.${uid}.${deviceId}.${expRaw}.${sig}`,
+        token: `${web ? 'dws1' : ACCESS_PREFIX}.${uid}.${deviceId}.${expRaw}.${sig}`,
         expiresAt: new Date(Number(expRaw)).toISOString(),
       };
     }
 
-    function parseAccess(token) {
+    function parseAccess(token, web = false) {
       if (typeof token !== 'string' || token.length > 200) return null;
       const parts = token.split('.');
-      if (parts.length !== 5 || parts[0] !== ACCESS_PREFIX) return null;
+      if (parts.length !== 5 || parts[0] !== (web ? 'dws1' : ACCESS_PREFIX)) return null;
       const [, uid, deviceId, expRaw, sig] = parts;
       if (!UID_RE.test(uid) || !DEVICE_ID_RE.test(deviceId) || !EXP_RE.test(expRaw) || !HEX64_RE.test(sig)) return null;
       return { uid, deviceId, expRaw, sig };
@@ -294,13 +296,13 @@
       return fail('invalid_token');
     }
 
-    function verifyAccess(token, getUser) {
-      const parsed = parseAccess(token);
+    function verifyAccess(token, getUser, web = false) {
+      const parsed = parseAccess(token, web);
       if (!parsed) return null;
-      if (!deps.equal(parsed.sig, deps.sign(accessPayload(parsed.uid, parsed.deviceId, parsed.expRaw)))) return null;
+      if (!deps.equal(parsed.sig, deps.sign(accessPayload(parsed.uid, parsed.deviceId, parsed.expRaw, web)))) return null;
       const exp = Number(parsed.expRaw);
       const now = deps.now();
-      if (!(exp > now) || exp - now > ACCESS_TTL_MS) return null;
+      if (!(exp > now) || exp - now > (web ? WEB_TTL_MS : ACCESS_TTL_MS)) return null;
       const user = getUser(parsed.uid);
       if (!user) return null;
       // Checked on every request, so revocation is immediate instead of waiting
@@ -311,6 +313,16 @@
       if (!device || !statusOf(device, user).active) return null;
       return { uid: parsed.uid, deviceId: parsed.deviceId };
     }
+
+    // A separate credential namespace: never a full login cookie or refresh key.
+    // Every web request still checks the same device record and sessionVersion.
+    function issueWebSession(token, getUser) {
+      const access = verifyAccess(token, getUser);
+      if (!access) return fail('invalid_token');
+      const web = issueAccess(access.uid, access.deviceId, true);
+      return { ok: true, webSessionToken: web.token, expiresAt: web.expiresAt };
+    }
+    const verifyWebSession = (token, getUser) => verifyAccess(token, getUser, true);
 
     function list(user, currentDeviceId) {
       if (!user || !UID_RE.test(user.id)) return fail('not_authorized');
@@ -372,11 +384,11 @@
       });
     }
 
-    return Object.freeze({ register, refresh, verifyAccess, list, revoke, revokeAll, acknowledge });
+    return Object.freeze({ register, refresh, verifyAccess, issueWebSession, verifyWebSession, list, revoke, revokeAll, acknowledge });
   }
 
   return Object.freeze({
-    SCHEMA, ACCESS_TTL_MS, REFRESH_RETRY_GRACE_MS, MAX_ACTIVE_DEVICES, MAX_RECORDS, MAX_USED_HASHES,
+    SCHEMA, ACCESS_TTL_MS, WEB_TTL_MS, REFRESH_RETRY_GRACE_MS, MAX_ACTIVE_DEVICES, MAX_RECORDS, MAX_USED_HASHES,
     NAME_MAX, PLATFORMS, REVOKE_REASONS,
     cleanName, parseStore, statusOf, create,
   });

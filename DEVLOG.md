@@ -1,5 +1,22 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-20] v266 — B2 UI и отзываемая web-сессия нативного приложения
+
+DEVICE-WEB-SESSIONS-V266.md: экран устройств и заметный needsAck notice на пяти
+языках; права повторяют сервер, mutation подтверждается receipt + GET.
+Добавлен dws1/HttpOnly lrpg_device: отзыв устройства прекращает также WKWebView
+доступ, полный cookie fallback запрещён, web logout отзывает native credential.
+Обычный вход и dat1/drt1 совместимы; canManageAll/capability добавлены.
+Account epoch защищает поздние ответы и подтверждение отзыва.
+CACHE satoru-v266, app/styles pins 20260920-devices-v266-1; активные pin-tests обновлены.
+
+Native local: 18 real Keychain/WK integration scenarios PASS на iPhone Simulator.
+Физический iPhone подключён, но Developer Mode выключен и 0 signing identities.
+Unsigned Catalyst не проходит Keychain; подписанный Mac/iPhone QA остаётся.
+Web browser QA: empty/dense 375/1280, пять локалей, dark/light, ack/revoke,
+notice navigation, Escape/focus. Полный suite и deployment — release receipt.
+Native remote, Apple requests, App Store submission не выполнялись.
+
 ## [2026-09-19] Apple активно — первый локальный iOS foundation
 
 Team ID `8Y9TR9L674` получен от владельца. Проверены Xcode 26.6, iOS 26.5 runtime,

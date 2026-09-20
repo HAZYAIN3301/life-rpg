@@ -3,6 +3,12 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
+**Checkpoint 20.09, v266:** DEVICE-WEB-SESSIONS-V266.md. B2 devices UI/notices
+и отзываемый dws1 cookie для WKWebView. Native capability gate заменяет постоянное
+выключение регистрации ниже; 18 real Keychain/WK сценариев PASS в симуляторе.
+Физический iPhone подключён; Developer Mode/подпись и device QA остаются.
+Релизные факты — art-factory/device-sessions-v266/release-receipt.json.
+
 **Apple / iOS, 19.09:** членство активно по подтверждению владельца; Team ID
 `8Y9TR9L674`. Первый локальный SwiftUI-проект собирается для iPhone 14 simulator,
 обычный вход остаётся в WKWebView. Постоянная регистрация native-токена пока
