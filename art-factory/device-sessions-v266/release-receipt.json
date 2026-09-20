@@ -1,0 +1,122 @@
+{
+  "checkedAt": "2026-09-20T08:41:54.414Z",
+  "sha": "e52333ddcff4a8d80f4795c08e21f0677dc0412c",
+  "tests": {
+    "pass": 3028,
+    "fail": 0
+  },
+  "railway": [
+    {
+      "context": "brilliant-amazement - piper-tts",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/5805cd49-5d30-4dcf-a4fb-3f1bb5cca666?id=70a4ebc1-a7ee-4cac-b8a9-93d67790d0d7&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+    },
+    {
+      "context": "brilliant-amazement - life-rpg",
+      "state": "success",
+      "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/7a8e0c26-8a60-4bcc-ade2-f9f2e0f7ac7c?id=b14d1b88-d7e2-475f-8f7f-d291b7e98e1c&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+    }
+  ],
+  "results": [
+    {
+      "origin": "https://satoruapp.com",
+      "version": {
+        "app": "satoru",
+        "shellCache": "satoru-v266",
+        "commit": "e52333ddcff4a8d80f4795c08e21f0677dc0412c",
+        "serverTime": "2026-09-20T08:41:50.735Z",
+        "capabilities": {
+          "attentionEpisodeIntake": true,
+          "attentionLocalModeRefusal": true,
+          "webPush": true,
+          "deviceSessions": true,
+          "deviceWebSessions": true,
+          "appleAppSiteAssociation": false,
+          "androidAssetLinks": false
+        }
+      },
+      "files": [
+        {
+          "file": "index.html",
+          "status": 200,
+          "match": true,
+          "sha256": "8865e4b8fbc39f83a968a471ca318db1730398eea032612ea0afa272ae68fe85"
+        },
+        {
+          "file": "app.js",
+          "status": 200,
+          "match": true,
+          "sha256": "5cc8f2b470400a6d661b42692137984c8a31dca7060dd112fba08581f0f0c102"
+        },
+        {
+          "file": "styles.css",
+          "status": 200,
+          "match": true,
+          "sha256": "17a06cb868c9f2f796b93cddb10ee4de3d0d0ecda78174b6d267d6b27e9caaf6"
+        },
+        {
+          "file": "sw.js",
+          "status": 200,
+          "match": true,
+          "sha256": "40cbe98dafcac156d1f4a7681177b9d3c3bbae3d98da42ea4ba099358f439e28"
+        },
+        {
+          "file": "device-sessions-ui-v1.js",
+          "status": 200,
+          "match": true,
+          "sha256": "85129292adf1ddf8203cdad5dcb0a6159f12023e49d65b2ac5f23bba05bcd164"
+        }
+      ]
+    },
+    {
+      "origin": "https://life-rpg-production-416a.up.railway.app",
+      "version": {
+        "app": "satoru",
+        "shellCache": "satoru-v266",
+        "commit": "e52333ddcff4a8d80f4795c08e21f0677dc0412c",
+        "serverTime": "2026-09-20T08:41:52.557Z",
+        "capabilities": {
+          "attentionEpisodeIntake": true,
+          "attentionLocalModeRefusal": true,
+          "webPush": true,
+          "deviceSessions": true,
+          "deviceWebSessions": true,
+          "appleAppSiteAssociation": false,
+          "androidAssetLinks": false
+        }
+      },
+      "files": [
+        {
+          "file": "index.html",
+          "status": 200,
+          "match": true,
+          "sha256": "8865e4b8fbc39f83a968a471ca318db1730398eea032612ea0afa272ae68fe85"
+        },
+        {
+          "file": "app.js",
+          "status": 200,
+          "match": true,
+          "sha256": "5cc8f2b470400a6d661b42692137984c8a31dca7060dd112fba08581f0f0c102"
+        },
+        {
+          "file": "styles.css",
+          "status": 200,
+          "match": true,
+          "sha256": "17a06cb868c9f2f796b93cddb10ee4de3d0d0ecda78174b6d267d6b27e9caaf6"
+        },
+        {
+          "file": "sw.js",
+          "status": 200,
+          "match": true,
+          "sha256": "40cbe98dafcac156d1f4a7681177b9d3c3bbae3d98da42ea4ba099358f439e28"
+        },
+        {
+          "file": "device-sessions-ui-v1.js",
+          "status": 200,
+          "match": true,
+          "sha256": "85129292adf1ddf8203cdad5dcb0a6159f12023e49d65b2ac5f23bba05bcd164"
+        }
+      ]
+    }
+  ]
+}

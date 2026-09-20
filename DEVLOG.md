@@ -16,6 +16,12 @@ Unsigned Catalyst не проходит Keychain; подписанный Mac/iPh
 Web browser QA: empty/dense 375/1280, пять локалей, dark/light, ack/revoke,
 notice navigation, Escape/focus. Полный suite и deployment — release receipt.
 Native remote, Apple requests, App Store submission не выполнялись.
+Runtime `e52333d` опубликован: оба Railway services success, SHA/CACHE/capability
+и 5/5 изменённых shell files совпали на каждом домене 20.09 08:41 UTC.
+Receipt: art-factory/device-sessions-v266/release-receipt.json. 3028/3028 PASS
+на окончательном кандидате. Позже владелец включил Developer Mode и добавил
+Apple Account/сертификаты; Xcode получил iOS и Catalyst development profiles.
+Подпись/установка ещё не подтверждают прохождение device QA.
 
 ## [2026-09-19] Apple активно — первый локальный iOS foundation
 
