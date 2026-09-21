@@ -96,9 +96,11 @@ test('wake listening is explicit, visible and stops while the document is hidden
 
 test('local plan access requires a user-picked bounded text file', () => {
   assert.match(app, /id="chat-plan-file" type="file"/);
-  assert.match(app, /\['txt', 'md', 'markdown', 'json', 'csv'\]/);
-  assert.match(app, /file\.size > 20 \* 1024/);
-  assert.match(app, /ВЫБРАННЫЙ ФАЙЛ/);
+  assert.match(app, /txt\|md\|markdown\|json\|csv/);
+  assert.match(app, /files\.length > engine\.MAX_FILES/);
+  assert.match(app, /file\.size > engine\.MAX_BYTES/);
+  assert.match(app, /AssistantFileSearchV1\.context\(file\.documents, query\)/);
+  assert.match(app, /file\.ownerId !== State\.me\?\.id/);
   assert.match(app, /Ты не видишь произвольные файлы на компьютере/);
   assert.match(server, /String\(b\.system \|\| ''\)\.slice\(0, 48000\)/, 'server must not silently cut the selected plan at the legacy 12k ceiling');
 });

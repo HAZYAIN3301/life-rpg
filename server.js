@@ -11,6 +11,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const OllamaV1 = require('./server-ollama-v1.js');
 const BoardV2BraveAdapter = require('./server-board-v2-discovery-v1.js');
 const BoardV2PageVerifier = require('./server-board-v2-page-verifier-v1.js');
 const BoardV2AccountService = require('./server-board-v2-service-v1.js');
@@ -1320,6 +1321,7 @@ function httpsPostJson(host, pathName, headers, bodyObj) {
 // было только настоящим вызовом (флаг houseAvailable показывал true, потому что проверяет лишь
 // НАЛИЧИЕ ключа). Поэтому каждая модель переопределяется переменной окружения: сменить её можно
 // на Railway за минуту, без правки кода и деплоя.
+const localOllama = OllamaV1.create();
 const AI_PROVIDERS = {
   gemini: { shape: 'gemini', host: 'generativelanguage.googleapis.com', model: process.env.AI_MODEL_GEMINI || 'gemini-3.6-flash' },
   groq: { shape: 'openai', host: 'api.groq.com', path: '/openai/v1/chat/completions', model: process.env.AI_MODEL_GROQ || 'llama-3.3-70b-versatile' },
@@ -1413,6 +1415,8 @@ function aiRateLimited(r) {
   return /quota|rate.?limit|too many requests|exceeded|resource_exhausted/i.test(String(r.detail || ''));
 }
 async function aiCallForUser(user, requestedProvider, system, messages, maxTokens, purpose = '') {
+  // Local inference is explicit and never enters a cloud fallback chain.
+  if (requestedProvider === 'ollama') return localOllama.complete(user.id, system, messages, maxTokens);
   const userKeys = loadAiKeys(user.id);
   const res = resolveAiCall(user, requestedProvider, userKeys, purpose);
   if (res.error) return res;
@@ -6032,12 +6036,12 @@ const server = http.createServer(async (req, res) => {
       if (typeof b[id] === 'string') { const v = b[id].trim(); if (v) cur[id] = v; else delete cur[id]; }
     }
     try { fs.mkdirSync(userDataDir(uid), { recursive: true }); fs.writeFileSync(aiKeysFile(uid), JSON.stringify(cur)); } catch { return sendJson(res, 500, { error: 'save failed' }); }
-    const out = { ok: true }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!cur[id]; return sendJson(res, 200, out);
+    const out = { ok: true, ollama: localOllama.status(uid).configured, ollamaStatus: localOllama.status(uid) }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!cur[id]; return sendJson(res, 200, out);
   }
   if (u === '/api/ai/keys' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
-    const k = loadAiKeys(uid); const out = { houseAvailable: houseAvailable() }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!k[id];
+    const k = loadAiKeys(uid); const out = { houseAvailable: houseAvailable(), ollama: localOllama.status(uid).configured, ollamaStatus: localOllama.status(uid) }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!k[id];
     out.quota = aiQuota(user); // { tier, used, limit, remaining, ... }
     return sendJson(res, 200, out);
   }
@@ -6190,7 +6194,7 @@ const server = http.createServer(async (req, res) => {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-    const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
+    const provider = b.provider === 'ollama' || AI_PROVIDERS[b.provider] ? b.provider : null;
     const system = String(b.system || '').slice(0, 8000);
     const prompt = String(b.prompt || '').slice(0, 100000);
     if (!prompt) return sendJson(res, 400, { error: 'empty prompt' });
@@ -6205,7 +6209,7 @@ const server = http.createServer(async (req, res) => {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
-    const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
+    const provider = b.provider === 'ollama' || AI_PROVIDERS[b.provider] ? b.provider : null;
     const kind = b.kind === 'calibrate' ? 'calibrate' : b.kind === 'daylog' ? 'daylog' : b.kind === 'treemap' ? 'treemap' : b.kind === 'onboard' ? 'onboard' : b.kind === 'episode' ? 'episode' : 'goals';
     const text = String(b.text || '').slice(0, 20000);
     const context = String(b.context || '').slice(0, 6000);
@@ -6244,7 +6248,7 @@ const server = http.createServer(async (req, res) => {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     let b = {}; try { b = JSON.parse(await readBody(req, 256 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
-    const provider = AI_PROVIDERS[b.provider] ? b.provider : null;
+    const provider = b.provider === 'ollama' || AI_PROVIDERS[b.provider] ? b.provider : null;
     // Assistant v180 can receive a user-picked plan excerpt plus exact owned-object
     // ids. The former 12k-character ceiling silently cut off that context after the
     // long product manual, producing generic advice while pretending to have read the

@@ -8,6 +8,7 @@ const ECONOMY_ICON_SHELL = [
   ...'a1 a2 a2b a3 a4 m1 m2 m2b m3 m4 w1 w2 w2b w3 w4'.split(' ').map((id) => `art/icons/content-raster-v208/gear/${id}.png`),
 ];
 const SHELL = [
+  'assistant-file-search-v1.js',
   'device-sessions-ui-v1.js',
   'inspiration-media-v1.js', 'inspiration-player-v1.js', 'inspiration-visual-batch-v1.js', 'inspiration-visual-copy-v1.js',
   'party-session-v1.js', 'party-session-ui-v1.js', 'party-session-v1.css',
