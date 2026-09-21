@@ -1,5 +1,18 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-21] Public support page
+
+Added /support.html with the owner's confirmed satoru@satoruapp.com contact,
+account recovery and data/deletion request guidance in EN/RU/DE/UK/ES.
+No authentication, analytics, new JavaScript or data mutation. Reuses the existing
+public-page palette; isolated support CSS, no change to cached app shell/cache v266.
+Browser: 375×812 and 1280×900, no horizontal overflow; all links 44px high,
+language anchors/focus and mailto target checked. Static content has no empty state.
+Fixed dark public-page palette; reduced-motion inherited/overridden explicitly.
+Full suite 3028 tests PASS. Deployment receipt follows after push.
+Native 0.3.2 signed build/install/launch on owner's attached iPhone also PASS today;
+Mac signed build and codesign verification PASS. Successful biometric QA still open.
+
 ## [2026-09-20] v266 — B2 UI и отзываемая web-сессия нативного приложения
 
 DEVICE-WEB-SESSIONS-V266.md: экран устройств и заметный needsAck notice на пяти

@@ -1,0 +1,8 @@
+/* Standalone support document; reuses the existing public-page palette. */
+.support-languages { display: flex; flex-wrap: wrap; gap: 4px; }
+.support-languages a { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; padding: 8px; text-underline-offset: .2em; }
+.policy .support-contact { color: var(--accent); font-size: 1.15rem; }
+.policy h3 { font-size: 1rem; line-height: 1.5; margin: 24px 0 8px; }
+.policy section { scroll-margin-top: 16px; }
+a:focus-visible, section:focus-visible { outline: 3px solid var(--warm); outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }

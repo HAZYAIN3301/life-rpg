@@ -1,5 +1,9 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Публичная поддержка 21.09:** /support.html, satoru@satoruapp.com,
+  пять языков, доступ/восстановление и запросы данных/удаления. Полная privacy
+  policy, App Store privacy labels и внесение URL в ASC остаются отдельно.
+
 - [x] **Apple Developer: членство активно, 19.09.** Подтверждено владельцем,
   Team ID `8Y9TR9L674`. Прежняя запись Pending ниже — история 17.09.
 - [x] **Первый локальный iOS foundation:** SwiftUI/WKWebView, Xcode project,
@@ -8,9 +12,10 @@
 - [ ] **C1 завершить device QA:** B2 notices и bound web session реализованы v266;
   18 real Keychain/WK сценариев PASS на симуляторе, capability-gated registration.
   Нужны подписанные iPhone/Mac, offline/Keychain errors и полный UI flow.
-- [ ] **Apple внешний остаток:** четыре Family Controls requests подаёт владелец.
-  AASA 404 на обоих доменах; ожидается `APPLE_APP_IDS=8Y9TR9L674.com.satoruapp.satoru`.
-  Нет валидного сертификата подписи в проверенном keychain; TestFlight не собирался.
+- [ ] **Apple внешний остаток:** новая Family Controls форма выдаёт entitlement
+  команде; подтверждение её условий ещё ожидается. AASA уже 200 на обоих доменах,
+  сертификаты есть; signed iPhone/Mac 0.3.2 build/install проверены 21.09.
+  Полный пользовательский device QA, OAuth, Screen Time extensions и TestFlight остаются.
 
 - [x] **Вдохновение v265 — индивидуальный визуальный вкус и media UI.**
   INSPIRATION-VISUAL-V265.md: до 10 личных референсов, настоящие превью 17 постов,
