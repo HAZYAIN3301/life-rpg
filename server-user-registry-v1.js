@@ -28,7 +28,7 @@
   function assertValid(value) {
     if (!Array.isArray(value)) fail('root-not-array');
     if (value.length > MAX_USERS) fail('too-many-users');
-    const ids = new Set();
+    const ids = new Set(), identities = new Set();
     for (let index = 0; index < value.length; index += 1) {
       const row = value[index];
       if (!row || typeof row !== 'object' || Array.isArray(row)) fail(`row-${index}-not-object`);
@@ -44,6 +44,16 @@
         fail(`row-${index}-bad-field`);
       }
       if (row.isAdmin != null && typeof row.isAdmin !== 'boolean') fail(`row-${index}-bad-admin`);
+      if (row.oauth != null) {
+        if (!row.oauth || typeof row.oauth !== 'object' || Array.isArray(row.oauth)) fail(`row-${index}-bad-oauth`);
+        for (const [provider, identity] of Object.entries(row.oauth)) {
+          if (!['apple', 'google'].includes(provider) || !identity || typeof identity.subject !== 'string' ||
+            !identity.subject || identity.subject.length > 255 || !optionalString(identity, 'refresh', 16000)) fail(`row-${index}-bad-oauth`);
+          const key = provider + ':' + identity.subject;
+          if (identities.has(key)) fail(`row-${index}-duplicate-oauth`);
+          identities.add(key);
+        }
+      }
       if (row.plan != null && !['free', 'pro'].includes(row.plan)) fail(`row-${index}-bad-plan`);
       if (row.lang != null && !['en', 'ru', 'de', 'uk', 'es'].includes(row.lang)) fail(`row-${index}-bad-lang`);
       if (row.socialConsent != null && (!row.socialConsent || typeof row.socialConsent !== 'object' || Array.isArray(row.socialConsent))) {

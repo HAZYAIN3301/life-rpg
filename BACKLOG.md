@@ -1,5 +1,16 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Native OAuth server/client infrastructure 21.09:** OAUTH-NATIVE-V1.md.
+  Existing-account password-confirmed linking, Apple/Google code flow, native PKCE,
+  encrypted Apple revocation token. Provider credentials absent: live sign-in is
+  NOT enabled or verified. Owner preparing branded Google account; Apple capability/
+  key approval pending. Social registration and identity replacement not implemented.
+- [x] **Privacy disclosure EN/RU:** /privacy.html, native settings links/manifest.
+- [ ] **Launch privacy gates:** optional analytics opt-in decision, hosting/AI
+  contracts and transfer/retention details, final privacy labels and seller imprint.
+- [ ] **TestFlight:** signed iOS 1.0/build 6 archive exists locally; App Store
+  export blocked by empty Xcode Apple Accounts and missing distribution profile.
+
 - [x] **Публичная поддержка 21.09:** /support.html, satoru@satoruapp.com,
   пять языков, доступ/восстановление и запросы данных/удаления. Полная privacy
   policy, App Store privacy labels и внесение URL в ASC остаются отдельно.

@@ -1,5 +1,29 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-21] Native provider authentication and privacy disclosure
+
+OAUTH-NATIVE-V1.md: provider authorization code flow, strict ID token verification,
+one-use browser-bound state, native PKCE ticket exchange, password-confirmed linking
+of existing accounts, no email merges, encrypted Apple refresh and revocation during
+deletion. Provider UI is gated off until credentials exist. No live OAuth success
+claimed. Local native 1.0/build 6 adds browser sign-in controls and privacy/support
+links; simulator compile, 18 Swift tests and signed iOS Release archive pass.
+App Store export currently fails No Accounts/no distribution profile; Xcode UI
+confirms empty Apple Accounts, owner sign-in requested.
+
+Public privacy disclosure EN/RU records actual data processing and current analytics
+defaults. Existing static styling: browser 375/1280, no overflow, 44px links,
+RU anchor receives focus. No cached shell changes; cache remains v266.
+19 targeted OIDC tests pass (including real isolated server). Final full suite:
+3047/3047 PASS. One earlier full run failed an unchanged attention revision test;
+isolated 14/14 and the final full rerun passed. Deployment receipt follows release.
+
+Prior support release d76d747 verified live; support URL now saved in ASC for both
+platforms, reply email received. Owner reports Face ID tested. Family Controls
+request received by Apple, decision pending. Google project satoruapp-auth created;
+owner chose to create a Google account for satoru@satoruapp.com. Business is not yet
+registered (planned Kleingewerbe); no live payment activation or trader assertion.
+
 ## [2026-09-21] Public support page
 
 Added /support.html with the owner's confirmed satoru@satoruapp.com contact,

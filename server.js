@@ -4197,11 +4197,58 @@ async function handleShadowTts(req, res, user) {
 }
 
 // ============================================================
+// OIDC accounts are deliberately linked only after password reauthentication.
+// Social registration can be added separately; matching an email never links it.
+const oidc = require('./server-oidc-v1.js').create({ secret: () => SECRET });
+const OAUTH_ERRORS = new Set(['provider_unavailable', 'invalid_challenge', 'busy', 'expired_request', 'invalid_identity', 'invalid_state', 'authorization_cancelled', 'account_not_linked', 'account_changed', 'identity_already_linked']);
+function oauthError(error) { return OAUTH_ERRORS.has(error?.code) ? error.code : 'authorization_failed'; }
+async function handleOAuthBrowser(req, res) {
+  const headers = { 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer', 'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'" };
+  try {
+    const url = new URL(req.url, 'https://satoru.invalid');
+    if (url.pathname === '/oauth/authorize' && req.method === 'GET') {
+      const wait = authRateLimited(req, 'login'); if (wait) return tooManyAuth(res, wait);
+      const next = oidc.authorize(url.searchParams.get('request'));
+      return send(res, 302, '', { ...headers, Location: next.url,
+        'Set-Cookie': `__Host-satoru_oidc=${next.browser}; Path=/; Secure; HttpOnly; SameSite=None; Max-Age=300` });
+    }
+    const match = url.pathname.match(/^\/oauth\/callback\/(google|apple)$/);
+    if (!match || (match[1] === 'apple' ? req.method !== 'POST' : req.method !== 'GET')) return send(res, 404, 'Not found', headers);
+    const input = match[1] === 'apple' ? new URLSearchParams(await readBody(req, 16384)) : url.searchParams;
+    if (input.getAll('state').length !== 1 || input.getAll('code').length > 1) throw new Error('invalid callback');
+    const identity = await oidc.finish(match[1], Object.fromEntries(input), parseCookies(req)['__Host-satoru_oidc']);
+    const users = loadUsers();
+    const existing = users.find(user => user.oauth?.[identity.provider]?.subject === identity.subject);
+    let user = existing;
+    let refusal = '';
+    if (identity.link) {
+      user = users.find(row => row.id === identity.link.uid && row.sessionVersion === identity.link.version);
+      if (!user) refusal = 'account_changed';
+      else if (existing && existing.id !== user.id) refusal = 'identity_already_linked';
+      else if (user.oauth?.[identity.provider] && user.oauth[identity.provider].subject !== identity.subject) refusal = 'identity_already_linked';
+    } else if (!user) refusal = 'account_not_linked';
+    if (!refusal) {
+      user.oauth = { ...user.oauth, [identity.provider]: { subject: identity.subject,
+        ...(identity.refresh ? { refresh: identity.refresh } : {}) } };
+      saveUsers(users);
+    }
+    const result = refusal ? 'error=' + refusal : 'ticket=' + oidc.issueTicket(user.id, user.sessionVersion, identity.challenge);
+    return send(res, 302, '', { ...headers, Location: 'satoru-auth://callback?' + result,
+      'Set-Cookie': '__Host-satoru_oidc=; Path=/; Secure; HttpOnly; SameSite=None; Max-Age=0' });
+  } catch (error) {
+    // Provider errors and tokens never enter logs or reflected HTML.
+    return send(res, 400, 'Satoru sign-in could not finish. Close this window and try again in the app.', { ...headers, 'Content-Type': 'text/plain; charset=utf-8' });
+  }
+}
+
 //  HTTP server
 // ============================================================
 const server = http.createServer(async (req, res) => {
   const u = req.url || '/';
   if (req.method === 'OPTIONS') return send(res, 204, '');
+
+  // OIDC callbacks precede JSON auth parsing: Apple uses form_post.
+  if (u.startsWith('/oauth/')) return handleOAuthBrowser(req, res);
 
   // ---- Native association and server capabilities ----
   // Declared before auth, recovery and static so a query string cannot change the
@@ -4271,6 +4318,34 @@ const server = http.createServer(async (req, res) => {
       }
       if (raw) { try { body = JSON.parse(raw); } catch { return sendJson(res, 400, { error: 'bad json' }); } }
       if (!body || typeof body !== 'object' || Array.isArray(body)) body = {};
+    }
+
+    if (u === '/api/auth/oauth/providers' && req.method === 'GET') {
+      return sendJson(res, 200, { providers: oidc.available(), accountCreation: false });
+    }
+    if (u === '/api/auth/oauth/prepare' && req.method === 'POST') {
+      const wait = authRateLimited(req, 'login'); if (wait) return tooManyAuth(res, wait);
+      try {
+        let link = null;
+        if (body.mode === 'link') {
+          const uid = sessionUserId(req), user = uid && loadUsers().find(row => row.id === uid);
+          if (!user || !user.pwHash || !verifyPw(body.password, user.pwSalt, user.pwHash))
+            return sendJson(res, 401, { error: 'reauthentication_required' });
+          link = { uid, version: user.sessionVersion };
+        } else if (body.mode !== 'login') return sendJson(res, 400, { error: 'invalid_mode' });
+        return sendJson(res, 200, oidc.prepare(body.provider, body.challenge, link));
+      } catch (error) { return sendJson(res, 400, { error: oauthError(error) }); }
+    }
+    if (u === '/api/auth/oauth/redeem' && req.method === 'POST') {
+      const wait = authRateLimited(req, 'login'); if (wait) return tooManyAuth(res, wait);
+      try {
+        const ticket = oidc.redeem(body.ticket, body.verifier);
+        const user = loadUsers().find(row => row.id === ticket.uid && row.sessionVersion === ticket.version);
+        if (!user) return sendJson(res, 401, { error: 'expired_request' });
+        // Only the native PKCE holder can redeem. No third-party access/refresh
+        // token or identity is returned, only the existing full Satoru session.
+        return sendJson(res, 200, { ok: true, sessionToken: makeSession(user) });
+      } catch (error) { return sendJson(res, 401, { error: oauthError(error) }); }
     }
 
     // GET /api/auth/me
@@ -4677,7 +4752,13 @@ const server = http.createServer(async (req, res) => {
         if (!pin) return sendJson(res, 400, { error: 'нужен PIN для подтверждения' });
         if (user.pinHash !== hashPin(uid, String(pin))) return sendJson(res, 401, { error: 'неверный PIN' });
       }
-      try { deleteAccountLifecycle(uid, users); }
+      try {
+        if (user.oauth?.apple) await oidc.revokeApple(user.oauth.apple);
+        const current = loadUsers();
+        if (!current.some(row => row.id === uid && row.sessionVersion === user.sessionVersion))
+          return sendJson(res, 409, { error: 'account_changed' });
+        deleteAccountLifecycle(uid, current);
+      }
       catch (error) { console.error('[delete-account]', uid, error); return sendJson(res, 500, { error: 'удаление не завершено; данные сохранены, повтори попытку' }); }
       // Clear session cookie
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': clearCookieHeader(req), 'Cache-Control': 'no-store' });
