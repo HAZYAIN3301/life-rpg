@@ -1,5 +1,11 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Secretary v268:** optional allowlisted local Ollama and ephemeral selected-file
+  retrieval with source excerpts. SECRETARY-OLLAMA-V268.md; no cloud fallback.
+- [ ] **Secretary next:** persistent permissioned document library/hybrid retrieval;
+  paired Mac connector for production; typed ecosystem APIs then scoped MCP;
+  same-data comparison before changing provider defaults.
+
 - [x] **Native navigation v267 / build 7:** one sidebar, labeled settings,
   settings discovery, direct linked-provider login, app-language bridge.
   See NATIVE-NAVIGATION-V267.md for checks and limitations.

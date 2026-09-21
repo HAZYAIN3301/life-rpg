@@ -1,5 +1,20 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-21] Secretary local Ollama / files, v268
+
+Browser: actual local Qwen, two selected files, tail fact beyond 20k, source excerpts,
+five locale disclosures, light/dark desktop. QA receipt records remaining visual
+limits. Fixed an existing attention test port collision with Ollama: OS-assigned
+port and readiness from its own child, without weakening assertions.
+
+**Checkpoint 21.09, v268 — local secretary:** SECRETARY-OLLAMA-V268.md.
+Optional allowlisted server-local Ollama, no cloud fallback; selected-file search
+beyond the old 20k prefix, up to five files, actual source excerpts in chat.
+Synthetic local Qwen: 20/20 facts/refusals, 9/20 strict citation format; no Gemini
+comparison. Railway→owner Mac bridge and persistent library are not implemented.
+Navigation v267 changes preserved. Publication verification recorded separately.
+
+
 ## [2026-09-21] One native navigation surface and settings search — v267
 
 NATIVE-NAVIGATION-V267.md: visible Settings label, cross-section text search,

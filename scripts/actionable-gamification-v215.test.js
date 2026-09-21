@@ -125,7 +125,7 @@ test('v215 integrity modules remain ordered while the app shell advances to v248
       `${file} query does not identify the v215 release`
     );
   }
-  assert.match(scriptTag('app.js'), /[?&](?:v|build)=[^"']*v267(?:[-_.][^"']*)?["']/i,
+  assert.match(scriptTag('app.js'), /[?&](?:v|build)=[^"']*v268(?:[-_.][^"']*)?["']/i,
     'app.js query does not identify the v266 release');
 });
 

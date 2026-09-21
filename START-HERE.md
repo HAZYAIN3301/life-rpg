@@ -3,6 +3,13 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
+**Checkpoint 21.09, v268 — local secretary:** SECRETARY-OLLAMA-V268.md.
+Optional allowlisted server-local Ollama, no cloud fallback; selected-file search
+beyond the old 20k prefix, up to five files, actual source excerpts in chat.
+Synthetic local Qwen: 20/20 facts/refusals, 9/20 strict citation format; no Gemini
+comparison. Railway→owner Mac bridge and persistent library are not implemented.
+Navigation v267 changes preserved. Publication verification recorded separately.
+
 **Checkpoint 20.09, v266:** DEVICE-WEB-SESSIONS-V266.md. B2 devices UI/notices
 и отзываемый dws1 cookie для WKWebView. Native capability gate заменяет постоянное
 выключение регистрации ниже; 18 real Keychain/WK сценариев PASS в симуляторе.

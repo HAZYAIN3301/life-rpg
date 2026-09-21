@@ -561,7 +561,7 @@ test('Context pack v205 explicitly releases exact Guide copy and chapter version
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*navigation-v267(?:-|$)/, 'the changed app shell needs the v266 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*secretary-v268(?:-|$)/, 'the changed app shell needs the v266 cache-busting pin');
   sourceMatches(INDEX, /styles\.css\?v=[^"']*navigation-v267(?:-|["'])/,
     'the current application CSS needs the v266 cache-busting pin');
 });

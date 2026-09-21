@@ -1,0 +1,29 @@
+{
+  "date": "2026-09-21",
+  "release": "v268",
+  "baseBeforeParallelMerge": "e27cd68",
+  "mergedNavigation": "20e82e5",
+  "localBrowser": {
+    "syntheticAccount": true,
+    "actualOllama": true,
+    "provider": "ollama",
+    "systemCharacters": 18686,
+    "twoFilesSelected": true,
+    "tailFactBeyond20000": true,
+    "facts": [
+      "ZX-867",
+      "26 September 18:30",
+      "845 EUR"
+    ],
+    "actualSourceExcerptsExpanded": true,
+    "modelExactLineCitationsReliable": false,
+    "desktopScreenshot": "1280x900 inspected",
+    "mobileViewport": "375x812, document scrollWidth=375; screenshot unusually scaled",
+    "limits": "Keyboard/reduced-motion and full mobile visual matrix not completed. Mobile DOM overflow check passed; mobile screenshot unusually scaled. No authenticated production inference.",
+    "locales": "RU/EN/DE/UK/ES file-disclosure copy inspected in real browser",
+    "themes": "RU dark and DE light screenshots inspected",
+    "providerSetting": "Ollama selected, local model shown after reload and after navigation merge"
+  },
+  "benchmark": "local-benchmark.json; 20/20 facts/refusals, 9/20 strict citation format; no Gemini comparison",
+  "publication": "See release-receipt.json when present"
+}
