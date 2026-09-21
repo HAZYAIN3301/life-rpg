@@ -22516,3 +22516,21 @@ dialog.inspiration-embed.is-image-viewer button:focus-visible { outline: 2px sol
 .device-session-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 .device-sessions-card > .btn { margin: 8px 8px 0 0; }
 .device-sessions-card .btn, .device-session-notice .btn { min-height: 44px; white-space: normal; }
+/* Settings discovery and the integrated native shell. */
+.settings-discovery { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:var(--sp-3); margin-top:var(--sp-4); }
+.settings-discovery label { display:grid; gap:var(--sp-2); min-width:0; }
+.settings-discovery input { width:100%; min-height:44px; }
+.settings-discovery > button { align-self:end; min-height:44px; }
+.settings-discovery > p,.settings-discovery-results { grid-column:1/-1; margin:0; }
+.settings-discovery-results { display:grid; gap:var(--sp-2); }
+.settings-discovery-results button { text-align:left; white-space:normal; min-height:44px; }
+.settings-discovery-auth { display:grid; gap:var(--sp-2); margin-bottom:var(--sp-4); }
+.settings-discovery-auth button { min-height:44px; width:100%; }
+.settings-discovery-actions { position:relative; }
+.settings-discovery-actions summary { cursor:pointer; min-height:44px; display:flex; align-items:center; padding:var(--sp-2) var(--sp-3); }
+.settings-discovery-actions summary::after { content:'▾'; margin-left:var(--sp-2); }
+.settings-discovery-actions > div { position:absolute; z-index:30; left:0; top:100%; display:grid; gap:var(--sp-2); padding:var(--sp-3); width:min(280px,85vw); background:var(--bg); border-radius:12px; box-shadow:var(--shadow-raised); }
+.settings-discovery-actions button { min-height:44px; white-space:normal; text-align:left; }
+.navgear { width:auto!important; gap:var(--sp-3); }
+.settings-group .card:focus { outline:2px solid var(--accent); outline-offset:4px; }
+@media(max-width:600px) { .settings-discovery { grid-template-columns:1fr; } .settings-discovery-actions summary { font-size:13px; padding:var(--sp-2); } }
