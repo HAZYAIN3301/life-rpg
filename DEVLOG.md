@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-21] One native navigation surface and settings search — v267
+
+NATIVE-NAVIGATION-V267.md: visible Settings label, cross-section text search,
+explicit AI discovery through the existing provider, native quick-action menu,
+device settings integration and direct linked Apple login. Native companion 1.0(7)
+removes the duplicate sidebar/top bar and follows the application's language.
+3051 tests pass; signed iOS/Mac archives and 18 Swift tests pass. Browser fixture
+checks cover RU/EN/DE, responsive layouts and missing AI; live AI quality unverified.
+Earlier launch blockers below are historical: Apple login is now configured and
+owner-tested, both build-6 platforms are in TestFlight; Google remains unconfigured.
+
 ## [2026-09-21] Native provider authentication and privacy disclosure
 
 OAUTH-NATIVE-V1.md: provider authorization code flow, strict ID token verification,

@@ -85,11 +85,11 @@ test('runtime selects an available capability, opens Path and completes on the e
 });
 
 test('v205 Guide assets remain pinned while v216 advances the app shell', () => {
-  assert.match(SW, /const CACHE = 'satoru-v266'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v266'/);
+  assert.match(SW, /const CACHE = 'satoru-v268'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v268'/);
   for (const file of ['guide-v3.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js', 'guide-presenter-v1.js']) {
     assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=20260830-guide-tree-v205-1`));
   }
-  assert.match(INDEX, /app\.js\?v=20260920-devices-v266-1/);
-  assert.match(INDEX, /styles\.css\?v=20260920-devices-v266-1/);
+  assert.match(INDEX, /app\.js\?v=20260921-secretary-v268-1/);
+  assert.match(INDEX, /styles\.css\?v=20260921-navigation-v267-1/);
 });

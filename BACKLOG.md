@@ -1,5 +1,14 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Native navigation v267 / build 7:** one sidebar, labeled settings,
+  settings discovery, direct linked-provider login, app-language bridge.
+  See NATIVE-NAVIGATION-V267.md for checks and limitations.
+- [x] **Launch status correction 21.09:** Apple sign-in works per owner;
+  iOS and Mac build 6 are testing in Satoru Internal. Xcode/signing unblocked.
+  Older absent-credentials/empty-Accounts entries below are historical.
+- [ ] **Remaining release gates:** Google OAuth setup; Family Controls response;
+  real screenshots; privacy labels/consent; seller and payment configuration.
+
 - [x] **Native OAuth server/client infrastructure 21.09:** OAUTH-NATIVE-V1.md.
   Existing-account password-confirmed linking, Apple/Google code flow, native PKCE,
   encrypted Apple revocation token. Provider credentials absent: live sign-in is
