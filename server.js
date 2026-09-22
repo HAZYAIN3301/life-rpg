@@ -284,6 +284,9 @@ function serveStatic(req, res, urlPath, headOnly) {
     const ext = path.extname(filePath).toLowerCase();
     send(res, 200, headOnly ? '' : buf, {
       'Content-Type': MIME[ext] || 'application/octet-stream',
+      ...(ext === '.zip' && rel.startsWith('/downloads/')
+        ? { 'Content-Disposition': `attachment; filename="${path.basename(filePath).replace(/[^A-Za-z0-9._-]/g, '_')}"` }
+        : {}),
       'Cache-Control': staticCacheControl(urlPath, rel, ext),
       ...(rel === '/design-baseline/v244/index.html' ? { 'Content-Security-Policy': "sandbox allow-scripts allow-downloads; default-src 'self' data: blob:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'none'; form-action 'none'; frame-src 'none'; object-src 'none'", 'Permissions-Policy': 'camera=(), microphone=(), geolocation=()' } : {}),
       ...(/\.(woff2?|ttf|svg|png|webp|jpg)$/.test(rel) ? {'Access-Control-Allow-Origin':'*'} : {}),

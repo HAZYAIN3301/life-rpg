@@ -18382,6 +18382,11 @@ html.attention-dialog-open body { overscroll-behavior: none; }
 .browser-companion-installer-actions > * { min-height: var(--touch-min); }
 .browser-companion-installer :is(button, a):focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
+.goal-proposal-error { color: var(--danger, #b83b4b); font-weight: 700; margin: var(--sp-2) 0; }
+.goal-proposal-source { margin-top: var(--sp-3); border-top: 1px solid var(--line-soft); padding-top: var(--sp-2); }
+.goal-proposal-source summary { cursor: pointer; font-weight: 700; min-height: var(--touch-min); }
+.goal-proposal-source textarea { width: 100%; max-width: 100%; margin: var(--sp-2) 0; }
+
 .attention-actions,
 .attention-boundary-actions {
   min-width: 0;

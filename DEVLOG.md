@@ -1,5 +1,27 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-22] Chromium ZIP download and external JSON goal import — v269
+
+The in-app extension link was still pinned to v215 while the guided Chrome/Brave
+page used v260. Both archives were valid, but ZIP responses lacked an attachment
+header. The in-app link now points to v260 and `/downloads/*.zip` is served with
+`Content-Disposition: attachment`. Chrome and Brave still use unpacked extension
+installation until store publication.
+
+External-AI proposals with a metric such as `{"target":"10 км","unit":"км"}`
+previewed but failed the final transaction. The error rendered behind the still-open
+modal, looking like no action. The importer now normalizes numeric values with
+matching units, reports invalid fields and commit failures inside the modal,
+preserves editable source JSON, prevents a second click while saving, and reports
+an explicit 300-proposal limit instead of silently dropping items after 120.
+
+Synthetic local browser QA: one such goal saved, remained after reload, and showed
+`0 км → 10 км`; an invalid `target:"ten"` displayed a visible error and disabled
+Apply. A 40-goal valid batch saved in the earlier reproduction. Full automated
+suite: **3065/3065 PASS**. The local v260 ZIP response has `HTTP 200`,
+`application/zip` and `Content-Disposition: attachment`. Production verification
+is recorded separately after deployment.
+
 ## [2026-09-21] Secretary local Ollama / files, v268
 
 Browser: actual local Qwen, two selected files, tail fact beyond 20k, source excerpts,

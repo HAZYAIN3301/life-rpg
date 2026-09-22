@@ -410,8 +410,10 @@ test('AI proposal draft stays invisible until the five-domain transaction succee
   assert.ok(exposeDraft >= 0 && restoreLive > exposeDraft && request > restoreLive && acceptDraft > request,
     'live State can retain an unconfirmed proposal while the network request is pending');
   const failedBranch = apply.slice(request, acceptDraft);
-  assert.match(failedBranch, /render\(\);\s*return/,
-    'a rejected five-domain transaction can fall through and expose its draft');
+  assert.match(failedBranch, /showError\([^;]+\);\s*return/,
+    'a rejected five-domain transaction must report the failure and keep the draft hidden');
+  assert.doesNotMatch(failedBranch, /render\(\)/,
+    'rendering behind the open proposal modal hides the error from the user');
 });
 
 test('proposal construction cannot schedule legacy per-file saves', () => {

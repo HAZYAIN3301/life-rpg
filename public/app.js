@@ -1580,6 +1580,20 @@ const I18N_EXTRA = {
   'Привычка отмечена': { en: 'Habit marked', de: 'Gewohnheit markiert', uk: 'Звичку відмічено', es: 'Hábito marcado' },
   'Отметка возвращена': { en: 'Habit mark restored', de: 'Markierung zurückgesetzt', uk: 'Позначку повернено', es: 'Marca restaurada' },
   'Не удалось сохранить. Ничего не изменено — повтори попытку.': { en: 'Could not save. Nothing changed; try again.', de: 'Speichern fehlgeschlagen. Nichts wurde geändert; versuche es erneut.', uk: 'Не вдалося зберегти. Нічого не змінено — спробуй ще раз.', es: 'No se pudo guardar. Nada cambió; inténtalo de nuevo.' },
+  'Предложения содержат неверные данные. Исправь JSON и разбери его снова.': { en: 'Some proposals contain invalid data. Correct the JSON and parse it again.', de: 'Einige Vorschläge enthalten ungültige Daten. Korrigiere das JSON und lies es erneut ein.', uk: 'Деякі пропозиції містять некоректні дані. Виправ JSON і розбери його знову.', es: 'Algunas propuestas contienen datos inválidos. Corrige el JSON y vuelve a analizarlo.' },
+  'Данные аккаунта ещё загружаются. Подожди и повтори сохранение.': { en: 'Account data is still loading. Wait and try saving again.', de: 'Die Kontodaten werden noch geladen. Warte und versuche es erneut.', uk: 'Дані акаунта ще завантажуються. Зачекай і повтори збереження.', es: 'Los datos de la cuenta aún se cargan. Espera y vuelve a guardar.' },
+  'Данные изменились в другом окне. Скопируй JSON перед обновлением страницы.': { en: 'Data changed in another tab. Copy the JSON before reloading.', de: 'Daten wurden in einem anderen Tab geändert. Kopiere das JSON vor dem Neuladen.', uk: 'Дані змінилися в іншій вкладці. Скопіюй JSON перед оновленням сторінки.', es: 'Los datos cambiaron en otra pestaña. Copia el JSON antes de recargar.' },
+  'Слишком большой пакет целей. Раздели JSON на части и сохрани по очереди.': { en: 'This goal batch is too large. Split the JSON and save each part in turn.', de: 'Dieses Zielpaket ist zu groß. Teile das JSON auf und speichere die Teile nacheinander.', uk: 'Цей пакет цілей завеликий. Розділи JSON і збережи частини послідовно.', es: 'Este lote de metas es demasiado grande. Divide el JSON y guarda cada parte por turno.' },
+  'Связи целей или сфер не прошли проверку. Исправь JSON и попробуй снова.': { en: 'Goal or area links failed validation. Correct the JSON and try again.', de: 'Ziel- oder Bereichsverknüpfungen wurden abgelehnt. Korrigiere das JSON und versuche es erneut.', uk: 'Зв’язки цілей або сфер не пройшли перевірку. Виправ JSON і спробуй знову.', es: 'Los vínculos entre metas o áreas no pasaron la validación. Corrige el JSON e inténtalo otra vez.' },
+  'Сервер не сохранил цели. Исходный JSON оставлен для повторной попытки.': { en: 'The server did not save the goals. The original JSON is still here for another try.', de: 'Der Server hat die Ziele nicht gespeichert. Das ursprüngliche JSON bleibt für einen neuen Versuch erhalten.', uk: 'Сервер не зберіг цілі. Початковий JSON залишився для повторної спроби.', es: 'El servidor no guardó las metas. El JSON original sigue aquí para intentarlo de nuevo.' },
+  'Подтверждение сохранения устарело. Перечитай данные перед повтором.': { en: 'The save confirmation became stale. Reload the data before retrying.', de: 'Die Speicherbestätigung ist veraltet. Lade die Daten vor einem neuen Versuch.', uk: 'Підтвердження збереження застаріло. Перечитай дані перед повтором.', es: 'La confirmación de guardado quedó obsoleta. Recarga los datos antes de reintentar.' },
+  'Сеть прервала сохранение. Проверь список целей перед повтором.': { en: 'The connection broke during saving. Check the goal list before retrying.', de: 'Die Verbindung brach beim Speichern ab. Prüfe die Zielliste vor einem neuen Versuch.', uk: 'З’єднання обірвалося під час збереження. Перевір список цілей перед повтором.', es: 'La conexión se cortó al guardar. Revisa la lista de metas antes de reintentar.' },
+  'Слишком много предложений в одном JSON. Раздели его на части.': { en: 'Too many proposals in one JSON. Split it into smaller parts.', de: 'Zu viele Vorschläge in einem JSON. Teile es in kleinere Teile.', uk: 'Забагато пропозицій в одному JSON. Розділи його на частини.', es: 'Hay demasiadas propuestas en un JSON. Divídelo en partes más pequeñas.' },
+  'Предложение {number}: метрика должна содержать число и согласованную единицу. Исправь JSON и разбери снова.': { en: 'Proposal {number}: the metric needs a number and matching unit. Correct the JSON and parse it again.', de: 'Vorschlag {number}: Die Metrik braucht eine Zahl und eine passende Einheit. Korrigiere das JSON und lies es erneut ein.', uk: 'Пропозиція {number}: метрика має містити число й відповідну одиницю. Виправ JSON і розбери знову.', es: 'Propuesta {number}: la métrica necesita un número y una unidad coherente. Corrige el JSON y vuelve a analizarlo.' },
+  'Предложение {number}: неверный формат. Исправь JSON и разбери снова.': { en: 'Proposal {number}: invalid format. Correct the JSON and parse it again.', de: 'Vorschlag {number}: ungültiges Format. Korrigiere das JSON und lies es erneut ein.', uk: 'Пропозиція {number}: некоректний формат. Виправ JSON і розбери знову.', es: 'Propuesta {number}: formato inválido. Corrige el JSON y vuelve a analizarlo.' },
+  'Исходный JSON — открыть и исправить': { en: 'Original JSON — open and edit', de: 'Ursprüngliches JSON — öffnen und bearbeiten', uk: 'Початковий JSON — відкрити й виправити', es: 'JSON original: abrir y corregir' },
+  'Разобрать исправленный JSON': { en: 'Parse corrected JSON', de: 'Korrigiertes JSON einlesen', uk: 'Розібрати виправлений JSON', es: 'Analizar JSON corregido' },
+  'Неверный формат': { en: 'Invalid format', de: 'Ungültiges Format', uk: 'Некоректний формат', es: 'Formato inválido' },
   'Файл данных на сервере не читается. Перезагрузка не поможет — ничего не изменено, сообщи об этом.': { en: 'A data file on the server cannot be read. Reloading will not help — nothing was changed, please report it.', de: 'Eine Datendatei auf dem Server ist nicht lesbar. Neuladen hilft nicht — es wurde nichts geändert, bitte melde es.', uk: 'Файл даних на сервері не читається. Перезавантаження не допоможе — нічого не змінено, повідом про це.', es: 'Un archivo de datos del servidor no se puede leer. Recargar no ayudará: no se cambió nada, avísanos.' },
   'Другое устройство успело записать раньше. Согласовать сам не смог — ничего не потеряно, повтори.': { en: 'Another device wrote first. I could not reconcile it myself — nothing is lost, try again.', de: 'Ein anderes Gerät hat zuerst geschrieben. Ich konnte es nicht selbst abgleichen — nichts ist verloren, versuche es erneut.', uk: 'Інший пристрій записав раніше. Узгодити сам не зміг — нічого не втрачено, спробуй ще раз.', es: 'Otro dispositivo escribió antes. No pude reconciliarlo yo mismo: no se perdió nada, inténtalo otra vez.' },
   'В данных есть повреждённые символы': { en: 'Your data contains damaged characters', de: 'Deine Daten enthalten beschädigte Zeichen', uk: 'У даних є пошкоджені символи', es: 'Tus datos contienen caracteres dañados' },
@@ -12387,6 +12401,8 @@ function proposalWriteBase() {
 // durable transaction; the client sends one exact candidate and creates no
 // debounced Store writes around it.
 async function proposalDataCommit(data) {
+  State._proposalCommitError = '';
+  const reject = (message) => { State._proposalCommitError = message; return false; };
   const exact = data && typeof data === 'object' && !Array.isArray(data)
     && Object.keys(data).sort().join(',') === 'goals,groups,settings,skilltree,tasks';
   if (!exact || !pwaWriteAllowed('proposalDataCommit', true)
@@ -12398,29 +12414,37 @@ async function proposalDataCommit(data) {
     || !validateTasksPayload(data.tasks)
     || !validateGoalsPayload(data.goals)
     || !validateGoalGroupsPayload(data.groups)
-    || !validateSkillTreePayload(data.skilltree)) return false;
+    || !validateSkillTreePayload(data.skilltree)) return reject(t('Предложения содержат неверные данные. Исправь JSON и разбери его снова.'));
   const slots = ['settings', 'tasks', 'goals', 'goal-groups', 'skilltree'];
   return Store.runExclusive(slots, async ({ writeEpoch, accountId }) => {
     // The five-file endpoint compares every server-confirmed snapshot. A pair-
     // only base would make the server reject the request; live State is never
     // substituted because it may already contain edits from another tab.
     const base = proposalWriteBase();
-    if (!base) return false;
+    if (!base) return reject(t('Данные аккаунта ещё загружаются. Подожди и повтори сохранение.'));
     const payload = { base, data };
     try {
       const response = await fetch('/api/goals/commit', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
       });
       if (response.status === 401) { handleAccountSessionExpired(); return false; }
-      if (await commitmentBoundaryRejected(response)) return false;
-      if (!response.ok || !rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return false;
+      if (await commitmentBoundaryRejected(response)) return reject(t('Данные изменились в другом окне. Скопируй JSON перед обновлением страницы.'));
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        return reject(t(body.error === 'goal_commit_too_large'
+          ? 'Слишком большой пакет целей. Раздели JSON на части и сохрани по очереди.'
+          : body.error === 'invalid_goal_commit' || body.error === 'invalid_commitment_graph'
+            ? 'Связи целей или сфер не прошли проверку. Исправь JSON и попробуй снова.'
+            : 'Сервер не сохранил цели. Исходный JSON оставлен для повторной попытки.'));
+      }
+      if (!rememberDedicatedCommitSlots(data, { writeEpoch, accountId })) return reject(t('Подтверждение сохранения устарело. Перечитай данные перед повтором.'));
       // These snapshots are not CAS inputs, but keeping every confirmed slot in
       // sync prevents later recovery UI from comparing against a stale client copy.
       Store._persisted.goals = { exists: true, value: structuredClone(data.goals) };
       Store._persisted['goal-groups'] = { exists: true, value: structuredClone(data.groups) };
       Store._persisted.skilltree = { exists: true, value: structuredClone(data.skilltree) };
       return true;
-    } catch (error) { console.error('proposal commit', error); return false; }
+    } catch (error) { console.error('proposal commit', error); return reject(t('Сеть прервала сохранение. Проверь список целей перед повтором.')); }
   });
 }
 async function retryGoalsLoad() {
@@ -15884,18 +15908,28 @@ function openProposeModal(kind, prefill) {
   setTimeout(() => { const t = document.getElementById('propose-text'); if (t) { if (prefill) t.value = prefill; t.focus(); } }, 30);
 }
 // Карточки-предложения в #propose-result (общий рендер для API и копипаст-моста)
-function renderProposalCards(res) {
+function renderProposalCards(res, { issues = [], raw = '' } = {}) {
   if (!res) return;
+  if (issues[0]?.field === 'limit') {
+    res.innerHTML = `<p class="goal-proposal-error" role="alert">${t('Слишком много предложений в одном JSON. Раздели его на части.')}</p>${raw ? `<textarea id="bridge-json" rows="6">${esc(raw)}</textarea><button type="button" class="btn ghost" data-action="bridge-parse">${t('Разобрать исправленный JSON')}</button>` : ''}`;
+    return;
+  }
   if (!_proposals.length) { res.innerHTML = '<p class="muted">Ничего не нашлось. Добавь деталей или переформулируй.</p>'; return; }
+  const issue = issues[0];
+  const issueCopy = issue ? t(issue.field === 'metric'
+    ? 'Предложение {number}: метрика должна содержать число и согласованную единицу. Исправь JSON и разбери снова.'
+    : 'Предложение {number}: неверный формат. Исправь JSON и разбери снова.').replace('{number}', String(issue.index + 1)) : '';
   res.innerHTML = `<div class="prop-list">${_proposals.map((p, i) => {
       let parentPick = '';
-      if (p.type === 'sphere') {
+      if (p && p.type === 'sphere') {
         const dp = p.parent ? State.settings.skills.find((s) => normRu(s.name) === normRu(p.parent)) : null;
         parentPick = `<select class="prop-parent" data-prop-parent="${i}" title="Внутрь какой сферы"><option value="">— верхний уровень —</option>${skillOptionsHTML(dp ? dp.id : '')}</select>`;
       }
-      return `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(proposalLabel(p))}</span>${parentPick}</label>`;
+      return `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(p ? proposalLabel(p) : t('Неверный формат'))}</span>${parentPick}</label>`;
     }).join('')}</div>
-    <div class="propose-actions"><button class="btn" data-action="propose-apply">✓ Применить выбранные</button> <span class="muted" style="font-size:12px">${_proposals.length} предложений · сними галочку, чтобы отклонить</span></div>`;
+    <div class="propose-actions"><button class="btn" data-action="propose-apply" ${issue ? 'disabled' : ''}>✓ Применить выбранные</button> <span class="muted" style="font-size:12px">${_proposals.length} предложений · сними галочку, чтобы отклонить</span></div>
+    <p class="goal-proposal-error" role="alert" ${issue ? '' : 'hidden'}>${esc(issueCopy)}</p>
+    ${raw ? `<details class="goal-proposal-source"><summary>${t('Исходный JSON — открыть и исправить')}</summary><textarea id="bridge-json" rows="6">${esc(raw)}</textarea><button type="button" class="btn ghost" data-action="bridge-parse">${t('Разобрать исправленный JSON')}</button></details>` : ''}`;
 }
 async function runPropose(kind) {
   const ta = document.getElementById('propose-text');
@@ -15909,8 +15943,9 @@ async function runPropose(kind) {
     if (d.error && aiHandleErr(d)) { const p = document.getElementById('propose-modal'); if (p) p.remove(); return; }
     if (d.error === 'parse') { if (res) res.innerHTML = '<p class="muted">ИИ вернул не тот формат. Попробуй переформулировать короче и конкретнее.</p>'; return; }
     if (!r.ok || !d.proposals) { if (res) res.innerHTML = `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`; return; }
-    _proposals = d.proposals;
-    renderProposalCards(res);
+    const normalized = window.GoalProposalImportV1.normalize(d.proposals);
+    _proposals = normalized.proposals;
+    renderProposalCards(res, { issues: normalized.issues, raw: JSON.stringify({ proposals: d.proposals }) });
     track('ai:propose:' + kind);
   } catch { if (res) res.innerHTML = '<p class="muted">Сетевая ошибка.</p>'; }
 }
@@ -15969,8 +16004,9 @@ function parseBridgeResponse() {
   if (!raw) { toast(t('Вставь ответ ИИ')); return; }
   const parsed = extractJsonClient(raw);
   if (!parsed || !Array.isArray(parsed.proposals)) { if (res) res.insertAdjacentHTML('beforeend', '<p class="muted" style="margin-top:8px">Не нашёл корректный JSON в ответе. Скопируй ответ ИИ целиком (он должен содержать {"proposals":[…]}).</p>'); return; }
-  _proposals = parsed.proposals.slice(0, 120);
-  renderProposalCards(res);
+  const normalized = window.GoalProposalImportV1.normalize(parsed.proposals);
+  _proposals = normalized.proposals;
+  renderProposalCards(res, { issues: normalized.issues, raw });
   track('ai:bridge');
 }
 function proposalLabel(p) {
@@ -15984,6 +16020,13 @@ function proposalLabel(p) {
     return `🎯 Цель: ${p.title}${project}${spheres ? ` · ${spheres}` : ''} · ${goalTypeLabel(p.horizon)}${steps}${action}${m}${w}`;
   }
   return JSON.stringify(p).slice(0, 80);
+}
+async function applyAcceptedProposalsGuarded() {
+  if (State._proposalApplyBusy) return;
+  const applyButton = document.querySelector('#propose-result [data-action="propose-apply"]');
+  State._proposalApplyBusy = true; if (applyButton) applyButton.disabled = true;
+  try { await applyAcceptedProposals(); }
+  finally { State._proposalApplyBusy = false; if (applyButton?.isConnected) applyButton.disabled = false; }
 }
 async function applyAcceptedProposals() {
   const set = new Set([...document.querySelectorAll('#propose-result input[data-prop]:checked')].map((el) => Number(el.dataset.prop)));
@@ -16009,14 +16052,20 @@ async function applyAcceptedProposals() {
     for (const name of slots) draft[name] = State[name];
     Object.assign(State, live);
   }
-  if (buildFailed) { State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); render(); return; }
+  const showError = (message) => {
+    const res = document.getElementById('propose-result'); if (!res) return;
+    let error = res.querySelector('.goal-proposal-error');
+    if (!error) { error = document.createElement('p'); error.className = 'goal-proposal-error'; error.setAttribute('role', 'alert'); res.appendChild(error); }
+    error.hidden = false; error.textContent = message;
+  };
+  if (buildFailed) { showError(t('Предложения содержат неверные данные. Исправь JSON и разбери его снова.')); return; }
   const changed = slots.some((name) => JSON.stringify(live[name]) !== JSON.stringify(draft[name]));
   const data = {
     settings: draft.settings, tasks: draft.tasks, goals: draft.goals,
     groups: draft.goalGroups, skilltree: draft.tree,
   };
   if (changed && !await proposalDataCommit(data)) {
-    State._goalsError = t('Не удалось сохранить. Ничего не изменено — повтори попытку.'); render(); return;
+    showError(State._proposalCommitError || t('Сервер не сохранил цели. Исходный JSON оставлен для повторной попытки.')); return;
   }
   if (changed) Object.assign(State, draft);
   const m = document.getElementById('propose-modal'); if (m) m.remove();
@@ -23900,7 +23949,7 @@ let _attentionEmergencyTimer = null;
 // policies, spend an emergency exit or mark an outcome through postMessage.
 const BROWSER_COMPANION_ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
 const BROWSER_COMPANION_STATUS_TTL_MS = 25000;
-const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v215.zip';
+const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v260.zip';
 // One-click installation on desktop Chromium is only legal through a signed
 // Chrome Web Store listing. Until its real ID exists, the guided test build is
 // shown instead of rendering a fake or broken store button.
@@ -31963,7 +32012,7 @@ async function onClick(e) {
   } else if (action === 'propose-run') { runPropose(el.dataset.kind);
   } else if (action === 'bridge-copy') { copyBridgePrompt(el.dataset.kind);
   } else if (action === 'bridge-parse') { parseBridgeResponse();
-  } else if (action === 'propose-apply') { applyAcceptedProposals();
+  } else if (action === 'propose-apply') { applyAcceptedProposalsGuarded();
   } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
   } else if (action === 'treemap-open') {
     openTreeMapAI(); track('tree:aimap-open'); return;
@@ -33553,7 +33602,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v268';
+const PWA_CACHE_VERSION = 'satoru-v269';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

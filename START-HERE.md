@@ -3,6 +3,14 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
+**Checkpoint 22.09, v269 — extension download и JSON-импорт целей:** приложение
+теперь ведёт на актуальный v260 Chromium ZIP для Chrome/Brave, сервер отдаёт ZIP
+как attachment. Импорт нормализует числовые метрики с единицей (`10 км`),
+показывает ошибки прямо в модальном окне, сохраняет исходный JSON для правки
+и не обрезает молча пакет после 120 предложений. Локальный браузерный QA:
+сохранение и повторное чтение цели PASS; неверная метрика показывает ошибку и
+блокирует применение. Полный suite и production receipt — в верхней записи DEVLOG.
+
 **Checkpoint 21.09, v268 — local secretary:** SECRETARY-OLLAMA-V268.md.
 Optional allowlisted server-local Ollama, no cloud fallback; selected-file search
 beyond the old 20k prefix, up to five files, actual source excerpts in chat.

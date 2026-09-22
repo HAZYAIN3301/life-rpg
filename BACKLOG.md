@@ -1,5 +1,12 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v269: скачивание расширения и сохранение целей из внешнего JSON.**
+  Актуальный v260 ZIP в приложении и `Content-Disposition: attachment`;
+  метрики вида `10 км` нормализуются, ошибки видны в модальном окне, исходный
+  JSON остаётся для исправления, лимит 300 явно сообщается без частичного импорта.
+- [ ] **Extension store:** ручная публикация в Chrome Web Store и проверка
+  установленного пакета на устройстве владельца остаются отдельным решением.
+
 - [x] **Secretary v268:** optional allowlisted local Ollama and ephemeral selected-file
   retrieval with source excerpts. SECRETARY-OLLAMA-V268.md; no cloud fallback.
 - [ ] **Secretary next:** persistent permissioned document library/hybrid retrieval;
