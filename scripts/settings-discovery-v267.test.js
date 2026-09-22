@@ -23,3 +23,23 @@ test('search limits results without mutating the catalog',()=>{
  assert.equal(rank('sound',items).length,8);
  assert.equal(items.length,20);
 });
+
+test('natural queries ignore filler and punctuation across five supported languages',()=>{
+ const items=[{id:'language',title:'Appearance',text:'Language theme'}, {id:'sound',title:'Sound',text:'Volume'}];
+ for(const query of ['как поменять язык?','як змінити мову?','how do I change language?','wie kann ich die Sprache ändern?','como cambiar idioma?']) {
+   assert.equal(rank(query,items)[0]?.id,'language',query);
+ }
+ assert.equal(rank('как выключить звук?',items)[0].id,'sound');
+});
+
+test('reminder vocabulary finds notifications without cloud inference',()=>{
+ const items=[{id:'device',title:'Device',text:'Notifications Face ID'}];
+ for(const query of ['напоминания','нагадування','recordatorios','Erinnerungen','reminders']) assert.equal(rank(query,items)[0]?.id,'device',query);
+});
+
+test('all concepts beat a partially matching title and repetition does not skew rank',()=>{
+ const items=[{id:'account',title:'Account',text:'Name and email'}, {id:'delete',title:'Privacy',text:'Delete account'}];
+ assert.equal(rank('delete account',items)[0].id,'delete');
+ assert.deepEqual(rank('account account account',items).map(x=>x.id),rank('account',items).map(x=>x.id));
+ assert.deepEqual(rank('how do I?',items),[]);
+});

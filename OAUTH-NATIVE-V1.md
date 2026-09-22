@@ -1,5 +1,16 @@
 # Native browser sign-in — 21 September 2026
 
+## Status correction — 22 September
+
+Apple credentials were configured on 21 September and the owner confirmed Apple
+sign-in on iPhone. iOS/iPadOS and Mac 1.0 (7) were subsequently processed and added
+to Satoru Internal. Google remains unconfigured. These are recorded receipts,
+not a fresh live device test on 22 September. Native source is not present in the
+current ~/Projects checkout; do not rebuild from the prohibited Documents copy.
+The older credential/manifest statements below describe the initial implementation.
+Build 7 added UserDefaults required-reason declaration CA92.1 for app language.
+Release documentation and remaining declarations: release/app-store/README.md.
+
 ## Implemented scope
 
 Apple/Google sign-in for an existing Satoru password account. First sign in normally,

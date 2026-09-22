@@ -1,0 +1,44 @@
+{
+  "status": "draft-not-submitted",
+  "supportURL": "https://satoruapp.com/support.html",
+  "privacyPolicyURL": "https://satoruapp.com/privacy.html",
+  "copyright": "2026 Albert Prokopets",
+  "categoryProposal": "Productivity",
+  "localizations": {
+    "en-US": {
+      "name": "Satoru",
+      "subtitle": "Tasks, habits & your progress",
+      "promotionalText": "Turn daily plans into quests. Build habits, keep notes and grow your character, one completed step at a time.",
+      "keywords": "planner,tasks,habits,goals,notes,focus,quests,progress,routine",
+      "description": "Satoru turns daily plans into a personal adventure.\n\nPlan tasks, build habits, keep notes and see your progress across the areas of life that matter to you. Complete quests, earn experience and develop your character.\n\nShadow, your companion, offers a place to reflect and choose your next step. AI features require an available configured provider.\n\nUse Satoru on iPhone, iPad and Mac with your account. Device reminders and Face ID or Touch ID protection are optional.\n\nYou stay in control: manage remembered devices, export your account data or delete your account from Settings."
+    },
+    "ru": {
+      "name": "Satoru",
+      "subtitle": "Задачи, привычки и прогресс",
+      "promotionalText": "Превращай планы в квесты. Развивай привычки, сохраняй мысли и прокачивай персонажа — по одному выполненному шагу.",
+      "keywords": "планировщик,задачи,привычки,цели,заметки,квесты",
+      "description": "Satoru превращает повседневные планы в личное приключение.\n\nПланируй задачи, развивай привычки, сохраняй заметки и следи за прогрессом в важных для тебя сферах жизни. Выполняй квесты, получай опыт и развивай персонажа.\n\nТень — твой спутник, с которым можно подвести итоги и выбрать следующий шаг. Для ИИ-функций нужен доступный настроенный провайдер.\n\nИспользуй свой аккаунт Satoru на iPhone, iPad и Mac. Напоминания на устройстве и защита через Face ID или Touch ID включаются по желанию.\n\nУправляй запомненными устройствами, выгружай свои данные или удаляй аккаунт в Настройках."
+    },
+    "uk": {
+      "name": "Satoru",
+      "subtitle": "Завдання, звички та поступ",
+      "promotionalText": "Перетворюй плани на квести. Розвивай звички, зберігай думки й удосконалюй персонажа — по одному виконаному кроку.",
+      "keywords": "планувальник,завдання,звички,цілі,нотатки,квести",
+      "description": "Satoru перетворює щоденні плани на особисту пригоду.\n\nПлануй завдання, розвивай звички, зберігай нотатки та стеж за поступом у важливих для тебе сферах життя. Виконуй квести, здобувай досвід і розвивай персонажа.\n\nТінь — твій супутник, з яким можна підбити підсумки й обрати наступний крок. Для функцій ШІ потрібен доступний налаштований провайдер.\n\nКористуйся своїм акаунтом Satoru на iPhone, iPad і Mac. Нагадування на пристрої та захист через Face ID або Touch ID вмикаються за бажанням.\n\nКеруй запам’ятованими пристроями, експортуй свої дані або видаляй акаунт у Налаштуваннях."
+    },
+    "de-DE": {
+      "name": "Satoru",
+      "subtitle": "Aufgaben und Gewohnheiten",
+      "promotionalText": "Mach aus deinen Plänen Quests. Entwickle Gewohnheiten, halte Gedanken fest und lass deinen Charakter mit jedem erledigten Schritt wachsen.",
+      "keywords": "Planer,Aufgaben,Gewohnheiten,Ziele,Notizen,Fokus,Quests,Fortschritt,Routinen",
+      "description": "Satoru verwandelt tägliche Pläne in ein persönliches Abenteuer.\n\nPlane Aufgaben, entwickle Gewohnheiten, halte Notizen fest und verfolge deinen Fortschritt in den Lebensbereichen, die dir wichtig sind. Erfülle Quests, sammle Erfahrung und entwickle deinen Charakter.\n\nDein Begleiter Schatten hilft dir, Bilanz zu ziehen und den nächsten Schritt zu wählen. KI-Funktionen benötigen einen verfügbaren, eingerichteten Anbieter.\n\nNutze dein Satoru-Konto auf iPhone, iPad und Mac. Erinnerungen auf dem Gerät und der Schutz durch Face ID oder Touch ID sind optional.\n\nDu behältst die Kontrolle: Verwalte gespeicherte Geräte, exportiere deine Daten oder lösche dein Konto in den Einstellungen."
+    },
+    "es-ES": {
+      "name": "Satoru",
+      "subtitle": "Tareas, hábitos y tu progreso",
+      "promotionalText": "Convierte tus planes en misiones. Crea hábitos, guarda ideas y desarrolla tu personaje, paso a paso.",
+      "keywords": "planificador,tareas,hábitos,metas,notas,enfoque,misiones,progreso,rutina",
+      "description": "Satoru convierte tus planes diarios en una aventura personal.\n\nPlanifica tareas, crea hábitos, guarda notas y observa tu progreso en las áreas de la vida que te importan. Completa misiones, gana experiencia y desarrolla tu personaje.\n\nSombra, tu acompañante, te ayuda a reflexionar y elegir el siguiente paso. Las funciones de IA requieren un proveedor configurado y disponible.\n\nUsa tu cuenta de Satoru en iPhone, iPad y Mac. Los recordatorios del dispositivo y la protección mediante Face ID o Touch ID son opcionales.\n\nTú tienes el control: gestiona los dispositivos recordados, exporta tus datos o elimina tu cuenta desde Ajustes."
+    }
+  }
+}

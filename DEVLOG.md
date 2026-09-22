@@ -1,5 +1,29 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-22] App Store draft package and settings discovery — v270
+
+Prepared `release/app-store/`: metadata for RU/UK/DE/EN/ES, reviewer instructions,
+code-backed privacy category candidates, release gates and a referral/Founder Pass
+proposal. All metadata limits checked, including the stricter 100 UTF-8 byte keyword
+limit. Owner has not registered Kleingewerbe; worldwide launch is provisional. No
+prices, referral entitlements, payment activation or final privacy declarations were
+submitted. Existing Founder Pass survey numbers remain a historical hypothesis.
+
+Settings discovery now tokenizes punctuation, ignores common filler words, supports
+an explicit five-language synonym vocabulary and ranks concept coverage above a
+partial title match. Ordinary search runs locally; the existing optional AI action
+is unchanged. Updated shell/cache pins to v270 and active test expectations.
+
+Validation: **3068/3068 PASS** with `node --test --test-concurrency=2 scripts/*.test.js`.
+Isolated local browser QA: Ukrainian language-change query opened Appearance with
+the language controls; English password query opened Sign in & recovery at 375px.
+Document width and scroll width both 375px. No real account data used; no claim of
+fresh native-device QA or completed App Store submission. Native sources are still
+only known under Documents, excluded by current machine rules; move authorization
+or an owner-provided Projects checkout is needed before further native builds.
+
+Publication receipt is recorded separately after deployment.
+
 ## [2026-09-22] Chromium ZIP download and external JSON goal import — v269
 
 The in-app extension link was still pinned to v215 while the guided Chrome/Brave

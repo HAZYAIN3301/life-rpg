@@ -1,13 +1,37 @@
 (function(root) {
   'use strict';
   const normalize = value => String(value || '').normalize('NFKD').toLowerCase().replace(/\p{M}/gu, '').replace(/ё/g, 'е');
+  const wordsOf = value => normalize(value).match(/[\p{L}\p{N}]+/gu) || [];
+  const stopWords = new Set(wordsOf('как где мне я хочу поменять изменить включить выключить отключить настроить how where do i my want change enable disable turn on off the a to can wie wo ich meine andern aktivieren deaktivieren ein aus die der das як де мені хочу змінити увімкнути вимкнути налаштувати como donde quiero cambiar activar desactivar el la los las mi'));
+  // Small explicit vocabulary, not a model: queries stay on this device.
+  const concepts = [
+    'звук звуки звучание sound sounds audio ton klang звук звуки sonido sonidos',
+    'уведомления напоминания notifications notification reminders reminder mitteilungen benachrichtigungen erinnerungen сповіщення нагадування notificaciones recordatorios',
+    'язык языки language languages sprache sprachen мова мови мову idioma idiomas',
+    'пароль password passwort пароль contrasena',
+    'приватность privacy datenschutz конфіденційність privacidad',
+    'экспорт export exportieren експорт exportar',
+    'удалить удаление delete deletion loschen видалити видалення eliminar eliminacion',
+    'выйти выход logout signout abmelden вийти вихід salir',
+    'тема оформление theme appearance design tema вигляд оформлення apariencia',
+  ].map(value=>new Set(wordsOf(value)));
+  const variants = word => concepts.find(group=>group.has(word)) || new Set([word]);
   let savedQuery = '';
   function rank(query, items) {
-    const words = normalize(query).trim().split(/\s+/).filter(Boolean);
+    const words = [...new Set(wordsOf(query).filter(word=>!stopWords.has(word)))];
     if (!words.length) return [];
     return items.map(item => {
       const title = normalize(item.title), text = normalize(item.text);
-      const score = words.reduce((n, word) => n + (title.includes(word) ? 5 : text.includes(word) ? 1 : 0), 0);
+      const titleWords=new Set(wordsOf(title)), textWords=new Set(wordsOf(text));
+      const score = words.reduce((n, word) => {
+        // Every extra matched concept outweighs a title-only partial match.
+        if(title.includes(word))return n+105;
+        if(text.includes(word))return n+101;
+        const aliases=[...variants(word)];
+        if(aliases.some(alias=>titleWords.has(alias)))return n+104;
+        if(aliases.some(alias=>textWords.has(alias)))return n+100;
+        return n;
+      }, 0);
       return {...item, score};
     }).filter(item => item.score > 0).sort((a,b) => b.score - a.score).slice(0, 8);
   }
