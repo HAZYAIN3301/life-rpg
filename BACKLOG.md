@@ -7,8 +7,8 @@
 - [ ] **App Store final:** заполнить проверенные privacy labels, подготовить demo
   account и реальные screenshots, подтвердить страны/цену/статус продавца; черновики
   не равны отправленной заявке. Referral/Founder Pass пока не включать как оплату.
-- [ ] **Native workspace:** получить исходники iOS/macOS в Projects либо разрешение
-  владельца на копирование прежнего native checkout из Documents без удаления.
+- [x] **Native workspace:** копия ~/Projects/satoru-ios, оригинал сохранён.
+  Build 8 signed archives/export PASS; native manifest дополнен Device ID/Gameplay Content.
 
 - [x] **v269: скачивание расширения и сохранение целей из внешнего JSON.**
   Актуальный v260 ZIP в приложении и `Content-Disposition: attachment`;

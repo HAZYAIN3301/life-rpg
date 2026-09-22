@@ -2,6 +2,12 @@
 
 22 сентября 2026. Документы подготовлены локально; в App Review не отправлены.
 
+Обновление 22.09: promo, description, keywords и support URL сохранены в ASC
+для всех пяти локализаций на iOS и macOS; общие subtitles также сохранены.
+После reload проверены списки языков и тексты EN/ES. Это черновики без screenshots
+и финальных деклараций. Native build 8: оба signed archive/export PASS,
+18 Swift tests PASS. Текущий native receipt: ~/Projects/satoru-ios/release/STATUS.md.
+
 - metadata.json: готовые для проверки поля RU/UK/DE/EN/ES, без обещаний будущих функций.
 - REVIEW-NOTES.md: английские инструкции проверяющему и проверка demo account.
 - PRIVACY-MATRIX.md: категории данных с привязкой к коду и открытыми вопросами.

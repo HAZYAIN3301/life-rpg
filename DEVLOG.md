@@ -1,5 +1,15 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-22] App Store metadata saved; native build 8
+
+ASC drafts now contain promo, description, keywords and support URL in five locales
+for both iOS and macOS, plus localized common subtitles. Reload confirmed all locales
+and EN/ES persistence. No review submission, screenshots or final privacy labels.
+Native copied to ~/Projects/satoru-ios, preserving original. 18 Swift tests and
+shared contracts PASS; signed iOS/Mac build 8 archives and distribution exports PASS.
+Packaged manifest corrected for installation Device ID and Gameplay Content.
+See native release/STATUS.md for remaining gates. Web runtime unchanged (v270).
+
 ## [2026-09-22] App Store draft package and settings discovery — v270
 
 Prepared `release/app-store/`: metadata for RU/UK/DE/EN/ES, reviewer instructions,
