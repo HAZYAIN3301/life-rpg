@@ -11834,7 +11834,7 @@ html.mobile-nav-open body {
     min-block-size: var(--touch-min);
     left: calc(var(--den-stage-center) - 21px) !important;
   }
-  .den-tag-copy { max-width: 112px; }
+  .den-tag-copy { max-width: 160px; }
   .den-actions .btn { padding-inline: var(--sp-1); }
 }
 

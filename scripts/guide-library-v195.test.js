@@ -38,11 +38,11 @@ test('automatic Guide prompts keep the contextual pacing contract', () => {
 });
 
 test('v195 ships the manual-library fix through a fresh offline cache', () => {
-  assert.match(SW, /const CACHE = 'satoru-v270'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v270'/);
+  assert.match(SW, /const CACHE = 'satoru-v271'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v271'/);
   for (const file of ['guide-v3.js', 'guide-presenter-v1.js', 'guide-v3-copy-ru.js', 'guide-v3-copy-en.js', 'guide-v3-copy-de.js', 'guide-v3-copy-uk.js', 'guide-v3-copy-es.js']) {
     assert.match(INDEX, new RegExp(`${file.replace('.', '\\.')}\\?v=[^"']*v205`));
   }
-  assert.match(INDEX, /app\.js\?v=[^"']*search-v270/);
-  assert.match(INDEX, /styles\.css\?v=[^"']*search-v270/);
+  assert.match(INDEX, /app\.js\?v=[^"']*den-v271/);
+  assert.match(INDEX, /styles\.css\?v=[^"']*den-v271/);
 });

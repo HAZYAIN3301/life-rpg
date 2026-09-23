@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-23] iPad Den title and store screenshots — v271
+
+Real iPad XCTest capture exposed «Логов / о»: the coarse-pointer title wrapper
+was limited to 112px while retaining the tablet heading size. Increased it to
+160px; a new unmodified native screenshot confirms «Логово» fits on one line.
+Shell cache/pins updated; full Node suite 3068/3068 PASS. Native capture PASS
+on iPhone and iPad; iPad settings search PASS. RU store sets now use Today,
+Habits, Den, Plan; uploaded to ASC as draft media. Native build remains 8.
+Mac, other screenshot locales and device auth/notification QA remain open.
+Production deployment verification follows this commit; do not infer it from tests.
+
 ## [2026-09-22] App Store metadata saved; native build 8
 
 ASC drafts now contain promo, description, keywords and support URL in five locales

@@ -3,6 +3,11 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
+**Checkpoint 23.09, v271:** исправлен перенос заголовка Логова на iPad,
+3068/3068 tests PASS. Русские iPhone/iPad screenshots с Логовом загружены в ASC.
+Native release work: `/Users/al.prokopets/Projects/satoru-ios/CHECKPOINT.md` и
+`release/STATUS.md`. Полный store/device QA ещё не завершён.
+
 **Checkpoint 22.09, v269 — extension download и JSON-импорт целей:** приложение
 теперь ведёт на актуальный v260 Chromium ZIP для Chrome/Brave, сервер отдаёт ZIP
 как attachment. Импорт нормализует числовые метрики с единицей (`10 км`),
