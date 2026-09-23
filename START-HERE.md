@@ -3,8 +3,9 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
-**Checkpoint 23.09, v271:** исправлен перенос заголовка Логова на iPad,
-3068/3068 tests PASS. Русские iPhone/iPad screenshots с Логовом загружены в ASC.
+**Checkpoint 23.09, v272:** исправлено наложение поля времени на длительность
+в форме iPad; до этого v271 исправил заголовок Логова. 3068/3068 tests PASS.
+Русские iPhone/iPad/Mac screenshots с Логовом загружены в ASC; локализации в работе.
 Native release work: `/Users/al.prokopets/Projects/satoru-ios/CHECKPOINT.md` и
 `release/STATUS.md`. Полный store/device QA ещё не завершён.
 

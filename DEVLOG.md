@@ -1,5 +1,18 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-23] iPad quick-add time field — v272
+
+Actual WKWebView screenshot showed the native time control painting over duration.
+The options grid now wraps by available width; inputs stay within their columns and
+the time input uses the existing form styling without WebKit's oversized appearance.
+Input type, values and saving logic are unchanged. Final iPad capture:
+`/Users/al.prokopets/Projects/satoru-ios/release/screenshots/raw/en/ipad-appearance-v272/01-today.png`.
+Full Node suite 3068/3068 PASS; cache and active shell pins updated to v272.
+DE/UK/ES native screenshot captures passed on iPhone, iPad and Mac. Visual review
+and ASC uploads continue in the native checkpoint; they are not complete release QA.
+v271/c5a0831 was verified on both Railway services with production SHA and 4/4
+shell hashes on both domains. v272 deployment receipt must be checked after push.
+
 ## [2026-09-23] iPad Den title and store screenshots — v271
 
 Real iPad XCTest capture exposed «Логов / о»: the coarse-pointer title wrapper

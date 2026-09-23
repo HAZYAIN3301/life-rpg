@@ -1,5 +1,11 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **v272: форма добавления на iPad.** Поле времени больше не рисуется поверх
+  длительности в WKWebView; адаптивные колонки, настоящий screenshot и 3068/3068 tests PASS.
+- [ ] **Release QA:** отдельная проверка первого касания «Ещё» на iPhone остаётся
+  открытой; успешные screenshot captures не заменяют её. Контакты/review account,
+  privacy/trader и окончательные Apple поля — по native release/STATUS.md.
+
 - [x] **v271: заголовок Логова на iPad.** Исправлен перенос последней буквы;
   подтверждён реальным XCTest screenshot. RU iPhone/iPad store sets загружены
   в ASC с Логовом вместо Персонажа. Mac/остальные языки остаются в release QA.

@@ -159,8 +159,10 @@
 :root[data-design=next] .add-field-title{grid-column:1;grid-row:1}
 :root[data-design=next] .add-field{min-width:0;display:grid;gap:6px}
 :root[data-design=next] .add-field-label{font-size:.75rem}
-:root[data-design=next] .quest-add-options-body{display:grid;grid-column:1/-1;grid-row:2;grid-template-columns:110px minmax(140px,1fr) minmax(130px,1fr);gap:12px;align-items:end;margin:0}
+:root[data-design=next] .quest-add-options-body{display:grid;grid-column:1/-1;grid-row:2;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:12px;align-items:end;margin:0}
 :root[data-design=next] .quest-add-options-body .difficulty-help{grid-column:1/-1;font-size:.75rem}
+:root[data-design=next] .quest-add-options-body input{min-inline-size:0;max-inline-size:100%;box-sizing:border-box}
+:root[data-design=next] .quest-add-options-body input[type=time]{appearance:none;-webkit-appearance:none}
 :root[data-design=next] .difficulty-help summary{min-height:32px;color:var(--muted)}
 :root[data-design=next] .add-submit{grid-column:1/-1;grid-row:3;padding:10px 16px}
 :root[data-design=next] .sphere-field,:root[data-design=next] .sphere-picker,:root[data-design=next] .sphere-picker-trigger{min-width:0;max-width:100%}
@@ -277,7 +279,7 @@
  :root[data-design=next] #add-task>.sphere-field{grid-column:1}
  :root[data-design=next] #add-task .add-field-skill{grid-column:1;grid-row:2}
  :root[data-design=next] #add-task .add-submit{grid-column:1;grid-row:4}
- :root[data-design=next] .quest-add-options-body{grid-row:3;grid-template-columns:100px minmax(0,1fr)}
+ :root[data-design=next] .quest-add-options-body{grid-row:3;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}
  :root[data-design=next] .add-field-difficulty{grid-column:1/-1}
  :root[data-design=next] .add-field-duration .dur-input{min-width:0}
  :root[data-design=next] .calv-strip{gap:3px;margin-top:16px}
