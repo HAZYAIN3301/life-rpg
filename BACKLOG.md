@@ -1,5 +1,12 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R08 / 03B / R02A, v279:** consistent damage receipts and safe backup identity;
+  export/import including lost response and concurrent change; shared tree picker,
+  removable selections, required-field validation and mobile layout fixes. See
+  COHERENCE-V279-QA.md. **Remaining:** R02B colors/recovery, R03 visual/copy pass,
+  R04 progress, R05/R06 routes/companion, native/device and release gates.
+  Owner now authorizes related batches without per-small-fix confirmation.
+
 - [x] **Package 03A / v278:** task-write session expiry no longer leaves a blocking
   dialog; B login no longer waits for A's pending write; late A response is fenced.
   Offline/503 retry, two-tab conflict and load recovery checked on synthetic A/B.

@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] Combined R08 / 03B / R02A coherence batch — v279
+
+Repair uses consistent field counts, persistent account-scoped receipts and explicit
+zero-result guidance; unrelated record ids cannot supply fallback backup text.
+Shared task/goal sphere picker gains expandable branches, selected chips and clear
+empty-selection validation. Dense mobile rows/time controls and closed menus no
+longer overlap or widen the page. Full account export/import passes lost-response
+retry and two-tab conflict checks without a runtime rewrite. Chrome/WebKit, five
+locales, mobile/desktop, light/dark and actual server readback checked. Details and
+remaining scope: COHERENCE-V279-QA.md. Final suite 3088/3088 PASS, syntax/diff checks
+PASS. Shell/pins advance to v279; deployment receipt lives in the release plan.
+
 ## [2026-09-24] Package 03A: usable session recovery and isolated write queues — v278
 
 Fixed the task-time dialog blocking login after a save gets 401; account teardown

@@ -47,6 +47,16 @@
     return node;
   }
 
+  function carrierAtPath(root, path) {
+    let node = root, carrier = idOf(root);
+    for (const part of path.match(/\[[0-9]+\]|\.[^.[]+/g) || []) {
+      if (node == null) return '';
+      node = part[0] === '[' ? node[Number(part.slice(1, -1))] : node[part.slice(1)];
+      carrier = idOf(node) || carrier;
+    }
+    return carrier;
+  }
+
   /** Ищем целую строку по id носителя — индекс в массиве мог сдвинуться. */
   function findByCarrier(value, carrier, key, out = { found: null }) {
     if (out.found !== null) return out;
@@ -75,7 +85,8 @@
           const hit = findByCarrier(backup.value, spot.carrier, spot.key).found;
           if (typeof hit === 'string') { clean = hit; source = backup.label || String(i); break; }
         }
-        const byPath = atPath(backup.value, spot.path);
+        const byPath = !spot.carrier || carrierAtPath(backup.value, spot.path) === spot.carrier
+          ? atPath(backup.value, spot.path) : undefined;
         if (typeof byPath === 'string' && !byPath.includes(MARK)) { clean = byPath; source = backup.label || String(i); break; }
       }
       plan.push({ path: spot.path, key: spot.key, carrier: spot.carrier, marks: spot.marks, clean, source });
@@ -106,5 +117,25 @@
     return { value: next, applied };
   }
 
-  return Object.freeze({ VERSION, MARK, MAX_SPOTS, findDamage, planRepair, applyRepair });
+  function summary(areas) {
+    const rows = [], fingerprint = [];
+    for (const [area, value] of Object.entries(areas)) {
+      const spots = findDamage(value);
+      if (spots.length) rows.push({ area, count: spots.length });
+      for (const spot of spots) fingerprint.push([area, spot.path, spot.carrier, atPath(value, spot.path)]);
+    }
+    let hash = 2166136261;
+    for (const ch of JSON.stringify(fingerprint)) hash = Math.imul(hash ^ ch.charCodeAt(0), 16777619);
+    return { rows, signature: String(hash >>> 0) };
+  }
+  function validReceipt(data) {
+    const count = n => Number.isSafeInteger(n) && n >= 0;
+    return data?.ok === true && data.apply === true && Array.isArray(data.report)
+      && ['total', 'fixable', 'done'].every(k => count(data[k]))
+      && data.report.every(r => typeof r.file === 'string' && ['spots', 'repairable', 'applied'].every(k => count(r[k])) && r.applied <= r.repairable && r.repairable <= r.spots)
+      && data.total === data.report.reduce((s, r) => s + r.spots, 0)
+      && data.fixable === data.report.reduce((s, r) => s + r.repairable, 0)
+      && data.done === data.report.reduce((s, r) => s + r.applied, 0);
+  }
+  return Object.freeze({ VERSION, MARK, MAX_SPOTS, findDamage, planRepair, applyRepair, summary, validReceipt });
 }));

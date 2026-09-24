@@ -10,6 +10,28 @@ const D = require('../public/damage-repair-v1.js');
 
 const dmg = '��чета за месяц';
 
+test('не подставляет текст другой записи по совпавшему индексу', () => {
+  const current = [{ id: 'new', title: dmg }];
+  const plan = D.planRepair(current, [{ value: [{ id: 'old', title: 'Чужая запись' }] }]);
+  assert.equal(plan.repairable, 0);
+  assert.deepEqual(D.applyRepair(current, plan.plan).value, current);
+});
+
+test('сводка считает поля, различает повреждённый текст и не считает emoji порчей', () => {
+  const a = D.summary({ notes: [{ id: 'a', text: '���' }, { id: 'b', text: 'Україна, Köln, 日本 🐈' }] });
+  assert.equal(a.rows[0].count, 1);
+  assert.notEqual(a.signature, D.summary({ notes: [{ id: 'a', text: '��X' }] }).signature);
+  assert.deepEqual(D.summary({ text: 'Україна, Köln, 日本 🐈' }).rows, []);
+});
+
+test('квитанция ремонта требует согласованных количеств, а не одного ok', () => {
+  const receipt = { ok: true, apply: true, total: 2, fixable: 1, done: 1,
+    report: [{ file: 'inbox', spots: 2, repairable: 1, applied: 1 }] };
+  assert.equal(D.validReceipt(receipt), true);
+  assert.equal(D.validReceipt({ ...receipt, done: 2 }), false);
+  assert.equal(D.validReceipt({ ok: true }), false);
+});
+
 test('находит порчу и запоминает, чья это запись', () => {
   const spots = D.findDamage({ tasks: [{ id: 'a', title: 'целый' }, { id: 'b', title: dmg }] });
   assert.equal(spots.length, 1);

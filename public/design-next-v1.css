@@ -140,6 +140,18 @@
 :root[data-design=next] .secretary-today-kicker{color:var(--design-accent)}
 :root[data-design=next] :is(.eyebrow,.settings-eyebrow,.character-wardrobe-kicker,.shelf-kicker){color:var(--muted);text-transform:none;letter-spacing:.02em}
 :root[data-design=next] .notes-screen{max-width:900px}
+:root[data-design=next] .task-more:not([open]) > .task-menu{display:none}
+:root[data-design=next] .sphere-selection{display:flex;flex-wrap:wrap;gap:8px;margin-block:8px;max-height:22vh;overflow:auto}
+:root[data-design=next] .sphere-selected-chip{display:flex;align-items:center;gap:8px;min-height:44px;max-width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);text-align:left}
+:root[data-design=next] .sphere-selected-chip span:first-child{overflow-wrap:anywhere;min-width:0}
+:root[data-design=next] .sphere-selected-chip small{color:var(--muted)}
+:root[data-design=next] .sphere-panel-results{display:block;max-height:36vh;overflow:auto}
+:root[data-design=next] .sphere-panel .sphere-role-button{background:transparent;color:var(--text);min-height:44px;border:1px solid var(--line)}
+:root[data-design=next] .sphere-panel .sphere-role-button[aria-pressed=true]{background:var(--panel);border-color:var(--accent)}
+:root[data-design=next] .sphere-branch-head{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:start}
+:root[data-design=next] .sphere-branch-toggle{width:44px;min-height:44px;background:transparent;border:0;color:var(--text);font-size:1.25rem}
+:root[data-design=next] .sphere-multi-tree .sphere-choice-row{padding-inline-start:4px}
+:root[data-design=next] .sphere-multi-kids{margin-inline-start:12px;border-inline-start:1px solid var(--line);padding-inline-start:4px}
 :root[data-design=next] .notes-header{padding-bottom:12px}
 :root[data-design=next] .notes-back{margin-bottom:var(--sp-3);min-height:44px}
 :root[data-design=next] .capture-card .cap-add{width:auto;inline-size:auto;min-height:44px;padding:var(--sp-2) var(--sp-3);font-size:.875rem}
@@ -490,7 +502,7 @@
  :root[data-design=next] .task.task-entry-layout>.check{grid-column:1;grid-row:1;margin:0;inline-size:44px;block-size:44px;min-inline-size:44px;min-block-size:44px}
  :root[data-design=next] .task.task-entry-layout>.task-schedule{grid-column:2;grid-row:2;justify-self:start;min-width:44px;min-height:44px}
  :root[data-design=next] .task.task-entry-layout>.t-title{grid-column:2/4;grid-row:1;padding:var(--sp-2) 0 0}
- :root[data-design=next] .task.task-entry-layout>.task-time-controls{grid-column:3/-1;grid-row:2;flex-direction:row;justify-content:flex-end;gap:var(--sp-2)}
+ :root[data-design=next] .task.task-entry-layout>.task-time-controls{grid-column:3/-1;grid-row:2;flex-direction:row;flex-wrap:wrap;justify-content:flex-end;gap:var(--sp-2)}
  :root[data-design=next] .task.task-entry-layout>.task-time-controls .t-time{font-size:.8125rem;min-height:44px}
  :root[data-design=next] .task.task-entry-layout>.task-more{grid-column:4;grid-row:1}
  :root[data-design=next] .task.task-entry-layout>.t-diff{grid-column:1;grid-row:3;justify-self:center}

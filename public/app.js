@@ -539,6 +539,14 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  'Подсферы': { en: 'Subareas', de: 'Unterbereiche', uk: 'Підсфери', es: 'Subáreas' },
+  'Основные — прямой результат. Фон — сопутствующий вклад.': { en: 'Main: direct results. Background: supporting contributions.', de: 'Hauptbereiche: direkte Ergebnisse. Hintergrund: begleitende Beiträge.', uk: 'Основні — прямий результат. Фон — супутній внесок.', es: 'Principales: resultados directos. Secundarios: aportaciones adicionales.' },
+  'Повреждённые поля': { en: 'Damaged fields', de: 'Beschädigte Felder', uk: 'Пошкоджені поля', es: 'Campos dañados' },
+  'Проверено': { en: 'Checked', de: 'Geprüft', uk: 'Перевірено', es: 'Revisados' },
+  'Целой копии оставшихся полей нет. Проверь текст в указанных разделах и исправь его вручную.': { en: 'No intact backup exists for the remaining fields. Review the text in these sections and correct it manually.', de: 'Für die übrigen Felder gibt es keine intakte Kopie. Prüfe den Text in diesen Bereichen und korrigiere ihn manuell.', uk: 'Цілої копії решти полів немає. Перевір текст у вказаних розділах і виправ його вручну.', es: 'No hay una copia intacta de los campos restantes. Revisa el texto en estas secciones y corrígelo manualmente.' },
+  'Восстановление заменит повреждённые поля целым текстом из резервных копий. Остальные данные останутся прежними.': { en: 'Restoring replaces damaged fields with intact text from backups. Other data stays unchanged.', de: 'Die Wiederherstellung ersetzt beschädigte Felder durch intakten Text aus Sicherungen. Andere Daten bleiben unverändert.', uk: 'Відновлення замінить пошкоджені поля цілим текстом із резервних копій. Решта даних залишиться без змін.', es: 'La restauración reemplaza los campos dañados con texto intacto de las copias. Los demás datos no cambian.' },
+  'Скрыть до закрытия вкладки': { en: 'Hide until this tab closes', de: 'Bis zum Schließen des Tabs ausblenden', uk: 'Приховати до закриття вкладки', es: 'Ocultar hasta cerrar esta pestaña' },
+  'Результат восстановления не подтверждён. Повтори проверку — уже восстановленный текст не изменится.': { en: 'Restoration is unconfirmed. Try again; already restored text will stay unchanged.', de: 'Die Wiederherstellung ist nicht bestätigt. Versuche es erneut; bereits wiederhergestellter Text bleibt unverändert.', uk: 'Результат відновлення не підтверджено. Повтори перевірку — вже відновлений текст не зміниться.', es: 'La restauración no está confirmada. Reintenta; el texto ya restaurado no cambiará.' },
   'Проверить уведомление аккаунта': { en: 'Test account notification', de: 'Kontobenachrichtigung testen', uk: 'Перевірити сповіщення облікового запису', es: 'Probar notificación de la cuenta' },
   'Первый результат': { en: 'First result', de: 'Erstes Ergebnis', uk: 'Перший результат', es: 'Primer resultado' },
   "Сделать сейчас": {"en": "Do it now", "de": "Jetzt machen", "uk": "Зробити зараз", "es": "Hacerlo ahora"},
@@ -7500,7 +7508,7 @@ function splitSkillFieldValue(value) {
   return uniqueSkillIds(String(value || '').split(',').map((id) => id.trim()).filter(Boolean));
 }
 function sphereFieldState(field) {
-  const main = splitSkillFieldValue(field?.querySelector('[name="skillIds"]')?.value || field?.querySelector('[name="skillId"]')?.value);
+  const main = splitSkillFieldValue(field?.querySelector('[name="skillIds"]')?.value ?? field?.querySelector('[name="skillId"]')?.value);
   const backgroundName = field?.dataset.backgroundName || 'layers';
   const background = splitSkillFieldValue(field?.querySelector(`[name="${backgroundName}"]`)?.value).filter((id) => !main.includes(id));
   return { main, background, backgroundName };
@@ -7522,23 +7530,47 @@ function sphereChoiceRowHTML(skill, main, background, query = '') {
     <div class="sphere-choice-actions" role="group" aria-label="${esc(path)}"><button type="button" class="sphere-role-button sphere-role-main" data-action="sphere-pick" data-id="${esc(skill.id)}" data-label="${esc(path)}" aria-pressed="${isMain ? 'true' : 'false'}">${esc(t(isMain ? 'Основная' : 'Выбрать'))}</button><button type="button" class="sphere-role-button sphere-role-background" data-action="sphere-background-pick" data-id="${esc(skill.id)}" aria-pressed="${isBackground ? 'true' : 'false'}">${esc(t(isBackground ? 'Фон' : '+ Фон'))}</button></div>
   </div>`;
 }
-function sphereMultiResultsHTML(query, main, background) {
+function sphereSelectedHTML(main, background) {
+  return [...main.map(id => [id, 'sphere-pick', 'Основная']), ...background.map(id => [id, 'sphere-background-pick', 'Фон'])]
+    .map(([id, action, role]) => `<button type="button" class="sphere-selected-chip" data-action="${action}" data-id="${esc(id)}" aria-label="${esc(t('Убрать') + ': ' + skillLabel(id))}" title="${esc(skillLabel(id))}"><span data-noi18n>${esc(skillById(id).name)}</span><small>${esc(t(role))}</small><span aria-hidden="true">×</span></button>`).join('') || `<p class="muted">${esc(t('Нужна хотя бы одна основная сфера'))}</p>`;
+}
+function sphereMultiResultsHTML(query, main, background, expanded = new Set()) {
   const q = String(query || '').trim(), visible = pickerVisibleSkills();
-  const rows = q && window.SphereSearchV1
-    ? window.SphereSearchV1.search(visible, q, { limit: 40 }).map((result) => visible.find((skill) => skill.id === result.id)).filter(Boolean)
-    : visible.slice().sort((a, b) => skillLabel(a.id).localeCompare(skillLabel(b.id), lang()));
-  if (!rows.length) return `<p class="sphere-empty muted">${esc(t('Ничего не нашлось'))}</p>`;
-  return rows.map((skill) => sphereChoiceRowHTML(skill, main, background, q)).join('');
+  if (q && window.SphereSearchV1) {
+    const rows = window.SphereSearchV1.search(visible, q, { limit: 40 }).map(result => visible.find(skill => skill.id === result.id)).filter(Boolean);
+    return rows.length ? rows.map(skill => sphereChoiceRowHTML(skill, main, background, q)).join('') : `<p class="sphere-empty muted">${esc(t('Ничего не нашлось'))}</p>`;
+  }
+  const ids = new Set(visible.map(s => s.id)), seen = new Set();
+  const branch = (skill, depth) => {
+    if (seen.has(skill.id) || depth > 6) return '';
+    seen.add(skill.id);
+    const kids = visible.filter(s => s.parentId === skill.id), open = expanded.has(skill.id);
+    const row = sphereChoiceRowHTML(skill, main, background);
+    if (!kids.length) return row;
+    return `<div class="sphere-choice-branch" data-branch-id="${esc(skill.id)}"><div class="sphere-branch-head"><button type="button" class="sphere-branch-toggle" data-action="sphere-branch-toggle" data-id="${esc(skill.id)}" aria-expanded="${open}" aria-label="${esc(t('Подсферы') + ': ' + skill.name)}">${open ? '⌄' : '›'}</button>${row}</div><div class="sphere-multi-kids"${open ? '' : ' hidden'}>${kids.map(s => branch(s, depth + 1)).join('')}</div></div>`;
+  };
+  const roots = visible.filter(s => !s.parentId || !ids.has(s.parentId));
+  const tree = roots.map(s => branch(s, 0)).join('');
+  return `<div class="sphere-multi-tree">${tree}${visible.filter(s => !seen.has(s.id)).map(s => branch(s, 0)).join('')}</div>`;
 }
 function refreshSphereField(field, { close = false } = {}) {
   if (!field) return;
+  const active = document.activeElement, restore = field.contains(active) && active?.dataset.action;
+  const focusId = active?.dataset.id, inSelection = !!active?.closest('.sphere-selection');
   const state = sphereFieldState(field), primary = field.querySelector('[name="skillId"]'), mainInput = field.querySelector('[name="skillIds"]'), backgroundInput = field.querySelector(`[name="${state.backgroundName}"]`);
   if (primary) primary.value = state.main[0] || '';
   if (mainInput) mainInput.value = state.main.join(',');
   if (backgroundInput) backgroundInput.value = state.background.join(',');
   const summary = field.querySelector('.sphere-trigger-value'); if (summary) summary.innerHTML = sphereFieldSummaryHTML(state.main, state.background);
   const results = field.querySelector('.sphere-panel-results'), search = field.querySelector('.sphere-search-input');
-  if (results) results.innerHTML = sphereMultiResultsHTML(search?.value || '', state.main, state.background);
+  if (results) results.innerHTML = sphereMultiResultsHTML(search?.value || '', state.main, state.background, field._expandedSpheres);
+  const selected = field.querySelector('.sphere-selection'); if (selected) selected.innerHTML = sphereSelectedHTML(state.main, state.background);
+  if (state.main.length) field.closest('form')?.querySelector('.sphere-form-error')?.remove();
+  if (restore && !active.isConnected) {
+    const host = inSelection ? selected : results;
+    const next = host?.querySelector(`[data-action="${CSS.escape(restore)}"][data-id="${CSS.escape(focusId || '')}"]`) || field.querySelector('.sphere-panel-done');
+    focusPathChoiceTarget(next);
+  }
   if (close) field.removeAttribute('open');
 }
 // ── Пикер сферы v1: дерево с раскрытием + поиск (fb_msi16wnqpyrs, fb_mqdgi36249e4) ──
@@ -7599,9 +7631,10 @@ function sphereFieldHTML(selectedId, options = {}) {
   return `<details class="add-field add-field-skill sphere-field sphere-field-multi${fieldClass}" data-background-name="${esc(backgroundName)}">
     <summary class="sphere-trigger"><span class="add-field-label">${esc(t(options.label || 'Сферы'))}</span><span class="sphere-trigger-value">${sphereFieldSummaryHTML(main, background)}</span></summary>
     <div class="sphere-panel">
-      <div class="sphere-panel-head"><div><strong>${esc(t('Сферы цели'))}</strong><small>${esc(t('Основные отражают прямой результат. Фон — что цель поддерживает попутно.'))}</small></div><button type="button" class="sphere-panel-done" data-action="sphere-picker-done">${esc(t('Готово'))}</button></div>
+      <div class="sphere-panel-head"><div><strong>${esc(t('Сферы'))}</strong><small>${esc(t('Основные — прямой результат. Фон — сопутствующий вклад.'))}</small></div><button type="button" class="sphere-panel-done" data-action="sphere-picker-done">${esc(t('Готово'))}</button></div>
       <label class="sr-only" for="sphere-search-${esc(fallback)}">${esc(t('Искать сферу'))}</label>
       <input type="text" id="sphere-search-${esc(fallback)}" class="sphere-search-input" placeholder="${esc(t('Искать сферу…'))}" autocomplete="off" />
+      <div class="sphere-selection">${sphereSelectedHTML(main, background)}</div>
       <div class="sphere-panel-results">${sphereMultiResultsHTML('', main, background)}</div>
     </div>
     <input type="hidden" name="skillId" value="${esc(main[0] || '')}" /><input type="hidden" name="skillIds" value="${esc(main.join(','))}" /><input type="hidden" name="${esc(backgroundName)}" value="${esc(background.join(','))}" /></details>`;
@@ -16996,64 +17029,65 @@ function captureBar(options = {}) {
 // кусков тела запроса и писал на диск «\uFFFD» вместо буквы (см. DEVLOG). Дефект закрыт,
 // но уже испорченные символы не восстанавливаются: байты потеряны. Молчать об этом нельзя —
 // человек должен знать, где в его данных дырка, чтобы поправить текст руками.
-let _dataDamageReported = false;
+let _dataDamageReported = '';
 function scanDataDamage() {
-  const areas = {
-    'квесты': State.tasks, 'цели': State.goals, 'привычки': State.habits,
-    'заметки': State.inbox, 'настройки': State.settings, 'дни': State.days,
-  };
-  const out = [];
-  for (const [name, value] of Object.entries(areas)) {
-    if (value == null) continue;
-    let text = '';
-    try { text = JSON.stringify(value); } catch { continue; }
-    const n = (text.match(/\uFFFD/g) || []).length;
-    if (n) out.push({ area: name, count: n });
-  }
-  return out;
+  return window.DamageRepairV1.summary({
+    'Квесты': State.tasks, 'Цели': State.goals, 'Привычки': State.habits,
+    'Заметки': State.inbox, 'Настройки': State.settings, 'Дни': State.days,
+  });
+}
+function damageUiKey() { return `satoru:damage:${String(State.me?.id || '')}`; }
+function rememberDamageUI(dismissed = false) {
+  const record = { signature: State._damageSignature, dismissed, result: State._damageResult || null };
+  try { sessionStorage.setItem(damageUiKey(), JSON.stringify(record)); } catch {}
 }
 function reportDataDamageOnce() {
-  if (_dataDamageReported) return;
-  _dataDamageReported = true;
-  const damage = scanDataDamage();
-  State._dataDamage = damage.length ? damage : null;
-  if (!damage.length) { console.info('[осмотр данных] порчи не найдено'); return; }
-  const total = damage.reduce((sum, d) => sum + d.count, 0);
-  console.warn('[осмотр данных] испорченных символов:', total, damage.map((d) => `${d.area}: ${d.count}`).join(', '));
+  const summary = scanDataDamage(), key = `${State.me?.id}:${summary.signature}`;
+  if (_dataDamageReported === key) return;
+  _dataDamageReported = key; State._damageSignature = summary.signature;
+  let saved; try { saved = JSON.parse(sessionStorage.getItem(damageUiKey())); } catch {}
+  const same = saved?.signature === summary.signature;
+  State._damageResult = same && window.DamageRepairV1.validReceipt(saved.result) ? saved.result : null;
+  State._damageError = '';
+  State._dataDamage = same && saved.dismissed ? null : summary.rows;
 }
-// Заметка о порче — не тост, а карточка с действием: тост исчезает, а дырка в данных нет.
 function dataDamageNoticeHTML() {
-  const damage = State._dataDamage;
-  if (!damage || !damage.length) return '';
+  const damage = State._dataDamage, result = State._damageResult;
+  if (!damage || (!damage.length && !result)) return '';
   const total = damage.reduce((sum, d) => sum + d.count, 0);
-  const where = damage.map((d) => `${d.area}: ${d.count}`).join(', ');
+  const left = result ? result.total - result.done : total;
+  const where = damage.map(d => `${t(d.area)}: ${d.count}`).join(', ');
   return `<section class="card data-damage-card" role="status">
-    <h3>${esc(t('В данных есть повреждённые символы'))}: ${total}</h3>
-    <p class="muted">${esc(where)}. ${esc(t('Причина устранена. Могу восстановить из твоих резервных копий — только то, что там есть целым; выдумывать текст не буду.'))}</p>
+    <h3>${esc(t('Повреждённые поля'))}: ${left}</h3>
+    ${where ? `<p class="muted">${esc(where)}</p>` : ''}
+    ${result ? `<p>${esc(t('Проверено'))}: ${result.total} · ${esc(t('Восстановлено'))}: ${result.done} · ${esc(t('Осталось'))}: ${left}</p><p class="muted">${esc(t(left ? 'Целой копии оставшихся полей нет. Проверь текст в указанных разделах и исправь его вручную.' : 'Повреждений не осталось'))}</p>` : `<p class="muted">${esc(t('Восстановление заменит повреждённые поля целым текстом из резервных копий. Остальные данные останутся прежними.'))}</p>`}
+    ${State._damageError ? `<p role="alert">${esc(State._damageError)}</p>` : ''}
     <div class="propose-actions">
-      <button type="button" class="btn" data-action="damage-repair"${State._damageBusy ? ' disabled' : ''}>${esc(State._damageBusy ? t('Восстанавливаю…') : t('Восстановить из копий'))}</button>
-      <button type="button" class="btn ghost" data-action="damage-dismiss">${esc(t('Позже'))}</button>
+      ${!result || State._damageError ? `<button type="button" class="btn" data-action="damage-repair"${State._damageBusy ? ' disabled' : ''}>${esc(t(State._damageBusy ? 'Восстанавливаю…' : 'Восстановить из копий'))}</button>` : ''}
+      <button type="button" class="btn ghost" data-action="damage-dismiss"${State._damageBusy ? ' disabled' : ''}>${esc(t('Скрыть до закрытия вкладки'))}</button>
     </div></section>`;
 }
 async function repairDataDamage() {
   if (State._damageBusy) return;
-  State._damageBusy = true; render();
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  State._damageBusy = true; State._damageError = ''; render();
   try {
     const r = await fetch('/api/account/repair-damage', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ apply: true }),
     });
+    if (!current()) return;
+    if (r.status === 401) { handleAccountSessionExpired(); return; }
     const d = await r.json();
-    if (!r.ok || !d.ok) { toast(t('Восстановление не удалось. Данные не тронуты.')); return; }
-    console.warn('[ремонт данных]', JSON.stringify(d.report));
-    const left = Math.max(0, Number(d.total || 0) - Number(d.done || 0));
-    toast(left
-      ? `${t('Восстановлено')}: ${d.done}. ${t('Осталось мест без целой копии')}: ${left}`
-      : `${t('Восстановлено')}: ${d.done}. ${t('Повреждений не осталось')}`);
+    if (!current()) return;
+    if (!r.ok || !window.DamageRepairV1.validReceipt(d)) throw new Error('repair_unconfirmed');
     await initApp();
-    _dataDamageReported = false; reportDataDamageOnce();
-  } catch (error) {
-    console.error('repair damage', error); toast(t('Восстановление не удалось. Данные не тронуты.'));
-  } finally { State._damageBusy = false; render(); }
+    if (!current()) return;
+    _dataDamageReported = ''; reportDataDamageOnce();
+    State._damageResult = d; rememberDamageUI();
+  } catch {
+    if (current()) State._damageError = t('Результат восстановления не подтверждён. Повтори проверку — уже восстановленный текст не изменится.');
+  } finally { if (current()) { State._damageBusy = false; render(); } }
 }
 function validateInboxPayload(value) {
   if (!Array.isArray(value)) return false;
@@ -28238,6 +28272,14 @@ function kickCompVideo() {
 // ============================================================
 async function onSubmit(e) {
   const f = e.target;
+  const sphere = f.querySelector('.sphere-field-multi');
+  if (sphere && !sphereFieldState(sphere).main.length) {
+    e.preventDefault();
+    let error = f.querySelector('.sphere-form-error');
+    if (!error) { error = document.createElement('p'); error.className = 'sphere-form-error'; error.setAttribute('role', 'alert'); f.querySelector('[type=submit]')?.before(error); }
+    error.textContent = t('Нужна хотя бы одна основная сфера'); sphere.open = true;
+    sphere.querySelector('.sphere-search-input')?.focus(); return;
+  }
   if (f.id === 'secretary-next-question-form') {
     e.preventDefault(); const ref = f.elements.namedItem('targetRef')?.value;
     if (!ref) return;
@@ -31024,6 +31066,15 @@ async function onClick(e) {
   if (action === 'close-reward-catalog') { closeAccountDialog('rw-catalog'); return; }
   if (action === 'retry-daily-reward') { commitDailyRewardDialog(el.closest('#loot-modal')); return; }
   if (action === 'skip-capsule-reveal') { finishChestReel(el.closest('#loot-modal')); return; }
+  if (action === 'sphere-branch-toggle') {
+    const field = el.closest('.sphere-field'), branch = el.closest('.sphere-choice-branch');
+    if (!field || !branch) return;
+    field._expandedSpheres ||= new Set();
+    const open = el.getAttribute('aria-expanded') !== 'true';
+    if (open) field._expandedSpheres.add(el.dataset.id); else field._expandedSpheres.delete(el.dataset.id);
+    el.setAttribute('aria-expanded', String(open)); el.textContent = open ? '⌄' : '›';
+    branch.querySelector(':scope > .sphere-multi-kids').hidden = !open; return;
+  }
   if (action === 'sphere-pick') {
     // Кнопка живёт внутри <summary> у столбов — без preventDefault клик по ней
     // ЗАКРЫЛ/открыл бы <details> раскрытия следом за выбором: два эффекта одним
@@ -31037,7 +31088,6 @@ async function onClick(e) {
     if (mainInput) {
       const state = sphereFieldState(field);
       if (state.main.includes(sid)) {
-        if (state.main.length <= 1) { toast(t('Нужна хотя бы одна основная сфера')); return; }
         state.main.splice(state.main.indexOf(sid), 1);
         selectedNow = false;
       } else state.main.push(sid);
@@ -32150,7 +32200,7 @@ async function onClick(e) {
   } else if (action === 'cap-video') { startCapture('video');
   } else if (action === 'cap-stop') { stopCapture();
   } else if (action === 'damage-repair') { repairDataDamage();
-  } else if (action === 'damage-dismiss') { State._dataDamage = null; render();
+  } else if (action === 'damage-dismiss') { rememberDamageUI(true); State._dataDamage = null; State._damageResult = null; render();
   } else if (action === 'notes-back') {
     State.view = 'today'; State._tasksFocusAfterCommit = '.today-notes-link'; render();
   } else if (action === 'goto-notes') {
@@ -32735,6 +32785,7 @@ function clearAllData() {
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
   State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
   State.purchases = null; State.achievements = null; State.weeks = null; State.lootbox = null;
+  _dataDamageReported = ''; State._dataDamage = null; State._damageResult = null; State._damageError = ''; State._damageBusy = false;
   State.inbox = null; State.inboxOpen = false; State.antihabits = null; State.episodes = null;
   State.secretaryOffer = undefined; State._secretaryOfferBusy = false;
   State.attentionMode = 'local'; State.attentionPolicies = null; State.attentionSessions = null; State.attentionEpisodes = null;
@@ -33385,7 +33436,7 @@ function onSettingsInput(e) {
     const hidden = field && field.querySelector('input[name="skillId"]');
     if (results) {
       const state = sphereFieldState(field);
-      results.innerHTML = field.classList.contains('sphere-field-multi') ? sphereMultiResultsHTML(e.target.value, state.main, state.background) : sphereResultsHTML(e.target.value, hidden ? hidden.value : null);
+      results.innerHTML = field.classList.contains('sphere-field-multi') ? sphereMultiResultsHTML(e.target.value, state.main, state.background, field._expandedSpheres) : sphereResultsHTML(e.target.value, hidden ? hidden.value : null);
     }
   }
   if (e.target.matches('.admin-user-search-input')) {
@@ -33758,7 +33809,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v278';
+const PWA_CACHE_VERSION = 'satoru-v279';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
