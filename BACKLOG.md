@@ -1,6 +1,6 @@
 # Gojo — BACKLOG (список ожидания)
 
-- [x] **R02B / v280:** labeled sphere color/inheritance, preserved manual colors,
+- [x] **R02B / v280–v281:** labeled sphere color/inheritance, preserved manual colors,
   durable recovery toggle with explicit effect and account isolation. **R03 partial:**
   settings/AI/recovery registry icons, mobile nav labels, themed cards and removal
   of empty quiet-sphere invitation. See SPHERE-CONTROLS-V280-QA.md. Dense Today art,

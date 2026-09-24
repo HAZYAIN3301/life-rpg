@@ -150,6 +150,8 @@
 :root[data-design=next] .skill-edit .se-move{display:flex;gap:4px}
 :root[data-design=next] .skill-edit :is(.se-move button,.se-collapse,.del){display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text)}
 :root[data-design=next] .ai-pending{display:flex;align-items:center;gap:8px;margin-block:16px;color:var(--muted);font-size:var(--type-body)}
+:root[data-design=next] .ai-box>.modal-x{display:flex;align-items:center;justify-content:center;width:44px;height:44px;top:12px;right:12px}
+:root[data-design=next] .ai-box>h3{padding-right:40px;overflow-wrap:anywhere}
 :root[data-design=next] .load-row{grid-template-columns:minmax(90px,1fr) minmax(70px,2fr) 62px minmax(170px,auto)}
 :root[data-design=next] .load-restore{display:flex;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;min-height:44px;padding:8px;color:var(--text);font:inherit;line-height:1.35}
 :root[data-design=next] .load-restore.on{border-color:var(--good);background:var(--panel2)}

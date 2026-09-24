@@ -1,4 +1,9 @@
-# Sphere controls and shared visual cleanup — v280
+# Sphere controls and shared visual cleanup — v280–v281
+
+Final visual follow-up v281: the generic AI close button had a 27×19px inherited
+target. It is now 44×44px with heading clearance. Final evidence waits for the SVG
+mask resources, so screenshots distinguish asset loading from actual missing icons.
+The final full suite is repeated on v281, after this correction and its cache bump.
 
 ## Result and contract
 

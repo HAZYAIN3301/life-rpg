@@ -1,5 +1,12 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] Final sphere-batch visual correction — v281
+
+Real AI modal screenshot exposed an inherited 27×19px close target. It is now
+44×44 with title clearance. Registry mask resources verified before capture.
+No request/reward behavior change; full suite repeated on the final v281 candidate.
+The combined batch remains documented in SPHERE-CONTROLS-V280-QA.md.
+
 ## [2026-09-24] R02B and scoped R03 cleanup — v280
 
 Added labeled sphere colors with explicit parent-shade inheritance that preserves
