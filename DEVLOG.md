@@ -7322,3 +7322,14 @@ Tree v3 хранил реальные milestones и игровые perks в од
 - Добавлен отдельный contract suite `scripts/guide-tree-v4-v205.test.js`; shell/cache поднят до `satoru-v205`.
 - Финальный gate: full repository `1237/1237 PASS`; browser acceptance `1280×900` и `375×812` прошёл полный `intro → exact sphere → capability receipt → durable finish`, без horizontal overflow и console warnings/errors.
 - Release handoff записан в `GUIDE-V3-TREE-V4-V205-QA.md`.
+# 24.09.2026 — v274: тест сохранённой push-подписки с другого устройства
+
+Кнопка теста была видна только при локальной браузерной подписке. Владелец не мог
+проверить телефон с вошедшего Brave, не заменив подписку. Теперь Settings →
+Приложение показывает тест аккаунта и без локального PushManager/разрешения.
+Действие использует существующий authenticated POST /api/push/test, не вызывает
+subscribe и не меняет разрешения. Сервер по-прежнему хранит одну user.push;
+это не multi-device/APNs реализация. Повторный click блокируется _pushBusy.
+Добавлены два поведенческих теста; карточка просмотрена desktop и 375px.
+SHELL v274 и активные проверки cache pins синхронизированы.
+Полный набор: 3073/3073 PASS. Физическое получение теста пока не подтверждено.

@@ -539,6 +539,7 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  'Проверить уведомление аккаунта': { en: 'Test account notification', de: 'Kontobenachrichtigung testen', uk: 'Перевірити сповіщення облікового запису', es: 'Probar notificación de la cuenta' },
   'Первый результат': { en: 'First result', de: 'Erstes Ergebnis', uk: 'Перший результат', es: 'Primer resultado' },
   'Первый вход': { en: 'Getting started', de: 'Erste Schritte', uk: 'Перший вхід', es: 'Primeros pasos' },
   'Сначала — одна настоящая польза': { en: 'Start with one useful step', de: 'Beginne mit einem hilfreichen Schritt', uk: 'Спочатку — один корисний крок', es: 'Empieza con un paso útil' },
@@ -33564,7 +33565,7 @@ function pwaCard() {
   return `<div class="card pwa-card" aria-busy="${_pwaInstallBusy || _pushBusy}"><h3>${t('📲 Приложение')}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 6px">${t('Установи Satoru как приложение: иконка на телефоне и офлайн-режим. Уведомления — только по отдельному согласию ниже.')}</p>
     <p class="muted pwa-status" role="status">${offline} ${t('Установка и уведомления включаются отдельно.')}</p>
-    <div class="pwa-row">${install}</div>${apk}${push}</div>`;
+    <div class="pwa-row">${install}</div>${apk}${push}${!canPush || Notification.permission === 'denied' || !State.pushOn ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить уведомление аккаунта')}</button></div>` : ''}</div>`;
 }
 async function pushEnable() {
   if (_pushBusy) return;
@@ -33618,7 +33619,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v273';
+const PWA_CACHE_VERSION = 'satoru-v274';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
