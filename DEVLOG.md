@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] Package 01: First Value recovery and later-state translations — local v275
+
+Fixed the missing recovery launcher call, kept the promised ten-minute default,
+and supplied EN/DE/UK/ES translations for later First Value states. Pausing now
+shows a readable reason instead of internal enum codes. Shell cache/pins updated.
+Five real localhost registration/form/reopen scenarios cover all three routes,
+manual setup, goal-step completion and rejected/lost-response retry without
+duplicate entities. 550/550 targeted tests PASS; five-language screenshots at
+375/1280 checked. See FIRST-VALUE-V275-QA.md for evidence and limitations.
+Local only: no push/deploy, full release/native QA remains with packages 11–12.
+
 ## [2026-09-24] First visit copy and observed return history — v273
 
 The separate reviewer account reproduced Russian First Value labels in English,

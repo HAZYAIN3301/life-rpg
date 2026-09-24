@@ -541,6 +541,58 @@ const I18N_ES = {
 const I18N_EXTRA = {
   'Проверить уведомление аккаунта': { en: 'Test account notification', de: 'Kontobenachrichtigung testen', uk: 'Перевірити сповіщення облікового запису', es: 'Probar notificación de la cuenta' },
   'Первый результат': { en: 'First result', de: 'Erstes Ergebnis', uk: 'Перший результат', es: 'Primer resultado' },
+  "Сделать сейчас": {"en": "Do it now", "de": "Jetzt machen", "uk": "Зробити зараз", "es": "Hacerlo ahora"},
+  "Один маленький настоящий шаг": {"en": "One small real step", "de": "Ein kleiner echter Schritt", "uk": "Один малий справжній крок", "es": "Un pequeño paso real"},
+  "Выбери посильное дело и доведи его до сохранённого результата.": {"en": "Choose a manageable task, complete it and save the result.", "de": "Wähle eine machbare Aufgabe, erledige sie und speichere das Ergebnis.", "uk": "Обери посильну справу, виконай її та збережи результат.", "es": "Elige una tarea manejable, complétala y guarda el resultado."},
+  "Выбрать шаг": {"en": "Pick a step", "de": "Schritt wählen", "uk": "Обрати крок", "es": "Elegir un paso"},
+  "Достать следующий шаг из плана": {"en": "Find the next step in your plan", "de": "Den nächsten Schritt im Plan finden", "uk": "Знайти наступний крок у плані", "es": "Encuentra el siguiente paso en tu plan"},
+  "Не планировать всё заново — закрепить одно конкретное действие.": {"en": "Keep your plan and commit to one concrete action.", "de": "Nicht alles neu planen – eine konkrete Aktion festlegen.", "uk": "Не плануй усе заново — визнач одну конкретну дію.", "es": "No hace falta rehacer todo el plan: concreta una acción."},
+  "Найти следующий шаг": {"en": "Find the next step", "de": "Nächsten Schritt finden", "uk": "Знайти наступний крок", "es": "Encontrar el siguiente paso"},
+  "Уточнить действие": {"en": "Clarify the action", "de": "Aktion klären", "uk": "Уточнити дію", "es": "Aclarar la acción"},
+  "Начать безопасное восстановление": {"en": "Take a break with a clear boundary", "de": "Eine Pause mit klarer Grenze beginnen", "uk": "Почати безпечне відновлення", "es": "Descansa con un límite claro"},
+  "Поставить настоящую границу отдыха и снять лишнее давление.": {"en": "Set a clear boundary for your break and ease the pressure.", "de": "Setze deiner Pause eine klare Grenze und nimm dir den Druck.", "uk": "Встановити справжню межу відпочинку та зняти зайвий тиск.", "es": "Pon un límite claro a tu descanso y reduce la presión."},
+  "Начать восстановление": {"en": "Start a break", "de": "Erholung beginnen", "uk": "Почати відновлення", "es": "Empezar el descanso"},
+  "Выбрать границу": {"en": "Pick a boundary", "de": "Grenze wählen", "uk": "Обрати межу", "es": "Elegir un límite"},
+  "Направление выбрано": {"en": "Direction chosen", "de": "Richtung gewählt", "uk": "Напрям обрано", "es": "Dirección elegida"},
+  "Шаг готов": {"en": "Step ready", "de": "Schritt bereit", "uk": "Крок готовий", "es": "Paso listo"},
+  "Шаг начат": {"en": "Step started", "de": "Schritt gestartet", "uk": "Крок розпочато", "es": "Paso iniciado"},
+  "Результат сохранён": {"en": "Result saved", "de": "Ergebnis gespeichert", "uk": "Результат збережено", "es": "Resultado guardado"},
+  "Завершено": {"en": "Done", "de": "Fertig", "uk": "Завершено", "es": "Hecho"},
+  "Можно вернуться позже": {"en": "You can come back later", "de": "Du kannst später zurückkommen", "uk": "Можна повернутися пізніше", "es": "Puedes volver más tarde"},
+  "Задача выполнена": {"en": "Task done", "de": "Aufgabe erledigt", "uk": "Завдання виконано", "es": "Tarea completada"},
+  "Следующий шаг закреплён": {"en": "Next step saved", "de": "Nächster Schritt festgelegt", "uk": "Наступний крок закріплено", "es": "Siguiente paso definido"},
+  "Граница восстановления начата": {"en": "Break boundary started", "de": "Erholungsgrenze gestartet", "uk": "Межу відновлення встановлено", "es": "Descanso con límite iniciado"},
+  "План сохранён": {"en": "Plan saved", "de": "Plan gespeichert", "uk": "План збережено", "es": "Plan guardado"},
+  "Задача": {"en": "Task", "de": "Aufgabe", "uk": "Завдання", "es": "Tarea"},
+  "Шаг цели": {"en": "Goal step", "de": "Zielschritt", "uk": "Крок мети", "es": "Paso de la meta"},
+  "Граница восстановления": {"en": "Break boundary", "de": "Erholungsgrenze", "uk": "Межа відновлення", "es": "Límite del descanso"},
+  "Сессия": {"en": "Session", "de": "Sitzung", "uk": "Сесія", "es": "Sesión"},
+  "Шаг": {"en": "Step", "de": "Schritt", "uk": "Крок", "es": "Paso"},
+  "без названия": {"en": "untitled", "de": "ohne Titel", "uk": "без назви", "es": "sin título"},
+  "обещанного короткого времени": {"en": "the planned short interval", "de": "die vorgesehene kurze Zeit", "uk": "обіцяного короткого часу", "es": "el breve tiempo previsto"},
+  "Твой шаг сохранён": {"en": "Your step is saved", "de": "Dein Schritt ist gespeichert", "uk": "Твій крок збережено", "es": "Tu paso está guardado"},
+  "Отложено: {reason}. Это не провал — можно продолжить с того же места.": {"en": "Paused: {reason}. This is not a failure — you can pick up where you left off.", "de": "Pausiert: {reason}. Das ist kein Scheitern — du kannst an derselben Stelle weitermachen.", "uk": "Відкладено: {reason}. Це не провал — можна продовжити з того ж місця.", "es": "En pausa: {reason}. No es un fracaso: puedes continuar donde lo dejaste."},
+  "Это не провал — можно продолжить с того же места, когда появится ресурс.": {"en": "This is not a failure. Pick up where you left off when you feel ready.", "de": "Das ist kein Scheitern. Mach an derselben Stelle weiter, wenn du wieder Kraft hast.", "uk": "Це не провал — можна продовжити з того самого місця, коли з’являться сили.", "es": "No es un fracaso: puedes retomar el mismo paso cuando tengas fuerzas."},
+  "Вернуться к шагу": {"en": "Return to step", "de": "Zurück zum Schritt", "uk": "Повернутися до кроку", "es": "Volver al paso"},
+  "Настоящий результат сохранён": {"en": "Real result saved", "de": "Echtes Ergebnis gespeichert", "uk": "Справжній результат збережено", "es": "Resultado real guardado"},
+  "Первый настоящий результат уже здесь": {"en": "Your first real result is here", "de": "Dein erstes echtes Ergebnis ist da", "uk": "Перший справжній результат вже тут", "es": "El primer resultado real ya está aquí"},
+  "Satoru дождался подтверждённой записи — поэтому этому результату можно доверять.": {"en": "Satoru confirmed that your result was saved, so you can rely on it.", "de": "Satoru hat bestätigt, dass dein Ergebnis gespeichert ist. Darauf kannst du dich verlassen.", "uk": "Satoru підтвердив збереження — тож цьому результату можна довіряти.", "es": "Satoru confirmó que tu resultado se guardó, así que puedes confiar en él."},
+  "Продолжить в Satoru": {"en": "Continue in Satoru", "de": "In Satoru weitermachen", "uk": "Продовжити в Satoru", "es": "Continuar en Satoru"},
+  "Продолжить шаг": {"en": "Continue step", "de": "Schritt fortsetzen", "uk": "Продовжити крок", "es": "Continuar paso"},
+  "Начать шаг": {"en": "Start step", "de": "Schritt starten", "uk": "Почати крок", "es": "Iniciar paso"},
+  "Сейчас в работе": {"en": "In progress", "de": "Gerade dabei", "uk": "Зараз у роботі", "es": "En curso"},
+  "Твой следующий шаг": {"en": "Your next step", "de": "Dein nächster Schritt", "uk": "Твій наступний крок", "es": "Tu siguiente paso"},
+  "Первый шаг не сохранён. Ничего не потеряно — повтори.": {"en": "Your first step was not saved. Nothing is lost — try again.", "de": "Erster Schritt nicht gespeichert. Nichts verloren – versuche es erneut.", "uk": "Перший крок не збережено. Нічого не втрачено — спробуй ще раз.", "es": "Primer paso no guardado. Nada perdido – inténtalo de nuevo."},
+  "Открыть шаг": {"en": "Open step", "de": "Schritt öffnen", "uk": "Відкрити крок", "es": "Abrir paso"},
+  "Открыть в цели": {"en": "Open in goal", "de": "Im Ziel öffnen", "uk": "Відкрити в цілі", "es": "Abrir en la meta"},
+  "Короткое восстановление с границей": {"en": "A short break with a clear boundary", "de": "Kurze Erholung mit klarer Grenze", "uk": "Коротке відновлення з межею", "es": "Un breve descanso con un límite claro"},
+  "10 минут": {"en": "10 minutes", "de": "10 Minuten", "uk": "10 хвилин", "es": "10 minutos"},
+  "Твой первый план": {"en": "Your first plan", "de": "Dein erster Plan", "uk": "Твій перший план", "es": "Tu primer plan"},
+  "Открыть план": {"en": "Open plan", "de": "Plan öffnen", "uk": "Відкрити план", "es": "Abrir plan"},
+  "Первый шаг не сохранился": {"en": "First step not saved", "de": "Erster Schritt nicht gespeichert", "uk": "Перший крок не збережено", "es": "Primer paso no guardado"},
+  "Этот шаг уже изменился. Выбери актуальный — прежние данные не затронуты.": {"en": "This step has changed. Choose a current one — your existing data is unchanged.", "de": "Dieser Schritt hat sich geändert. Wähle einen aktuellen — deine bisherigen Daten bleiben unverändert.", "uk": "Цей крок уже змінився. Обери актуальний — попередні дані не змінено.", "es": "Este paso ha cambiado. Elige uno actual: tus datos anteriores siguen intactos."},
+  "пауза по твоему выбору": {"en": "you chose to take a break", "de": "du hast dich für eine Pause entschieden", "uk": "пауза за твоїм вибором", "es": "has elegido hacer una pausa"},
+  "прошло время, отведённое на первый шаг": {"en": "the time set aside for the first step has passed", "de": "die für den ersten Schritt vorgesehene Zeit ist vorbei", "uk": "минув час, відведений на перший крок", "es": "ha pasado el tiempo reservado para el primer paso"},
   'Первый вход': { en: 'Getting started', de: 'Erste Schritte', uk: 'Перший вхід', es: 'Primeros pasos' },
   'Сначала — одна настоящая польза': { en: 'Start with one useful step', de: 'Beginne mit einem hilfreichen Schritt', uk: 'Спочатку — один корисний крок', es: 'Empieza con un paso útil' },
   'Без длинной настройки. Satoru предложит один путь, а результат появится только после сохранённого действия.': { en: 'No lengthy setup. Satoru suggests one path and counts the result only after your action is saved.', de: 'Ohne lange Einrichtung. Satoru schlägt einen Weg vor und zählt das Ergebnis erst, wenn deine Aktion gespeichert ist.', uk: 'Без довгого налаштування. Satoru запропонує один шлях і зарахує результат лише після збереження дії.', es: 'Sin una configuración larga. Satoru propone un camino y cuenta el resultado solo cuando tu acción se guarda.' },
@@ -20502,7 +20554,11 @@ async function firstValueChooseRoute(route) {
   return saved;
 }
 function firstValuePrepareRoute(route) {
-  if (route === 'recover') { State.view = 'today'; render(); setTimeout(() => openRecoveryFromShortcut(document.querySelector('[data-action="first-value-prepare-route"]')), 0); return; }
+  if (route === 'recover') {
+    State.view = 'today'; render();
+    setTimeout(() => openRecoveryLauncher(document.querySelector('.first-value-card [data-action="first-value-open-primary"], .first-value-card [data-action="first-value-prepare-route"]'), { minutes: 10 }), 0);
+    return;
+  }
   if (route === 'clarify') { State.view = 'goals'; State._goalsComposerOpen = true; State._goalsFocusAfterCommit = '#add-goal input[name="title"]'; render(); return; }
   State.view = 'today'; State._tasksFocusAfterCommit = '#add-task input[name="title"]'; render();
 }
@@ -33619,7 +33675,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v274';
+const PWA_CACHE_VERSION = 'satoru-v275';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

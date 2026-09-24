@@ -6,7 +6,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildFirstValueUi() {
   'use strict';
 
-  const VERSION = '1.0.0';
+  const VERSION = '1.0.1';
   const ROUTE_LABELS = Object.freeze({
     do_now: Object.freeze({
       eyebrow: 'Сделать сейчас', title: 'Один маленький настоящий шаг',
@@ -124,7 +124,8 @@
     return { eyebrow: translate(context, STATUS_LABELS.new), title: translate(context, 'Сначала — одна настоящая польза'), description: translate(context, 'Без длинной настройки. Satoru предложит один путь, а результат появится только после сохранённого действия.'), body, primary };
   }
   function renderDeferred(view, context) {
-    const reason = translate(context, text(view.deferredReason));
+    const reasons = { user_choice: 'пауза по твоему выбору', time_boundary: 'прошло время, отведённое на первый шаг' };
+    const reason = translate(context, reasons[view.deferredReason] || text(view.deferredReason));
     return {
       eyebrow: translate(context, STATUS_LABELS.deferred), title: translate(context, 'Твой шаг сохранён'),
       description: reason ? translatedTemplate(context, 'Отложено: {reason}. Это не провал — можно продолжить с того же места.', { reason }) : translate(context, 'Это не провал — можно продолжить с того же места, когда появится ресурс.'),

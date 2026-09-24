@@ -1,5 +1,12 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Package 01, local v275:** First Value recovery opens the real ten-minute
+  dialog; later states and pause reasons translated in five languages. All three
+  routes, manual setup, linked goal progress and retry/reopen checked on localhost;
+  550/550 targeted tests. Evidence/boundaries: FIRST-VALUE-V275-QA.md. Not deployed.
+- [ ] **Package 10:** EN achievement toast still contains Russian outside the
+  First Value card; screenshot recorded in package 01 evidence.
+
 - [x] **v272: форма добавления на iPad.** Поле времени больше не рисуется поверх
   длительности в WKWebView; адаптивные колонки, настоящий screenshot и 3068/3068 tests PASS.
 - [ ] **Release QA:** отдельная проверка первого касания «Ещё» на iPhone остаётся
