@@ -4529,6 +4529,17 @@ textarea:focus {
   z-index: 2;
 }
 
+/* Lift the open stacking context, not only its child menu. */
+.task-more[open] { z-index: 3; }
+
+.cal-task-dialog.task-actual-dialog { position: relative; width: min(440px, 100%); }
+.task-actual-dialog .modal-x { position: static; flex: 0 0 44px; }
+#task-actual-form { display: grid; gap: var(--sp-3); }
+.task-actual-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-3); }
+.task-actual-fields .cal-task-field { grid-column: auto; }
+.task-actual-fields .cal-task-field input { width: 100%; min-width: 0; font-size: 1.25rem; min-height: 44px; }
+.task-actual-dialog .cal-task-status:empty { display: none; }
+
 .task-more > summary {
   display: inline-flex;
   align-items: center;

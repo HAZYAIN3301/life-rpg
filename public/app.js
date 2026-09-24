@@ -3484,6 +3484,14 @@ const I18N_EXTRA = {
   'Состояние дня': { en: 'Day status', de: 'Tagesstatus', uk: 'Стан дня', es: 'Estado del día' },
   'Длительность: часы и минуты': { en: 'Duration: hours and minutes', de: 'Dauer: Stunden und Minuten', uk: 'Тривалість: години та хвилини', es: 'Duración: horas y minutos' },
   'Часы': { en: 'Hours', de: 'Stunden', uk: 'Години', es: 'Horas' },
+  'Затрачено': { en: 'Time spent', de: 'Zeitaufwand', uk: 'Витрачено', es: 'Tiempo dedicado' },
+  'Фактическое время': { en: 'Time spent', de: 'Tatsächlicher Zeitaufwand', uk: 'Фактичний час', es: 'Tiempo dedicado' },
+  'В ядро дня': { en: 'Make a daily priority', de: 'Zur Tagespriorität machen', uk: 'До ядра дня', es: 'Hacer prioridad del día' },
+  'Сначала останови таймер этого дела, затем измени итоговое время.': { en: 'Stop this task’s timer before editing its total time.', de: 'Beende zuerst den Timer dieser Aufgabe, um die Gesamtzeit zu ändern.', uk: 'Спочатку зупини таймер цієї справи, потім зміни загальний час.', es: 'Detén el temporizador de esta tarea antes de editar el tiempo total.' },
+  'Введи целые часы и минуты от 0 до 59.': { en: 'Enter whole hours and minutes from 0 to 59.', de: 'Gib ganze Stunden und Minuten von 0 bis 59 ein.', uk: 'Введи цілі години та хвилини від 0 до 59.', es: 'Introduce horas enteras y minutos de 0 a 59.' },
+  'Не удалось сохранить время. Ввод сохранён — попробуй ещё раз.': { en: 'Could not save the time. Your input is kept — try again.', de: 'Die Zeit konnte nicht gespeichert werden. Deine Eingabe bleibt erhalten — versuche es erneut.', uk: 'Не вдалося зберегти час. Введене залишилося — спробуй ще раз.', es: 'No se pudo guardar el tiempo. Se conserva lo introducido; inténtalo de nuevo.' },
+  'Время уже изменилось. Открой форму заново, чтобы проверить его.': { en: 'The time has changed. Reopen this form to review it.', de: 'Die Zeit wurde bereits geändert. Öffne das Formular erneut, um sie zu prüfen.', uk: 'Час уже змінився. Відкрий форму знову, щоб перевірити його.', es: 'El tiempo ha cambiado. Vuelve a abrir el formulario para revisarlo.' },
+  'Время сохранено': { en: 'Time saved', de: 'Zeit gespeichert', uk: 'Час збережено', es: 'Tiempo guardado' },
   'Минуты': { en: 'Minutes', de: 'Minuten', uk: 'Хвилини', es: 'Minutos' },
   'ч': { en: 'h', de: 'Std', uk: 'год', es: 'h' },
   'м': { en: 'm', de: 'Min', uk: 'хв', es: 'm' },
@@ -14059,7 +14067,7 @@ function questRow(q, links) {
   const backdate = past
     ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}">✓<sub>${dmShort(q.date)}</sub></button>`
     : '';
-  const coreLabel = q.core ? t('Убрать из ядра дня') : t('В ядро дня — то, ради чего день считается состоявшимся');
+  const coreLabel = q.core ? t('Убрать из ядра дня') : t('В ядро дня');
   const linkedGoal = q.goalId ? goalById(q.goalId) : null;
   const commitment = questCommitment(q);
   const commitmentMenu = !q.done
@@ -14083,11 +14091,66 @@ function questRow(q, links) {
     <button type="button" class="task-schedule" data-action="cal-edit-task" data-id="${q.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}">${q.startTime ? esc(q.startTime) : '+ ' + t('Время')}</button>
     <button class="check" data-action="toggle-task" data-id="${q.id}"${guideCompleteTarget} aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
     ${titleCell}
-    <span class="task-time-controls"><button class="task-duration" data-action="cal-edit-task" data-id="${q.id}" aria-label="${t('Длительность')}: ${esc(fullTitle)}">${fmtDur(estMin)}</button><button class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${t('Изменить фактическое время квеста')} ${esc(fullTitle)}: ${time}" title="${t('Клик — фактическое время')}">${q.actualMin ? fmtDur(q.actualMin) : t('Факт')} ↗</button></span>
+    <span class="task-time-controls"><button class="task-duration" data-action="cal-edit-task" data-id="${q.id}" aria-label="${t('Длительность')}: ${esc(fullTitle)}">${fmtDur(estMin)}</button><button type="button" class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${esc(t('Фактическое время'))}: ${esc(fullTitle)}${q.actualMin ? ': ' + esc(fmtDur(q.actualMin)) : ''}">${esc(t('Затрачено'))}${q.actualMin ? ': ' + esc(fmtDur(q.actualMin)) : ''} ${satoruIconHTML('action.edit', 'task-action-icon', '')}</button></span>
     <span class="t-xp"${guideRewardTarget}>${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
     ${backdate}
     ${commitment ? `<span class="t-commitment" title="${esc(t('Личная граница'))}: ${esc(commitmentTimeOf(commitment))}">⚔️${esc(commitmentTimeOf(commitment))}</span>` : ''}
     ${taskMenu}</li>`;
+}
+function openTaskActualDialog(id, returnFocus = document.activeElement) {
+  const task = questById(id);
+  if (!task || State._tasksLoadError || !window.TaskActualV1) return null;
+  const previous = document.getElementById('task-actual-modal');
+  if (previous?._saving) return null;
+  closeAccountDialog('task-actual-modal', { restoreFocus: false });
+  const total = Number(task.actualMin) || 0;
+  const overlay = document.createElement('div');
+  overlay.id = 'task-actual-modal'; overlay.className = 'modal-overlay';
+  overlay.dataset.accountId = String(State.me?.id || '');
+  overlay._writeEpoch = Store._writeEpoch;
+  overlay._expected = task.actualMin ?? null;
+  const running = State.timer?.taskId === id;
+  overlay.innerHTML = `<section class="cal-task-dialog task-actual-dialog" role="dialog" aria-modal="true" aria-labelledby="task-actual-title" aria-describedby="task-actual-name" lang="${esc(lang())}">
+    <div class="cal-task-dialog-head"><h2 id="task-actual-title" tabindex="-1">${esc(t('Фактическое время'))}</h2><button type="button" class="modal-x" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'task-action-icon', '')}</button></div>
+    <p class="cal-task-name" id="task-actual-name" data-noi18n>${esc(taskDisplayTitle(task))}</p>
+    <form id="task-actual-form" novalidate>
+      <div class="task-actual-fields"><label class="cal-task-field"><span>${esc(t('Часы'))}</span><input name="hours" type="number" inputmode="numeric" min="0" step="1" required value="${Math.floor(total / 60)}" /></label><label class="cal-task-field"><span>${esc(t('Минуты'))}</span><input name="minutes" type="number" inputmode="numeric" min="0" max="59" step="1" required value="${total % 60}" /></label></div>
+      <p class="cal-task-status" role="status" aria-live="polite">${running ? esc(t('Сначала останови таймер этого дела, затем измени итоговое время.')) : ''}</p>
+      <div class="cal-task-actions"><button type="button" class="btn ghost task-actual-cancel">${esc(t('Отмена'))}</button><button type="submit" class="btn"${running ? ' disabled' : ''}>${esc(t('Сохранить'))}</button></div>
+    </form></section>`;
+  const close = () => closeAccountDialog(overlay.id);
+  overlay.querySelector('.modal-x').addEventListener('click', close);
+  overlay.querySelector('.task-actual-cancel').addEventListener('click', close);
+  overlay.querySelector('form').addEventListener('submit', async event => {
+    event.preventDefault();
+    if (overlay._saving || overlay._writeEpoch !== Store._writeEpoch || overlay.dataset.accountId !== String(State.me?.id || '')) return;
+    const form = event.currentTarget, status = form.querySelector('[role=status]');
+    const value = window.TaskActualV1.minutes(form.elements.hours.value, form.elements.minutes.value);
+    if (value === null) { status.textContent = t('Введи целые часы и минуты от 0 до 59.'); return; }
+    if (State.timer?.taskId === id) { status.textContent = t('Сначала останови таймер этого дела, затем измени итоговое время.'); return; }
+    overlay._saving = true;
+    overlay.querySelectorAll('button,input').forEach(control => { control.disabled = true; });
+    status.textContent = t('Сохраняю…');
+    let conflict = false, saved = false;
+    try {
+      saved = await commitmentDataCommit(({ settings, tasks }) => {
+        const next = window.TaskActualV1.update(tasks, id, value, overlay._expected, State.timer?.taskId);
+        if (!next) { conflict = true; return null; }
+        return { settings, tasks: next };
+      });
+    } catch (error) { console.error('actual time save', error); }
+    overlay._saving = false;
+    if (!overlay.isConnected || overlay._writeEpoch !== Store._writeEpoch || overlay.dataset.accountId !== String(State.me?.id || '')) return;
+    if (saved) {
+      closeAccountDialog(overlay.id, { restoreFocus: false });
+      State._tasksFocusAfterCommit = `.task[data-id="${CSS.escape(String(id))}"] [data-action="edit-actual"]`;
+      render(); toast(t('Время сохранено'));
+    } else {
+      overlay.querySelectorAll('button,input').forEach(control => { control.disabled = false; });
+      status.textContent = t(conflict ? 'Время уже изменилось. Открой форму заново, чтобы проверить его.' : 'Не удалось сохранить время. Ввод сохранён — попробуй ещё раз.');
+    }
+  });
+  return mountAccountDialog(overlay, { initial: 'input', returnFocus });
 }
 function scheduleQuestTitleDisclosures() {
   if (_questTitleDisclosureFrame) cancelAnimationFrame(_questTitleDisclosureFrame);
@@ -22359,7 +22422,7 @@ function observeGuideV3BlockingSurfaces() {
 }
 function closeAccountDialog(id, { restoreFocus = true } = {}) {
   const overlay = document.getElementById(id); if (!overlay) return false;
-  if (['economy-confirm-modal', 'loot-modal'].includes(id) && overlay._saving) return false;
+  if (['economy-confirm-modal', 'loot-modal', 'task-actual-modal'].includes(id) && overlay._saving) return false;
   const preferred = restoreFocus && _accountDialogReturnFocus && _accountDialogReturnFocus.isConnected ? _accountDialogReturnFocus : null;
   const target = preferred || (restoreFocus ? document.querySelector('[data-action="mobile-nav-more"], [data-action="show-guide"], [data-action="open-helper"]') : null);
   const app = document.getElementById('app'); if (app) app.inert = false;
@@ -22389,7 +22452,10 @@ function mountAccountDialog(overlay, { initial, dismissible = true, returnFocus 
     }
   });
   document.body.appendChild(overlay);
-  requestAnimationFrame(() => overlay.querySelector(initial || '[tabindex="-1"], input, button')?.focus());
+  requestAnimationFrame(() => {
+    // A quick tap/type may already have selected a field. Never steal that focus.
+    if (overlay.isConnected && !overlay.contains(document.activeElement)) overlay.querySelector(initial || '[tabindex="-1"], input, button')?.focus();
+  });
   return overlay;
 }
 function showPartyExitDialog(mode, returnFocus = document.activeElement) {
@@ -31275,8 +31341,7 @@ async function onClick(e) {
   } else if (action === 'timer-stop') { stopFocus(true);
   } else if (action === 'open-pip') { openFocusWidget();
   } else if (action === 'edit-actual') {
-    const t = questById(id); if (!t) return; const v = prompt('Фактическое время в минутах:', t.actualMin || t.estimateMin || ''); if (v === null) return;
-    const n = Math.round(Number(v)); if (!isNaN(n) && n >= 0) { t.actualMin = n || null; Store.save('tasks', State.tasks); render(); }
+    openTaskActualDialog(id, el);
   } else if (action === 'control-review-revise') {
     openControlReviewReviseDialog(questById(id), el);
   } else if (action === 'control-review-revise-cancel') {
@@ -33675,7 +33740,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v275';
+const PWA_CACHE_VERSION = 'satoru-v276';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

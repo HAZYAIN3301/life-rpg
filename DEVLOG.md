@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] R01A: working task menu and hours/minutes editor — v276
+
+Raised the open task disclosure above neighbouring rows after reproducing their
+click interception. Replaced native prompt/optimistic actual-time writes with an
+accessible localized in-app hours/minutes dialog and existing durable task commit.
+Draft survives errors; retry does not duplicate time or rewards; conflicting edits
+and active timer totals are protected. Fixed delayed dialog focus stealing input.
+Five locales, Chrome/WebKit, mobile/desktop and dense-list UI checked; full suite
+3083/3083 PASS. TASK-ACTUAL-V276-QA.md records scope, before/after and limitations.
+Shell cache and active test pins v276. Publication receipt follows in the plan.
+
 ## [2026-09-24] Package 02: goal JSON regression and v275 release candidate
 
 The existing v269 importer passes real UI checks for unit-bearing metrics,

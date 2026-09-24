@@ -1,5 +1,14 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R01A / v276:** task menu no longer loses clicks to neighbouring summaries;
+  actual time has hours/minutes, localized in-app form, durable save/error/retry,
+  safe timer boundary and unchanged completion/rewards. Chrome/WebKit, five locales,
+  375/1280 and full 3083/3083 tests PASS. See TASK-ACTUAL-V276-QA.md.
+- [ ] **R01B:** reproduce notes opening from Today; complete create→find→open→return.
+  Apply the owner's September 24 whole-app design/coherence criteria to later work.
+- [ ] **R01A device gate:** verify the owner's installed native build and actual
+  editor there. WebKit browser checks pass; they do not identify that installed build.
+
 - [x] **Package 02:** v269 goal JSON regression PASS: numeric units, invalid input,
   limit 301, rejected-write retry, duplicate activation, five locales and reload.
   No runtime rewrite. Full v275 candidate: 3079/3079 tests. See GOAL-IMPORT-PACKAGE02-QA.md.
