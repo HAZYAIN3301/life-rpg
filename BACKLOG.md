@@ -1,5 +1,10 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Package 03A / v278:** task-write session expiry no longer leaves a blocking
+  dialog; B login no longer waits for A's pending write; late A response is fenced.
+  Offline/503 retry, two-tab conflict and load recovery checked on synthetic A/B.
+  See SESSION-PACKAGE03A-QA.md. Next separate review slice: R08, then 03B.
+
 - [x] **R01A / v276:** task menu no longer loses clicks to neighbouring summaries;
   actual time has hours/minutes, localized in-app form, durable save/error/retry,
   safe timer boundary and unchanged completion/rewards. Chrome/WebKit, five locales,

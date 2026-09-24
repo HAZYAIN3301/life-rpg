@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] Package 03A: usable session recovery and isolated write queues — v278
+
+Fixed the task-time dialog blocking login after a save gets 401; account teardown
+now dismisses it after invalidating old writes. Detached old account write queues
+so a new account does not await a previous account's delayed response. Existing
+epoch guards reject old completion, and task-time errors restore keyboard focus.
+Real Chrome A/B late-response test, offline/503 retry, two-tab conflict, load-error
+recovery and Chrome/WebKit mobile relogin pass. Two queue regression tests added.
+Final full suite: 3085/3085 PASS; JS syntax and diff checks PASS. Shell/pins v278.
+See SESSION-PACKAGE03A-QA.md for evidence, scope and remaining checks.
+
 ## [2026-09-24] R01B: connected notes capture and navigation — v277
 
 Fixed Today’s ignored Notes click, added explicit return with keyboard focus,

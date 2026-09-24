@@ -5537,6 +5537,7 @@ const Store = {
     this._timers = {};
     this._persisted = Object.create(null);
     this._writeEpoch += 1;
+    this._writes = Object.create(null);
   },
   _liveSlot(name) {
     return ({
@@ -14150,6 +14151,7 @@ function openTaskActualDialog(id, returnFocus = document.activeElement) {
     } else {
       overlay.querySelectorAll('button,input').forEach(control => { control.disabled = false; });
       status.textContent = t(conflict ? 'Время уже изменилось. Открой форму заново, чтобы проверить его.' : 'Не удалось сохранить время. Ввод сохранён — попробуй ещё раз.');
+      if (!overlay.contains(document.activeElement)) focusPathChoiceTarget(form.elements.minutes);
     }
   });
   return mountAccountDialog(overlay, { initial: 'input', returnFocus });
@@ -32725,6 +32727,10 @@ function clearAllData() {
   State._partyRewardCycle = null; State._partyClaimBusy = false;
   Store.cancelPending();
   cancelCapturePipeline();
+  // Account teardown must dismiss its form even while the old request is pending.
+  // The incremented write epoch prevents that response from updating another account.
+  const actualDialog = document.getElementById('task-actual-modal');
+  if (actualDialog) { actualDialog._saving = false; closeAccountDialog(actualDialog.id, { restoreFocus: false }); }
   clearTimeout(_inspirationDraftSaveTimer); _inspirationDraftSaveTimer = null;
   State.settings = null; State.tasks = null; State.days = null; State.habits = null;
   State.habitlog = null; State.goals = null; State.goalGroups = null; State.tree = null; State.rewards = null;
@@ -33752,7 +33758,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v277';
+const PWA_CACHE_VERSION = 'satoru-v278';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
