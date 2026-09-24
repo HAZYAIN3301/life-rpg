@@ -153,13 +153,13 @@
     const left = Number(r.left) || 0, right = Number(r.right) || left;
     const top = Number(r.top) || 0, bottom = Number(r.bottom) || top;
     const height = Math.max(0, Number(r.height) || (bottom - top));
-    const y = height > 60 ? bottom - 46 : top + (height - 42) / 2;
+    const y = height > 60 ? bottom - 48 : top + (height - 44) / 2;
     const blocked = typeof blocksPoint === 'function' ? blocksPoint : () => false;
-    for (const candidate of [{ x: right + 4, y }, { x: left - 46, y }]) {
-      if (candidate.x < 4 || candidate.x + 42 > width - 4) continue;
-      if (!blocked(candidate.x + 21, candidate.y + 21)) return candidate;
+    for (const candidate of [{ x: right + 4, y }, { x: left - 48, y }]) {
+      if (candidate.x < 4 || candidate.x + 44 > width - 4) continue;
+      if (!blocked(candidate.x + 22, candidate.y + 22)) return candidate;
     }
-    return { x: Math.max(left + 4, right - 46), y };
+    return { x: Math.max(left + 4, right - 48), y };
   }
 
   // ── Всё ниже требует DOM и в тестах не исполняется ───────────────────────────
@@ -186,8 +186,8 @@
     const style = doc.createElement('style');
     style.textContent = `
       #voice-input-btn{position:absolute;z-index:60;display:none;align-items:center;justify-content:center;
-        width:42px;height:42px;padding:0;border-radius:50%;border:1px solid var(--line,#2a3350);
-        background:var(--card,#161d33);color:var(--text,#e8ecf7);cursor:pointer;font-size:17px;line-height:1}
+        width:44px;height:44px;padding:0;border-radius:50%;border:1px solid var(--line,#2a3350);
+        background:var(--panel,#161d33);color:var(--text,#e8ecf7);cursor:pointer;font-size:17px;line-height:1}
       #voice-input-btn:focus-visible{outline:2px solid var(--accent,#7c8cff);outline-offset:2px}
       #voice-input-btn[aria-pressed="true"]{border-color:var(--accent,#7c8cff)}
       @media (prefers-reduced-motion:no-preference){#voice-input-btn[aria-pressed="true"]{animation:viPulse 1.4s ease-in-out infinite}}
@@ -200,7 +200,8 @@
     btn.setAttribute('aria-pressed', 'false');
     btn.setAttribute('aria-label', LABELS.start);
     btn.title = LABELS.start;
-    btn.textContent = '🎤';
+    if (typeof w.satoruIconHTML === 'function') btn.innerHTML = w.satoruIconHTML('media.microphone', 'inline-glyph');
+    else btn.textContent = '●';
     doc.body.appendChild(btn);
 
     let field = null, rec = null, listening = false, baseValue = '', baseStart = 0, baseEnd = 0;

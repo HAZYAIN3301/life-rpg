@@ -259,12 +259,14 @@ test('companion and quick capture keep explicit accessible names', () => {
   assert.match(today, /<aside class="today-support" aria-label="\$\{t\('Поддержка дня'\)\}"/);
 });
 
-test('new secretary and capture emoji remain decorative for assistive technology', () => {
+test('secretary registry icons and capture emoji remain decorative for assistive technology', () => {
   const control = section(APP, 'function attentionTodayControlHTML(', '\nfunction attentionPolicyId(');
-  for (const glyph of ['↩', '🌿', '🌙', '🛡']) {
-    assert.match(control, new RegExp(`<span aria-hidden="true">${glyph}<\\/span>`),
-      `${glyph} must not be announced before the adjacent text label`);
+  for (const icon of ['action.back', 'status.balance', 'system.day-end', 'difficulty.protected']) {
+    assert.ok(control.includes(`satoruIconHTML('${icon}', 'button-glyph')`), `${icon} uses the shared decorative renderer`);
   }
+  const iconRenderer = section(APP, 'function satoruIconHTML(', '\nfunction ');
+  assert.match(iconRenderer, /aria-hidden="true"/);
+
 
   const capture = section(APP, 'function captureBar(options = {}) {', '\nfunction validateInboxPayload(');
   assert.match(capture, /<span aria-hidden="true">📝<\/span> \$\{noteCount\}/);

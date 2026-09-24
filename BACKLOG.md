@@ -1,5 +1,13 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R03A / v282:** dense Today reference and shared control cleanup.
+
+  Streak/chest 48px, calmer support, concrete localized entry copy, registry task/
+  support/voice icons and 44px microphone. Actions preserved; see
+  TODAY-COMPONENTS-V282-QA.md. R03B remains per-screen; R04A load, R04B charts,
+  R04C AI lifecycle, R04D export, R05/R06 and native/release gates remain.
+
+
 - [x] **R02B / v280–v281:** labeled sphere color/inheritance, preserved manual colors,
   durable recovery toggle with explicit effect and account isolation. **R03 partial:**
   settings/AI/recovery registry icons, mobile nav labels, themed cards and removal

@@ -3973,6 +3973,8 @@ const I18N_EXTRA = {
   'Обставить комнату': { en: 'Furnish room', de: 'Zimmer einrichten', uk: 'Обставити кімнату', es: 'Amueblar habitación' },
   'Обставить': { en: 'Furnish', de: 'Einrichten', uk: 'Обставити', es: 'Amueblar' },
   'Дела сегодня': { en: 'Things today', de: 'Heutige Aufgaben', uk: 'Справи сьогодні', es: 'Tareas de hoy' },
+  'Выбрать дело на 10 минут': { en: 'Choose something for 10 minutes', de: 'Etwas für 10 Minuten wählen', uk: 'Вибрати справу на 10 хвилин', es: 'Elegir algo para 10 minutos' },
+  'Короткая попытка без обязательства. За завершение — связь с Тенью и золото, без XP.': { en: 'A short try with no commitment. Finishing earns bond with Shadow and gold, without XP.', de: 'Ein kurzer Versuch ohne Verpflichtung. Zum Abschluss gibt es Bindung mit Schatten und Gold, ohne XP.', uk: 'Коротка спроба без зобов’язань. За завершення — зв’язок із Тінню та золото, без XP.', es: 'Un intento breve sin compromiso. Al terminar ganas vínculo con Sombra y oro, sin XP.' },
   'Серия': { en: 'Streak', de: 'Serie', uk: 'Серія', es: 'Racha' },
   'Пройтись к окну': { en: 'Walk to the window', de: 'Zum Fenster gehen', uk: 'Пройтися до вікна', es: 'Caminar hasta la ventana' },
   'Сесть у окна': { en: 'Sit by the window', de: 'Ans Fenster setzen', uk: 'Сісти біля вікна', es: 'Sentarse junto a la ventana' },
@@ -14107,7 +14109,7 @@ function questGoalChipHTML(q, links) {
   if (!link) return '';
   const stateCopy = QUEST_GOAL_STATE_COPY[link.state] ? t(QUEST_GOAL_STATE_COPY[link.state]) : '';
   const label = `${t('Ради цели')}: ${link.title}${stateCopy ? ` · ${stateCopy}` : ''}`;
-  return `<a class="task-goal-chip is-${esc(link.state)}" href="${esc(goalDeepLinkHref(link.goalId))}" data-action="goto-goal" data-id="${esc(link.goalId)}" aria-label="${esc(label)}" title="${esc(label)}"><span class="task-goal-chip-mark" aria-hidden="true">🎯</span><span class="task-goal-chip-title" data-noi18n>${esc(link.title)}</span>${stateCopy ? `<span class="task-goal-chip-state">${esc(stateCopy)}</span>` : ''}</a>`;
+  return `<a class="task-goal-chip is-${esc(link.state)}" href="${esc(goalDeepLinkHref(link.goalId))}" data-action="goto-goal" data-id="${esc(link.goalId)}" aria-label="${esc(label)}" title="${esc(label)}"><span class="task-goal-chip-mark" aria-hidden="true">${satoruIconHTML('nav.today', 'inline-glyph')}</span><span class="task-goal-chip-title" data-noi18n>${esc(link.title)}</span>${stateCopy ? `<span class="task-goal-chip-state">${esc(stateCopy)}</span>` : ''}</a>`;
 }
 function questRow(q, links) {
   const estMin = Number(q.estimateMin) || 0;
@@ -14120,7 +14122,7 @@ function questRow(q, links) {
   const guideRewardTarget = guideTarget === 'first-task-reward' ? ' data-guide-target="first-task-reward"' : '';
   const sphereNames = [...taskSkills(q), ...taskLayers(q)].map((sid) => skillById(sid)).filter((s) => !s.missing).map((s) => s.name).join(', ');
   const skSel = `<button class="t-cats" data-action="edit-cats" data-id="${q.id}" aria-label="${t('Изменить сферы квеста')}: ${esc(fullTitle)}${sphereNames ? ` · ${esc(sphereNames)}` : ''}" title="${sphereNames ? esc(sphereNames) : t('Категории квеста — клик чтобы изменить (можно несколько)')}">${catChips(q)}</button>`;
-  const coreBadge = q.core ? `<span class="task-core-badge"><span aria-hidden="true">◆</span>${esc(t('Ядро дня'))}</span>` : '';
+  const coreBadge = q.core ? `<span class="task-core-badge">${satoruIconHTML('system.focus', 'inline-glyph')}${esc(t('Ядро дня'))}</span>` : '';
   const titleControl = State._editTask === q.id
     ? `<form class="t-edit-form" data-id="${q.id}"><input name="title" value="${esc(q.title)}" maxlength="160" autocomplete="off" aria-label="${t('Квест')}" /></form>`
     : `<button class="t-title-edit" data-action="edit-task-title" data-id="${q.id}" aria-label="${t('Изменить название квеста')}: ${esc(fullTitle)}" title="${t('Клик — изменить текст квеста')}"><span class="t-title-copy" data-noi18n>${taskContentIconHTML(q, 'task-content-icon')}${esc(fullTitle)}</span></button>`;
@@ -14139,14 +14141,14 @@ function questRow(q, links) {
   const commitment = questCommitment(q);
   const commitmentMenu = !q.done
     ? (commitment
-      ? `<div class="task-menu-commitment"><span>⚔️ ${esc(t('Граница'))}: ${esc(commitmentTimeOf(commitment))}</span><button data-action="commitment-revise" data-id="${q.id}">${esc(t('Пересмотреть'))}</button><button data-action="commitment-release" data-id="${q.id}">${esc(t('Снять бесплатно'))}</button></div>`
-      : q.date === todayStr() ? `<button data-action="commitment-take" data-id="${q.id}">⚔️ ${esc(t('Выбрать личную границу'))}</button>` : '')
+      ? `<div class="task-menu-commitment"><span>${satoruIconHTML('difficulty.protected', 'inline-glyph')} ${esc(t('Граница'))}: ${esc(commitmentTimeOf(commitment))}</span><button data-action="commitment-revise" data-id="${q.id}">${esc(t('Пересмотреть'))}</button><button data-action="commitment-release" data-id="${q.id}">${esc(t('Снять бесплатно'))}</button></div>`
+      : q.date === todayStr() ? `<button data-action="commitment-take" data-id="${q.id}">${satoruIconHTML('difficulty.protected', 'inline-glyph')} ${esc(t('Выбрать личную границу'))}</button>` : '')
     : '';
   const taskMenu = `<details class="task-more"><summary aria-label="${t('Полное название и действия квеста')}: ${esc(fullTitle)}"><span class="task-more-dots" aria-hidden="true">•••</span><span class="task-more-disclosure" aria-hidden="true">${t('Ещё')}</span></summary><div class="task-menu">
       <p class="task-menu-title" data-noi18n>${esc(fullTitle)}</p>
-      ${linkedGoal ? `<a class="task-menu-goal" href="${esc(goalDeepLinkHref(linkedGoal.id))}" data-action="goto-goal" data-id="${linkedGoal.id}">🎯 ${t('Открыть связанную цель')}: <span data-noi18n>${esc(linkedGoal.title)}</span></a>` : ''}
+      ${linkedGoal ? `<a class="task-menu-goal" href="${esc(goalDeepLinkHref(linkedGoal.id))}" data-action="goto-goal" data-id="${linkedGoal.id}">${satoruIconHTML('nav.today', 'task-action-icon')} ${t('Открыть связанную цель')}: <span data-noi18n>${esc(linkedGoal.title)}</span></a>` : ''}
       ${!q.done ? `<button data-action="focus-task" data-id="${q.id}" aria-label="${t(active ? 'Открыть активный фокус' : 'Начать фокус')}: ${esc(fullTitle)}">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')} ${t(active ? 'Открыть фокус' : 'Начать фокус')}</button>` : ''}
-      ${q.date === todayStr() ? `<button data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}">◆ ${esc(coreLabel)}</button>` : ''}
+      ${q.date === todayStr() ? `<button data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}">${satoruIconHTML('system.focus', 'task-action-icon')} ${esc(coreLabel)}</button>` : ''}
       ${!q.done && q.createdAt && fmtDate(new Date(q.createdAt)) === todayStr() ? `<div class="task-menu-diff">
         <p class="task-menu-diff-label muted">${esc(t('Сложность — можно поменять сегодня'))}</p>
         <div class="task-diff-row" role="group" aria-label="${esc(t('Сложность'))}">${['easy', 'normal', 'hard'].map((d) => `<button type="button" class="task-diff-btn${q.difficulty === d ? ' is-active' : ''}" data-action="edit-difficulty" data-id="${q.id}" data-difficulty="${d}" aria-pressed="${q.difficulty === d ? 'true' : 'false'}" title="${esc(DIFF[d] || '')}">${difficultyIconHTML(d)}</button>`).join('')}</div>
@@ -14159,9 +14161,9 @@ function questRow(q, links) {
     <button class="check" data-action="toggle-task" data-id="${q.id}"${guideCompleteTarget} aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
     ${titleCell}
     <span class="task-time-controls"><button class="task-duration" data-action="cal-edit-task" data-id="${q.id}" aria-label="${t('Длительность')}: ${esc(fullTitle)}">${fmtDur(estMin)}</button><button type="button" class="t-time" data-action="edit-actual" data-id="${q.id}" aria-label="${esc(t('Фактическое время'))}: ${esc(fullTitle)}${q.actualMin ? ': ' + esc(fmtDur(q.actualMin)) : ''}">${esc(t('Затрачено'))}${q.actualMin ? ': ' + esc(fmtDur(q.actualMin)) : ''} ${satoruIconHTML('action.edit', 'task-action-icon', '')}</button></span>
-    <span class="t-xp"${guideRewardTarget}>${q.done ? (q.entry ? '💛' : '+' + (q.xpAwarded || 0)) : ''}</span>
+    <span class="t-xp"${guideRewardTarget}>${q.done ? (q.entry ? satoruIconHTML('pet.trait.friend', 'inline-emblem') : '+' + (q.xpAwarded || 0)) : ''}</span>
     ${backdate}
-    ${commitment ? `<span class="t-commitment" title="${esc(t('Личная граница'))}: ${esc(commitmentTimeOf(commitment))}">⚔️${esc(commitmentTimeOf(commitment))}</span>` : ''}
+    ${commitment ? `<span class="t-commitment" title="${esc(t('Личная граница'))}: ${esc(commitmentTimeOf(commitment))}">${satoruIconHTML('difficulty.protected', 'inline-glyph')}${esc(commitmentTimeOf(commitment))}</span>` : ''}
     ${taskMenu}</li>`;
 }
 function openTaskActualDialog(id, returnFocus = document.activeElement) {
@@ -17728,16 +17730,17 @@ function companionCard(controlHTML = '') {
     : `<div class="comp-art">${shadowVideo(ti, mood.face, 'card')}</div>`;
   const expanded = !!State._todayCompanionOpen || !!form || !!guideContactTarget;
   const chests = lootChestsAvailable();
-  const reward = chests > 0 ? `<button class="secretary-reward is-waiting" data-action="goto-rewards" title="${esc(t('Заработанная награда ждёт — получить'))}" aria-label="${esc(t('Заработанная награда ждёт — получить'))}: ${chests}">${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} <b>${chests}</b></button>` : '';
+  const reward = chests > 0 ? `<button class="secretary-reward is-waiting" data-action="goto-rewards" title="${esc(t('Заработанная награда ждёт — получить'))}" aria-label="${esc(t('Заработанная награда ждёт — получить'))}: ${chests}">${satoruIconHTML('system.rewards', 'comp-progress-art')}<span><small>${t('Награды')}</small><b>${chests}</b></span></button>` : '';
   return `<div class="card comp-card secretary-card${expanded ? ' is-open' : ''}" data-secretary-card>
     <div class="comp-row secretary-summary">
       ${companionArt}
       <div class="comp-body">
-        <div class="comp-name"><b>${esc(c.name)}</b><span class="secretary-streak" title="${t('Рекорд:')} ${localizedDayCount(longestStreak())}">${satoruIconHTML('status.streak', 'inline-emblem', '🔥')} ${localizedDayCount(currentStreak(), true)}</span>${reward}</div>
+        <div class="comp-name"><b>${esc(c.name)}</b></div>
         <div class="comp-line-row" data-tts><p class="comp-line">${mood.line}</p>${ttsBtnHTML()}</div>
       </div>
       ${form ? '' : `<button type="button" class="secretary-toggle" data-action="toggle-today-companion" aria-expanded="${expanded}" aria-controls="secretary-details" aria-label="${esc(t(expanded ? 'Свернуть' : 'Подробнее'))}" title="${esc(t(expanded ? 'Свернуть' : 'Подробнее'))}"><span class="secretary-toggle-copy">${t(expanded ? 'Свернуть' : 'Подробнее')}</span><span aria-hidden="true">${expanded ? '⌃' : '⌄'}</span></button>`}
     </div>
+    <div class="comp-progress"><span class="secretary-streak" title="${t('Рекорд:')} ${localizedDayCount(longestStreak())}">${satoruIconHTML('status.streak', 'comp-progress-art')}<span><small>${t('Серия')}</small><b>${localizedDayCount(currentStreak(), true)}</b></span></span>${reward}</div>
     ${controlHTML}
     <div id="secretary-details" class="secretary-details${expanded ? '' : ' is-collapsed'}">
       ${nextBar}
@@ -20878,12 +20881,8 @@ function renderToday() {
   const entryNudge = (!entryTodayTask() && (entryTopSpheres().length || entryStuckTasks().length)
     && (entryLow || hrE >= 18 || entryStuckNow) && entryStale)
     ? `<div class="card nudge-card entry-nudge">
-        <button class="nudge" data-action="entry-open">🕯 ${entryStuckNow && !entryLow && hrE < 18
-          ? t('Дел заведено больше, чем сделано. Может, дело не в лени, а в размере входа')
-          : entryLow
-          ? t('Сил нет — и не надо много. Есть вход на 10 минут в любимое')
-          : t('Вечер идёт не туда? Есть ход получше приставки')}</button>
-        <span class="nudge-boost">${t('Крошечный вход в твоё дело + уют. Без опыта — связь и золото. Отказ ничего не стоит.')}</span></div>`
+        <button class="nudge" data-action="entry-open">${satoruIconHTML('media.play', 'button-glyph')} ${t('Выбрать дело на 10 минут')}</button>
+        <span class="nudge-boost">${t('Короткая попытка без обязательства. За завершение — связь с Тенью и золото, без XP.')}</span></div>`
     : '';
   // Профилактика травм (Блок 3, спек F): активные силовые/единоборства без мобилки → мягкая opt-in подсказка
   const prefs = State.settings.prefs || {};
@@ -21039,7 +21038,7 @@ function boardTakenLineHTML() {
       ${habits.length ? `<ul class="tasks">${habits.map(habitRow).join('')}</ul>` : `<p class="muted">${t('На сегодня привычек нет.')}</p>`}</div>`;
   const obs = dayObservationFor(today);
   const obsBlock = obs ? `<div class="day-obs" data-obs-id="${esc(obs.id)}">
-      <p class="day-obs-q">🔎 ${esc(obs.question)}</p>
+      <p class="day-obs-q">${satoruIconHTML('system.search', 'inline-glyph')} ${esc(obs.question)}</p>
       <div class="day-obs-acts">
         <button class="btn ghost sm" data-action="dayobs-yes" data-text="${esc(obs.statement)}">${t('Да, так')}</button>
         <button class="btn ghost sm" data-action="dayobs-no">${t('Не совсем')}</button>
@@ -25107,7 +25106,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
     primary = { kind: 'offer', title: t('Сейчас важнее всего'), html: secretaryOfferHTML(secretaryOfferView()) };
   } else if (eveningDue) {
     controlState = ' is-due';
-    primary = { kind: 'evening', title: t('Пора завершить рабочий день'), html: `<button class="secretary-action is-primary" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` };
+    primary = { kind: 'evening', title: t('Пора завершить рабочий день'), html: `<button class="secretary-action is-primary" data-action="evening-open">${satoruIconHTML('system.day-end', 'button-glyph')}<b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` };
   } else if (!closed && experimentOffer) {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
   } else if (!closed && selectedOffer && selectedOffer.html) {
@@ -25122,17 +25121,17 @@ function attentionTodayControlHTML(selectedOffer = null) {
     primary = fallbackPrimary;
   }
 
-  return `<section class="secretary-control${controlState}" data-secretary-control tabindex="-1" aria-labelledby="secretary-control-title">
+  return `<section class="secretary-control${controlState}${primary.kind === 'nudge' ? ' is-nudge' : ''}" data-secretary-control tabindex="-1" aria-labelledby="secretary-control-title">
     <div class="secretary-control-head"><div><span class="secretary-control-kicker">${t('Тень рядом')}</span><b id="secretary-control-title">${primary.title}</b></div></div>
     <div class="secretary-primary-offer" role="status" aria-live="polite">${primary.html}</div>
     <details class="secretary-other-support">
       <summary><span>${t('Другая поддержка')}</span><span aria-hidden="true">⌄</span></summary>
       <div class="secretary-other-support-body">
-        ${!closed && pendingReturn && primary.kind !== 'return' ? `<button class="secretary-action" data-action="attention-open-return"><span aria-hidden="true">↩</span><b>${t('Вернуться одним шагом')}</b></button>` : ''}
-        <button class="secretary-action" data-action="recovery-open"><span aria-hidden="true">🌿</span><b>${t('Отдохнуть с границей')}</b></button>
-        ${!closed && primary.kind !== 'evening' ? `<button class="secretary-action" data-action="evening-open"><span aria-hidden="true">🌙</span><b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` : ''}
-        ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}"><span aria-hidden="true">🛡</span><b>${esc(policies[0].name)}</b></button>` : `<button class="secretary-action" data-action="attention-open-setup"><span aria-hidden="true">🛡</span><b>${t('Настроить границу входа')}</b></button>`}
-        ${secretaryExperimentAvailable() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open"><span aria-hidden="true">◌</span><b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentAvailable() && experiment.status === 'active' ? `<button class="secretary-action" data-action="secretary-experiment-stop"><span aria-hidden="true">■</span><b>${t('Остановить эксперимент')}</b></button>` : ''}
+        ${!closed && pendingReturn && primary.kind !== 'return' ? `<button class="secretary-action" data-action="attention-open-return">${satoruIconHTML('action.back', 'button-glyph')}<b>${t('Вернуться одним шагом')}</b></button>` : ''}
+        <button class="secretary-action" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-glyph')}<b>${t('Отдохнуть с границей')}</b></button>
+        ${!closed && primary.kind !== 'evening' ? `<button class="secretary-action" data-action="evening-open">${satoruIconHTML('system.day-end', 'button-glyph')}<b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` : ''}
+        ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${esc(policies[0].name)}</b></button>` : `<button class="secretary-action" data-action="attention-open-setup">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${t('Настроить границу входа')}</b></button>`}
+        ${secretaryExperimentAvailable() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open">${satoruIconHTML('system.focus', 'button-glyph')}<b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentAvailable() && experiment.status === 'active' ? `<button class="secretary-action" data-action="secretary-experiment-stop">${satoruIconHTML('media.stop', 'button-glyph')}<b>${t('Остановить эксперимент')}</b></button>` : ''}
       </div>
     </details>
   </section>`;
@@ -33848,7 +33847,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v281';
+const PWA_CACHE_VERSION = 'satoru-v282';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

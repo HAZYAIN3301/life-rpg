@@ -1,5 +1,18 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] R03A / scoped R03B — Today components, v282
+
+Companion streak/chest now have 48px artwork, labels and a quiet reward shortcut.
+Optional support loses nested frames and unsupported fatigue/evening judgements.
+Task/core/goal/commitment/observation/support icons and floating voice input use the
+shared registry; voice target/placement is 44px and follows the theme. Actions,
+reward math and storage contracts preserved. Five locales and Chrome/WebKit at
+375/1280 verified; before/after, keyboard, voice placement, reward navigation,
+empty render and contrast >=5.97:1 recorded in TODAY-COMPONENTS-V282-QA.md.
+Full final suite: 3094/3094 PASS, 0 skipped; syntax/diff PASS. Shell/pins v282.
+R03B remains per-screen; next R04A/B/C/D and R05/R06, native and release gates.
+
+
 ## [2026-09-24] Final sphere-batch visual correction — v281
 
 Real AI modal screenshot exposed an inherited 27×19px close target. It is now
