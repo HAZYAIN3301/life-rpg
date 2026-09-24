@@ -3485,6 +3485,8 @@ const I18N_EXTRA = {
   'Длительность: часы и минуты': { en: 'Duration: hours and minutes', de: 'Dauer: Stunden und Minuten', uk: 'Тривалість: години та хвилини', es: 'Duración: horas y minutos' },
   'Часы': { en: 'Hours', de: 'Stunden', uk: 'Години', es: 'Horas' },
   'Затрачено': { en: 'Time spent', de: 'Zeitaufwand', uk: 'Витрачено', es: 'Tiempo dedicado' },
+  'Открыть заметку': { en: 'Open note', de: 'Notiz öffnen', uk: 'Відкрити нотатку', es: 'Abrir nota' },
+  'Текст заметки…': { en: 'Note text…', de: 'Notiztext…', uk: 'Текст нотатки…', es: 'Texto de la nota…' },
   'Фактическое время': { en: 'Time spent', de: 'Tatsächlicher Zeitaufwand', uk: 'Фактичний час', es: 'Tiempo dedicado' },
   'В ядро дня': { en: 'Make a daily priority', de: 'Zur Tagespriorität machen', uk: 'До ядра дня', es: 'Hacer prioridad del día' },
   'Сначала останови таймер этого дела, затем измени итоговое время.': { en: 'Stop this task’s timer before editing its total time.', de: 'Beende zuerst den Timer dieser Aufgabe, um die Gesamtzeit zu ändern.', uk: 'Спочатку зупини таймер цієї справи, потім зміни загальний час.', es: 'Detén el temporizador de esta tarea antes de editar el tiempo total.' },
@@ -16966,6 +16968,8 @@ async function sendChat(text) {
 }
 function captureBar(options = {}) {
   const expanded = options.expanded === true;
+  const receipt = State._captureReceipt;
+  const savedNote = receipt?.accountId === String(State.me?.id || '') && (State.inbox || []).find(note => note.id === receipt.id);
   if (_rec) {
     return `<div class="card capture-card recording">
       <div class="cap-rec"><span class="cap-dot"></span><span>${satoruIconHTML(_rec.kind === 'video' ? 'media.video' : 'media.microphone', 'capture-glyph', _rec.kind === 'video' ? '🎥' : '🎤')} ${t('Запись')} <span id="rec-timer">0:00</span></span>
@@ -16978,12 +16982,13 @@ function captureBar(options = {}) {
   const secondaryTools = guideTextOnly ? '' : `<button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button><button class="capture-notes-link" data-action="goto-notes" title="${t('Открыть заметки')}" aria-label="${t('Открыть заметки')}: ${noteCount}"><span aria-hidden="true">📝</span> ${noteCount}</button>`;
   return `<div class="card capture-card ${expanded ? 'is-expanded' : 'is-compact'}">
     <form id="capture-form" class="cap-row" data-guide-target="note-capture">
-      <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" placeholder="${t('Быстрая мысль, идея, план — в Заметки…')}" autocomplete="off" />
+      <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" placeholder="${t('Текст заметки…')}" autocomplete="off" />
       ${expanded ? mediaTools : ''}
-      <button type="submit" class="cap-add" aria-label="${t('Сохранить заметку')}">${satoruIconHTML('action.add', 'capture-glyph', '↵')}</button>
+      <button type="submit" class="cap-add" aria-label="${t('Сохранить заметку')}">${t('Сохранить')}</button>
       <span class="capture-status" role="status" aria-live="polite"></span>
     </form>
-    ${expanded && secondaryTools ? `<div class="capture-secondary">${secondaryTools}</div>` : !expanded && secondaryTools ? `<details class="capture-tools"><summary aria-label="${t('Ещё способы сохранить мысль')}"><span aria-hidden="true">•••</span></summary><div class="capture-tools-menu">${mediaTools}${secondaryTools}</div></details>` : ''}</div>`;
+    ${expanded && secondaryTools ? `<div class="capture-secondary">${secondaryTools}</div>` : !expanded && secondaryTools ? `<details class="capture-tools"><summary aria-label="${t('Ещё способы сохранить мысль')}"><span aria-hidden="true">•••</span></summary><div class="capture-tools-menu">${mediaTools}${secondaryTools}</div></details>` : ''}
+    ${savedNote && !expanded ? `<div class="capture-receipt" role="status"><span>${esc(t('Сохранено'))}</span><button type="button" data-action="goto-notes" data-id="${esc(savedNote.id)}">${esc(t('Открыть заметку'))}</button></div>` : ''}</div>`;
 }
 // Осмотр данных на порчу. До 03.09 сервер разрывал многобайтовые символы на границе
 // кусков тела запроса и писал на диск «\uFFFD» вместо буквы (см. DEVLOG). Дефект закрыт,
@@ -17101,7 +17106,7 @@ function notesPeekToday() {
 function renderNotes() {
   const notes = State.inbox || [];
   if (State._inboxLoadError) return notesRecoveryCard();
-  return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><h2 id="notes-title">${t('Заметки')}</h2><p>${t('Мысли, которые хочется сохранить.')}</p></header>${captureBar({ expanded: true })}
+  return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><button type="button" class="btn ghost notes-back" data-action="notes-back">${satoruIconHTML('action.back', 'button-glyph', '')} ${esc(t('Сегодня'))}</button><h2 id="notes-title" tabindex="-1">${t('Заметки')}</h2><p>${t('Мысли, которые хочется сохранить.')}</p></header>${captureBar({ expanded: true })}
     <section class="notes-list" aria-label="${t('Заметки')}">${notes.length ? notes.map(noteCard).join('') : `<div class="card notes-empty"><p>${t('Пусто. Запиши первую мысль в строке выше ↑ (текст, 🎤 голос или 🎥 видео).')}</p></div>`}</section></section>`;
 }
 function closeNoteDeleteDialog({ restoreFocus = true } = {}) {
@@ -20995,7 +21000,7 @@ function boardTakenLineHTML() {
   const tabs = `<div class="today-tabs"><div class="today-mode-tabs" role="tablist" aria-label="${t('Разделы дня')}">
     <button id="today-tab-day" type="button" role="tab" aria-selected="${tab === 'day'}" aria-controls="today-panel-day" tabindex="${tab === 'day' ? '0' : '-1'}" class="today-tab${tab === 'day' ? ' on' : ''}" data-action="today-tab" data-id="day">${t('День')}</button>
     <button id="today-tab-board" type="button" role="tab" aria-selected="${tab === 'board'}" aria-controls="today-panel-board" tabindex="${tab === 'board' ? '0' : '-1'}" class="today-tab${tab === 'board' ? ' on' : ''}" data-action="today-tab" data-id="board">${t('Доска')}</button>
-    </div><div class="today-tools-links"><button type="button" class="today-shadow-link" data-action="open-helper">${satoruIconHTML('nav.shadow','button-glyph','◇')} ${t('Тень')}</button><button type="button" class="today-notes-link" data-view="notes" data-guide-target="notes-nav">${t('Заметки')} ↗</button></div>
+    </div><div class="today-tools-links"><button type="button" class="today-shadow-link" data-action="open-helper">${satoruIconHTML('nav.shadow','button-glyph','◇')} ${t('Тень')}</button><button type="button" class="today-notes-link" data-action="goto-notes" data-guide-target="notes-nav">${t('Заметки')}</button></div>
   </div>`;
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
   const week = weekStart(today);
@@ -28854,7 +28859,8 @@ async function onSubmit(e) {
       focusPathChoiceTarget(f.text); return;
     }
     if (guideNotes) { State._guideV3NoteDraftId = ''; State._guideNoteAttempt = null; }
-    State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast(t('📝 В Заметках')); render();
+    State._captureReceipt = { id: item.id, accountId: String(State.me?.id || '') };
+    State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast(t('Сохранено')); render();
     return;
   }
   if (f.id === 'chat-form') {
@@ -32143,7 +32149,13 @@ async function onClick(e) {
   } else if (action === 'cap-stop') { stopCapture();
   } else if (action === 'damage-repair') { repairDataDamage();
   } else if (action === 'damage-dismiss') { State._dataDamage = null; render();
-  } else if (action === 'goto-notes') { State.view = 'notes'; track('view:notes'); render();
+  } else if (action === 'notes-back') {
+    State.view = 'today'; State._tasksFocusAfterCommit = '.today-notes-link'; render();
+  } else if (action === 'goto-notes') {
+    State.view = 'notes';
+    State._inboxFocusAfterCommit = el.dataset.id && (State.inbox || []).some(note => note.id === el.dataset.id)
+      ? `#note-${CSS.escape(el.dataset.id)}-text` : '#notes-title';
+    track('view:notes'); render();
   } else if (action === 'ai-review') { runWeeklyReview();
   } else if (action === 'ai-import-goals') { openProposeModal('goals');
   } else if (action === 'ai-import-levels') { openProposeModal('calibrate');
@@ -33740,7 +33752,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v276';
+const PWA_CACHE_VERSION = 'satoru-v277';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -1,5 +1,15 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] R01B: connected notes capture and navigation — v277
+
+Fixed Today’s ignored Notes click, added explicit return with keyboard focus,
+and a durable Saved → Open note receipt pointing to the existing note editor.
+Replaced the ambiguous plus with localized Save, corrected composer widths/44px
+controls and translated the placeholder. Existing inbox owner/storage retained.
+Chrome/WebKit, five locales, mobile/desktop, error/retry, delayed save and reload
+readback checked. Full suite 3083/3083 PASS; see NOTES-V277-QA.md. Shell/pins v277.
+Deployment receipt follows in the plan; next separate package is 03A.
+
 ## [2026-09-24] R01A: working task menu and hours/minutes editor — v276
 
 Raised the open task disclosure above neighbouring rows after reproducing their

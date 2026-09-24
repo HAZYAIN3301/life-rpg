@@ -6,7 +6,7 @@ const read = p => fs.readFileSync(path.join(__dirname, '..', p), 'utf8');
 const app=read('public/app.js'),css=read('public/design-next-v1.css'),index=read('public/index.html'),sw=read('public/sw.js');
 
 test('redesign ships together with its local font and preserves the old UI entry',()=>{
- assert.match(index,/design-next-v1\.css\?v=20260924-task-time-v276-1/);
+ assert.match(index,/design-next-v1\.css\?v=20260924-notes-v277-1/);
  assert.match(sw,/'design-next-v1\.css'/);
  assert.match(sw,/'fonts\/russo-one\/RussoOne\.ttf'/);
  assert.match(css,/\[data-theme=light\]/);
@@ -29,7 +29,7 @@ test('draft retention stays inside the existing form and durable save path',()=>
 test('work, time, voice, notes and completion stay visible without duplicated Day navigation',()=>{
  assert.match(app,/class="task-schedule" data-action="cal-edit-task"/);
  assert.match(app,/day-recap-direct.*data-action="day-recap"/);
- assert.match(app,/today-notes-link.*data-view="notes".*notes-nav/);
+ assert.match(app,/today-notes-link.*data-action="goto-notes".*notes-nav/);
  assert.match(app,/subs && State\.view !== 'today'/);
  assert.match(app,/role="dialog" aria-modal="true" aria-labelledby="dayrec-heading"/);
  assert.match(css,/\.task\.habit\{grid-template-columns:44px minmax\(0,1fr\) auto/);

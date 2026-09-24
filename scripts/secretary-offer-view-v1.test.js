@@ -95,8 +95,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   const at = INDEX.indexOf('src="secretary-offer-view-v1.js');
   assert.ok(at >= 0 && INDEX.indexOf('src="app.js') > at);
   assert.equal((SW.match(/'secretary-offer-view-v1\.js'/g) || []).length, 1);
-  assert.match(SW, /const CACHE = 'satoru-v276'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v276'/);
+  assert.match(SW, /const CACHE = 'satoru-v277'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v277'/);
 });
 
 test('the move is claimed before it is ever drawn', () => {

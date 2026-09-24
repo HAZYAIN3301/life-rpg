@@ -4,7 +4,9 @@
   actual time has hours/minutes, localized in-app form, durable save/error/retry,
   safe timer boundary and unchanged completion/rewards. Chrome/WebKit, five locales,
   375/1280 and full 3083/3083 tests PASS. See TASK-ACTUAL-V276-QA.md.
-- [ ] **R01B:** reproduce notes opening from Today; complete create→find→open→return.
+- [x] **R01B / v277:** fixed Today → Notes, durable saved-note shortcut, explicit
+  return and keyboard focus, clear Save label and mobile composer. Chrome/WebKit,
+  five locales, error/retry/readback and full 3083/3083 PASS. See NOTES-V277-QA.md.
   Apply the owner's September 24 whole-app design/coherence criteria to later work.
 - [ ] **R01A device gate:** verify the owner's installed native build and actual
   editor there. WebKit browser checks pass; they do not identify that installed build.

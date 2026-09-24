@@ -141,6 +141,11 @@
 :root[data-design=next] :is(.eyebrow,.settings-eyebrow,.character-wardrobe-kicker,.shelf-kicker){color:var(--muted);text-transform:none;letter-spacing:.02em}
 :root[data-design=next] .notes-screen{max-width:900px}
 :root[data-design=next] .notes-header{padding-bottom:12px}
+:root[data-design=next] .notes-back{margin-bottom:var(--sp-3);min-height:44px}
+:root[data-design=next] .capture-card .cap-add{width:auto;inline-size:auto;min-height:44px;padding:var(--sp-2) var(--sp-3);font-size:.875rem}
+:root[data-design=next] .capture-card.is-compact .cap-row{grid-template-columns:minmax(0,1fr)}
+:root[data-design=next] .capture-receipt{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);font-size:.875rem;color:var(--muted)}
+:root[data-design=next] .capture-receipt button{background:none;border:0;min-height:44px;color:var(--text);text-decoration:underline;text-underline-offset:3px;padding:var(--sp-2)}
 :root[data-design=next] .notes-header p{margin-top:8px;font-size:1rem;color:var(--muted)}
 :root[data-design=next] .notes-list{display:grid;gap:14px}
 :root[data-design=next] .pet-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;align-items:start}
@@ -393,10 +398,10 @@
 :root[data-design=next] .hb-nmt{font-size:.875rem}
 :root[data-design=next] .notes-screen{max-width:none}
 :root[data-design=next] .notes-workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:var(--sp-5);align-items:start}
-:root[data-design=next] .notes-workspace .cap-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-2)}
+:root[data-design=next] .notes-workspace .cap-row{display:grid;grid-template-columns:44px 44px minmax(0,1fr);gap:var(--sp-2)}
 :root[data-design=next] .notes-workspace #capture-text{grid-column:1/-1;min-width:0}
 :root[data-design=next] .notes-workspace .capture-status{grid-column:1/-1}
-:root[data-design=next] .notes-workspace .cap-btn,:root[data-design=next] .notes-workspace .cap-add{width:100%}
+:root[data-design=next] .notes-workspace .cap-btn,:root[data-design=next] .notes-workspace .cap-add{width:100%;min-height:44px}
 :root[data-design=next] .notes-gallery .note-top h3{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 :root[data-design=next] .notes-gallery .note-text{background:transparent;border-color:transparent;padding:var(--sp-2) 0;line-height:1.6}
 :root[data-design=next] .notes-gallery .note-text:focus{border-color:var(--line-strong);background:var(--panel)}
