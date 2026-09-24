@@ -1,5 +1,11 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Package 02:** v269 goal JSON regression PASS: numeric units, invalid input,
+  limit 301, rejected-write retry, duplicate activation, five locales and reload.
+  No runtime rewrite. Full v275 candidate: 3079/3079 tests. See GOAL-IMPORT-PACKAGE02-QA.md.
+- [ ] **Package 10:** translate remaining legacy importer labels/help; existing
+  v269 inline errors already work in five languages.
+
 - [x] **Package 01, local v275:** First Value recovery opens the real ten-minute
   dialog; later states and pause reasons translated in five languages. All three
   routes, manual setup, linked goal progress and retry/reopen checked on localhost;

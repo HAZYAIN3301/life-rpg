@@ -1,5 +1,15 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] Package 02: goal JSON regression and v275 release candidate
+
+The existing v269 importer passes real UI checks for unit-bearing metrics,
+invalid units/text, 301-proposal rejection, failed-write retry and duplicate
+activation protection. Five synthetic accounts retain imported goals after
+reload; mobile/desktop and keyboard checked. No new runtime fix was necessary.
+Full candidate suite: 3079/3079 PASS. GOAL-IMPORT-PACKAGE02-QA.md records evidence.
+Owner now requests immediate publication, including package 01's local v275
+fixes below. Deployment verification follows this commit in the plan checkpoint.
+
 ## [2026-09-24] Package 01: First Value recovery and later-state translations — local v275
 
 Fixed the missing recovery launcher call, kept the promised ten-minute default,
