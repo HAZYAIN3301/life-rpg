@@ -1,5 +1,19 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] Public ambient audio attribution and reviewer QA
+
+Added /credits.html linked from Support (also reachable from native Settings).
+The three ambient recording sources were checked on Wikimedia: fire CC BY 4.0,
+rain public-domain dedication, birds CC0. Credits include authors, source/license
+links and the normalization/transcoding changes. No claim about rights to all art.
+Standalone support/credits pages are not in the SW shell; no shell cache bump.
+Full Node suite 3068/3068 PASS. Browser desktop credits inspection PASS.
+Separate non-admin Apple Review account login works; a synthetic quest persists
+after reload. No passwords or sessions are stored in this repository.
+Fresh-account English UI exposes untranslated First Value copy and an incorrect
+30-day absence suggestion; these remain release QA findings, not closed checks.
+Publication verification follows the commit.
+
 ## [2026-09-23] iPad quick-add time field — v272
 
 Actual WKWebView screenshot showed the native time control painting over duration.
