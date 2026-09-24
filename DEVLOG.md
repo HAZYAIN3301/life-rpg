@@ -1,5 +1,19 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] First visit copy and observed return history — v273
+
+The separate reviewer account reproduced Russian First Value labels in English,
+and a 30-day absence suggestion immediately after its first saved quest.
+Translated the initial card and its elapsed-time boundary into EN/DE/UK/ES.
+Return nudges now require an XP activity dated before today; empty/new history
+is not absence evidence. Existing measured intervals are preserved.
+Three regression tests cover new/today/future-only history, prior activity, and
+the four translation dictionaries. Initial real-renderer fixtures checked at
+375px across five languages: no horizontal overflow; EN/DE visually checked,
+English desktop checked. This is not QA for all later First Value states.
+Shell cache/active pins updated to v273. Full suite: 3071/3071 PASS.
+Production verification follows this commit.
+
 ## [2026-09-24] Public ambient audio attribution and reviewer QA
 
 Added /credits.html linked from Support (also reachable from native Settings).

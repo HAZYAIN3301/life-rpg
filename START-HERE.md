@@ -3,6 +3,13 @@
 > Вход для агента — [AGENTS.md](./AGENTS.md). Здесь состояние и карта контекста;
 > действующий процесс — AGENTS-PROTOCOL.md. Читай профильные документы по задаче.
 
+**Checkpoint 24.09, v273:** first-visit card translations EN/DE/UK/ES and
+no invented absence on new accounts; 3071/3071 tests PASS. Public ambient audio
+credits added at /credits.html via Support. Native build 9 uploaded to Apple
+for iOS/Mac; processing and review form state tracked in native release/STATUS.md.
+All 60 store screenshots were completed on 23.09; older "localizations in work"
+below is historical. Reviewer account verified; no credentials in repository.
+
 **Checkpoint 23.09, v272:** исправлено наложение поля времени на длительность
 в форме iPad; до этого v271 исправил заголовок Логова. 3068/3068 tests PASS.
 Русские iPhone/iPad/Mac screenshots с Логовом загружены в ASC; локализации в работе.

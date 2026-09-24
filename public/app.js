@@ -539,6 +539,16 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  'Первый результат': { en: 'First result', de: 'Erstes Ergebnis', uk: 'Перший результат', es: 'Primer resultado' },
+  'Первый вход': { en: 'Getting started', de: 'Erste Schritte', uk: 'Перший вхід', es: 'Primeros pasos' },
+  'Сначала — одна настоящая польза': { en: 'Start with one useful step', de: 'Beginne mit einem hilfreichen Schritt', uk: 'Спочатку — один корисний крок', es: 'Empieza con un paso útil' },
+  'Без длинной настройки. Satoru предложит один путь, а результат появится только после сохранённого действия.': { en: 'No lengthy setup. Satoru suggests one path and counts the result only after your action is saved.', de: 'Ohne lange Einrichtung. Satoru schlägt einen Weg vor und zählt das Ergebnis erst, wenn deine Aktion gespeichert ist.', uk: 'Без довгого налаштування. Satoru запропонує один шлях і зарахує результат лише після збереження дії.', es: 'Sin una configuración larga. Satoru propone un camino y cuenta el resultado solo cuando tu acción se guarda.' },
+  'Уточнить': { en: 'Clarify', de: 'Klären', uk: 'Уточнити', es: 'Aclarar' },
+  'Восстановиться': { en: 'Recover', de: 'Erholen', uk: 'Відновитися', es: 'Recuperarte' },
+  'Сделать маленький шаг': { en: 'Take a small step', de: 'Einen kleinen Schritt machen', uk: 'Зробити маленький крок', es: 'Dar un pequeño paso' },
+  'Можно остановиться': { en: 'You can stop here', de: 'Du kannst hier aufhören', uk: 'Можна зупинитися', es: 'Puedes parar aquí' },
+  'Вернуться позже': { en: 'Return later', de: 'Später zurückkommen', uk: 'Повернутися пізніше', es: 'Volver más tarde' },
+  'Прошло больше {time}. Ничего не потеряно: остановись сейчас или спокойно продолжи.': { en: 'More than {time} has passed. Nothing is lost: stop now or continue at your own pace.', de: 'Mehr als {time} sind vergangen. Nichts ist verloren: Höre jetzt auf oder mache in deinem Tempo weiter.', uk: 'Минуло понад {time}. Нічого не втрачено: зупинися зараз або спокійно продовжуй.', es: 'Han pasado más de {time}. No se ha perdido nada: para ahora o continúa a tu ritmo.' },
   'Данные изменились на другом устройстве. Обнови страницу — твоя правка не сохранена.': { en: 'The data changed on another device. Reload the page — your edit was not saved.', de: 'Die Daten haben sich auf einem anderen Gerät geändert. Lade die Seite neu — deine Änderung wurde nicht gespeichert.', uk: 'Дані змінилися на іншому пристрої. Онови сторінку — твоя правка не збережена.', es: 'Los datos cambiaron en otro dispositivo. Recarga la página; tu cambio no se guardó.' },
   // ── Внимание: конфликт записи между устройствами ──
   '⚠️ Данные изменились на другом устройстве. Обнови страницу — твоя правка не сохранена.': { en: '⚠️ The data changed on another device. Reload the page — your edit was not saved.', de: '⚠️ Die Daten haben sich auf einem anderen Gerät geändert. Lade die Seite neu — deine Änderung wurde nicht gespeichert.', uk: '⚠️ Дані змінилися на іншому пристрої. Онови сторінку — твоя правка не збережена.', es: '⚠️ Los datos cambiaron en otro dispositivo. Recarga la página; tu cambio no se guardó.' },
@@ -12121,6 +12131,12 @@ function quietDaysBefore(max) {
   }
   return n;
 }
+// A new account has no absence history. Only observed activity can establish a return.
+function observedQuietDaysBefore(max) {
+  const today = todayStr();
+  if (!xpEvents().some((event) => typeof event.date === 'string' && event.date < today)) return 0;
+  return quietDaysBefore(max);
+}
 // ══ «Заход» v1 (fb_mr2afy1ho0hu; живое подтверждение — fb_mrmr1frhpf7z: «слил вечер →
 // нежелание пользоваться приложением») ═══════════════════════════════════════════════
 // Вечер сорвался / сил нет → рука тянется к приставке. «Заход» — альтернатива ровно в этот
@@ -20603,7 +20619,7 @@ function renderToday() {
   // Долгая тишина (3+ дня) — это почти всегда не «забыл», а «жизнь была не той формы»: поездка,
   // интенсив, болезнь. Предлагать закрывать её по дню — та самая стена, из-за которой не
   // возвращаются. Поэтому от 3 дней зовём в эпизод, а посуточный разбор оставляем как выбор.
-  const quietLong = (State.tasks || []).length ? quietDaysBefore(30) : 0;
+  const quietLong = observedQuietDaysBefore(30);
   const epNudge = quietLong >= 3
     ? `<div class="card nudge-card ep-nudge">
         <button class="nudge" data-action="episode-open" data-from="${addDays(todayStr(), -quietLong)}" data-to="${addDays(todayStr(), -1)}">🎒 ${t('Тебя не было')} ${quietLong} ${locDay(quietLong, lang())} — ${t('что это было?')}</button>
@@ -20639,7 +20655,7 @@ function renderToday() {
   const amnestyUndo = amnBack.length
     ? `<div class="card nudge-card amnesty-undo"><span class="nudge-boost">🌅 ${t('Отпущено сегодня')}: ${amnBack.length} · <button class="link-btn" data-action="amnesty-undo">${t('вернуть обратно')}</button></span></div>`
     : '';
-  const quietN = (State.tasks || []).length ? quietDaysBefore() : 0;
+  const quietN = observedQuietDaysBefore();
   const dayLogNudge = (quietN >= 2 || (doneCount === 0 && new Date().getHours() >= 18 && (State.tasks || []).length > 0))
     ? `<div class="card nudge-card daylog-nudge">
         <button class="nudge" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${quietN >= 2
@@ -33602,7 +33618,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v272';
+const PWA_CACHE_VERSION = 'satoru-v273';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

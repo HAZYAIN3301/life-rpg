@@ -21,9 +21,9 @@ test('v179 shell retains local Board contracts before runtime and caches each on
   for (const file of files.slice(0, -1)) {
     assert.equal((sw.match(new RegExp(`'${file.replaceAll('.', '\\.')}''?`.replace("''", "'"), 'g')) || []).length, 1);
   }
-  assert.match(sw, /const CACHE = 'satoru-v272';/);
-  assert.match(index, /styles\.css\?v=20260923-time-field-v272-1/);
-  assert.match(index, /app\.js\?v=20260923-time-field-v272-1/);
+  assert.match(sw, /const CACHE = 'satoru-v273';/);
+  assert.match(index, /styles\.css\?v=20260924-release-qa-v273-1/);
+  assert.match(index, /app\.js\?v=20260924-release-qa-v273-1/);
 });
 
 test('city discovery requires two explicit approvals and names Brave as recipient', () => {
