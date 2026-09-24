@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-24] R02B and scoped R03 cleanup — v280
+
+Added labeled sphere colors with explicit parent-shade inheritance that preserves
+existing manual choices. Recovery now shows yes/no and its exact effect, awaits
+durable owner confirmation and rejects late account completion. Settings controls
+have 44px targets and theme-correct panels. Registry icons replace system emoji in
+the changed control groups/AI modal; long mobile navigation labels wrap. Removed
+the unsupported quiet-sphere companion invitation. No load/reward formula changes.
+See SPHERE-CONTROLS-V280-QA.md for tests, compatibility and the remaining R03/R04 work.
+Final full suite 3094/3094 PASS; syntax/diff checks PASS. Shell/pins v280.
+
+
 ## [2026-09-24] Combined R08 / 03B / R02A coherence batch — v279
 
 Repair uses consistent field counts, persistent account-scoped receipts and explicit

@@ -539,6 +539,17 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  'Разбор недели': { en: 'Weekly review', de: 'Wochenrückblick', uk: 'Огляд тижня', es: 'Resumen semanal' },
+  'Анализирую твою неделю…': { en: 'Reviewing your week…', de: 'Deine Woche wird ausgewertet…', uk: 'Аналізую твій тиждень…', es: 'Analizando tu semana…' },
+  'Не удалось выполнить запрос. Попробуй ещё раз.': { en: 'The request failed. Please try again.', de: 'Die Anfrage ist fehlgeschlagen. Versuche es erneut.', uk: 'Не вдалося виконати запит. Спробуй ще раз.', es: 'La solicitud falló. Inténtalo de nuevo.' },
+  'Обрабатываю…': { en: 'Processing…', de: 'Wird verarbeitet…', uk: 'Обробляю…', es: 'Procesando…' },
+  'Домен': { en: 'Domain', de: 'Lebensbereich', uk: 'Домен', es: 'Dominio' },
+  'Проект': { en: 'Project', de: 'Projekt', uk: 'Проєкт', es: 'Proyecto' },
+  'Цвет сферы': { en: 'Area color', de: 'Bereichsfarbe', uk: 'Колір сфери', es: 'Color del área' },
+  'Оттенок родителя': { en: 'Shade of parent', de: 'Farbton des übergeordneten Bereichs', uk: 'Відтінок батьківської сфери', es: 'Tono del área superior' },
+  'Восстанавливает: да': { en: 'Restorative: yes', de: 'Erholsam: ja', uk: 'Відновлює: так', es: 'Me repone: sí' },
+  'Восстанавливает: нет': { en: 'Restorative: no', de: 'Erholsam: nein', uk: 'Відновлює: ні', es: 'Me repone: no' },
+  'Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.': { en: 'Enable for an area you consider restful. This disables its overload warning; records, XP and rewards stay unchanged.', de: 'Aktiviere dies für einen Bereich, der dich erholt. Seine Überlastungswarnung wird deaktiviert; Einträge, XP und Belohnungen bleiben unverändert.', uk: 'Увімкни для сфери, яку вважаєш відпочинком. Це вимикає її попередження про перегрів; записи, XP і нагороди не змінюються.', es: 'Actívalo para un área que consideres descanso. Desactiva su aviso de sobrecarga; los registros, XP y recompensas no cambian.' },
   'Подсферы': { en: 'Subareas', de: 'Unterbereiche', uk: 'Підсфери', es: 'Subáreas' },
   'Основные — прямой результат. Фон — сопутствующий вклад.': { en: 'Main: direct results. Background: supporting contributions.', de: 'Hauptbereiche: direkte Ergebnisse. Hintergrund: begleitende Beiträge.', uk: 'Основні — прямий результат. Фон — супутній внесок.', es: 'Principales: resultados directos. Secundarios: aportaciones adicionales.' },
   'Повреждённые поля': { en: 'Damaged fields', de: 'Beschädigte Felder', uk: 'Пошкоджені поля', es: 'Campos dañados' },
@@ -8262,6 +8273,26 @@ function subtreeXp(id, map) { let v = map[id] || 0; for (const c of descendantSk
 // «Эта сфера меня восстанавливает» — снимает перегрев (предупреждать «ты перебрал отдыха» глупо).
 // Это же и калибровка интроверт/экстраверт из плана: для экстраверта сфера людей — заряд, а не расход.
 function sphereRestores(id) { const s = skillById(id); return !!(s && s.restores); }
+async function persistSphereRestores(id) {
+  if (State._sphereRestoreBusy) return;
+  const epoch = Store._writeEpoch, accountId = String(State.me?.id || '');
+  const current = () => epoch === Store._writeEpoch && accountId === String(State.me?.id || '');
+  const desired = !sphereRestores(id);
+  State._sphereRestoreBusy = true; render();
+  let saved = false;
+  try {
+    saved = await Store.updateNow('settings', settings => {
+      if (!current() || !settings?.skills?.some(s => s.id === id)) return undefined;
+      return { ...settings, skills: settings.skills.map(s => s.id === id ? { ...s, restores: desired } : s) };
+    }, committed => { if (!current()) return false; State.settings = committed; return true; });
+  } finally {
+    if (current()) {
+      State._sphereRestoreBusy = false; render();
+      toast(t(saved ? 'Сохранено' : 'Не удалось сохранить изменения.'));
+      document.querySelector(`[data-action="toggle-restores"][data-id="${CSS.escape(id)}"]`)?.focus();
+    }
+  }
+}
 function sphereLoads() {
   const T = todayStr();
   const recFrom = addDays(T, -(LOAD_WIN - 1));
@@ -15744,26 +15775,26 @@ function buildWeekContext() {
 }
 async function runWeeklyReview() {
   if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return; }
-  openAiModal('🤖 Разбор недели', '<p class="muted">Анализирую твою неделю…</p>', true);
+  openAiModal(t('Разбор недели'), `<p class="muted">${esc(t('Анализирую твою неделю…'))}</p>`, true);
   const system = window.ShadowPersonaV1.systemInstruction({ surface: 'chat', lang: lang() }) + '\n\nРАЗБОР НЕДЕЛИ. Опирайся на записи за указанный период и собственные слова человека в рефлексии, намерении и итогах. Назови 2–3 конкретных наблюдения о записанном времени, делах и сферах; отдели факты от гипотез. Предложи 1–2 выполнимых шага, отвечающих его вопросу или намерению. Строка «Записи об отдыхе на сегодня» — ограниченный поиск по текстам, не измерение отдыха, усталости или самочувствия и не данные о выбранной прошлой неделе. Отсутствие записей не делает отдых обязательным главным выводом. Нагрузка и индекс баланса тоже не измеряют состояние человека. Если человек сам описал трудность, учитывай её прямо, без диагноза и без автоматического списка задач. Длина соответствует содержанию; тёплый, прямой ответ без оценки дня или человека. ' + aiAnswerLangLine();
   try {
     const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
     const d = await r.json();
     if (d.error && aiHandleErr(d)) { const m = document.getElementById('ai-modal'); if (m) m.remove(); return; }
-    if (!r.ok || !d.text) { openAiModal('🤖 Разбор недели', `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`); return; }
+    if (!r.ok || !d.text) { openAiModal(t('Разбор недели'), `<p class="muted">${esc(t('Не удалось выполнить запрос. Попробуй ещё раз.'))}</p>`); return; }
     const weekBody = window.MdLiteV1 ? window.MdLiteV1.render(d.text) : esc(d.text).replace(/\n/g, '<br>');
-    openAiModal('🤖 Разбор недели', `<div class="ai-out" data-tts>${weekBody}${ttsBtnHTML()}</div>`);
+    openAiModal(t('Разбор недели'), `<div class="ai-out" data-tts>${weekBody}${ttsBtnHTML()}</div>`);
     track('ai:weekly');
     // Недельный разбор — естественная точка обновления профиля: раз в неделю, когда
     // человек и так пришёл смотреть итоги, а не на каждый рендер. silent, чтобы
     // второй тост и перерисовка не перебивали открытый разбор.
     refreshProfile({ silent: true });
-  } catch { openAiModal('🤖 Разбор недели', '<p class="muted">Сетевая ошибка.</p>'); }
+  } catch { openAiModal(t('Разбор недели'), `<p class="muted">${esc(t('Сетевая ошибка'))}</p>`); }
 }
 function openAiModal(title, bodyHtml, loading) {
   let ov = document.getElementById('ai-modal');
   if (!ov) { ov = document.createElement('div'); ov.id = 'ai-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
-  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="ai-close">✕</button><h3>${esc(title)}</h3>${loading ? '<div class="ai-spin">⏳</div>' : ''}<div class="ai-body">${bodyHtml}</div></div>`;
+  ov.innerHTML = `<div class="ai-box" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title"><button class="modal-x" data-action="ai-close" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'inline-glyph')}</button><h3 id="ai-modal-title">${satoruIconHTML('nav.shadow', 'heading-glyph')} ${esc(String(title).replace(/^🤖\s*/, ''))}</h3>${loading ? `<div class="ai-pending" role="status">${satoruIconHTML('action.refresh', 'inline-glyph')} ${esc(t('Обрабатываю…'))}</div>` : ''}<div class="ai-body">${bodyHtml}</div></div>`;
 }
 // ---- Движок «Предложений»: ИИ предлагает → ты одобряешь/отклоняешь ----
 let _proposals = []; // последний полученный набор предложений
@@ -17131,7 +17162,7 @@ function noteCard(it) {
   const when = (it.at || '').replace('T', ' ').slice(0, 16);
   return `<article class="card note-card" data-guide-target="note-created" data-id="${esc(it.id)}" tabindex="-1" aria-labelledby="note-${esc(it.id)}-title">
     <div class="note-top"><div><h3 id="note-${esc(it.id)}-title">${esc(noteTitle(it))}</h3><span class="note-when muted">${icon} ${esc(when)}</span></div>
-      <span class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">🤖 ${t('Цель')}</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button><button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">✕</button></span></div>
+      <span class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">${satoruIconHTML('nav.shadow', 'inline-glyph')} ${t('Цель')}</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button><button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">✕</button></span></div>
     ${media}
     <label class="sr-only" for="note-${esc(it.id)}-text">${t('Текст заметки')}</label><textarea id="note-${esc(it.id)}-text" class="note-text" data-action="note-edit" data-id="${it.id}" rows="2" maxlength="1000" placeholder="${t(it.file ? 'Подпиши заметку…' : 'Текст заметки…')}">${esc(it.text || '')}</textarea><p class="note-save-status" data-note-status="${it.id}" role="status"></p></article>`;
 }
@@ -17445,8 +17476,8 @@ function compMood() {
   if (tired && act > 0) return { face: 'caring', line: compLine('caring', ti) };
   if (act >= 3) return { face: 'radiant', line: compLine('radiant', ti, { actP: act + ' ' + locThing(act, lang()) }) };
   if (st >= 3 && act >= 1) return { face: 'happy', line: compLine('streak', ti, { stP: st + ' ' + locDay(st, lang()) }) };
-  const lonely = compLonelyPetName();
-  if (lonely && hr >= 11 && hr < 21) return { face: 'happy', line: compLine('lonelyPet', ti, { pet: lonely }) };
+  // A quiet sphere is not an event in the Den. Keep the contextual day response
+  // instead of inventing a reason to visit a pet from the sphere's name.
   if (act >= 1) return { face: 'happy', line: compLine('someActivity', ti) };
   if (hr >= 21) return { face: 'sleepy', line: compLine('evening', ti) };
   if (hr < 11) return { face: 'happy', line: compLine('morning', ti) };
@@ -20498,7 +20529,7 @@ function stuckAskHTML(today) {
         <button class="btn sm" data-action="stuck-step-add" data-id="${esc(String(pick.id))}">${t('Добавить шаг')}</button>
       </div>
       <div class="stuck-acts">
-        ${canUseAi() ? `<button class="btn ghost sm" data-action="stuck-ai-step" data-id="${esc(String(pick.id))}">🤖 ${t('Пусть Тень предложит шаг')}</button>` : ''}
+        ${canUseAi() ? `<button class="btn ghost sm" data-action="stuck-ai-step" data-id="${esc(String(pick.id))}">${satoruIconHTML('nav.shadow', 'inline-glyph')} ${t('Пусть Тень предложит шаг')}</button>` : ''}
         <button class="btn ghost sm" data-action="stuck-cancel">${t('Не сейчас')}</button>
       </div>
       <span class="stuck-note" id="stuck-ai-note"></span></div>`;
@@ -23994,7 +24025,7 @@ function renderStats() {
   // когда видишь «перегрев отдыха» и понимаешь, что для этой сферы предупреждение бессмысленно.
   const loads = sphereLoads().filter((r) => r.ratio != null || r.rec > 0);
   const ins = loadInsight();
-  const loadCard = loads.length ? `<div class="card"><h3>🌡 ${t('Нагрузка сфер')}</h3>
+  const loadCard = loads.length ? `<div class="card"><h3>${satoruIconHTML('status.balance', 'heading-glyph')} ${t('Нагрузка сфер')}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Сравнение с твоей же нормой: последние 7 дней против предыдущих 28. Не «много вообще», а «много для тебя».')}</p>
     ${ins ? `<p class="load-insight">${t('Перегрев')}: <b>${esc(ins.hot.name)}</b> — ×${ins.hot.ratio.toFixed(1)} ${t('от твоей нормы')}${ins.quiet.length ? `. ${t('Без внимания')}: ${ins.quiet.map((q) => esc(q.name)).join(', ')}` : ''}.</p>` : ''}
     <div class="load-rows">${loads.map((r) => {
@@ -24003,10 +24034,10 @@ function renderStats() {
         <span class="load-name">${esc(r.name)}</span>
         <span class="load-bar">${pct == null ? `<i class="load-none"></i>` : `<i style="width:${pct}%;background:${r.hot ? '#e0526a' : esc(r.color)}"></i>`}</span>
         <span class="load-val ${r.hot ? 'is-hot' : ''}">${r.ratio == null ? t('мало данных') : '×' + r.ratio.toFixed(1)}</span>
-        <button type="button" class="load-restore${r.restores ? ' on' : ''}" data-action="toggle-restores" data-id="${r.id}" aria-pressed="${r.restores ? 'true' : 'false'}" aria-label="${esc(t('Эта сфера меня восстанавливает — не предупреждать о перегрузе'))}: ${esc(r.name)}">${r.restores ? '🌿' : '·'}</button>
+        <button type="button" class="load-restore${r.restores ? ' on' : ''}"${State._sphereRestoreBusy ? ' disabled' : ''} data-action="toggle-restores" data-id="${r.id}" aria-pressed="${r.restores ? 'true' : 'false'}" aria-label="${esc(t('Эта сфера меня восстанавливает — не предупреждать о перегрузе'))}: ${esc(r.name)}">${satoruIconHTML('difficulty.easy', 'inline-glyph')}<span>${t(r.restores ? 'Восстанавливает: да' : 'Восстанавливает: нет')}</span></button>
       </div>`;
     }).join('')}</div>
-    <p class="muted" style="font-size:11.5px;margin:8px 0 0">🌿 — ${t('сфера восстанавливает: перегрев по ней не считается')}</p></div>` : '';
+    <p class="muted" style="font-size:11.5px;margin:8px 0 0">${t('Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.')}</p></div>` : '';
   const epList = (State.episodes || []).slice().sort((a, b) => (a.from < b.from ? 1 : -1));
   const episodesCard = `<div class="card"><h3>🎒 ${t('Эпизоды')}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Периоды, когда жизнь шла, а записывать было некогда: поездки, интенсивы, болезнь.')}</p>
@@ -26884,22 +26915,23 @@ function renderSettings() {
     const auto = canonById(autoCanon(sk.name));
     const topExtra = depth === 0 ? `
       <div class="se-canon">
-        <span class="se-canon-lbl" title="${t('Канонический жизненный домен — единый «хребет» для карты баланса и подсказок. Авто по названию, можно поправить.')}">${t('🧭 домен')}</span>
+        <span class="se-canon-lbl" title="${t('Канонический жизненный домен — единый «хребет» для карты баланса и подсказок. Авто по названию, можно поправить.')}">${satoruIconHTML('nav.progress', 'inline-glyph')} ${t('Домен')}</span>
         <select data-field="canon">
-          <option value="">${t('авто')}${auto ? ' · ' + auto.icon + ' ' + t(auto.name) : ' · —'}</option>
-          ${CANON_DOMAINS.map((d) => `<option value="${d.id}" ${sk.canon === d.id ? 'selected' : ''}>${d.icon} ${esc(t(d.name))}</option>`).join('')}
+          <option value="">${t('авто')}${auto ? ' · ' + t(auto.name) : ' · —'}</option>
+          ${CANON_DOMAINS.map((d) => `<option value="${d.id}" ${sk.canon === d.id ? 'selected' : ''}>${esc(t(d.name))}</option>`).join('')}
         </select>
-        <label class="se-proj" title="${t('Проект — не ось колеса баланса (живёт в Целях)')}"><input type="checkbox" data-field="noBalance" ${sk.noBalance ? 'checked' : ''}/> ${t('🏁 проект')}</label>
+        <label class="se-proj" title="${t('Проект — не ось колеса баланса (живёт в Целях)')}"><input type="checkbox" data-field="noBalance" ${sk.noBalance ? 'checked' : ''}/> ${t('Проект')}</label>
         <label class="se-rhythm" title="${t('Как часто ты хочешь заниматься этой сферой. Пусто — частота не объявлена, и сфера не судится.')}"><input type="number" min="1" max="7" step="1" inputmode="numeric" data-field="targetPerWeek" value="${sk.targetPerWeek == null ? '' : esc(String(sk.targetPerWeek))}" placeholder="—" /> ${t('раз в неделю')}</label>
       </div>` : '';
     return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''} ${sk.archived ? 'is-archived' : ''}" data-id="${sk.id}" style="--d:${depth}">
-      <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" title="${t('Выше')}">▲</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" title="${t('Ниже')}">▼</button></span>
-      ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" title="${t('Свернуть/развернуть под-навыки')}">${collapsed[sk.id] ? '▸' : '▾'}</button>` : '<span class="se-collapse-spacer"></span>'}
-      <input type="color" value="${esc(sk.color)}" data-field="color" />
-      <input type="text" value="${esc(sk.name)}" data-field="name" />
-      <select data-field="parentId" title="${t('Вложенность сферы')}">${parentOptions(sk)}</select>
+      <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" aria-label="${t('Выше')}: ${esc(sk.name)}">${satoruIconHTML('action.collapse', 'inline-glyph')}</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" aria-label="${t('Ниже')}: ${esc(sk.name)}">${satoruIconHTML('action.expand', 'inline-glyph')}</button></span>
+      ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" aria-expanded="${!collapsed[sk.id]}" aria-label="${t('Подсферы')}: ${esc(sk.name)}">${satoruIconHTML(collapsed[sk.id] ? 'action.expand' : 'action.collapse', 'inline-glyph')}</button>` : '<span class="se-collapse-spacer"></span>'}
+      <label class="se-color">${t('Цвет сферы')}<input type="color" value="${esc(sk.color || '#6c8cff')}" data-field="color" /></label>
+      ${sk.parentId ? `<label class="se-auto"><input type="checkbox" data-field="colorMode" ${window.SphereColorsV1.automatic(sk) ? 'checked' : ''} /> ${t('Оттенок родителя')}</label>` : ''}
+      <label class="se-name">${t('Название')}<input type="text" value="${esc(sk.name)}" data-field="name" /></label>
+      <label class="se-parent">${t('Вложенность сферы')}<select data-field="parentId">${parentOptions(sk)}</select></label>
       ${sk.archived ? `<span class="se-archived-badge" title="${t('Сфера в архиве')}">${t('Сфера в архиве')}</span><button class="btn ghost sm" data-action="restore-skill" data-id="${sk.id}">${t('Вернуть из архива')}</button>` : `<button class="btn ghost sm" data-action="archive-skill" data-id="${sk.id}" title="${t('Пропадает из пикеров выбора сферы, но история и опыт остаются')}">${t('В архив')}</button>`}
-      <button class="del" data-action="delete-skill" data-id="${sk.id}" title="${t('Удалить совсем — вместе с историей и опытом')}">✕</button>
+      <button class="del" data-action="delete-skill" data-id="${sk.id}" aria-label="${t('Удалить совсем — вместе с историей и опытом')}: ${esc(sk.name)}">${satoruIconHTML('action.delete', 'inline-glyph')}</button>
       ${topExtra}</div>`;
   };
   // Рекурсивный рендер дерева сфер: глубина любая, свёрнутый узел прячет всё поддерево
@@ -32405,10 +32437,7 @@ async function onClick(e) {
   } else if (action === 'ep-type') { document.querySelectorAll('.ep-type').forEach((b) => b.classList.toggle('on', b === el));
   } else if (action === 'ep-social') { _epExtra.social = el.dataset.id; document.querySelectorAll('.ep-soc').forEach((b) => b.classList.toggle('on', b === el));
   } else if (action === 'toggle-restores') {
-    const s = State.settings.skills.find((x) => x.id === el.dataset.id); if (!s) return;
-    s.restores = !s.restores; Store.save('settings', State.settings);
-    toast(s.restores ? t('🌿 Эта сфера восстанавливает — перегрев по ней считать не буду') : t('Снова считаю перегрев по этой сфере'));
-    render();
+    await persistSphereRestores(el.dataset.id);
   } else if (action === 'toggle-layer') {
     // Роль сферы по кругу: не участвует → фон → (если была основной) фон → выключено.
     const q = questById(el.dataset.id); if (!q) return;
@@ -32517,7 +32546,7 @@ async function onClick(e) {
   // --- Настройки ---
   } else if (action === 'add-skill') {
     captureSettingsForm(); // сохранить текущие правки формы, чтобы не потерять
-    State.settings.skills.push({ id: 'sk_' + uid(), name: 'Новая сфера', color: '#6c8cff' }); ensureTrees();
+    State.settings.skills.push({ id: 'sk_' + uid(), name: 'Новая сфера', color: '#6c8cff', colorMode: 'auto' }); ensureTrees();
     Store.save('settings', State.settings); Store.save('skilltree', State.tree); render();
   } else if (action === 'archive-skill') {
     captureSettingsForm();
@@ -32651,6 +32680,8 @@ function captureSettingsForm() {
       // ВАЖНО: строим объект от старого (...old), чтобы НЕ потерять поля канон-маппинга/проекта,
       // которых нет среди простых инпутов (иначе автосейв формы их стирал бы).
       const o = { ...old, id: row.dataset.id, name: row.querySelector('[data-field="name"]').value.trim() || 'Без названия', color: row.querySelector('[data-field="color"]').value, parentId: psel && psel.value ? psel.value : null };
+      const autoColor = row.querySelector('[data-field="colorMode"]');
+      if (autoColor) o.colorMode = autoColor.checked ? 'auto' : 'manual';
       // canon/noBalance живут только у верхних сфер (есть контролы). У под-сфер — чистим (не оси колеса).
       if (canonSel) o.canon = canonSel.value || null; else delete o.canon;
       if (projChk) o.noBalance = projChk.checked; else delete o.noBalance;
@@ -32675,6 +32706,8 @@ function captureSettingsForm() {
       if (!ok || g >= 10) sk.parentId = null;
     }
   }
+  s.skills = window.SphereColorsV1.resolve(s.skills);
+  for (const row of skillRows) { const color = row.querySelector('[data-field="color"]'); if (color) color.value = s.skills.find(sk => sk.id === row.dataset.id).color; }
   // Привычки: 0 строк = пусто легитимно ТОЛЬКО когда секция реально отрендерена. Защита от гонки: пишем лишь если контейнер на месте.
   const habitsList = document.getElementById('habits-list');
   if (habitsList) {
@@ -32765,6 +32798,7 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  State._sphereRestoreBusy = false;
   closeAccountDialog('device-revoke-dialog', { restoreFocus: false });
   Object.assign(deviceUI, { uid: null, epoch: deviceUI.epoch + 1, data: null, busy: false, error: false, checked: 0 });
   cancelInspirationWork();
@@ -33412,6 +33446,11 @@ function onChange(e) {
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
+  if (e.target.dataset.field === 'color' && e.target.closest('#skills-list')) {
+    const row = e.target.closest('.skill-edit'), auto = row.querySelector('[data-field="colorMode"]');
+    if (auto) auto.checked = false;
+    const skill = State.settings.skills.find(s => s.id === row.dataset.id); if (skill) skill.colorMode = 'manual';
+  }
   if (e.target.closest?.('#account-profile-form')) {
     const form = e.target.form || e.target.closest('form'); refreshAccountProfilePreview(form);
     if (e.target.name === 'handle') {
@@ -33809,7 +33848,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v279';
+const PWA_CACHE_VERSION = 'satoru-v280';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -140,6 +140,24 @@
 :root[data-design=next] .secretary-today-kicker{color:var(--design-accent)}
 :root[data-design=next] :is(.eyebrow,.settings-eyebrow,.character-wardrobe-kicker,.shelf-kicker){color:var(--muted);text-transform:none;letter-spacing:.02em}
 :root[data-design=next] .notes-screen{max-width:900px}
+:root[data-design=next] .skill-edit{align-items:end;gap:12px;padding:16px;margin-block:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text)}
+:root[data-design=next] .skill-edit :is(.se-color,.se-name,.se-parent){display:grid;gap:6px;font-size:var(--type-meta);min-width:0}
+:root[data-design=next] .skill-edit .se-color input{width:64px;height:44px}
+:root[data-design=next] .skill-edit .se-name{flex:1 1 180px}
+:root[data-design=next] .skill-edit .se-parent{flex:1 1 200px}
+:root[data-design=next] .skill-edit .se-auto{display:flex;align-items:center;gap:8px;min-height:44px;font-size:var(--type-meta);flex:1 1 170px}
+:root[data-design=next] .skill-edit .se-auto input{width:20px;height:20px;flex:none}
+:root[data-design=next] .skill-edit .se-move{display:flex;gap:4px}
+:root[data-design=next] .skill-edit :is(.se-move button,.se-collapse,.del){display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--text)}
+:root[data-design=next] .ai-pending{display:flex;align-items:center;gap:8px;margin-block:16px;color:var(--muted);font-size:var(--type-body)}
+:root[data-design=next] .load-row{grid-template-columns:minmax(90px,1fr) minmax(70px,2fr) 62px minmax(170px,auto)}
+:root[data-design=next] .load-restore{display:flex;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;min-height:44px;padding:8px;color:var(--text);font:inherit;line-height:1.35}
+:root[data-design=next] .load-restore.on{border-color:var(--good);background:var(--panel2)}
+@media(max-width:600px){
+ :root[data-design=next] .skill-edit,:root[data-design=next] .skill-edit.is-sub{margin-left:min(calc(var(--d,0)*8px),24px);padding:12px}
+ :root[data-design=next] .load-row{grid-template-columns:minmax(70px,1fr) minmax(60px,1fr) 54px;gap:8px;padding-block:8px;border-bottom:1px solid var(--line)}
+ :root[data-design=next] .load-restore{grid-column:1/-1;justify-self:start}
+}
 :root[data-design=next] .task-more:not([open]) > .task-menu{display:none}
 :root[data-design=next] .sphere-selection{display:flex;flex-wrap:wrap;gap:8px;margin-block:8px;max-height:22vh;overflow:auto}
 :root[data-design=next] .sphere-selected-chip{display:flex;align-items:center;gap:8px;min-height:44px;max-width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--text);text-align:left}
@@ -256,7 +274,7 @@
  :root[data-design=next] #nav .mobile-nav-more{display:flex}
  :root[data-design=next] #nav .mobile-secondary,:root[data-design=next] #nav .navgear{display:none}
  :root[data-design=next] #nav .navsec.active{box-shadow:none;background:var(--panel2)}
- :root[data-design=next] #nav .navsec-l{font-size:.75rem}
+ :root[data-design=next] #nav .navsec-l{font-size:.75rem;line-height:1.2;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;hyphens:auto;max-width:100%}
  :root[data-design=next] #nav .navsub{padding:6px 0 0;border:0;gap:4px;flex-wrap:nowrap;overflow:auto;scrollbar-width:none}
  :root[data-design=next] #nav .navsubtab{white-space:nowrap;padding:8px 12px;flex:none}
  :root[data-design=next] #main{padding-top:20px}
