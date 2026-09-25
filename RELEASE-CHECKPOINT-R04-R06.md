@@ -20,7 +20,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R09 | owner decision: one Today hint — one action (rest, overload, mobility; teaser removed) | **published** v291 | `2e345bf` | both domains commit `2e345bf`, `satoru-v291` at 12:48 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 | R10 | follow-up: hidden content (collapsed sections, Settings groups, light theme) | **published** v292 | `41e00cb` | both domains commit `41e00cb`, `satoru-v292` at 13:10 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R11 | follow-up: dialogs and real content (programs, sphere names, legacy windows) | **published** v293 | `e1d4989` | both domains commit `e1d4989`, `satoru-v293` at 13:36 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
-| R12 | follow-up: sign-in, registration and first run | verified locally v294, publishing | — | — |
+| R12 | follow-up: sign-in, registration and first run | **published** v294 | `0d7f3f5` | both domains commit `0d7f3f5`, `satoru-v294` at 14:02 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 
 ## Environment notes for this queue
 
@@ -107,9 +107,14 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
   against the commit blobs for app.js, design-next-v1.css, index.html, sw.js,
   styles.css on both domains; login smoke clean. QA: DIALOGS-V293-QA.md.
 
+- **R12 / v294** `0d7f3f5` — full suite 3152/3152 PASS, 0 skipped (non-root);
+  fast-forward `8acdc36..0d7f3f5`. Both domains deployed (~3 min). SHA256 match
+  against the commit blobs for app.js, design-next-v1.css, index.html, sw.js,
+  styles.css on both domains; login smoke clean. QA: FIRST-RUN-V294-QA.md.
+
 ## Queue status after R06
 
-All packages R04A → R11 are published. Owner decisions 25.09: monetisation gate —
+All packages R04A → R12 are published. Owner decisions 25.09: monetisation gate —
 no change until the owner's documents arrive; the companion name «Тень» stays.
 The four filtered-out Today hints were resolved in R09 by the owner's choice. Open: WebKit and real-device
 checks for every package; real calendar import / iOS share sheet. The external plan

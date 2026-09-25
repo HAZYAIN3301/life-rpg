@@ -32,3 +32,9 @@ Tribe-exit and voucher dialogs: clean (EN 375 dark, DE 1280 light).
 
 **Not verified here:** WebKit, real devices, screen readers (label association was
 verified through the DOM `labels` API).
+
+## Publication
+
+`0d7f3f5` on master 25.09; both domains report it with `satoru-v294` at 14:02 UTC;
+10/10 SHA256 matches against the commit (app.js, design-next-v1.css, index.html,
+sw.js, styles.css × 2 domains); login page loads the v294 shell without errors.
