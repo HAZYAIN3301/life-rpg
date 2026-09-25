@@ -869,3 +869,10 @@
  :root[data-design=next] .task-goal-chip{display:inline-flex;align-items:center;min-height:44px}
 }
 :root[data-design=next] :is(#cat-pop-title,#entry-title,#sphguide-title):focus{outline:none}
+/* R12 (v294): sign-in and registration — readable alpha and privacy notes, 44px text links. */
+:root[data-design=next] :is(.ap-alpha,.privacy-note){font-size:var(--type-micro)}
+:root[data-design=next] .auth-links .link-btn{min-height:44px;display:inline-flex;align-items:center}
+:root[data-design=next] :is(.questionnaire-step,.questionnaire-source-badge),:root[data-design=next] [class*="questionnaire"] small{font-size:var(--type-micro)}
+@media (min-width:601px) and (pointer:fine){
+ :root[data-design=next] .task-goal-chip{display:inline-flex;align-items:center;min-height:24px}
+}

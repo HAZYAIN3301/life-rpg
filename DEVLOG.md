@@ -1,5 +1,12 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R12 — sign-in, registration and first run, v294
+
+Auth labels were not linked to inputs (linkAuthFormLabels); first-run questionnaire
+copy was Russian in all languages (translated); pitch/CTA/voice emoji → icons; 12 px
+notes; 44 px auth links; 24 px desktop goal chip. Tribe/voucher dialogs clean.
+FIRST-RUN-V294-QA.md. Shell/pins v294.
+
 ## [2026-09-25] R11 — dialogs and real content, v293
 
 Full synthetic accounts (goals, habits, notes, rewards) seeded through app flows.

@@ -539,6 +539,11 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // R12 (v294): первый запуск — строки анкеты были по-русски на всех языках.
+  'ИИ сейчас не подключён — ручной путь работает полностью.': { en: 'AI is not connected right now — the manual path works fully.', de: 'KI ist gerade nicht verbunden — der manuelle Weg funktioniert vollständig.', uk: 'ШІ зараз не підключений — ручний шлях працює повністю.', es: 'La IA no está conectada ahora; el camino manual funciona por completo.' },
+  'Проверяю подключение ИИ…': { en: 'Checking the AI connection…', de: 'KI-Verbindung wird geprüft…', uk: 'Перевіряю підключення ШІ…', es: 'Comprobando la conexión con la IA…' },
+  'Предложено как фон': { en: 'Suggested as background', de: 'Als Hintergrund vorgeschlagen', uk: 'Запропоновано як фон', es: 'Propuesta como fondo' },
+  'Предложено как основная сфера': { en: 'Suggested as the main area', de: 'Als Hauptbereich vorgeschlagen', uk: 'Запропоновано як основну сферу', es: 'Propuesta como área principal' },
   // R11 (v293): стартовое содержимое программ-данжей — привычки и квесты новичка были по-русски на любом языке.
   'с нуля': { en: 'from scratch', de: 'bei null', uk: 'з нуля', es: 'desde cero' },
   'Редактор внешности': { en: 'Appearance editor', de: 'Aussehen bearbeiten', uk: 'Редактор зовнішності', es: 'Editor de apariencia' },
@@ -13745,9 +13750,9 @@ function renderLoginScreen() {
       <div class="auth-pitch">
         <p class="ap-lead">${t('RPG, где персонаж — ты. Дела дают опыт, сферы жизни растут уровнями, привычки становятся навыками.')}</p>
         <div class="ap-points">
-          <span>🧭 ${t('Свои сферы: учёба, спорт, творчество — что угодно')}</span>
-          <span>🕯 ${t('Живой спутник Тень — ведёт, а не пилит')}</span>
-          <span>🛡 ${t('Без вины: пропуск не сжигает прогресс. Уровень не сгорает')}</span>
+          <span>${satoruIconHTML('status.balance', 'inline-glyph', '🧭')} ${t('Свои сферы: учёба, спорт, творчество — что угодно')}</span>
+          <span>${satoruIconHTML('nav.shadow', 'inline-glyph', '🕯')} ${t('Живой спутник Тень — ведёт, а не пилит')}</span>
+          <span>${satoruIconHTML('difficulty.protected', 'inline-glyph', '🛡')} ${t('Без вины: пропуск не сжигает прогресс. Уровень не сгорает')}</span>
         </div>
         <p class="ap-alpha muted">${t('Открытая альфа: бесплатно, без карты. Твой фидбек прямо в приложении делает игру лучше — за это дают ачивки.')}</p>
       </div>`;
@@ -13756,7 +13761,7 @@ function renderLoginScreen() {
       <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Превращаем жизнь в игру')}</p></div>
       ${pitch}
       <div class="auth-box">
-        <button class="btn auth-cta" data-action="go-register" style="width:100%">${t('⚡ Начать — создать аккаунт')}</button>
+        <button class="btn auth-cta" data-action="go-register" style="width:100%">${esc(emojiFree(t('⚡ Начать — создать аккаунт')))}</button>
         <div class="auth-or muted">${t('уже играешь?')}</div>
         <form id="login-form">
           <label>Email</label>
@@ -13766,7 +13771,7 @@ function renderLoginScreen() {
           <div id="login-error" class="pin-error"></div>
           <button type="submit" class="btn ghost" style="margin-top:14px;width:100%">${t('Войти')}</button>
         </form>
-        ${isLocal ? `<button class="btn ghost test-login-btn" data-action="test-login" style="margin-top:10px;width:100%">${t('🧪 Войти как тестовый пользователь')}</button>` : ''}
+        ${isLocal ? `<button class="btn ghost test-login-btn" data-action="test-login" style="margin-top:10px;width:100%">${esc(emojiFree(t('🧪 Войти как тестовый пользователь')))}</button>` : ''}
         <div class="auth-links">
           <button class="link-btn" data-action="go-register">${t('Создать аккаунт')}</button>
           <button class="link-btn" data-action="go-reset">${t('Забыл пароль?')}</button>
@@ -14147,13 +14152,13 @@ async function questionnaireDefer() {
 function questionnaireVoiceToggle() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition, button = document.querySelector('[data-action="questionnaire-voice"]'), field = document.getElementById('questionnaire-answer');
   if (!SR || !field) return;
-  if (_obVoice) { try { _obVoice.stop(); } catch {} _obVoice = null; if (button) { button.classList.remove('rec'); button.textContent = `🎤 ${t('Ответить голосом')}`; } return; }
+  if (_obVoice) { try { _obVoice.stop(); } catch {} _obVoice = null; if (button) { button.classList.remove('rec'); button.innerHTML = `${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${esc(t('Ответить голосом'))}`; } return; }
   const rec = new SR(); _obVoice = rec; rec.lang = window.VoiceInputV1 ? window.VoiceInputV1.langTag(lang()) : lang(); rec.continuous = true; rec.interimResults = true;
   let base = field.value;
   rec.onresult = (event) => { let finalText = '', interim = ''; for (let i = event.resultIndex; i < event.results.length; i += 1) { const row = event.results[i]; if (row.isFinal) finalText += row[0].transcript; else interim += row[0].transcript; } if (finalText) base = `${base}${base ? ' ' : ''}${finalText.trim()}`; field.value = `${base}${interim ? ` ${interim}` : ''}`.trim(); questionnaireSourceFromDOM(); };
-  rec.onend = () => { if (_obVoice === rec) _obVoice = null; if (button) { button.classList.remove('rec'); button.textContent = `🎤 ${t('Ответить голосом')}`; } };
+  rec.onend = () => { if (_obVoice === rec) _obVoice = null; if (button) { button.classList.remove('rec'); button.innerHTML = `${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${esc(t('Ответить голосом'))}`; } };
   rec.onerror = () => { State._questionnaireError = t('Не удалось включить микрофон. Ответ можно вписать вручную.'); };
-  try { rec.start(); button?.classList.add('rec'); if (button) button.textContent = `■ ${t('Остановить запись')}`; } catch { _obVoice = null; }
+  try { rec.start(); button?.classList.add('rec'); if (button) button.innerHTML = `${satoruIconHTML('media.stop', 'button-glyph', '■')} ${esc(t('Остановить запись'))}`; } catch { _obVoice = null; }
 }
 
 async function onboardingSave(entries) {
@@ -14217,7 +14222,7 @@ function renderOnboardingScreen() {
     const provider = aiProvider() ? aiProviderLabel(aiProvider()) : aiHouseOK() ? t('ИИ Satoru') : '';
     body = `<header class="questionnaire-head"><span class="questionnaire-step">${stepLabel}</span><h1 id="questionnaire-title" tabindex="-1">${t('Что тебе сейчас важнее всего сдвинуть с места?')}</h1><p>${t('Какой результат ты хочешь увидеть, почему он важен — и какой небольшой шаг готов сделать уже сегодня?')}</p></header>
       <label class="sr-only" for="questionnaire-answer">${t('Твой ответ')}</label><textarea id="questionnaire-answer" rows="7" maxlength="4000" data-noi18n placeholder="${esc(t('Например: хочу выпустить первое видео о Satoru, чтобы начать продвижение. Сегодня открою сценарий, выберу одну сцену и запишу черновой дубль.'))}">${esc(q.rawAnswer || '')}</textarea>
-      <div class="questionnaire-input-tools">${SR ? `<button type="button" class="btn ghost" data-action="questionnaire-voice">🎤 ${t('Ответить голосом')}</button>` : ''}<span class="muted">${t('Один ответ — не анкета на час.')}</span></div>
+      <div class="questionnaire-input-tools">${SR ? `<button type="button" class="btn ghost" data-action="questionnaire-voice">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Ответить голосом')}</button>` : ''}<span class="muted">${t('Один ответ — не анкета на час.')}</span></div>
       ${aiReady ? `<label class="questionnaire-ai-consent"><input id="questionnaire-ai-consent" type="checkbox" ${q.consents && q.consents.sendRawTextToAiProvider ? 'checked' : ''}/><span><b>${t('Разрешить разобрать этот ответ с помощью ИИ')}</b><small>${t('Текст будет отправлен выбранному провайдеру')}: ${esc(provider)}. ${t('Перед записью ты увидишь и исправишь результат.')}</small></span></label>` : `<p class="questionnaire-ai-unavailable">${esc(t(aiKeysKnown() ? 'ИИ сейчас не подключён — ручной путь работает полностью.' : 'Проверяю подключение ИИ…'))}</p>`}
       <details class="questionnaire-plan-import"><summary>${t('У меня уже есть план')}</summary><p>${t('Вставь его в поле выше или выбери текстовый файл. Satoru видит только явно выбранный файл.')}</p><label class="btn ghost questionnaire-file"><span>${t('Выбрать файл')}</span><input id="questionnaire-plan-file" type="file" accept=".txt,.md,text/plain,text/markdown" /></label></details>
       <div class="questionnaire-actions questionnaire-source-actions">${aiReady ? `<button type="button" class="btn questionnaire-primary" data-action="questionnaire-analyze" ${busy ? 'disabled' : ''}>${busy ? t('Разбираю…') : t('Показать, что понял Satoru')}</button>` : ''}<button type="button" class="btn ${aiReady ? 'ghost' : 'questionnaire-primary'}" data-action="questionnaire-manual" ${busy ? 'disabled' : ''}>${t('Продолжить вручную')}</button></div>
@@ -14239,6 +14244,19 @@ function renderOnboardingScreen() {
   });
 }
 
+// R12: на экранах входа подписи стоят над полями, но не были с ними связаны — экранный диктор
+// читал поле без имени. Связываем подпись со следующим полем; полю без подписи даём aria-label.
+function linkAuthFormLabels(root) {
+  if (!root) return;
+  root.querySelectorAll('form').forEach((form, formIndex) => {
+    form.querySelectorAll('input:not([type=hidden])').forEach((input) => {
+      if (!input.id) input.id = `${form.id || `auth-form-${formIndex}`}-${input.name || input.type}`;
+      const label = input.previousElementSibling;
+      if (label && label.tagName === 'LABEL' && !label.htmlFor && !label.querySelector('input')) label.htmlFor = input.id;
+      else if (!input.labels?.length && !input.getAttribute('aria-label') && input.placeholder) input.setAttribute('aria-label', input.placeholder);
+    });
+  });
+}
 function showAuthScreen() {
   if (State.phase === 'login') renderLoginScreen();
   else if (State.phase === 'register-language') renderRegistrationLanguageScreen();
@@ -14246,6 +14264,7 @@ function showAuthScreen() {
   else if (State.phase === 'reset') renderResetScreen();
   else if (State.phase === 'reset-token') renderResetTokenScreen();
   else if (State.phase === 'onboarding') renderOnboardingScreen();
+  if (State.phase !== 'onboarding') linkAuthFormLabels(document.getElementById('app'));
   syncDocumentLanguage();
   if (lang() !== 'ru') { try { translateDOM(document.getElementById('app')); } catch {} }
   paintPwaLifecycleSurface();
@@ -34473,7 +34492,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v293';
+const PWA_CACHE_VERSION = 'satoru-v294';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

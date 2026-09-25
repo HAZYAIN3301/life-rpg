@@ -3,8 +3,9 @@
 - [x] **R11 / v293:** dialogs and real content — programs create content in the
   interface language, sphere names in labels translated, legacy windows are dialogs.
   See DIALOGS-V293-QA.md.
-- [ ] **Small follow-up:** on desktop (fine pointer) the goal chip under a Today quest is
-  22 px high (WCAG 2.5.8 minimum is 24 px; touch already 44 px). ES/UK full-account
+- [x] **R12 / v294:** sign-in, registration and first run audited in five languages;
+  labels linked, questionnaire translated; desktop goal chip 24 px. See
+  FIRST-RUN-V294-QA.md. (Earlier note: the desktop goal chip was 22 px.) ES/UK full-account
   audits after R11 found nothing else beyond the documented exceptions.
 - [ ] **QA data note:** synthetic QA accounts must include goals, habits, notes and
   rewards and keep standard (Russian-stored) sphere names; the older «dense» seeds had
