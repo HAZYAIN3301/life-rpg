@@ -56,6 +56,12 @@ Synthetic isolated accounts only (dense 35 days × RU/EN/DE/UK/ES, 3-day RU, emp
 
 **Not verified here:** WebKit (not installed), real devices, screen readers.
 
+## Publication
+
+`06e7002` on master 25.09; both domains report it with `satoru-v284`; 18/18 SHA256
+matches; unauthenticated login page loads the v284 pin and `ProgressChartsV1`
+without console errors. No production account was opened.
+
 ## Remaining
 
 R04C AI lifecycle, R04D export, R05/R06. DE duration format «10Std 30Min» comes from

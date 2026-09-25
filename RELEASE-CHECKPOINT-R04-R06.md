@@ -10,8 +10,8 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | Package | Scope | State | Commit | Deploy / hashes |
 |---|---|---|---|---|
 | R04A | honest XP / load / insufficient base | **published** v283 | `65a58bb` | both domains `/api/version` commit `65a58bb`, `satoru-v283` at 09:10 UTC 25.09; 20/20 SHA256 (10 files × 2 domains); login page smoke, 0 errors |
-| R04B | dense, understandable charts | implemented, verified locally | pending | pending |
-| R04C | AI lifecycle: timeout, cancel, late response | queued | — | — |
+| R04B | dense, understandable charts | **published** v284 | `06e7002` | both domains commit `06e7002`, `satoru-v284` at 09:37 UTC; 18/18 SHA256 (9 files × 2); login smoke 0 errors |
+| R04C | AI lifecycle: timeout, cancel, late response | in progress | — | — |
 | R04D | export | queued | — | — |
 | R05/R06 | per NEXT.md (routes / companion) | needs NEXT.md scope | — | — |
 
@@ -36,3 +36,8 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
   interface-composition-v1.js, day-load-v1.js, chart-labels-v1.js,
   failure-context-v1.js on satoruapp.com and the Railway domain. Piper/TTS
   unchanged by this package (not re-verified). QA: PROGRESS-MEANING-V283-QA.md.
+- **R04B / v284** `06e7002` — full suite 3108/3108 PASS, 0 skipped (non-root);
+  fast-forward `64668d8..06e7002`. Both domains deployed (~3 min). SHA256 match for
+  app.js, design-next-v1.css, index.html, sw.js, progress-charts-v1.js,
+  chart-labels-v1.js, sphere-load-v1.js, styles.css, interface-composition-v1.js.
+  QA: CHARTS-V284-QA.md.
