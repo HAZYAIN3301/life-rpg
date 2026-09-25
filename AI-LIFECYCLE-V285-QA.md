@@ -52,6 +52,12 @@ were intercepted with synthetic responses — no real AI request was made.
 
 **Not verified here:** WebKit, real devices, real providers.
 
+## Publication
+
+`e4adff1` on master 25.09; both domains report it with `satoru-v285`; 16/16 SHA256
+matches against the commit; the login page loads `AiRequestV1` without console
+errors; unauthenticated `/api/ai/analyze` returns 401. No real AI request was sent.
+
 ## Remaining
 
 Other AI surfaces (category suggestion, stuck-task step, day recap, proposals,
