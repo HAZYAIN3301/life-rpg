@@ -10,7 +10,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | Package | Scope | State | Commit | Deploy / hashes |
 |---|---|---|---|---|
 | R04A | honest XP / load / insufficient base | **published** v283 | `65a58bb` | both domains `/api/version` commit `65a58bb`, `satoru-v283` at 09:10 UTC 25.09; 20/20 SHA256 (10 files × 2 domains); login page smoke, 0 errors |
-| R04B | dense, understandable charts | in progress | — | — |
+| R04B | dense, understandable charts | implemented, verified locally | pending | pending |
 | R04C | AI lifecycle: timeout, cancel, late response | queued | — | — |
 | R04D | export | queued | — | — |
 | R05/R06 | per NEXT.md (routes / companion) | needs NEXT.md scope | — | — |

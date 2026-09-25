@@ -1,5 +1,9 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R04B / v284:** readable HTML charts (XP by day, time by area in Progress and
+  Calendar), usable rhythm wheel on phone/desktop, no truncated sphere names.
+  See CHARTS-V284-QA.md. WebKit/device check remains with the R04A follow-up.
+
 - [x] **R04A / v283:** honest sphere load (observed-day base, named insufficient
   base, no «×0.0»), neutral explained balance index gated on 7 days, completion
   without today's open tasks, XP meaning and «to level N». See PROGRESS-MEANING-V283-QA.md.

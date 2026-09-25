@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R04B — dense, understandable charts, v284
+
+SVG bar charts scaled to ~5px text on phones are replaced by HTML charts from the
+new pure `ProgressChartsV1`: XP by day labels only peak/today and summarises range,
+peak, today and average; time by area is a sorted horizontal list with durations,
+zero spheres folded into one line, and container-query layout for the Calendar
+sidebar. The Hero rhythm panel is no longer squeezed into a 197px column or clipped
+on 1280×900; radar labels are ≥11px without ellipsis, rows wrap names. Registry
+icons/words replace chart emoji; R04A sphere names translate again. Chromium
+metrics (18 combinations × 3 screens), contrast and empty states checked; WebKit
+unavailable. See CHARTS-V284-QA.md. Shell/pins v284.
+
 ## [2026-09-25] R04A — honest XP, load and insufficient base, v283
 
 Sphere load no longer divides the base by 28 days for a young history: new pure

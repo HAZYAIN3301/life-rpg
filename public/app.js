@@ -568,6 +568,15 @@ const I18N_EXTRA = {
   'Отметить сферы, которые восстанавливают': { en: 'Mark areas that restore you', de: 'Bereiche markieren, die dich erholen', uk: 'Позначити сфери, які відновлюють', es: 'Marcar áreas que te reponen' },
   'Баланс появится после 7 дней записей. Это не оценка тебя.': { en: 'Balance appears after 7 days of entries. It is not a judgment of you.', de: 'Die Balance erscheint nach 7 Tagen mit Einträgen. Sie ist keine Bewertung von dir.', uk: 'Баланс з’явиться після 7 днів записів. Це не оцінка тебе.', es: 'El equilibrio aparece tras 7 días de registros. No es un juicio sobre ti.' },
   'Ранги по сферам': { en: 'Ranks by area', de: 'Ränge nach Bereich', uk: 'Ранги за сферами', es: 'Rangos por área' },
+  // R04B: readable charts (v284).
+  'максимум': { en: 'peak', de: 'Höchstwert', uk: 'максимум', es: 'máximo' },
+  'в среднем': { en: 'average', de: 'im Schnitt', uk: 'у середньому', es: 'de media' },
+  'в день': { en: 'per day', de: 'pro Tag', uk: 'на день', es: 'al día' },
+  'Всего': { en: 'Total', de: 'Gesamt', uk: 'Усього', es: 'Total' },
+  'Без записанного времени': { en: 'No recorded time', de: 'Keine erfasste Zeit', uk: 'Без записаного часу', es: 'Sin tiempo registrado' },
+  'За эти дни XP ещё не записан.': { en: 'No XP recorded for these days yet.', de: 'Für diese Tage ist noch keine XP erfasst.', uk: 'За ці дні XP ще не записано.', es: 'Aún no hay XP registrada en estos días.' },
+  'За эту неделю время по сферам ещё не записано.': { en: 'No time by area recorded this week yet.', de: 'Diese Woche ist noch keine Zeit nach Bereichen erfasst.', uk: 'За цей тиждень час за сферами ще не записано.', es: 'Esta semana aún no hay tiempo por áreas registrado.' },
+  'Длина полосы — доля от самой большой сферы.': { en: 'Bar length is relative to the largest area.', de: 'Die Balkenlänge ist relativ zum größten Bereich.', uk: 'Довжина смуги — частка від найбільшої сфери.', es: 'La longitud de la barra es relativa al área más grande.' },
   'Закрыто': { en: 'Closed', de: 'Erledigt', uk: 'Закрито', es: 'Cerradas' },
   'Открытые дела сегодня пока не считаются невыполненными.': { en: "Today's open tasks do not count as missed yet.", de: 'Heute offene Aufgaben zählen noch nicht als verpasst.', uk: 'Відкриті сьогодні справи поки не вважаються невиконаними.', es: 'Las tareas abiertas de hoy aún no cuentan como no hechas.' },
   'Восстанавливает: да': { en: 'Restorative: yes', de: 'Erholsam: ja', uk: 'Відновлює: так', es: 'Me repone: sí' },
@@ -8315,6 +8324,14 @@ async function persistSphereRestores(id) {
   }
 }
 function sphereLoads() { const result = sphereLoadResult(); return result ? result.rows : []; }
+// Сколько дней человек уже записывает (с первой записи опыта, включая сегодня).
+function recordedHistoryDays() {
+  const L = window.SphereLoadV1;
+  if (!L) return 0;
+  let start = null;
+  try { start = L.historyStartOf(xpEvents()); } catch { return 0; }
+  return start ? L.daysBetween(start, todayStr()) + 1 : 0;
+}
 function sphereLoadResult() {
   const L = window.SphereLoadV1;
   if (!L) return null;
@@ -8432,20 +8449,44 @@ function bodyFatCat(bf, sex) {
 
 // ---- SVG: радар сфер (личное десятиборье) + схематичное телосложение ----
 function radarSVG(scores) {
-  const cx = 140, cy = 140, R = 88, n = scores.length, max = Math.max(3, ...scores.map((s) => s.value));
+  // R04B: имена не обрезаются «…» и не сжимаются до 5px. Подпись переносится по месту, которое
+  // есть у её стороны (сбоку меньше, сверху/снизу больше); только слово длиннее места делится
+  // дефисом. При ширине карточки ~290px кегль остаётся ≥11px, подписи не выходят за край.
+  const W = 400, cx = 200, cy = 150, R = 84, CHAR = 8.1, n = scores.length, max = Math.max(3, ...scores.map((s) => s.value));
   const pt = (i, r) => { const ang = -Math.PI / 2 + i * 2 * Math.PI / n; return [cx + r * Math.cos(ang), cy + r * Math.sin(ang)]; };
+  const wrap = (name, LINE) => {
+    const words = [];
+    for (const word of String(name).split(/\s+/).filter(Boolean)) {
+      let rest = word;
+      while (rest.length > LINE) { const cut = Math.max(3, Math.min(LINE - 1, rest.length - 4)); words.push(rest.slice(0, cut) + '-'); rest = rest.slice(cut); }
+      words.push(rest);
+    }
+    const lines = [];
+    for (const word of words) {
+      const last = lines.length ? lines[lines.length - 1] : null;
+      if (last != null && !last.endsWith('-') && (last + ' ' + word).length <= LINE) lines[lines.length - 1] = last + ' ' + word;
+      else if (last != null && last.endsWith('-') && (last + word).length <= LINE + 1) lines[lines.length - 1] = last + word;
+      else lines.push(word);
+    }
+    return lines.length ? lines : [''];
+  };
   let grid = '';
   for (let g = 1; g <= 3; g++) { const poly = scores.map((_, i) => pt(i, R * g / 3).join(',')).join(' '); grid += `<polygon points="${poly}" fill="none" stroke="var(--line)" stroke-width="1"/>`; }
   let axes = '', labels = '';
   scores.forEach((s, i) => {
     const [x, y] = pt(i, R); axes += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line)"/>`;
-    const [lx, ly] = pt(i, R + 18);
-    const txt = s.icon || esc(s.name.length > 11 ? s.name.slice(0, 10) + '…' : s.name);
-    labels += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="${s.icon ? 15 : 10.5}" ${s.icon ? '' : `fill="${esc(s.color)}" font-weight="600"`}>${txt}</text>`;
+    const [lx, ly] = pt(i, R + 14);
+    const dx = lx - cx, anchor = Math.abs(dx) < 12 ? 'middle' : dx > 0 ? 'start' : 'end';
+    if (s.icon) { labels += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="15">${s.icon}</text>`; return; }
+    // Сколько знаков помещается от подписи до края viewBox с её стороны.
+    const room = anchor === 'middle' ? Math.min(lx, W - lx) * 2 : anchor === 'start' ? W - lx : lx;
+    const lines = wrap(s.name, Math.max(6, Math.floor(room / CHAR))), step = 17;
+    const top = ly < cy - 4 ? ly - (lines.length - 1) * step : ly > cy + 4 ? ly : ly - (lines.length - 1) * step / 2;
+    labels += `<text class="radar-label" x="${lx}" y="${top}" text-anchor="${anchor}" dominant-baseline="middle">${lines.map((line, k) => `<tspan x="${lx}" dy="${k ? step : 0}">${esc(line)}</tspan>`).join('')}</text>`;
   });
   const dpoly = scores.map((s, i) => pt(i, R * Math.min(1, s.value / max)).join(',')).join(' ');
-  const dots = scores.map((s, i) => { const [x, y] = pt(i, R * Math.min(1, s.value / max)); return `<circle cx="${x}" cy="${y}" r="3.5" fill="${s.color}"/>`; }).join('');
-  return `<svg viewBox="0 0 280 280" class="radar"><defs><radialGradient id="radg"><stop offset="0%" stop-color="rgba(108,140,255,.35)"/><stop offset="100%" stop-color="rgba(108,140,255,.08)"/></radialGradient></defs>${grid}${axes}<polygon points="${dpoly}" fill="url(#radg)" stroke="var(--accent)" stroke-width="2"/>${dots}${labels}</svg>`;
+  const dots = scores.map((s, i) => { const [x, y] = pt(i, R * Math.min(1, s.value / max)); return `<circle cx="${x}" cy="${y}" r="4" fill="${s.color}" stroke="var(--panel)" stroke-width="2"/>`; }).join('');
+  return `<svg viewBox="0 0 ${W} 300" class="radar" role="img" aria-label="${esc(scores.map((s) => s.name).join(', '))}"><defs><radialGradient id="radg"><stop offset="0%" stop-color="rgba(108,140,255,.35)"/><stop offset="100%" stop-color="rgba(108,140,255,.08)"/></radialGradient></defs>${grid}${axes}<polygon points="${dpoly}" fill="url(#radg)" stroke="var(--accent)" stroke-width="2"/>${dots}${labels}</svg>`;
 }
 function figureSVG() {
   const str = attrScore('str'), end = attrScore('end'), bmi = bodyBMI(), cr = charRank();
@@ -20845,7 +20886,7 @@ function renderToday() {
   // сразу. Двоеточие вместо сказуемого решает это на всех языках.
   const loadNudge = (li && li.quiet.length)
     ? `<div class="card nudge-card load-nudge">
-        <button class="nudge" data-action="goto-stats">${satoruIconHTML('status.balance', 'inline-glyph', '◇')} <span data-noi18n>${esc(li.hot.name)}</span>: ${loadRatioText(li.hot.ratio)} ${t('от обычного за неделю')}. ${t('Нет записей 7+ дней')}: <span data-noi18n>${li.quiet.map((q) => esc(q.name)).join(', ')}</span></button>
+        <button class="nudge" data-action="goto-stats">${satoruIconHTML('status.balance', 'inline-glyph', '◇')} ${sphereNameHTML(li.hot.name)}: ${loadRatioText(li.hot.ratio)} ${t('от обычного за неделю')}. ${t('Нет записей 7+ дней')}: ${li.quiet.map((q) => sphereNameHTML(q.name)).join(', ')}</button>
         <span class="nudge-boost">${t('Это по записанному опыту, а не по самочувствию. Если чувствуешь перегруз — можно дать этой сфере передышку.')}</span></div>`
     : '';
   // 🌅 Возврат после срыва (DISCIPLINE-BOUNDARIES-PLAN §6 п.4). Отличается от эпизода выше:
@@ -21813,15 +21854,17 @@ function balanceWheelCard() {
   const radar = scores.length >= 3
     ? `<div class="radar-wrap">${radarSVG(scores)}</div>`
     : `<p class="muted">${t('Добавь минимум 3 сферы в Настройках — и колесо оживёт.')}</p>`;
-  const balChip = bal.active >= 2
-    ? `<span class="bal-chip" title="${t('Баланс ритма')}">⚖️ ${t('Баланс ритма')} ${bal.index}/100${bal.weakest ? ` · ${esc(i18nWord(bal.weakest.name, lang()))}` : ''}</span>`
+  // R04B/R04A: та же граница, что на «Прогрессе»: индекс только после недели записей,
+  // слабая сфера названа тем, что посчитано, — отдельной строкой, а не чипом в заголовке.
+  const balChip = bal.active >= 2 && recordedHistoryDays() >= 7
+    ? `<p class="bal-chip-line">${t('Баланс ритма')} ${bal.index}/100${bal.weakest ? ` · ${t('Меньше всего времени за 3 недели')}: ${sphereNameHTML(bal.weakest.name)}` : ''}</p>`
     : '';
   const rows = rh.map((r) => balanceRow(r, maxMin, 0)).join('');
   const emptyHint = totalMin === 0
     ? `<p class="muted bal-empty">${t('За последние недели активности в сферах не было. Сделай небольшое дело в одной сфере — и ось оживёт.')}</p>`
     : '';
   const rhythmHelp = t('Длина оси — внимание за последние {days} дней. Уровень не сгорает.').replace('{days}', String(BALANCE_WINDOW_DAYS));
-  return `<div class="card balance-card"><h3>⚖️ ${t('Колесо ритма')} ${balChip}</h3>
+  return `<div class="card balance-card"><h3>${satoruIconHTML('status.balance', 'heading-glyph', '◇')} ${t('Колесо ритма')}</h3>${balChip}
     ${radar}
     <div class="bal-rows">${rows}</div>
     ${emptyHint}
@@ -21834,8 +21877,9 @@ function balanceRow(r, maxMin, depth) {
   const kids = childSkills(r.id), hasKids = kids.length > 0;
   const open = hasKids && State.balanceDrill && State.balanceDrill.has(r.id);
   const pct = Math.round(Math.min(100, (r.min / Math.max(1, maxMin)) * 100));
-  const tag = r.cooled ? `<span class="bal-tag cool" title="${t('Эта сфера давно без активности')}">💤 ${t('остыла')}${r.days === Infinity ? '' : ' ' + r.days + ' ' + t('дн.')}</span>`
-            : r.hot ? `<span class="bal-tag hot" title="${t('Свежая активность')}">🔥</span>` : '';
+  // R04B: смысл метки — словами/иконкой реестра, а не системным эмодзи.
+  const tag = r.cooled ? `<span class="bal-tag cool" title="${t('Эта сфера давно без активности')}">${t('остыла')}${r.days === Infinity ? '' : ' ' + r.days + ' ' + t('дн.')}</span>`
+            : r.hot ? `<span class="bal-tag hot" title="${t('Свежая активность')}">${satoruIconHTML('status.streak', 'inline-emblem', '🔥')}<span class="sr-only">${t('Свежая активность')}</span></span>` : '';
   const caret = hasKids ? `<span class="bal-caret">${open ? '▾' : '▸'}</span>` : '<span class="bal-caret-spacer"></span>';
   const row = `<div class="bal-row${depth ? ' is-sub' : ''}${r.cooled ? ' cooled' : ''}" style="--d:${depth}" ${hasKids ? `data-action="bal-drill" data-id="${r.id}" role="button" tabindex="0" aria-expanded="${open}"` : ''}>
     ${caret}
@@ -21861,7 +21905,7 @@ function canonHintHTML() {
     ? `${rel.icon} ${t('Нет сферы «Отношения» — карта показывает этот пробел без давления.')}`
     : `${t('Пустые жизненные домены:')} ${gaps.slice(0, 3).map((d) => `${d.icon} ${esc(t(d.name))}`).join(' · ')}.`;
   return `<div class="canon-hint">
-    <button class="canon-x" data-action="canon-hint-dismiss" aria-label="${t('Скрыть')}" title="${t('Скрыть')}">✕</button>
+    <button type="button" class="canon-x" data-action="canon-hint-dismiss" aria-label="${t('Скрыть')}" title="${t('Скрыть')}">${satoruIconHTML('action.close', 'inline-glyph', '✕')}</button>
     <div class="canon-hint-body">🧭 ${lead} <span class="muted">${t('Карта лишь показывает, чего ты пока не касаешься. Это не обязательство.')}</span></div>
     <button class="btn ghost sm" data-action="go-settings-skills">${t('+ Добавить сферу')}</button></div>`;
 }
@@ -23854,7 +23898,7 @@ function rangeStats(start, end) {
   const xp = ev.reduce((s, e) => s + e.xp, 0), gold = ev.reduce((s, e) => s + e.gold, 0), min = ev.reduce((s, e) => s + e.min, 0);
   const quests = State.tasks.filter((t) => t.done && dayOf(t) >= start && dayOf(t) <= end).length;
   let habitsC = 0; for (const d in State.habitlog) if (d >= start && d <= end) habitsC += Object.keys(State.habitlog[d]).length;
-  const byArea = leafSkills().map((s) => ({ label: skillLabel(s.id), value: ev.filter((e) => e.skillId === s.id).reduce((a, e) => a + e.min, 0), color: s.color }));
+  const byArea = leafSkills().map((s) => ({ id: s.id, label: skillLabel(s.id), value: ev.filter((e) => e.skillId === s.id).reduce((a, e) => a + e.min, 0), color: s.color }));
   return { xp, gold, min, quests, habitsC, byArea };
 }
 function selectedWeekDate(ws) {
@@ -23938,7 +23982,7 @@ function renderWeekly() {
     ${calendarMoveReceiptHTML()}
     <main class="week-work"><section class="card week-work-card" aria-labelledby="week-work-title"><div class="week-work-head"><div><h3 id="week-work-title"><span class="week-work-title-desktop">${esc(t('Квесты недели'))}</span><span class="week-work-title-mobile">${esc(t('Квесты выбранного дня'))}</span></h3><span class="muted week-selected-summary">${esc(selectedWeekday)} ${dmShort(selectedDay.date)} · ${selectedDay.tasks.length} · ${fmtDur(selectedDay.planned)}</span></div></div><div class="wk-mobile-detail" role="region" aria-label="${esc(t('Выбранный день'))}"><div class="wk-detail-tasks">${detailRows || `<div class="wk-detail-empty"><p>${esc(t('Нет квестов на этот день'))}</p></div>`}</div>${weekAddAreaHTML(selectedDay.date, 'detail')}</div><div class="wk-grid-wrap"><div class="wk-grid">${board}</div></div><p class="wk-hint muted">${esc(t('На desktop можно перетащить квест в другой день; тап, клик или Enter открывает расписание.'))}</p></section></main>
     <aside class="week-secondary"><div class="card week-summary-card"><div class="week-summary-head"><h3>${esc(t('Итоги недели'))}</h3><button type="button" class="btn ghost" data-action="share-week" aria-label="${esc(t('Поделиться итогами недели'))}">${satoruIconHTML('action.share', 'button-glyph', '📤')} ${esc(t('Поделиться'))}</button></div><div class="kpis"><div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div><div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">${t('Золото')}</div></div><div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div><div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div><div class="kpi"><div class="v">${fmtDur(st.min)}</div><div class="l">${t('Времени')}</div></div></div></div>
-    <div class="card week-chart-card"><h3>📊 ${t('Время по сферам')}</h3>${barChartSVG(st.byArea)}</div>
+    <div class="card week-chart-card"><h3>${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Время по сферам')}</h3>${timeBySphereChartHTML(st.byArea)}</div>
     <div class="card week-review-card"><h3>🎯 ${t('Намерение на неделю')}</h3>
       <textarea id="week-intention" placeholder="${esc(t('Что главное на этой неделе? Куда направить фокус…'))}">${esc(wk.intention || '')}</textarea>
       <h3 style="margin-top:14px">🔄 ${t('Итоги недели')}</h3>
@@ -23954,33 +23998,51 @@ function renderWeekly() {
 // ============================================================
 function xpByDay(n) {
   const ev = xpEvents(), out = [];
-  for (let i = n - 1; i >= 0; i--) { const d = addDays(todayStr(), -i); out.push({ label: dmShort(d), value: ev.filter((e) => e.date === d).reduce((s, e) => s + e.xp, 0) }); }
+  for (let i = n - 1; i >= 0; i--) { const d = addDays(todayStr(), -i); out.push({ label: dmShort(d), tick: String(Number(d.slice(8))), value: ev.filter((e) => e.date === d).reduce((s, e) => s + e.xp, 0) }); }
   return out;
 }
 function weekStart(s) { const wd = (parseDate(s).getDay() + 6) % 7; return addDays(s, -wd); }
 function timeByAreaThisWeek() { const ws = weekStart(todayStr()); return rangeStats(ws, addDays(ws, 6)).byArea; }
-// chart-labels-v1: подписи столбцов не слипаются (fb_ms4m1ur2m1ip). Даты можно
-// прореживать (пропуск восстанавливается по соседям), имена сфер — никогда
-// (столбец без подписи никто не опознает) — решает вызывающий через opts.thinnable,
-// сама функция не выбирает, потому что не знает, что именно подписано.
-function barChartSVG(data, opts) {
-  const o = opts || {};
-  const w = 600, h = 190, pad = 26, bw = (w - pad * 2) / Math.max(1, data.length), max = Math.max(1, ...data.map((d) => d.value));
+// R04B: графики — HTML, а не масштабируемый SVG. Раньше viewBox 600×190 сжимался на
+// телефоне почти вдвое, и подписи 9–11px становились 5px. Теперь кегль задаёт CSS,
+// числа подписаны выборочно (максимум и сегодня), время — с единицей, сферы без
+// времени — одной строкой. Модели считает ProgressChartsV1, прореживание дат —
+// прежний ChartLabelsV1 (даты можно прореживать, имена — никогда).
+// Имя сферы: стандартные названия переводятся, свои остаются как есть.
+function sphereNameText(name) { return String(name == null ? '' : name).split(' › ').map((part) => i18nWord(part, lang())).join(' › '); }
+function sphereNameHTML(name) { return `<span data-noi18n>${esc(sphereNameText(name))}</span>`; }
+function xpByDayChartHTML(points) {
+  const C = window.ProgressChartsV1;
+  if (!C) return '';
+  const model = C.columns(points);
+  if (!model.total) return `<p class="muted dchart-empty">${t('За эти дни XP ещё не записан.')}</p>`;
   const L = window.ChartLabelsV1;
-  const layout = L ? L.layout({ labels: data.map((d) => d.label), width: w, pad, fontSize: 9, thinnable: !!o.thinnable })
-    : { mode: 'horizontal', angle: 0, every: 1, maxChars: null };
-  const bars = data.map((d, i) => {
-    const bh = Math.round((d.value / max) * (h - pad * 2)), x = pad + i * bw + bw * 0.15, y = h - pad - bh, ww = bw * 0.7, color = d.color || 'var(--accent)';
-    let lbl = '';
-    if (i % layout.every === 0) {
-      const text = layout.mode === 'truncated' && L ? L.clip(d.label, layout.maxChars) : d.label;
-      const cx = x + ww / 2, cy = h - pad + 14;
-      const rotate = layout.angle ? ` transform="rotate(${layout.angle} ${cx} ${cy})"` : '';
-      lbl = `<text class="bar-lbl" x="${cx}" y="${cy}" text-anchor="${layout.angle ? 'end' : 'middle'}"${rotate}>${esc(text)}</text>`;
-    }
-    return `<rect x="${x}" y="${y}" width="${ww}" height="${bh}" rx="3" fill="${color}"></rect>${d.value ? `<text class="bar-val" x="${x + ww / 2}" y="${y - 4}" text-anchor="middle">${d.value}</text>` : ''}${lbl}`;
-  }).join('');
-  return `<svg viewBox="0 0 ${w} ${h}" class="chart" preserveAspectRatio="xMidYMid meet">${bars}</svg>`;
+  // Ширину берём по узкому телефону: на широком экране подписей не станет меньше.
+  const every = L ? L.layout({ labels: model.cols.map((c) => c.tick), width: 300, pad: 0, fontSize: 12, thinnable: true }).every : 1;
+  const cols = model.cols.map((c, i) => `<li class="dchart-col${c.isMax ? ' is-max' : ''}${c.isLast ? ' is-last' : ''}" title="${esc(c.label)} · ${c.value} XP">
+      <span class="sr-only">${esc(c.label)}: ${c.value} XP</span>
+      <span class="dchart-colplot" aria-hidden="true"><span class="dchart-colbar" style="height:${c.pct}%">${c.showValue ? `<b class="dchart-colval">${c.value}</b>` : ''}</span></span>
+      <span class="dchart-tick" aria-hidden="true">${(i % every === 0 || c.isLast) ? esc(c.tick) : ''}</span></li>`).join('');
+  const first = model.cols[0], last = model.cols[model.lastIndex], peak = model.cols[model.maxIndex];
+  return `<figure class="dchart dchart-columns">
+    <ol class="dchart-plot" aria-label="${esc(t('XP по дням'))}: ${esc(first.label)} – ${esc(last.label)}">${cols}</ol>
+    <figcaption class="dchart-summary">${esc(first.label)} – ${esc(last.label)} · ${t('максимум')} ${peak.value} XP (${esc(peak.label)}) · ${t('сегодня')} ${last.value} XP · ${t('в среднем')} ${model.average} XP ${t('в день')}</figcaption>
+  </figure>`;
+}
+function timeBySphereChartHTML(items, emptyText) {
+  const C = window.ProgressChartsV1;
+  if (!C) return '';
+  const model = C.bars(items);
+  if (!model.total) return `<p class="muted dchart-empty">${emptyText || t('За эту неделю время по сферам ещё не записано.')}</p>`;
+  const rows = model.rows.map((r) => `<li class="dchart-row">
+      <span class="dchart-name"><i class="dchart-key" style="background:${esc(r.color || 'var(--accent)')}" aria-hidden="true"></i>${sphereNameHTML(r.label)}</span>
+      <span class="dchart-num">${fmtDur(r.value)}</span>
+      <span class="dchart-track" aria-hidden="true"><span class="dchart-fill" style="width:${r.pct}%;background:${esc(r.color || 'var(--accent)')}"></span></span></li>`).join('');
+  return `<figure class="dchart dchart-bars">
+    <ol class="dchart-rows">${rows}</ol>
+    ${model.zero.length ? `<p class="muted dchart-zero">${t('Без записанного времени')}: ${model.zero.map((z) => sphereNameHTML(z.label)).join(', ')}</p>` : ''}
+    <figcaption class="dchart-summary">${t('Всего')} ${fmtDur(model.total)}. ${t('Длина полосы — доля от самой большой сферы.')}</figcaption>
+  </figure>`;
 }
 // Ритм сфер: доля тех, кто попал в собственную объявленную частоту. Это ответ
 // `ALTERNEYT.md` §6.1 на «каждый день поровну на все сферы»: сфера с частотой
@@ -24037,9 +24099,9 @@ function renderStats() {
   };
   const skillRanksRows = topSkills().map((s) => rankRow(s, false) + childSkills(s.id).map((c) => rankRow(c, true)).join('')).join('');
   const advanced = isPro()
-    ? `<div class="card"><h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</div>`
+    ? `<div class="card"><h3>${t('Время по сферам')}</h3>${timeBySphereChartHTML(timeByAreaThisWeek())}</div>`
     : `<section class="card locked-card"><button type="button" class="lock-veil" data-action="show-paywall" data-feature="Расширенная аналитика"><span>${satoruIconHTML('status.lock', 'inline-glyph', '◇')} ${t('Расширенная аналитика')} — Pro</span></button>
-        <h3>${t('Время по сферам')}</h3>${barChartSVG(timeByAreaThisWeek())}</section>`;
+        <h3>${t('Время по сферам')}</h3>${timeBySphereChartHTML(timeByAreaThisWeek())}</section>`;
   // Эпизоды: без списка сохранённый период исчезал из виду, а ошибка ИИ в разборе оставалась
   // навсегда неверным опытом — откатить было нечем. Здесь же вход «записать эпизод» вручную,
   // не дожидаясь нуджа (поездку можно отметить сразу, а не после недели тишины).
@@ -24053,7 +24115,7 @@ function renderStats() {
   const loads = loadResult ? loadResult.rows.filter((r) => r.ratio != null || r.recentXp > 0) : [];
   // Переключатель «восстанавливает» нужен у строки ровно тогда, когда он что-то меняет (есть
   // предупреждение) или уже включён; остальные сферы — в одном раскрытии, а не семь кнопок подряд.
-  const loadRestoreButton = (r) => `<button type="button" class="load-restore${r.restores ? ' on' : ''}"${State._sphereRestoreBusy ? ' disabled' : ''} data-action="toggle-restores" data-id="${r.id}" aria-pressed="${r.restores ? 'true' : 'false'}" aria-label="${esc(t('Эта сфера меня восстанавливает — не предупреждать о перегрузе'))}: ${esc(r.name)}">${satoruIconHTML('difficulty.easy', 'inline-glyph')}<span>${t(r.restores ? 'Восстанавливает: да' : 'Восстанавливает: нет')}</span></button>`;
+  const loadRestoreButton = (r) => `<button type="button" class="load-restore${r.restores ? ' on' : ''}"${State._sphereRestoreBusy ? ' disabled' : ''} data-action="toggle-restores" data-id="${r.id}" aria-pressed="${r.restores ? 'true' : 'false'}" aria-label="${esc(t('Эта сфера меня восстанавливает — не предупреждать о перегрузе'))}: ${esc(sphereNameText(r.name))}">${satoruIconHTML('difficulty.easy', 'inline-glyph')}<span>${t(r.restores ? 'Восстанавливает: да' : 'Восстанавливает: нет')}</span></button>`;
   const loadRestoreRest = loads.filter((r) => !r.hot && !r.restores);
   // Фокус после сохранения возвращается на кнопку этой сферы — она не должна оказаться в закрытом раскрытии.
   const loadRestoreOpen = !!document.querySelector('.load-restore-more[open]') || loadRestoreRest.some((r) => r.id === State._sphereRestoreTarget);
@@ -24062,12 +24124,12 @@ function renderStats() {
   const loadCard = !loadResult || !loadResult.historyStart || (!loads.length && loadResult.baseReady) ? '' : `<div class="card load-card"><h3>${satoruIconHTML('status.balance', 'heading-glyph')} ${t('Нагрузка сфер')}</h3>
     ${loadIntro}
     ${!loadResult.baseReady ? `<p class="load-empty"><b>${t('Норма ещё не сложилась')}.</b> ${t('Для сравнения нужно 14 дней записей до последней недели. Сейчас')}: ${localizedDayCount(loadResult.observedBaseDays)}.</p>` : `
-    ${ins ? `<p class="load-insight">${t('Заметно больше обычного')}: <b data-noi18n>${esc(ins.hot.name)}</b> — ${loadRatioText(ins.hot.ratio)}${ins.quiet.length ? `. ${t('Нет записей 7+ дней')}: <span data-noi18n>${ins.quiet.map((q) => esc(q.name)).join(', ')}</span>` : ''}.</p>` : ''}
+    ${ins ? `<p class="load-insight">${t('Заметно больше обычного')}: <b>${sphereNameHTML(ins.hot.name)}</b> — ${loadRatioText(ins.hot.ratio)}${ins.quiet.length ? `. ${t('Нет записей 7+ дней')}: ${ins.quiet.map((q) => sphereNameHTML(q.name)).join(', ')}` : ''}.</p>` : ''}
     <div class="load-rows">${loads.map((r) => {
       const state = r.state === 'unknown' ? 'unknown' : r.state;
       const value = r.ratio == null ? t(loadStateText.unknown) : state === 'none' ? t(loadStateText.none) : `${loadRatioText(r.ratio)} · ${t(loadStateText[state])}`;
       return `<div class="load-row is-${state}${r.hot ? ' is-hot' : ''}">
-        <span class="load-name" data-noi18n>${esc(r.name)}</span>
+        <span class="load-name">${sphereNameHTML(r.name)}</span>
         <span class="load-val">${value}</span>
         <span class="load-bar" aria-hidden="true">${r.scalePct == null ? '<i class="load-none"></i>' : `<i style="width:${r.scalePct}%;background:${esc(r.color)}"></i>`}${r.ratio == null ? '' : `<b class="load-norm" style="left:${loadResult.normPct}%"></b>`}</span>
         ${r.hot || r.restores ? loadRestoreButton(r) : ''}
@@ -24075,7 +24137,7 @@ function renderStats() {
     }).join('')}</div>
     <p class="muted load-legend">${t('Вертикальная отметка на полосе — твой обычный день (×1).')}</p>
     ${loadRestoreRest.length ? `<details class="load-restore-more"${loadRestoreOpen ? ' open' : ''}><summary>${t('Отметить сферы, которые восстанавливают')}</summary>
-      <div class="load-restore-list">${loadRestoreRest.map((r) => `<div class="load-restore-item"><span data-noi18n>${esc(r.name)}</span>${loadRestoreButton(r)}</div>`).join('')}</div>
+      <div class="load-restore-list">${loadRestoreRest.map((r) => `<div class="load-restore-item">${sphereNameHTML(r.name)}${loadRestoreButton(r)}</div>`).join('')}</div>
       <p class="muted load-legend">${t('Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.')}</p></details>`
     : `<p class="muted load-legend">${t('Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.')}</p>`}`}</div>`;
   const epList = (State.episodes || []).slice().sort((a, b) => (a.from < b.from ? 1 : -1));
@@ -24102,7 +24164,7 @@ function renderStats() {
   // объявленных частот — остаётся прежняя строка, ровно как была.
   const rhythmSummary = sphereRhythmSummary();
   const balanceSummary = rhythmSummary || (hasBalanceSignal
-    ? (bal.weakest && bal.index < 80 ? `${t('Меньше всего времени за 3 недели')}: <span data-noi18n>${esc(bal.weakest.name)}</span>` : t('Ритм сфер устойчив'))
+    ? (bal.weakest && bal.index < 80 ? `${t('Меньше всего времени за 3 недели')}: ${sphereNameHTML(bal.weakest.name)}` : t('Ритм сфер устойчив'))
     : (bal.active >= 2 && balanceShortHistory ? t('Баланс появится после 7 дней записей. Это не оценка тебя.') : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.')));
   return `<section class="stats-shell" data-guide-target="stats-overview" aria-labelledby="stats-title">
     <header class="stats-route-head"><h2 id="stats-title" tabindex="-1">${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Прогресс')}</h2></header>
@@ -24116,7 +24178,7 @@ function renderStats() {
     <details class="card stats-progressive"><summary>${t('Ритм и баланс')}</summary><div class="stats-progressive-body">
       <div class="balance-card${hasBalanceSignal ? '' : ' is-observing'}"><div class="bal-head"><h3>${satoruIconHTML('status.balance', 'heading-glyph', '◇')} ${t('Баланс сфер')}</h3><div class="bal-score" style="color:${balColor}">${hasBalanceSignal ? `${bal.index}<small>/100</small>` : '—'}</div></div>${hasBalanceSignal ? `<div class="bal-meter" aria-hidden="true"><span style="width:${bal.index}%;background:var(--accent)"></span></div>` : ''}<p class="muted">${balanceSummary}</p>${hasBalanceSignal ? `<p class="muted stats-meaning">${t('Насколько ровно время распределено между сферами за 3 недели: 100 — поровну и во всех сферах. Это описание, а не оценка.')}</p>` : ''}</div>
       <section><h3>${t('Ранги по сферам')}</h3>${skillRanksRows || `<p class="muted">${t('Добавь навыки в Настройках.')}</p>`}</section>
-      <section><h3>${t('XP по дням')}</h3><p class="muted stats-meaning">${t('XP за закрытое дело: запланированные минуты × сложность + бонус за завершение; привычки, цели и эпизоды тоже дают XP. Это учёт сделанного, а не оценка тебя.')}</p>${barChartSVG(xpByDay(14), { thinnable: true })}</section>
+      <section><h3>${t('XP по дням')}</h3><p class="muted stats-meaning">${t('XP за закрытое дело: запланированные минуты × сложность + бонус за завершение; привычки, цели и эпизоды тоже дают XP. Это учёт сделанного, а не оценка тебя.')}</p>${xpByDayChartHTML(xpByDay(14))}</section>
       ${advanced}${loadCard}
     </div></details>
     <details class="card stats-progressive"><summary>${t('История и контекст')}</summary><div class="stats-progressive-body">${episodesCard}<section><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : `<p class="muted">${t('Пока нет записей.')}</p>`}</section></div></details>
@@ -33888,7 +33950,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v283';
+const PWA_CACHE_VERSION = 'satoru-v284';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
