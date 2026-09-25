@@ -25,3 +25,9 @@ A sweep of all 16 routes at 375 (RU, dense synthetic data) now finds no control 
   at 1280.
 
 **Not verified here:** WebKit, real devices.
+
+## Publication
+
+`c1e2856` on master 25.09; both domains report it with `satoru-v290` at 12:36 UTC;
+10/10 SHA256 matches against the commit (app.js, design-next-v1.css, index.html,
+sw.js, styles.css × 2 domains); login page loads the v290 shell without errors.

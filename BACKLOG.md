@@ -10,12 +10,13 @@
   are rendered but always filtered out on Today by the one-action rule
   (`secretaryNudgeEligible`); decide whether to redesign them as one-action hints or
   delete them. The companion name «Тень» is hard-coded in ~50 Russian strings with
-  case forms — keep unless the owner wants the companion renamed.
+  case forms — owner 25.09: keep the name «Тень».
 
 - [x] **R05 / v287:** remaining screens meet R03B floors (icons, contrast, 12px,
   44px targets). See SCREENS-V287-QA.md.
 - [ ] **Release gate — monetisation:** Settings/paywall still offer «Оформить Pro»,
-  the server answers «soon». Decide what the first free release shows.
+  the server answers «soon». Owner 25.09: no change until the owner's documents and
+  decisions on this side arrive.
 
 - [x] **R04D / v286:** verified account archive download, RFC 5545 .ics with stable
   UIDs, localized 2× «Your week» PNG, dated memory export. See EXPORT-V286-QA.md.

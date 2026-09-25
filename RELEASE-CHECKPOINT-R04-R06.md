@@ -16,7 +16,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R05 | remaining screens by R03B (owner choice 25.09: «Экраны + Тень») | **published** v287 | `6a036a5` | both domains commit `6a036a5`, `satoru-v287`; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | **published** v288 | `3a34a13` | both domains commit `3a34a13`, `satoru-v288` at 11:52 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R07 | follow-up: AI lifecycle on the remaining surfaces (owner 25.09: «делай дальше запланированное») | **published** v289 | `4af8474` | both domains commit `4af8474`, `satoru-v289` at 12:31 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
-| R08 | follow-up: Today touch-target floors (R05 audit remainder) | verified locally v290, publishing | — | — |
+| R08 | follow-up: Today touch-target floors (R05 audit remainder) | **published** v290 | `c1e2856` | both domains commit `c1e2856`, `satoru-v290` at 12:36 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 
 ## Environment notes for this queue
 
@@ -82,11 +82,16 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
   (changed) and styles.css, ai-request-v1.js on both domains; login page loads the
   v289 shell without console errors. QA: AI-SURFACES-V289-QA.md.
 
+- **R08 / v290** `c1e2856` — full suite 3138/3138 PASS, 0 skipped (non-root);
+  fast-forward `d1fdd07..c1e2856`. Both domains deployed (~3 min). SHA256 match
+  against the commit blobs for app.js, design-next-v1.css, index.html, sw.js,
+  styles.css on both domains; login smoke clean. QA: TODAY-FLOORS-V290-QA.md.
+
 ## Queue status after R06
 
-All packages R04A → R06 are published. Open, non-blocking (see BACKLOG): WebKit and
-real-device checks for every package; other AI surfaces onto `AiRequestV1`; real
-calendar import / iOS share sheet; monetisation gate («Оформить Pro» → server
-«soon»); filtered-out Today hints (rest, low energy, mobility, «System» teaser) and
-the hard-coded companion name; Today task-title edit buttons 23px (R03A area). The
-external plan (CHECKPOINT/START/NEXT) must be synced from this file by whoever has it.
+All packages R04A → R08 are published. Owner decisions 25.09: monetisation gate —
+no change until the owner's documents arrive; the companion name «Тень» stays.
+Open: the four filtered-out Today hints (rest, low energy, mobility, «System»
+teaser) — options proposed to the owner, awaiting the choice; WebKit and real-device
+checks for every package; real calendar import / iOS share sheet. The external plan
+(CHECKPOINT/START/NEXT) must be synced from this file by whoever has it.
