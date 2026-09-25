@@ -14,7 +14,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R04C | AI lifecycle: timeout, cancel, late response | **published** v285 | `e4adff1` | both domains commit `e4adff1`, `satoru-v285` at 09:5x UTC; 16/16 SHA256 (8 files × 2); login smoke 0 errors, `/api/ai/analyze` unauthenticated 401 |
 | R04D | export | **published** v286 | `1c3adf0` | both domains commit `1c3adf0`, `satoru-v286`; 18/18 SHA256 (9 files × 2); login smoke 0 errors; unauthenticated `/api/account/export` 401 (now reported in UI) |
 | R05 | remaining screens by R03B (owner choice 25.09: «Экраны + Тень») | **published** v287 | `6a036a5` | both domains commit `6a036a5`, `satoru-v287`; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
-| R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | verified locally v288, publishing | — | — |
+| R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | **published** v288 | `3a34a13` | both domains commit `3a34a13`, `satoru-v288` at 11:52 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 
 ## Environment notes for this queue
 
@@ -68,3 +68,17 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
   fast-forward to master. SHA256 match (commit blobs) for app.js, design-next-v1.css,
   index.html, sw.js, styles.css, calendar-export-v1.js on both domains.
   QA: SCREENS-V287-QA.md.
+- **R06 / v288** `3a34a13` — full suite 3128/3128 PASS, 0 skipped (non-root);
+  fast-forward `c6b27aa..3a34a13` to master. Both domains deployed (~3 min). SHA256
+  match (commit blobs) for app.js, design-next-v1.css, index.html, sw.js (changed)
+  and styles.css, icon-registry.js (unchanged) on both domains; login page loads the
+  v288 shell without console errors. QA: SHADOW-V288-QA.md.
+
+## Queue status after R06
+
+All packages R04A → R06 are published. Open, non-blocking (see BACKLOG): WebKit and
+real-device checks for every package; other AI surfaces onto `AiRequestV1`; real
+calendar import / iOS share sheet; monetisation gate («Оформить Pro» → server
+«soon»); filtered-out Today hints (rest, low energy, mobility, «System» teaser) and
+the hard-coded companion name; Today task-title edit buttons 23px (R03A area). The
+external plan (CHECKPOINT/START/NEXT) must be synced from this file by whoever has it.

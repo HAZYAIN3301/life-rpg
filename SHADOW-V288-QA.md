@@ -53,3 +53,9 @@ test data, shown where a real account would show the voiced phrase.
 
 **Not verified here:** WebKit, real devices, screen readers, real microphone and
 real AI phrasing.
+
+## Publication
+
+`3a34a13` on master 25.09; both domains report it with `satoru-v288` at 11:52 UTC;
+12/12 SHA256 matches (app.js, design-next-v1.css, index.html, sw.js, styles.css,
+icon-registry.js × 2 domains); login page loads the v288 shell without console errors.
