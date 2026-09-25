@@ -50,7 +50,7 @@ test('Habits v126 uses checked load, global write fences and one atomic client t
 });
 
 test('Habits v126 privacy, local-day and non-shaming contracts are explicit', () => {
-  const weekContext = APP.slice(APP.indexOf('function buildWeekContext()'), APP.indexOf('async function runWeeklyReview()'));
+  const weekContext = APP.slice(APP.indexOf('function buildWeekContext()'), APP.indexOf('async function runWeeklyReview('));
   assert.doesNotMatch(weekContext, /State\.antihabits|Анти-привычки/);
   assert.match(APP, /function localDayOrdinal\([\s\S]*Date\.UTC/);
   assert.match(APP, /localDayDistance\(from, habitDayKey\(\)\)/);

@@ -577,6 +577,15 @@ const I18N_EXTRA = {
   'За эти дни XP ещё не записан.': { en: 'No XP recorded for these days yet.', de: 'Für diese Tage ist noch keine XP erfasst.', uk: 'За ці дні XP ще не записано.', es: 'Aún no hay XP registrada en estos días.' },
   'За эту неделю время по сферам ещё не записано.': { en: 'No time by area recorded this week yet.', de: 'Diese Woche ist noch keine Zeit nach Bereichen erfasst.', uk: 'За цей тиждень час за сферами ще не записано.', es: 'Esta semana aún no hay tiempo por áreas registrado.' },
   'Длина полосы — доля от самой большой сферы.': { en: 'Bar length is relative to the largest area.', de: 'Die Balkenlänge ist relativ zum größten Bereich.', uk: 'Довжина смуги — частка від найбільшої сфери.', es: 'La longitud de la barra es relativa al área más grande.' },
+  // R04C: AI lifecycle (v285).
+  'Отменить запрос': { en: 'Cancel request', de: 'Anfrage abbrechen', uk: 'Скасувати запит', es: 'Cancelar solicitud' },
+  'Остановить': { en: 'Stop', de: 'Stoppen', uk: 'Зупинити', es: 'Detener' },
+  'Обычно это до минуты. Можно закрыть окно — запрос будет отменён, ничего не изменится.': { en: 'This usually takes up to a minute. You can close the window — the request will be cancelled and nothing will change.', de: 'Das dauert meist bis zu einer Minute. Du kannst das Fenster schließen — die Anfrage wird abgebrochen, nichts ändert sich.', uk: 'Зазвичай це до хвилини. Можна закрити вікно — запит буде скасовано, нічого не зміниться.', es: 'Suele tardar hasta un minuto. Puedes cerrar la ventana: la solicitud se cancelará y nada cambiará.' },
+  'Тень не ответила за минуту. Запрос отменён, ничего не изменено — можно повторить.': { en: 'Shadow did not answer within a minute. The request was cancelled and nothing changed — you can try again.', de: 'Schatten hat innerhalb einer Minute nicht geantwortet. Die Anfrage wurde abgebrochen, nichts wurde geändert — du kannst es erneut versuchen.', uk: 'Тінь не відповіла за хвилину. Запит скасовано, нічого не змінено — можна повторити.', es: 'Sombra no respondió en un minuto. La solicitud se canceló y nada cambió; puedes intentarlo de nuevo.' },
+  'Сетевая ошибка. Ничего не изменено — можно повторить.': { en: 'Network error. Nothing changed — you can try again.', de: 'Netzwerkfehler. Nichts wurde geändert — du kannst es erneut versuchen.', uk: 'Помилка мережі. Нічого не змінено — можна повторити.', es: 'Error de red. Nada cambió; puedes intentarlo de nuevo.' },
+  'Остановлено. Ничего не изменено — вопрос вернулся в поле ввода.': { en: 'Stopped. Nothing changed — your question is back in the input field.', de: 'Gestoppt. Nichts wurde geändert — deine Frage steht wieder im Eingabefeld.', uk: 'Зупинено. Нічого не змінено — питання повернулося в поле введення.', es: 'Detenido. Nada cambió; tu pregunta volvió al campo de texto.' },
+  'Тень не ответила за полторы минуты. Запрос отменён, ничего не изменено — вопрос вернулся в поле ввода.': { en: 'Shadow did not answer within a minute and a half. The request was cancelled and nothing changed — your question is back in the input field.', de: 'Schatten hat innerhalb von anderthalb Minuten nicht geantwortet. Die Anfrage wurde abgebrochen, nichts wurde geändert — deine Frage steht wieder im Eingabefeld.', uk: 'Тінь не відповіла за півтори хвилини. Запит скасовано, нічого не змінено — питання повернулося в поле введення.', es: 'Sombra no respondió en un minuto y medio. La solicitud se canceló y nada cambió; tu pregunta volvió al campo de texto.' },
+  'Сетевая ошибка. Ничего не изменено — вопрос вернулся в поле ввода.': { en: 'Network error. Nothing changed — your question is back in the input field.', de: 'Netzwerkfehler. Nichts wurde geändert — deine Frage steht wieder im Eingabefeld.', uk: 'Помилка мережі. Нічого не змінено — питання повернулося в поле введення.', es: 'Error de red. Nada cambió; tu pregunta volvió al campo de texto.' },
   'Закрыто': { en: 'Closed', de: 'Erledigt', uk: 'Закрито', es: 'Cerradas' },
   'Открытые дела сегодня пока не считаются невыполненными.': { en: "Today's open tasks do not count as missed yet.", de: 'Heute offene Aufgaben zählen noch nicht als verpasst.', uk: 'Відкриті сьогодні справи поки не вважаються невиконаними.', es: 'Las tareas abiertas de hoy aún no cuentan como no hechas.' },
   'Восстанавливает: да': { en: 'Restorative: yes', de: 'Erholsam: ja', uk: 'Відновлює: так', es: 'Me repone: sí' },
@@ -15831,28 +15840,73 @@ function buildWeekContext() {
   // without a separate, explicit disclosure and consent surface.
   return `НЕДЕЛЯ ${start}…${end}\nВремя по сферам:\n${sphereLines}\nИндекс баланса: ${bal.index}/100${bal.weakest ? ` (отстаёт: ${bal.weakest.name})` : ''}\nСегодня закрыто: ${load.done}${load.known ? ` при обычных ${load.typical} (${dayLoadMeta(load).text})` : ' (обычный день ещё не известен — мало наблюдений)'}\nЗаписи об отдыхе на сегодня: ${restLine} (ограниченный поиск по тексту; не измеряет отдых или самочувствие за выбранную неделю)\nРадар сфер: ${radar}\nЦели:\n${goals}${reflBlock}${wkBlock}${bpBlock}`;
 }
-async function runWeeklyReview() {
-  if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return; }
-  openAiModal(t('Разбор недели'), `<p class="muted">${esc(t('Анализирую твою неделю…'))}</p>`, true);
-  const system = window.ShadowPersonaV1.systemInstruction({ surface: 'chat', lang: lang() }) + '\n\nРАЗБОР НЕДЕЛИ. Опирайся на записи за указанный период и собственные слова человека в рефлексии, намерении и итогах. Назови 2–3 конкретных наблюдения о записанном времени, делах и сферах; отдели факты от гипотез. Предложи 1–2 выполнимых шага, отвечающих его вопросу или намерению. Строка «Записи об отдыхе на сегодня» — ограниченный поиск по текстам, не измерение отдыха, усталости или самочувствия и не данные о выбранной прошлой неделе. Отсутствие записей не делает отдых обязательным главным выводом. Нагрузка и индекс баланса тоже не измеряют состояние человека. Если человек сам описал трудность, учитывай её прямо, без диагноза и без автоматического списка задач. Длина соответствует содержанию; тёплый, прямой ответ без оценки дня или человека. ' + aiAnswerLangLine();
-  try {
-    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
-    const d = await r.json();
-    if (d.error && aiHandleErr(d)) { const m = document.getElementById('ai-modal'); if (m) m.remove(); return; }
-    if (!r.ok || !d.text) { openAiModal(t('Разбор недели'), `<p class="muted">${esc(t('Не удалось выполнить запрос. Попробуй ещё раз.'))}</p>`); return; }
-    const weekBody = window.MdLiteV1 ? window.MdLiteV1.render(d.text) : esc(d.text).replace(/\n/g, '<br>');
-    openAiModal(t('Разбор недели'), `<div class="ai-out" data-tts>${weekBody}${ttsBtnHTML()}</div>`);
-    track('ai:weekly');
-    // Недельный разбор — естественная точка обновления профиля: раз в неделю, когда
-    // человек и так пришёл смотреть итоги, а не на каждый рендер. silent, чтобы
-    // второй тост и перерисовка не перебивали открытый разбор.
-    refreshProfile({ silent: true });
-  } catch { openAiModal(t('Разбор недели'), `<p class="muted">${esc(t('Сетевая ошибка'))}</p>`); }
+// R04C: «Разбор недели» живёт как один отменяемый запрос. Закрыть окно, нажать «Отменить»,
+// начать новый разбор или выйти из аккаунта — значит прервать запрос; поздний ответ никогда
+// не открывает окно заново и не попадает в следующий аккаунт. Зависший провайдер больше
+// не держит спиннер вечно: через WEEKLY_REVIEW_TIMEOUT_MS честно сообщаем и даём повторить.
+const WEEKLY_REVIEW_TIMEOUT_MS = 60000;
+let _weeklyReviewRequest = null, _aiModalReturnFocus = null;
+function cancelWeeklyReview() {
+  const request = _weeklyReviewRequest;
+  _weeklyReviewRequest = null;
+  if (request) request.cancel();
 }
+function closeAiModal({ restoreFocus = true } = {}) {
+  cancelWeeklyReview();
+  const modal = document.getElementById('ai-modal');
+  if (modal) modal.remove();
+  const target = _aiModalReturnFocus;
+  _aiModalReturnFocus = null;
+  if (restoreFocus && target && target.isConnected) target.focus();
+  else if (restoreFocus) document.querySelector('[data-action="ai-review"]')?.focus();
+}
+function weeklyReviewNoticeHTML(message) {
+  return `<p class="ai-notice" role="status">${esc(message)}</p><div class="ai-actions"><button type="button" class="btn" data-action="ai-review-retry">${esc(t('Повторить'))}</button><button type="button" class="btn ghost" data-action="ai-close">${esc(t('Закрыть'))}</button></div>`;
+}
+async function runWeeklyReview(opener) {
+  if (!canUseAi()) { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return; }
+  const A = window.AiRequestV1;
+  if (!A) return;
+  cancelWeeklyReview();
+  if (opener && opener.focus) _aiModalReturnFocus = opener;
+  else if (!document.getElementById('ai-modal')) _aiModalReturnFocus = document.activeElement;
+  const accountId = State.me?.id, writeEpoch = Store._writeEpoch;
+  const title = t('Разбор недели');
+  const request = A.create({
+    timeoutMs: WEEKLY_REVIEW_TIMEOUT_MS,
+    isCurrent: () => request === _weeklyReviewRequest && accountId === State.me?.id && writeEpoch === Store._writeEpoch && !!document.getElementById('ai-modal'),
+  });
+  _weeklyReviewRequest = request;
+  openAiModal(title, `<div class="ai-pending" role="status">${satoruIconHTML('action.refresh', 'inline-glyph')} ${esc(t('Анализирую твою неделю…'))}</div><p class="muted ai-wait-note">${esc(t('Обычно это до минуты. Можно закрыть окно — запрос будет отменён, ничего не изменится.'))}</p><div class="ai-actions"><button type="button" class="btn ghost" data-action="ai-review-cancel">${esc(t('Отменить запрос'))}</button></div>`);
+  const system = window.ShadowPersonaV1.systemInstruction({ surface: 'chat', lang: lang() }) + '\n\nРАЗБОР НЕДЕЛИ. Опирайся на записи за указанный период и собственные слова человека в рефлексии, намерении и итогах. Назови 2–3 конкретных наблюдения о записанном времени, делах и сферах; отдели факты от гипотез. Предложи 1–2 выполнимых шага, отвечающих его вопросу или намерению. Строка «Записи об отдыхе на сегодня» — ограниченный поиск по текстам, не измерение отдыха, усталости или самочувствия и не данные о выбранной прошлой неделе. Отсутствие записей не делает отдых обязательным главным выводом. Нагрузка и индекс баланса тоже не измеряют состояние человека. Если человек сам описал трудность, учитывай её прямо, без диагноза и без автоматического списка задач. Длина соответствует содержанию; тёплый, прямой ответ без оценки дня или человека. ' + aiAnswerLangLine();
+  const out = await request.run(async (signal) => {
+    const response = await fetch('/api/ai/analyze', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt: buildWeekContext() }) });
+    return { ok: response.ok, data: await response.json() };
+  });
+  // Отменён, заменён новым разбором, окно закрыто или аккаунт сменился — молчим.
+  if (out.status === 'cancelled' || out.status === 'stale') return;
+  _weeklyReviewRequest = null;
+  if (out.status === 'timeout') { openAiModal(title, weeklyReviewNoticeHTML(t('Тень не ответила за минуту. Запрос отменён, ничего не изменено — можно повторить.'))); focusAiModal(); return; }
+  if (out.status === 'error') { openAiModal(title, weeklyReviewNoticeHTML(t('Сетевая ошибка. Ничего не изменено — можно повторить.'))); focusAiModal(); return; }
+  const { ok, data: d } = out.value;
+  if (d.error && aiHandleErr(d)) { closeAiModal({ restoreFocus: false }); return; }
+  if (!ok || !d.text) { openAiModal(title, weeklyReviewNoticeHTML(t('Не удалось выполнить запрос. Попробуй ещё раз.'))); focusAiModal(); return; }
+  const weekBody = window.MdLiteV1 ? window.MdLiteV1.render(d.text) : esc(d.text).replace(/\n/g, '<br>');
+  openAiModal(title, `<div class="ai-out" data-tts>${weekBody}${ttsBtnHTML()}</div>`);
+  focusAiModal();
+  track('ai:weekly');
+  // Недельный разбор — естественная точка обновления профиля: раз в неделю, когда
+  // человек и так пришёл смотреть итоги, а не на каждый рендер. silent, чтобы
+  // второй тост и перерисовка не перебивали открытый разбор.
+  refreshProfile({ silent: true });
+}
+function focusAiModal() { document.getElementById('ai-modal-title')?.focus(); }
 function openAiModal(title, bodyHtml, loading) {
   let ov = document.getElementById('ai-modal');
+  const created = !ov;
   if (!ov) { ov = document.createElement('div'); ov.id = 'ai-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
-  ov.innerHTML = `<div class="ai-box" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title"><button class="modal-x" data-action="ai-close" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'inline-glyph')}</button><h3 id="ai-modal-title">${satoruIconHTML('nav.shadow', 'heading-glyph')} ${esc(String(title).replace(/^🤖\s*/, ''))}</h3>${loading ? `<div class="ai-pending" role="status">${satoruIconHTML('action.refresh', 'inline-glyph')} ${esc(t('Обрабатываю…'))}</div>` : ''}<div class="ai-body">${bodyHtml}</div></div>`;
+  ov.innerHTML = `<div class="ai-box" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title"><button class="modal-x" data-action="ai-close" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'inline-glyph')}</button><h3 id="ai-modal-title" tabindex="-1">${satoruIconHTML('nav.shadow', 'heading-glyph')} ${esc(String(title).replace(/^🤖\s*/, ''))}</h3>${loading ? `<div class="ai-pending" role="status">${satoruIconHTML('action.refresh', 'inline-glyph')} ${esc(t('Обрабатываю…'))}</div>` : ''}<div class="ai-body">${bodyHtml}</div></div>`;
+  if (created) focusAiModal();
 }
 // ---- Движок «Предложений»: ИИ предлагает → ты одобряешь/отклоняешь ----
 let _proposals = []; // последний полученный набор предложений
@@ -16872,7 +16926,7 @@ function renderChatMessages() {
     const body = window.MdLiteV1 ? window.MdLiteV1.render(m.content) : esc(m.content).replace(/\n/g, '<br>');
     const sources = m.fileSources?.length ? `<details class="chat-file-sources"><summary class="btn ghost sm">${t('Переданные модели фрагменты')}</summary>${m.fileSources.map(s => `<p><b>${esc(s.name)} · [${esc(s.id)}:L${s.start}-L${s.end}]</b></p><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${esc(s.text)}</pre>`).join('')}</details>` : '';
     return `<div class="chat-msg ai" data-tts${m.guideResponseId ? ` data-guide-target="helper-response" data-response-id="${esc(m.guideResponseId)}" tabindex="-1"` : ''}>${body}${ttsBtnHTML()}${sources}${refused}${acts}</div>`;
-  }).join('') + (State._chatBusy ? `<div class="chat-msg ai typing"><span>${t('Тень формулирует ответ')}</span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>` : '');
+  }).join('') + (State._chatBusy ? `<div class="chat-msg ai typing"><span>${t('Тень формулирует ответ')}</span><span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span><button type="button" class="btn ghost sm chat-stop" data-action="chat-stop">${t('Остановить')}</button></div>` : '');
   box.scrollTop = box.scrollHeight;
   if (guideV3ContextActive('jarvis', 'helper-response-seen') && !State._guideV3AssistantCompleting) {
     const requestId = String(State._guideV3AssistantRequestId || '');
@@ -17029,6 +17083,12 @@ async function applyChatActions(msg, checks) {
   const total = Object.values(results).filter((result) => result.status === 'done').length;
   return { total, results };
 }
+// R04C: вопрос в чате — отменяемый запрос с таймаутом. Раньше зависший провайдер навсегда
+// оставлял чат «занятым»: новый вопрос отправить было нельзя. Теперь «Остановить» или
+// CHAT_TIMEOUT_MS возвращают вопрос в поле ввода; ответ после этого не показывается.
+const CHAT_TIMEOUT_MS = 90000;
+let _chatRequest = null;
+function stopChatRequest() { if (_chatRequest) _chatRequest.cancel(); }
 async function sendChat(text) {
   text = String(text || '').trim(); if (!text || State._chatBusy) return;
   if (!canUseAi()) { openHelperChat(); return; }
@@ -17048,10 +17108,26 @@ async function sendChat(text) {
     const attachment = State._chatPlanAttachment;
     const fileSources = attachment?.ownerId === accountId && attachment?.epoch === writeEpoch
       ? window.AssistantFileSearchV1.search(attachment.documents, text).map(({ id, name, start, end, text }) => ({ id, name, start, end, text })) : [];
-    const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages }) });
-    const d = await r.json();
-    if (staleChat()) return;
+    const request = window.AiRequestV1.create({ timeoutMs: CHAT_TIMEOUT_MS, isCurrent: () => !staleChat() && request === _chatRequest });
+    _chatRequest = request;
+    const out = await request.run(async (signal) => {
+      const response = await fetch('/api/ai/chat', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages }) });
+      return { response, data: await response.json() };
+    });
+    if (staleChat() || out.status === 'stale') return;
+    if (_chatRequest === request) _chatRequest = null;
     State._chatBusy = false;
+    if (out.status === 'cancelled' || out.status === 'timeout' || out.status === 'error') {
+      State.chatLog.push({ role: 'assistant', content: out.status === 'cancelled'
+        ? t('Остановлено. Ничего не изменено — вопрос вернулся в поле ввода.')
+        : out.status === 'timeout'
+          ? t('Тень не ответила за полторы минуты. Запрос отменён, ничего не изменено — вопрос вернулся в поле ввода.')
+          : t('Сетевая ошибка. Ничего не изменено — вопрос вернулся в поле ввода.') });
+      renderChatMessages();
+      const back = document.getElementById('chat-input'); if (back) { back.value = text; back.focus(); }
+      return;
+    }
+    const r = out.value.response, d = out.value.data;
     // Лимит — не повод терять надиктованное. Сообщение человека ОСТАЁТСЯ в переписке,
     // а текст возвращается в поле ввода: повторить должно стоить одно нажатие.
     if (d.error === 'rate_limit') {
@@ -32342,7 +32418,7 @@ async function onClick(e) {
     State._inboxFocusAfterCommit = el.dataset.id && (State.inbox || []).some(note => note.id === el.dataset.id)
       ? `#note-${CSS.escape(el.dataset.id)}-text` : '#notes-title';
     track('view:notes'); render();
-  } else if (action === 'ai-review') { runWeeklyReview();
+  } else if (action === 'ai-review') { runWeeklyReview(el);
   } else if (action === 'ai-import-goals') { openProposeModal('goals');
   } else if (action === 'ai-import-levels') { openProposeModal('calibrate');
   } else if (action === 'propose-run') { runPropose(el.dataset.kind);
@@ -32602,7 +32678,9 @@ async function onClick(e) {
     const card = el.closest('.card'); const form = card && card.querySelector('#add-task');
     const sel = sphereFieldInput(form); const box = card && card.querySelector('#cat-suggest');
     if (box && sel) aiCatSuggest(el.dataset.title, box, sel);
-  } else if (action === 'ai-close') { const m = document.getElementById('ai-modal'); if (m) m.remove();
+  } else if (action === 'ai-close' || action === 'ai-review-cancel') { closeAiModal();
+  } else if (action === 'ai-review-retry') { runWeeklyReview(_aiModalReturnFocus);
+  } else if (action === 'chat-stop') { stopChatRequest();
   } else if (action === 'notes-retry') {
     (async () => {
       const loaded = await Store.loadChecked('inbox', [], validateInboxPayload);
@@ -32930,6 +33008,9 @@ function clearAllData() {
   State._inspirationSection = 'today'; State._inspirationSetupOpen = false; State._inspirationDraft = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
   delete State._chatPlanAttachment; State._chatBusy = false;
+  // R04C: запросы прошлого аккаунта прерываются, их окна и поздние ответы не переживают выход.
+  cancelWeeklyReview(); document.getElementById('ai-modal')?.remove(); _aiModalReturnFocus = null;
+  if (_chatRequest) { const request = _chatRequest; _chatRequest = null; request.cancel(); }
   State._chatFileGeneration = (State._chatFileGeneration || 0) + 1;
   State.telemetryConsent = null; State._telemetryConsentLoaded = false; State._telemetryConsentBusy = false; State._telemetryConsentError = '';
   State.aiMemory = null; State._aiMemoryLoaded = false; State._aiMemoryBusy = false; State._aiMemoryError = ''; State._aiMemoryEditing = '';
@@ -33950,7 +34031,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v284';
+const PWA_CACHE_VERSION = 'satoru-v285';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -34154,6 +34235,7 @@ async function init() {
       return;
     }
     if (handleTreeDialogKeydown(e)) return;
+    if (e.key === 'Escape' && document.getElementById('ai-modal')) { e.preventDefault(); closeAiModal(); return; }
     if (e.target.matches?.(':is(.hsub,.goals-view-tabs,.today-tabs,.today-mode-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
       const at = tabs.indexOf(e.target); let next = at;

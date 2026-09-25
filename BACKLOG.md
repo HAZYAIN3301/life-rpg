@@ -1,5 +1,10 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R04C / v285:** weekly review and chat have timeout, cancel and late-response
+  fencing; server provider calls time out. See AI-LIFECYCLE-V285-QA.md.
+- [ ] **R04C follow-up:** move category suggestion, stuck-task step, day recap,
+  proposals and Inspiration AI calls onto `AiRequestV1` (client cancel/timeout).
+
 - [x] **R04B / v284:** readable HTML charts (XP by day, time by area in Progress and
   Calendar), usable rhythm wheel on phone/desktop, no truncated sphere names.
   See CHARTS-V284-QA.md. WebKit/device check remains with the R04A follow-up.

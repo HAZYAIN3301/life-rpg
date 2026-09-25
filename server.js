@@ -1297,6 +1297,10 @@ async function pushTick() {
 function aiKeysFile(id) { return path.join(userDataDir(id), 'ai-keys.json'); }
 function loadAiKeys(id) { try { return JSON.parse(fs.readFileSync(aiKeysFile(id), 'utf8')); } catch { return {}; } }
 // HTTPS POST JSON → { status, json }. Для прокси к Anthropic/OpenAI ключом юзера.
+// R04C: провайдер, который принял запрос и замолчал, больше не держит ответ (и спиннер
+// человека) бесконечно. Таймаут простоя сокета, а не общей длины: медленная, но идущая
+// генерация не обрывается. Ошибка уходит в обычный путь provider_unavailable.
+const AI_UPSTREAM_TIMEOUT_MS = Math.max(5000, Math.min(300000, Number(process.env.AI_UPSTREAM_TIMEOUT_MS) || 120000));
 function httpsPostJson(host, pathName, headers, bodyObj) {
   return new Promise((resolve, reject) => {
     const body = Buffer.from(JSON.stringify(bodyObj));
@@ -1313,6 +1317,7 @@ function httpsPostJson(host, pathName, headers, bodyObj) {
         resolve({ status: resp.statusCode, json });
       });
     });
+    r.setTimeout(AI_UPSTREAM_TIMEOUT_MS, () => r.destroy(Object.assign(new Error('AI provider timeout'), { code: 'AI_UPSTREAM_TIMEOUT' })));
     r.on('error', reject); r.write(body); r.end();
   });
 }

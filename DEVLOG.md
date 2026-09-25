@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R04C — AI lifecycle: timeout, cancel, late response, v285
+
+New pure `AiRequestV1` gives each AI request an AbortController, timeout and one
+final status. Weekly review: 60 s timeout notice with retry, «Отменить запрос»,
+✕/Escape abort, late answers never reopen a closed window or reach the next
+account, newer request wins, focus returns to the trigger. Chat: «Остановить» and a
+90 s timeout return the question to the input instead of staying busy forever.
+Server provider calls get an idle timeout (120 s, `AI_UPSTREAM_TIMEOUT_MS`).
+Intercepted synthetic AI only; real-time timeouts verified. AI-LIFECYCLE-V285-QA.md.
+Shell/pins v285.
+
 ## [2026-09-25] R04B — dense, understandable charts, v284
 
 SVG bar charts scaled to ~5px text on phones are replaced by HTML charts from the
