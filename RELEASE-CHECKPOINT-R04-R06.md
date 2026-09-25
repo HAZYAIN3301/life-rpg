@@ -13,7 +13,8 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R04B | dense, understandable charts | **published** v284 | `06e7002` | both domains commit `06e7002`, `satoru-v284` at 09:37 UTC; 18/18 SHA256 (9 files × 2); login smoke 0 errors |
 | R04C | AI lifecycle: timeout, cancel, late response | **published** v285 | `e4adff1` | both domains commit `e4adff1`, `satoru-v285` at 09:5x UTC; 16/16 SHA256 (8 files × 2); login smoke 0 errors, `/api/ai/analyze` unauthenticated 401 |
 | R04D | export | **published** v286 | `1c3adf0` | both domains commit `1c3adf0`, `satoru-v286`; 18/18 SHA256 (9 files × 2); login smoke 0 errors; unauthenticated `/api/account/export` 401 (now reported in UI) |
-| R05/R06 | per NEXT.md (routes / companion) | **waiting for owner scope** (NEXT.md not readable in the cloud session); route audit done | — | — |
+| R05 | remaining screens by R03B (owner choice 25.09: «Экраны + Тень») | implemented, verified locally | pending | pending |
+| R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | queued | — | — |
 
 ## Environment notes for this queue
 

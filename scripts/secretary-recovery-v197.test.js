@@ -269,7 +269,8 @@ test('secretary registry icons and capture emoji remain decorative for assistive
 
 
   const capture = section(APP, 'function captureBar(options = {}) {', '\nfunction validateInboxPayload(');
-  assert.match(capture, /<span aria-hidden="true">📝<\/span> \$\{noteCount\}/);
+  // v287: the notes shortcut uses the shared registry icon, which is aria-hidden (checked above).
+  assert.match(capture, /\$\{satoruIconHTML\('media\.notes', 'inline-glyph', '📝'\)\} \$\{noteCount\}/);
 
   const companion = section(APP, 'function companionCard(controlHTML = \'\') {', '\n// ============================================================\n//  Питомцы по сферам');
   assert.match(companion, /<span aria-hidden="true">\$\{expanded \? '⌃' : '⌄'\}<\/span>/);

@@ -14469,10 +14469,10 @@ function calModeToggle(mode) {
 }
 function calRemindBtn() {
   const on = State.settings && State.settings.remind;
-  return `<button type="button" class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" aria-pressed="${on ? 'true' : 'false'}" aria-label="${esc(t('Напоминания о квестах со временем'))}" title="${esc(t('Напоминания о квестах со временем'))}"><span class="cal-tool-icon" aria-hidden="true">${on ? '🔔' : '🔕'}</span> <span class="cal-tool-copy">${esc(t('Напоминания'))}</span></button>`;
+  return `<button type="button" class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" aria-pressed="${on ? 'true' : 'false'}" aria-label="${esc(t('Напоминания о квестах со временем'))}" title="${esc(t('Напоминания о квестах со временем'))}">${satoruIconHTML(on ? 'status.bell' : 'status.bell-muted', 'cal-tool-icon', on ? '🔔' : '🔕')} <span class="cal-tool-copy">${esc(t('Напоминания'))}</span></button>`;
 }
-function calExportBtn() { return `<button type="button" class="btn ghost sm" data-action="export-ics" aria-label="${esc(t('Экспорт календаря'))}" title="${esc(t('Экспорт календаря'))}"><span class="cal-tool-icon" aria-hidden="true">📆</span> <span class="cal-tool-copy">${esc(t('Экспорт'))}</span></button>`; }
-function calSubscribeBtn() { return `<button type="button" class="btn ghost sm" data-action="show-cal-subscribe" aria-label="${esc(t('Живая подписка на квесты'))}" title="${esc(t('Живая подписка на квесты'))}"><span class="cal-tool-icon" aria-hidden="true">📅</span> <span class="cal-tool-copy">${esc(t('Подписка'))}</span></button>`; }
+function calExportBtn() { return `<button type="button" class="btn ghost sm" data-action="export-ics" aria-label="${esc(t('Экспорт календаря'))}" title="${esc(t('Экспорт календаря'))}">${satoruIconHTML('action.export', 'cal-tool-icon', '📆')} <span class="cal-tool-copy">${esc(t('Экспорт'))}</span></button>`; }
+function calSubscribeBtn() { return `<button type="button" class="btn ghost sm" data-action="show-cal-subscribe" aria-label="${esc(t('Живая подписка на квесты'))}" title="${esc(t('Живая подписка на квесты'))}">${satoruIconHTML('system.calendar', 'cal-tool-icon', '📅')} <span class="cal-tool-copy">${esc(t('Подписка'))}</span></button>`; }
 function calendarToolsHTML() {
   return `<div class="cal-tools" role="group" aria-label="${esc(t('Инструменты календаря'))}">${calExportBtn()}${calSubscribeBtn()}${calRemindBtn()}</div>`;
 }
@@ -15217,7 +15217,7 @@ function habitCreateFormHTML() {
     <label><span>${t('Сфера')}</span><select name="skillId">${skills}</select></label>
     <label><span>${t('Минут')}</span><input name="estimateMin" type="number" min="1" max="1440" value="${existing ? Math.max(1, Math.min(1440, Math.round(Number(existing.estimateMin) || 10))) : 10}" inputmode="numeric"></label>
     <fieldset data-guide-target="habit-schedule"><legend>${t('Дни недели')}</legend><div class="habit-day-picks">${days}</div></fieldset>
-    <label class="habit-two-minute"><span>${t('⏱ Версия 2 минут')}</span><input name="twoMin" maxlength="200" autocomplete="off" value="${esc(existing?.atomic?.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}"${guideCompose ? ' required' : ''} data-guide-target="habit-two-minute" data-noi18n></label>
+    <label class="habit-two-minute"><span>${esc(emojiFree(t('⏱ Версия 2 минут')))}</span><input name="twoMin" maxlength="200" autocomplete="off" value="${esc(existing?.atomic?.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}"${guideCompose ? ' required' : ''} data-guide-target="habit-two-minute" data-noi18n></label>
     <p class="habit-form-status" role="status"></p><button type="submit" class="btn">${t(existing ? 'Сохранить' : 'Создать')}</button></form>`;
 }
 function lawsBlock(title, laws, kind) {
@@ -15233,7 +15233,7 @@ function habitsBuildHTML() {
       <summary class="hb-top"><b data-noi18n>${esc(h.title)}</b><span class="muted">${h.archived ? t('Пауза') + ' · ' : ''}<span data-noi18n>${esc(sk.name)}</span> · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></summary>
       <div class="habit-editor-body"><button type="button" class="btn ghost habit-schedule-edit" data-action="habit-edit" data-id="${esc(h.id)}">${t('Расписание и параметры')}</button><label class="hb-field">${t('🪪 Идентичность')} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
       <label class="hb-field">${t('📍 Сигнал / связка')} <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="${t('После [привычки] я…')}" /></label>
-      <label class="hb-field">${t('⏱ Версия 2 минут')} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label></div>
+      <label class="hb-field">${esc(emojiFree(t('⏱ Версия 2 минут')))} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label></div>
     </details>`;
   }).join('') : `<p class="muted">${t('Пока нет привычек — добавь и спроектируй по 4 законам.')}</p>`;
   // Ориентир экрана — собственные слова человека, если он их написал. Родовое
@@ -17190,7 +17190,7 @@ function captureBar(options = {}) {
   const noteCount = (State.inbox || []).length;
   const mediaTools = guideTextOnly ? '' : `<button type="button" class="cap-btn" data-action="cap-voice" aria-label="${t('Голосовая заметка')}">${satoruIconHTML('media.microphone', 'capture-glyph', '🎤')}</button>
       <button type="button" class="cap-btn" data-action="cap-video" aria-label="${t('Видео-заметка')}">${satoruIconHTML('media.video', 'capture-glyph', '🎥')}</button>`;
-  const secondaryTools = guideTextOnly ? '' : `<button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button><button class="capture-notes-link" data-action="goto-notes" title="${t('Открыть заметки')}" aria-label="${t('Открыть заметки')}: ${noteCount}"><span aria-hidden="true">📝</span> ${noteCount}</button>`;
+  const secondaryTools = guideTextOnly ? '' : `<button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button><button class="capture-notes-link" data-action="goto-notes" title="${t('Открыть заметки')}" aria-label="${t('Открыть заметки')}: ${noteCount}">${satoruIconHTML('media.notes', 'inline-glyph', '📝')} ${noteCount}</button>`;
   return `<div class="card capture-card ${expanded ? 'is-expanded' : 'is-compact'}">
     <form id="capture-form" class="cap-row" data-guide-target="note-capture">
       <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" placeholder="${t('Текст заметки…')}" autocomplete="off" />
@@ -17863,7 +17863,7 @@ function companionCard(controlHTML = '') {
   const lastText = last && last.kind === 'ms' && last.title
     ? `🚩 ${last.skillId ? skillLabel(last.skillId) : ''}: ${treeNodeCopy(last, 'title')}`
     : last && last.text;
-  const peek = (last && last.date === today) ? `<p class="comp-peek muted" data-noi18n>${satoruIconHTML(last.kind === 'm' ? 'nav.today' : last.kind === 'ms' ? 'status.milestone' : 'system.day-end', 'inline-glyph', '◇')} «${esc(lastText)}»</p>` : '';
+  const peek = (last && last.date === today) ? `<p class="comp-peek muted" data-noi18n>${satoruIconHTML(last.kind === 'm' ? 'nav.today' : last.kind === 'ms' ? 'goal.completed' : 'system.day-end', 'inline-glyph', '◇')} «${esc(lastText)}»</p>` : '';
   const guide = guideV3State();
   const guideContactTarget = guideV3RuntimeAllowed()
     && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER && guide.currentStep === 'bond'
@@ -18351,7 +18351,7 @@ function fortuneAppearanceSummary(sphereId) {
 }
 function fortuneControlsHTML(sphereId) {
   return `<div class="fortune-edit-launch">
-    <button type="button" class="btn ghost sm fortune-edit-btn" data-action="open-fortune-editor" data-id="${esc(sphereId)}"><span aria-hidden="true">🪞</span> ${t('Настроить облик')}</button>
+    <button type="button" class="btn ghost sm fortune-edit-btn" data-action="open-fortune-editor" data-id="${esc(sphereId)}">${satoruIconHTML('action.edit', 'inline-glyph', '◇')} ${t('Настроить облик')}</button>
     <small class="fortune-edit-summary">${esc(fortuneAppearanceSummary(sphereId))}</small>
   </div>`;
 }
@@ -18560,7 +18560,7 @@ function renderPets() {
     </div>` : '';
     const canonicalGuardian = activeSpecies === 'bodyToad' || activeSpecies === 'resourcesPenguin';
     const artAction = activeSpecies === 'resourcesPenguin' ? 'resources-penguin-card-interact' : 'pet-feed';
-    return `<details id="pet-summary-${esc(s.id)}" class="card pet-card pet-summary pet-card-${activeSpecies}${canonicalGuardian ? ' pet-card-canonical-guardian' : ''}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}"${priorityPet && priorityPet.s.id === s.id ? ' open' : ''}><summary><span class="pet-summary-name"><b>${esc(nm)}</b><small>${esc(s.name)}</small></span><span class="pet-badge" style="background:${meta.color}22;color:${meta.color}">${displayState}</span><span class="pet-summary-state">${line}</span></summary><div class="pet-summary-body">
+    return `<details id="pet-summary-${esc(s.id)}" class="card pet-card pet-summary pet-card-${activeSpecies}${canonicalGuardian ? ' pet-card-canonical-guardian' : ''}${activeSpecies === 'bodyToad' ? ' pet-card-body-toad' : ''}"${priorityPet && priorityPet.s.id === s.id ? ' open' : ''}><summary><span class="pet-summary-name"><b>${esc(nm)}</b><small>${esc(s.name)}</small></span><span class="pet-badge" style="--badge-color:${meta.color}">${displayState}</span><span class="pet-summary-state">${line}</span></summary><div class="pet-summary-body">
       <button type="button" class="pet-art pet-art-action" data-action="${artAction}" data-id="${s.id}"${activeSpecies === 'resourcesPenguin' ? ' data-mode="greet"' : ''} aria-label="${t('Погладить питомца')}: ${esc(nm)}">${petSVG(s.color || '#6c8cff', st.state, traits, s.id, idle)}</button>
       ${nameRow}${sub}
       ${activeSpecies === 'bodyToad' ? `<div class="body-toad-domain-badge">${t('BODY · канонический хранитель')}</div>` : activeSpecies === 'resourcesPenguin' ? `<div class="body-toad-domain-badge resources-penguin-domain-badge">${t('MONEY / RESOURCES · канонический хранитель')}</div>` : `<label class="pet-species-picker"><span>${t('Облик')}</span><select data-action="set-pet-species" data-id="${s.id}" aria-label="${t('Облик')}: ${esc(nm)}">${petSpeciesOptions(selectedSpecies)}</select></label>`}
@@ -18572,7 +18572,7 @@ function renderPets() {
   }).join('');
   const recoveryState = recoverySlugState();
   const recoveryMeta = window.RecoverySlugV1 && window.RecoverySlugV1.STATE_META[recoveryState];
-  const recoveryCard = window.RecoverySlugV1 ? `<details class="card pet-card pet-summary pet-card-recovery-slug"><summary><span class="pet-summary-name"><b>${t('Кацую')}</b><small>${t('Хранительница отдыха')}</small></span><span class="pet-badge" style="background:#79b8aa22;color:#79b8aa">${t(recoveryMeta.label)}</span><span class="pet-summary-state">${t(recoveryMeta.line)}</span></summary><div class="pet-summary-body">
+  const recoveryCard = window.RecoverySlugV1 ? `<details class="card pet-card pet-summary pet-card-recovery-slug"><summary><span class="pet-summary-name"><b>${t('Кацую')}</b><small>${t('Хранительница отдыха')}</small></span><span class="pet-badge" style="--badge-color:#79b8aa">${t(recoveryMeta.label)}</span><span class="pet-summary-state">${t(recoveryMeta.line)}</span></summary><div class="pet-summary-body">
       <button type="button" class="pet-art pet-art-action" data-action="recovery-slug-react" aria-label="${t('Побыть рядом с Кацую')}">${recoverySlugHTML({ className: 'recovery-slug-v1--card' })}</button>
       <p class="pet-sphere muted">${t('Состояние по записям, не измерение самочувствия.')}</p>
       <div class="body-toad-domain-badge recovery-slug-domain-badge">${t('RECOVERY · скрытый канонический сигнал')}</div>
@@ -21724,7 +21724,7 @@ function treePathHTML(id, tree) {
     <p class="tree-v4-trace-meta">${esc(treeClaimTrace(node))}</p>${node.proofNote ? `<p class="tree-v4-proof" data-noi18n>${esc(node.proofNote)}</p>` : ''}</div></article>`).join('');
   const olderTrace = claimed.length > 3 ? `<details class="tree-v4-future"><summary>${t('Показать весь путь')} · ${claimed.length}</summary><div class="tree-v4-trace-list">${claimed.slice(0, -3).reverse().map((node) => `<article class="tree-v4-trace-item"><span class="tree-v4-trace-state" aria-hidden="true">✓</span><div><h4 data-noi18n>${esc(treeNodeCopy(node, 'title'))}</h4><p class="tree-v4-trace-meta">${esc(treeClaimTrace(node))}</p>${node.proofNote ? `<p class="tree-v4-proof" data-noi18n>${esc(node.proofNote)}</p>` : ''}</div></article>`).join('')}</div></details>` : '';
   const nextCard = next ? `<article class="tree-v4-next" data-guide-target="tree-v4-next" data-node="${esc(next.id)}" aria-labelledby="tree-v4-next-title">
-      <div class="tree-v4-next-head"><span class="tree-v4-kicker">⚑ ${t('Следующая реальная веха')}</span><h3 id="tree-v4-next-title" data-noi18n>${esc(treeNodeCopy(next, 'title'))}</h3></div>
+      <div class="tree-v4-next-head"><span class="tree-v4-kicker">${satoruIconHTML('goal.completed', 'inline-emblem', '⚑')} ${t('Следующая реальная веха')}</span><h3 id="tree-v4-next-title" data-noi18n>${esc(treeNodeCopy(next, 'title'))}</h3></div>
       <div class="tree-v4-next-grid"><div><b>${t('Что считается результатом')}</b><p data-noi18n>${esc(treeNodeCriterion(next) || t('Критерий ещё не настроен'))}</p></div>
       ${treeNodeNextAction(next) ? `<div><b>${t('Следующий шаг')}</b><p data-noi18n>${esc(treeNodeNextAction(next))}</p></div>` : `<div><b>${t('Следующий шаг')}</b><p>${t('Настрой путь с Тенью — она предложит конкретное действие для этой вехи.')}</p></div>`}</div>
       <div class="tree-v4-actions">${treeNodeNextAction(next) ? `<button class="btn" data-action="tree-plan-step" data-node="${esc(next.id)}" ${State._treePlanBusy === next.id ? 'disabled' : ''}>${State._treePlanBusy === next.id ? t('Сохраняю…') : t('Добавить шаг в план')}</button>` : `<button class="btn" data-action="treemap-open">${t('Настроить путь с Тенью')}</button>`}
@@ -21777,7 +21777,7 @@ function renderTree() {
   const edit = State.treeEdit, layer = edit ? 'practices' : (State.treeLayer === 'practices' ? 'practices' : 'path');
   const avail = treePointsAvailable(id), earned = treePointsEarned(id), spent = treePointsSpent(id), claimed = treeMilestonesTaken(id);
   const treeHero = `<section class="card tree-hero" style="--c:${esc(sk.color)}"><div><span class="th-kicker">Satoru · ${t('Карта развития')}</span><h2 id="tree-route-title">${esc(skillLabel(id))}</h2><p>${t('Вехи фиксируют то, что ты реально можешь. Игровые бонусы меняют только Satoru.')}</p></div><div class="tree-hero-stats"><span><b>${skillLevelOf(id)}</b><small>${t('Практика')}</small></span><span><b>${claimed}</b><small>${t('вех подтверждено')}</small></span><span><b>${avail}</b><small>${t('очк. бонусов')}</small></span></div></section>`;
-  const layerSwitch = `<div class="tree-v4-switch" role="group" aria-label="${t('Слой карты')}"><button type="button" class="tree-v4-tab ${layer === 'path' ? 'is-active' : ''}" data-action="tree-layer" data-layer="path" aria-pressed="${layer === 'path'}" ${edit ? 'disabled' : ''}>⚑ ${t('Путь')}</button><button type="button" class="tree-v4-tab ${layer === 'practices' ? 'is-active' : ''}" data-action="tree-layer" data-layer="practices" aria-pressed="${layer === 'practices'}">◇ ${t('Игровые бонусы')}</button></div>`;
+  const layerSwitch = `<div class="tree-v4-switch" role="group" aria-label="${t('Слой карты')}"><button type="button" class="tree-v4-tab ${layer === 'path' ? 'is-active' : ''}" data-action="tree-layer" data-layer="path" aria-pressed="${layer === 'path'}" ${edit ? 'disabled' : ''}>${satoruIconHTML('nav.skills', 'inline-glyph', '⚑')} ${t('Путь')}</button><button type="button" class="tree-v4-tab ${layer === 'practices' ? 'is-active' : ''}" data-action="tree-layer" data-layer="practices" aria-pressed="${layer === 'practices'}">${satoruIconHTML('system.achievement', 'inline-glyph', '◇')} ${t('Игровые бонусы')}</button></div>`;
   const content = layer === 'path' ? treePathHTML(id, tree) : treePracticesHTML(id, tree, sk, edit, avail, earned, spent);
   return `<div class="tree-shell" data-guide-target="tree-overview" aria-labelledby="tree-route-title">${treeHero}<div class="card tree-tabs-card"><div class="tree-tabs" role="group" aria-label="${t('Сфера карты')}">${tabs}</div></div>${layerSwitch}<div id="tree-route-content">${content}</div></div>`;
 }
@@ -22033,8 +22033,8 @@ function renderCharacter() {
       <h3 id="character-secondary-title">${t('Дополнительно')}</h3>
       <div class="character-secondary-grid">
         <details class="character-secondary-panel" data-character-panel="poses"${secondaryOpen('poses')}><summary><span>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} <b>${t('Живые позы')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body">${avatarEditor()}</div></details>
-        <details class="character-secondary-panel" data-character-panel="rhythm"${secondaryOpen('rhythm')}><summary><span>⚖️ <b>${t('Ритм сфер')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body">${balanceWheelCard()}</div></details>
-        <details class="character-secondary-panel" data-character-panel="body"${secondaryOpen('body')}><summary><span>🧍 <b>${t('Телосложение')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body"><div class="card character-body-card"><h3>${t('Телосложение')}</h3><div class="figure-wrap">${figureSVG()}</div>${bmiLabel}<p class="muted" style="font-size:var(--type-meta)">${t('Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.')}</p>${bodyForm}</div></div></details>
+        <details class="character-secondary-panel" data-character-panel="rhythm"${secondaryOpen('rhythm')}><summary><span>${satoruIconHTML('status.balance', 'inline-glyph', '◇')} <b>${t('Ритм сфер')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body">${balanceWheelCard()}</div></details>
+        <details class="character-secondary-panel" data-character-panel="body"${secondaryOpen('body')}><summary><span>${satoruIconHTML('nav.hero', 'inline-glyph', '◇')} <b>${t('Телосложение')}</b></span><span aria-hidden="true">＋</span></summary><div class="character-secondary-body"><div class="card character-body-card"><h3>${t('Телосложение')}</h3><div class="figure-wrap">${figureSVG()}</div>${bmiLabel}<p class="muted" style="font-size:var(--type-meta)">${t('Силуэт живой: сила расширяет плечи, выносливость подсушивает, вес влияет на талию.')}</p>${bodyForm}</div></div></details>
       </div>
     </section>
   </div>`;
@@ -22604,19 +22604,19 @@ function svgToPng(svgStr, w, h, scale = 2) {
 // ============================================================
 function subscriptionCard() {
   const e = ent(), dl = trialDaysLeft();
-  const tierLabel = e.tier === 'pro' ? '💎 Pro' : (e.tier === 'trial' ? `✨ ${t('Pro-триал')} · ${localizedDayCount(dl)}` : t('Free'));
+  const tierLabel = e.tier === 'pro' ? 'Pro' : (e.tier === 'trial' ? `${t('Pro-триал')} · ${localizedDayCount(dl)}` : t('Free'));
   let cta = '';
   if (e.tier === 'free') {
-    if (!e.trialUsed) cta += `<button class="btn" data-action="start-trial">${t('✨ 7 дней Pro бесплатно')}</button>`;
-    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">${t('💎 Оформить Pro')}</button>`;
+    if (!e.trialUsed) cta += `<button class="btn" data-action="start-trial">${esc(emojiFree(t('✨ 7 дней Pro бесплатно')))}</button>`;
+    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">${esc(emojiFree(t('💎 Оформить Pro')))}</button>`;
   } else if (e.tier === 'trial') {
-    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">${t('💎 Оформить Pro насовсем')}</button>`;
+    cta += `<button class="btn pro-cta" data-action="show-paywall" data-feature="Pro">${esc(emojiFree(t('💎 Оформить Pro насовсем')))}</button>`;
   }
   const feats = ['📊 Расширенная аналитика и Индекс баланса', '💛 Pro не меняет награды, вероятность, XP или золото', '🧍 Живой персонаж и кастомизация (скоро)', '🤖 ИИ-ассистент (на своём ключе — есть бесплатные)', '🎨 Темы оформления (скоро)'];
   return `<div class="card sub-card">
     <h3>${t('Подписка —')} <span class="tier-badge tier-${e.tier}">${tierLabel}</span></h3>
-    <ul class="pro-feats">${feats.map((f) => `<li>${t(f)}</li>`).join('')}</ul>
-    <div class="settings-actions">${cta || `<span class="muted">${t('Спасибо за поддержку 💛')}</span>`}</div></div>`;
+    <ul class="pro-feats">${feats.map((f) => `<li>${esc(emojiFree(t(f)))}</li>`).join('')}</ul>
+    <div class="settings-actions">${cta || `<span class="muted">${esc(emojiFree(t('Спасибо за поддержку 💛')))}</span>`}</div></div>`;
 }
 let _accountDialogReturnFocus = null;
 let _guideV3BlockingSurfaceObserver = null;
@@ -22758,7 +22758,7 @@ function securityCard() {
          <label><span>${t('Пароль (8+)')}</span><input name="password" type="password" autocomplete="new-password" minlength="8" required /></label>
          <button type="submit" class="btn">${t('Привязать')}</button><span id="add-email-msg" class="muted"></span></form>`;
   const passwordBlock = hasEmail
-    ? `<h3 style="margin-top:16px">${t('🔐 Сменить пароль')}</h3>
+    ? `<h3 style="margin-top:16px">${esc(emojiFree(t('🔐 Сменить пароль')))}</h3>
       <form id="change-password" class="account-credential-form">
         <label><span>${t('Текущий пароль')}</span><input name="currentPassword" type="password" autocomplete="current-password" required /></label>
         <label><span>${t('Новый пароль (8+)')}</span><input name="newPassword" type="password" autocomplete="new-password" minlength="8" required /></label>
@@ -22766,16 +22766,16 @@ function securityCard() {
         <button type="submit" class="btn">${t('Сменить пароль')}</button><span class="account-form-status muted" role="status" aria-live="polite"></span>
       </form>` : '';
   const pinBlock = hasPin
-    ? `<h3 style="margin-top:16px">${t('🔐 Сменить PIN')}</h3>
+    ? `<h3 style="margin-top:16px">${esc(emojiFree(t('🔐 Сменить PIN')))}</h3>
     <form id="change-pin" class="pin-change">
       <label><span>${t('Текущий PIN')}</span><input name="oldPin" type="password" inputmode="numeric" maxlength="8" required /></label>
       <label><span>${t('Новый PIN (4+)')}</span><input name="newPin" type="password" inputmode="numeric" minlength="4" maxlength="8" required /></label>
       <button type="submit" class="btn">${t('Сменить')}</button><span id="pin-change-msg" class="muted"></span></form>`
     : '';
-  return `<div class="card"><h3>${t('🔑 Вход и восстановление')}</h3>${emailBlock}${passwordBlock}${pinBlock}
+  return `<div class="card"><h3>${satoruIconHTML('status.lock', 'heading-glyph', '◇')} ${esc(emojiFree(t('🔑 Вход и восстановление')))}</h3>${emailBlock}${passwordBlock}${pinBlock}
     <div class="settings-actions account-session-actions"><button type="button" class="btn ghost" data-action="logout-all">${t('Выйти на всех устройствах')}</button></div>
     <div class="danger-zone">
-      <h3>${t('⚠️ Данные и приватность')}</h3>
+      <h3>${satoruIconHTML('status.info', 'heading-glyph', '◇')} ${esc(emojiFree(t('⚠️ Данные и приватность')))}</h3>
       <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Мы храним только то, что ты вводишь сам: цели, квесты, дневник, привычки. Удаление аккаунта удаляет всё с сервера (DSGVO/GDPR).')}</p>
       <button class="btn ghost danger-btn" data-action="show-delete-account">${t('Удалить аккаунт и все данные')}</button>
     </div>
@@ -23554,16 +23554,16 @@ function showPaywall(feature) {
   const trialBtn = (e.tier === 'free' && !e.trialUsed) ? `<button class="btn" data-action="start-trial">${t('✨ 7 дней Pro бесплатно')}</button>` : '';
   const ov = document.createElement('div'); ov.id = 'paywall'; ov.className = 'modal-overlay';
   ov.innerHTML = `<section class="paywall-box v204-dialog" role="dialog" aria-modal="true" aria-labelledby="paywall-title" aria-describedby="paywall-desc">
-    <button type="button" class="modal-x" data-action="close-paywall" aria-label="${esc(t('Закрыть'))}">✕</button>
-    <div class="pw-crown">💎</div>
+    <button type="button" class="modal-x" data-action="close-paywall" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'inline-glyph', '✕')}</button>
+    <div class="pw-crown">${satoruIconHTML('nav.rewards', 'pw-crown-icon', '◇')}</div>
     <h2 id="paywall-title" tabindex="-1">${feature && feature !== 'Pro' ? esc(t(feature)) + ' — Pro' : 'Satoru Pro'}</h2>
     <p id="paywall-desc" class="muted">${t('Открой глубину игры. Ядро всегда бесплатно — Pro добавляет силу.')}</p>
     <ul class="pro-feats">
-      <li>${t('📊 Расширенная аналитика и Индекс баланса')}</li>
-      <li>${t('💛 Pro не меняет награды, вероятность, XP или золото')}</li>
-      <li>${t('🧍 Живой персонаж и кастомизация (скоро)')}</li>
-      <li>${t('🤖 ИИ-ассистент (на своём ключе — есть бесплатные)')}</li>
-      <li>${t('🎨 Темы оформления (скоро)')}</li></ul>
+      <li>${esc(emojiFree(t('📊 Расширенная аналитика и Индекс баланса')))}</li>
+      <li>${esc(emojiFree(t('💛 Pro не меняет награды, вероятность, XP или золото')))}</li>
+      <li>${esc(emojiFree(t('🧍 Живой персонаж и кастомизация (скоро)')))}</li>
+      <li>${esc(emojiFree(t('🤖 ИИ-ассистент (на своём ключе — есть бесплатные)')))}</li>
+      <li>${esc(emojiFree(t('🎨 Темы оформления (скоро)')))}</li></ul>
     <div class="pw-actions">${trialBtn}<button class="btn pro-cta" data-action="do-upgrade">${t('Оформить Pro')}</button></div>
     <p class="muted pw-fine">${t('Без карты для триала. Даунгрейд никогда не удаляет данные.')}</p></section>`;
   mountAccountDialog(ov, { initial: '#paywall-title', returnFocus: document.activeElement });
@@ -24117,11 +24117,11 @@ function renderWeekly() {
     <header class="card calv-head"><div class="calv-title"><div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="week-prev" aria-label="${esc(t('Предыдущая неделя'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" class="week-screen-title" tabindex="-1">${esc(t('Неделя'))} ${dmShort(ws)} – ${dmShort(end)}${isThis ? ` <span class="muted">· ${esc(t('(текущая)'))}</span>` : ''}</h2><button type="button" class="btn ghost sm cal-nav-next" data-action="week-next" aria-label="${esc(t('Следующая неделя'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button></div>${calModeToggle('week')}${calendarToolsHTML()}</div><div class="calv-strip week-overview" role="group" aria-label="${esc(t('Дни выбранной недели'))}">${strip}</div></header>
     ${calendarMoveReceiptHTML()}
     <main class="week-work"><section class="card week-work-card" aria-labelledby="week-work-title"><div class="week-work-head"><div><h3 id="week-work-title"><span class="week-work-title-desktop">${esc(t('Квесты недели'))}</span><span class="week-work-title-mobile">${esc(t('Квесты выбранного дня'))}</span></h3><span class="muted week-selected-summary">${esc(selectedWeekday)} ${dmShort(selectedDay.date)} · ${selectedDay.tasks.length} · ${fmtDur(selectedDay.planned)}</span></div></div><div class="wk-mobile-detail" role="region" aria-label="${esc(t('Выбранный день'))}"><div class="wk-detail-tasks">${detailRows || `<div class="wk-detail-empty"><p>${esc(t('Нет квестов на этот день'))}</p></div>`}</div>${weekAddAreaHTML(selectedDay.date, 'detail')}</div><div class="wk-grid-wrap"><div class="wk-grid">${board}</div></div><p class="wk-hint muted">${esc(t('На desktop можно перетащить квест в другой день; тап, клик или Enter открывает расписание.'))}</p></section></main>
-    <aside class="week-secondary"><div class="card week-summary-card"><div class="week-summary-head"><h3>${esc(t('Итоги недели'))}</h3><button type="button" class="btn ghost" data-action="share-week" aria-label="${esc(t('Поделиться итогами недели'))}">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${esc(t('Поделиться'))}</button></div><div class="kpis"><div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div><div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">${t('Золото')}</div></div><div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div><div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div><div class="kpi"><div class="v">${fmtDur(st.min)}</div><div class="l">${t('Времени')}</div></div></div></div>
+    <aside class="week-secondary"><div class="card week-summary-card"><div class="week-summary-head"><h3>${esc(t('Итоги недели'))}</h3><button type="button" class="btn ghost" data-action="share-week" aria-label="${esc(t('Поделиться итогами недели'))}">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${esc(t('Поделиться'))}</button></div><div class="kpis"><div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div><div class="kpi"><div class="v">${satoruIconHTML('status.gold', 'kpi-emblem', '🪙')} ${st.gold}</div><div class="l">${t('Золото')}</div></div><div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div><div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div><div class="kpi"><div class="v">${fmtDur(st.min)}</div><div class="l">${t('Времени')}</div></div></div></div>
     <div class="card week-chart-card"><h3>${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Время по сферам')}</h3>${timeBySphereChartHTML(st.byArea)}</div>
-    <div class="card week-review-card"><h3>🎯 ${t('Намерение на неделю')}</h3>
+    <div class="card week-review-card"><h3>${t('Намерение на неделю')}</h3>
       <textarea id="week-intention" placeholder="${esc(t('Что главное на этой неделе? Куда направить фокус…'))}">${esc(wk.intention || '')}</textarea>
-      <h3 style="margin-top:14px">🔄 ${t('Итоги недели')}</h3>
+      <h3 style="margin-top:14px">${t('Итоги недели')}</h3>
       <textarea id="week-review" placeholder="${esc(t('Что получилось, что нет, что перенести…'))}">${esc(wk.review || '')}</textarea>
       <div style="margin-top:10px"><button class="btn" data-action="save-week">${t('Сохранить')}</button>
     </div></div>
@@ -24145,6 +24145,14 @@ function timeByAreaThisWeek() { const ws = weekStart(todayStr()); return rangeSt
 // времени — одной строкой. Модели считает ProgressChartsV1, прореживание дат —
 // прежний ChartLabelsV1 (даты можно прореживать, имена — никогда).
 // Имя сферы: стандартные названия переводятся, свои остаются как есть.
+// R05: у многих переводов эмодзи вшит в ключ («🔑 Вход и восстановление»). Берём готовый
+// перевод и снимаем эмодзи с краёв — иконка, если нужна, ставится из реестра отдельно.
+function emojiFree(text) {
+  return String(text == null ? '' : text)
+    .replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '')
+    .replace(/[\s\uFE0F\u200D]*[\p{Extended_Pictographic}\uFE0F\u200D]+$/u, '')
+    .trim();
+}
 function sphereNameText(name) { return String(name == null ? '' : name).split(' › ').map((part) => i18nWord(part, lang())).join(' › '); }
 function sphereNameHTML(name) { return `<span data-noi18n>${esc(sphereNameText(name))}</span>`; }
 function xpByDayChartHTML(points) {
@@ -34104,7 +34112,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v286';
+const PWA_CACHE_VERSION = 'satoru-v287';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

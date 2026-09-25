@@ -782,3 +782,20 @@
 :root[data-design=next] .account-export-status{margin:var(--sp-2) 0 0;font-size:var(--type-meta);line-height:1.45;color:var(--text-soft);overflow-wrap:anywhere}
 :root[data-design=next] .account-export-status.is-error{color:var(--text);border-left:3px solid var(--warn);padding-left:var(--sp-2)}
 :root[data-design=next] .account-export-status:empty{display:none}
+/* R05 (v287): remaining screens meet the same floors — readable counts, 44px touch checks, state colour never on text. */
+:root[data-design=next] .calv-day .cd-dot:not(:empty){color:var(--on-accent);background:var(--accent)}
+@media (max-width:600px),(pointer:coarse){
+ :root[data-design=next] .week-work .wk-task-check{top:0;right:0;width:44px;height:44px;min-width:44px;min-height:44px;inline-size:44px;block-size:44px;max-inline-size:44px;border:0;border-radius:12px;background:transparent;display:flex;align-items:center;justify-content:center}
+ :root[data-design=next] .week-work .wk-task-check::before{content:'';position:absolute;inset:8px;border:1px solid var(--line-strong);border-radius:50%;background:var(--panel);z-index:-1}
+ :root[data-design=next] .week-work .wk-task-check[aria-pressed="true"]::before{background:var(--accent);border-color:var(--accent)}
+ :root[data-design=next] .week-work .wk-task-check[aria-pressed="true"] .cal-action-icon{color:var(--on-accent)}
+ :root[data-design=next] .week-work .wk-task-meta{padding-right:40px}
+}
+:root[data-design=next] .pet-badge{color:var(--text);background:color-mix(in srgb,var(--badge-color,var(--accent)) 16%,transparent);border:1px solid color-mix(in srgb,var(--badge-color,var(--accent)) 60%,transparent);font-size:var(--type-micro);font-weight:700}
+:root[data-design=next] .pet-card :is(.pet-sphere,.pet-hint){font-size:var(--type-micro)!important;opacity:1;color:var(--text-soft)}
+:root[data-design=next] .pet-card :is(.pet-trait-chip small,.fortune-edit-summary,.pet-species-picker>span){font-size:var(--type-micro)}
+:root[data-design=next] .avatar-editor :is(.avatar-editor-badge,.avatar-core-control-label,.avatar-core-gender-button small){font-size:var(--type-micro)}
+:root[data-design=next] .party-empty-hero :is(.event-kicker,.party-empty-mark b){font-size:var(--type-micro)}
+:root[data-design=next] .an-box .an-k{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}
+:root[data-design=next] .pw-crown .pw-crown-icon{width:40px;height:40px}
+:root[data-design=next] .pet-intro-details>summary{display:flex;align-items:center;min-height:44px;cursor:pointer}

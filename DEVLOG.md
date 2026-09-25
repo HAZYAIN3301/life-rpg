@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R05 — remaining screens against R03B, v287
+
+Owner-chosen scope (NEXT.md unreadable in the cloud session). Route/screen audit
+fixes: Settings/Week/Calendar/Pets/Hero/Tree/Notes/Habits emoji in controls become
+registry icons or plain translated text via `emojiFree()`; week task check 44×44;
+day count on-accent; pet state badges no longer colour text (2.0:1 → text colour);
+≥12px for pet/avatar/tribe labels; admin analytics labels wrap. Missing registry id
+`status.milestone` replaced; a test now checks every literal icon id. Audit after:
+0 overflow, 0 untranslated, 0 low contrast, 0 <11px on these screens.
+SCREENS-V287-QA.md. Shell/pins v287.
+
 ## [2026-09-25] R04D — export, v286
 
 Account archive is fetched and verified before saving (expired session no longer

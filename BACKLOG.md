@@ -1,5 +1,10 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R05 / v287:** remaining screens meet R03B floors (icons, contrast, 12px,
+  44px targets). See SCREENS-V287-QA.md.
+- [ ] **Release gate — monetisation:** Settings/paywall still offer «Оформить Pro»,
+  the server answers «soon». Decide what the first free release shows.
+
 - [x] **R04D / v286:** verified account archive download, RFC 5545 .ics with stable
   UIDs, localized 2× «Your week» PNG, dated memory export. See EXPORT-V286-QA.md.
 - [ ] **R04D follow-up:** import a generated .ics into Apple and Google Calendar on a
