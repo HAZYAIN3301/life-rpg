@@ -18,7 +18,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R07 | follow-up: AI lifecycle on the remaining surfaces (owner 25.09: «делай дальше запланированное») | **published** v289 | `4af8474` | both domains commit `4af8474`, `satoru-v289` at 12:31 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R08 | follow-up: Today touch-target floors (R05 audit remainder) | **published** v290 | `c1e2856` | both domains commit `c1e2856`, `satoru-v290` at 12:36 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 | R09 | owner decision: one Today hint — one action (rest, overload, mobility; teaser removed) | **published** v291 | `2e345bf` | both domains commit `2e345bf`, `satoru-v291` at 12:48 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
-| R10 | follow-up: hidden content (collapsed sections, Settings groups, light theme) | verified locally v292, publishing | — | — |
+| R10 | follow-up: hidden content (collapsed sections, Settings groups, light theme) | **published** v292 | `41e00cb` | both domains commit `41e00cb`, `satoru-v292` at 13:10 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 
 ## Environment notes for this queue
 
@@ -94,9 +94,15 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
   against the commit blobs for app.js, design-next-v1.css, index.html, sw.js,
   styles.css on both domains; login smoke clean. QA: TODAY-HINTS-V291-QA.md.
 
+- **R10 / v292** `41e00cb` — full suite 3146/3146 PASS, 0 skipped (non-root);
+  fast-forward `d9916eb..41e00cb`. Both domains deployed (~3 min). SHA256 match
+  against the commit blobs for app.js, design-next-v1.css, index.html, sw.js,
+  styles.css, telemetry-consent-v1.js on both domains; login smoke clean.
+  QA: HIDDEN-CONTENT-V292-QA.md.
+
 ## Queue status after R06
 
-All packages R04A → R09 are published. Owner decisions 25.09: monetisation gate —
+All packages R04A → R10 are published. Owner decisions 25.09: monetisation gate —
 no change until the owner's documents arrive; the companion name «Тень» stays.
 The four filtered-out Today hints were resolved in R09 by the owner's choice. Open: WebKit and real-device
 checks for every package; real calendar import / iOS share sheet. The external plan

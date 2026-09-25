@@ -45,3 +45,10 @@ the bar as background; they sit above the bar on the panel and read at full cont
 - Screenshots: DE light Settings focus card, DE light Progress ranks and charts.
 
 **Not verified here:** WebKit, real devices.
+
+## Publication
+
+`41e00cb` on master 25.09; both domains report it with `satoru-v292` at 13:10 UTC;
+12/12 SHA256 matches against the commit (app.js, design-next-v1.css, index.html,
+sw.js, styles.css, telemetry-consent-v1.js × 2 domains); login page loads the v292
+shell without errors.
