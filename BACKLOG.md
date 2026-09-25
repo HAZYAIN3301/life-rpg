@@ -3,6 +3,9 @@
 - [x] **R11 / v293:** dialogs and real content — programs create content in the
   interface language, sphere names in labels translated, legacy windows are dialogs.
   See DIALOGS-V293-QA.md.
+- [ ] **Small follow-up:** on desktop (fine pointer) the goal chip under a Today quest is
+  22 px high (WCAG 2.5.8 minimum is 24 px; touch already 44 px). ES/UK full-account
+  audits after R11 found nothing else beyond the documented exceptions.
 - [ ] **QA data note:** synthetic QA accounts must include goals, habits, notes and
   rewards and keep standard (Russian-stored) sphere names; the older «dense» seeds had
   only tasks and localized names and hid whole classes of defects.
