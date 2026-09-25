@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R06 — one Shadow: chat, hints, Den, voice, v288
+
+Owner-chosen scope. Today support hints (stretch, mobility, «System» teaser) were
+Russian-only; now through `t()` with EN/DE/UK/ES rows, and all hints lead with
+registry icons instead of 🌿🎖🤸🎒🌅📝🧘⚡ (rest/notes dynamic patterns accept both).
+`applyNudgeVoice` replaces the whole support line (was cut at the first `</span>`,
+which would leave old text next to Shadow's phrase once a line has an icon). Chat:
+on-accent own messages, registry import icon, 44px send. Voice: registry mic/stop,
+44px TTS. Companion head: edit icon, 44px rename/toggle, 12px kicker. Den: glyph in
+the «tasks today» chip was painted with the chip background (invisible) — fixed.
+Shadow button streak badge: registry icon, 12px. SHADOW-V288-QA.md. Shell/pins v288.
+
 ## [2026-09-25] R05 — remaining screens against R03B, v287
 
 Owner-chosen scope (NEXT.md unreadable in the cloud session). Route/screen audit

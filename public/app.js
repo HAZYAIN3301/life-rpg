@@ -539,6 +539,16 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // R06 (v288): подсказки Тени на «Сегодня» — раньше были только по-русски.
+  'сидячих планов — вставить разминку 10 мин': { en: 'of sitting plans — add a 10-min warm-up', de: 'Sitzpläne — 10 Min. Aufwärmen einfügen', uk: 'сидячих планів — додати розминку на 10 хв', es: 'de planes sentado — añade 10 min de calentamiento' },
+  'баланс — это тоже квест': { en: 'balance is a quest too', de: 'Balance ist auch eine Quest', uk: 'баланс — це теж квест', es: 'el equilibrio también es una misión' },
+  'Мобилка спины и плеч': { en: 'Back and shoulder mobility', de: 'Mobility für Rücken und Schultern', uk: 'Мобілка спини й плечей', es: 'Movilidad de espalda y hombros' },
+  'Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза.': { en: 'You train hard (strength / judo), but there has been no regular stretching for a while. Mobility work lowers the risk of stiffness and overload.', de: 'Du trainierst viel (Kraft / Judo), aber regelmäßiges Dehnen fehlt schon länger. Mobility senkt das Risiko von Verspannungen und Überlastung.', uk: 'Ти активно тренуєшся (силова / дзюдо), але регулярної розтяжки давно не видно. Мобілка знижує ризик затисків і перевантаження.', es: 'Entrenas mucho (fuerza / judo), pero hace tiempo que no hay estiramientos regulares. La movilidad reduce el riesgo de rigidez y sobrecarga.' },
+  'Это не медицинский совет — при болях сверься со специалистом.': { en: 'This is not medical advice — if it hurts, check with a specialist.', de: 'Das ist kein medizinischer Rat — bei Schmerzen sprich mit Fachleuten.', uk: 'Це не медична порада — якщо болить, звернися до фахівця.', es: 'No es un consejo médico: si hay dolor, consulta a un especialista.' },
+  'Растяжка 10 мин': { en: 'Stretch 10 min', de: '10 Min. dehnen', uk: 'Розтяжка 10 хв', es: 'Estirar 10 min' },
+  'Не показывать': { en: "Don't show", de: 'Nicht mehr zeigen', uk: 'Не показувати', es: 'No mostrar' },
+  'Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.': { en: 'Hidden feature: “System” mode (Solo Leveling vibe) — a narrator announces your wins.', de: 'Verstecktes Feature: der «System»-Modus (Solo-Leveling-Vibe) — ein Erzähler verkündet deine Siege.', uk: 'Прихована фішка: режим «Система» (Solo Leveling-вайб) — наратор оголошує твої перемоги.', es: 'Función oculta: el modo «Sistema» (vibe Solo Leveling) — un narrador anuncia tus victorias.' },
+  'Включить': { en: 'Turn on', de: 'Einschalten', uk: 'Увімкнути', es: 'Activar' },
   'Разбор недели': { en: 'Weekly review', de: 'Wochenrückblick', uk: 'Огляд тижня', es: 'Resumen semanal' },
   'Анализирую твою неделю…': { en: 'Reviewing your week…', de: 'Deine Woche wird ausgewertet…', uk: 'Аналізую твій тиждень…', es: 'Analizando tu semana…' },
   'Не удалось выполнить запрос. Попробуй ещё раз.': { en: 'The request failed. Please try again.', de: 'Die Anfrage ist fehlgeschlagen. Versuche es erneut.', uk: 'Не вдалося виконати запит. Спробуй ще раз.', es: 'La solicitud falló. Inténtalo de nuevo.' },
@@ -4873,7 +4883,7 @@ const I18N_DYN = [
   }],
   [/^🜲 (.+)$/, (l, m) => `🜲 ${i18nWord(m[1], l)}`],
   [/^· (.+)$/, (l, m) => { const w = i18nWord(m[1], l); return w !== m[1] ? `· ${w}` : null; }],
-  [/^📝 (\d+) (?:заметка|заметки|заметок) — открыть$/, (l, m) => `📝 ${m[1]} ${i18nNote(m[1], l)} — ${({ en: 'open', de: 'öffnen', uk: 'відкрити', es: 'abrir' })[l]}`],
+  [/^(📝 )?(\d+) (?:заметка|заметки|заметок) — открыть$/, (l, m) => `${m[1] || ''}${m[2]} ${i18nNote(m[2], l)} — ${({ en: 'open', de: 'öffnen', uk: 'відкрити', es: 'abrir' })[l]}`],
   [/^(\d+)\/(\d+) дней$/, (l, m) => `${m[1]}/${m[2]} ${i18nDay(m[2], l)}`],
   [/^Серия · рекорд (\d+)$/, (l, m) => `${({ en: 'Streak · record', de: 'Serie · Rekord', uk: 'Серія · рекорд', es: 'Racha · récord' })[l]} ${m[1]}`],
   [/^Рекорд: (\d+) (?:день|дня|дней)$/, (l, m) => `${({ en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' })[l]} ${m[1]} ${i18nDay(m[1], l)}`],
@@ -4900,9 +4910,9 @@ const I18N_DYN = [
   [/^растёт и (.+)$/, (l, m) => `${({ en: 'growing and', de: 'wächst und', uk: 'росте і', es: 'crece y' })[l]} ${i18nWord(m[1], l)}`],
   [/^Квестов (\d+\/\d+) · привычек (\d+\/\d+) · (.+)$/, (l, m) => { const q = ({ en: 'Quests', de: 'Quests', uk: 'Квестів', es: 'Misiones' })[l], h = ({ en: 'habits', de: 'Gewohnheiten', uk: 'звичок', es: 'hábitos' })[l]; return `${q} ${m[1]} · ${h} ${m[2]} · ${m[3]}`; }],
   [/^не виделись (\d+) (?:день|дня|дней) — скучает$/, (l, m) => ({ en: `not seen for ${m[1]} ${i18nDay(m[1], l)} — misses you`, de: `${m[1]} ${i18nDay(m[1], l)} nicht gesehen — vermisst dich`, uk: `не бачились ${m[1]} ${i18nDay(m[1], l)} — сумує`, es: `sin verte ${m[1]} ${i18nDay(m[1], l)} — te echa de menos` })[l]],
-  [/^🌿 (\d+) (?:день|дня|дней) без записей об отдыхе\. Если сейчас нужна пауза — можно её выбрать\.$/, (l, m) => {
+  [/^(🌿 )?(\d+) (?:день|дня|дней) без записей об отдыхе\. Если сейчас нужна пауза — можно её выбрать\.$/, (l, m) => {
     const tail = { en: 'without a rest entry. If you need a pause now, you can choose one.', de: 'ohne Pauseneintrag. Wenn du jetzt eine Pause brauchst, kannst du eine wählen.', uk: 'без записів про відпочинок. Якщо зараз потрібна пауза — можна її обрати.', es: 'sin un registro de descanso. Si necesitas una pausa ahora, puedes elegir una.' }[l];
-    return `🌿 ${m[1]} ${i18nDay(m[1], l)} ${tail}`;
+    return `${m[1] || ''}${m[2]} ${i18nDay(m[2], l)} ${tail}`;
   }],
   [/^Внутри «(.+)»$/, (l, m) => `${({ en: 'Inside', de: 'Innerhalb', uk: 'Всередині', es: 'Dentro de' })[l]} «${i18nWord(m[1], l)}»`],
   [/^Вставь ключ \((.+)\)$/, (l, m) => `${({ en: 'Paste key', de: 'Schlüssel einfügen', uk: 'Встав ключ', es: 'Pega la clave' })[l]} (${m[1]})`],
@@ -16796,7 +16806,8 @@ function assistantWakePaint() {
   const btn = document.querySelector('#helper-modal [data-action="assistant-wake-toggle"]');
   if (btn) {
     btn.setAttribute('aria-pressed', _assistantWakeArmed ? 'true' : 'false');
-    btn.textContent = _assistantWakeArmed ? `■ ${t('Остановить голосовой вызов')}` : `🎙 ${t('Включить «Сатору» для этой вкладки')}`;
+    // R06: состояние голосового вызова — иконкой реестра, текст остаётся текстом.
+    btn.innerHTML = _assistantWakeArmed ? `${satoruIconHTML('media.stop', 'button-glyph', '■')} ${esc(t('Остановить голосовой вызов'))}` : `${satoruIconHTML('media.microphone', 'button-glyph', '🎙')} ${esc(t('Включить «Сатору» для этой вкладки'))}`;
   }
   const status = document.getElementById('assistant-wake-status');
   if (status) status.textContent = _assistantWakeError ? t(_assistantWakeError) : _assistantWakeArmed ? t('Слушаю слово «Сатору»') : t('Скажи «Сатору…» — команда появится как черновик и не отправится сама.');
@@ -16897,7 +16908,7 @@ function openHelperChat(opener = document.activeElement) {
     ${noKey ? `<p class="muted">${esc(t(proHint ? 'Тень доступна с Pro или с твоим ключом ИИ.' : 'Подключи ИИ, чтобы обсуждать планы и действовать вместе с Тенью.'))}<br>${proHint ? `<button class="btn pro-cta" data-action="show-paywall" data-feature="ИИ-ассистент" style="margin-top:10px">💎 ${t('Оформить Pro')}</button> ` : ''}<button class="btn ${proHint ? 'ghost' : ''}" data-action="helper-to-settings" style="margin-top:10px">⚙️ ${t('Подключить ИИ')}</button></p>`
       : `<div id="chat-msgs" class="chat-msgs" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="${State._chatBusy ? 'true' : 'false'}"></div>
          <div class="chat-context-tools" role="group" aria-label="${t('Контекст помощника')}">
-           <button type="button" class="btn ghost sm" data-action="chat-plan-file">📎 ${t('План из файла')}</button>
+           <button type="button" class="btn ghost sm" data-action="chat-plan-file">${satoruIconHTML('action.import', 'button-glyph', '📎')} ${t('План из файла')}</button>
            <input id="chat-plan-file" type="file" multiple accept=".txt,.md,.markdown,.json,.csv,text/plain,text/markdown,application/json,text/csv" hidden />
            ${assistantWakeSupported() ? `<button type="button" class="btn ghost sm assistant-wake-toggle" data-action="assistant-wake-toggle" aria-pressed="${_assistantWakeArmed ? 'true' : 'false'}"></button>` : `<span class="chat-wake-unsupported">${t('Голосовой вызов недоступен в этом браузере')}</span>`}
          </div>
@@ -17313,7 +17324,7 @@ function noteCard(it) {
 }
 function notesPeekToday() {
   const n = (State.inbox || []).length; if (!n) return '';
-  return `<div class="card notes-peek"><button class="nudge" data-action="goto-notes">📝 ${n} ${plural(n, 'заметка', 'заметки', 'заметок')} — открыть</button></div>`;
+  return `<div class="card notes-peek"><button class="nudge" data-action="goto-notes">${satoruIconHTML('media.notes', 'button-glyph', '📝')} <span>${n} ${plural(n, 'заметка', 'заметки', 'заметок')} — открыть</span></button></div>`;
 }
 function renderNotes() {
   const notes = State.inbox || [];
@@ -17887,7 +17898,7 @@ function companionCard(controlHTML = '') {
     ${controlHTML}
     <div id="secretary-details" class="secretary-details${expanded ? '' : ' is-collapsed'}">
       ${nextBar}
-      <div class="secretary-details-head"><span>${t('Связь с Тенью')}</span><button type="button" class="comp-rename" data-action="comp-rename" title="${t('Переименовать')}" aria-label="${t('Переименовать')}">✎</button></div>
+      <div class="secretary-details-head"><span>${t('Связь с Тенью')}</span><button type="button" class="comp-rename" data-action="comp-rename" title="${t('Переименовать')}" aria-label="${t('Переименовать')}">${satoruIconHTML('action.edit', 'inline-glyph', '✎')}</button></div>
       ${actions}${peek}
     </div>
   </div>`;
@@ -19386,10 +19397,24 @@ async function nudgeVoiceFetch(sig, staticText) {
 // Подстановка фразы Тени в готовую карточку. Заменяем содержимое первого .nudge-boost —
 // у 7 из 8 нуджей это и есть пояснительная строка, а кнопка-действие остаётся нетронутой
 // (ИИ красит слова, не логику). У мобилки .nudge-boost нет — там фраза идёт отдельной строкой.
+// R06: в строке бывает иконка реестра (<span class="satoru-icon"…></span>) — ищем парный
+// закрывающий тег, а не первый попавшийся, иначе фраза Тени встаёт рядом со старым текстом.
 function applyNudgeVoice(html, voiced) {
   if (!html || !voiced) return html;
-  const re = /(<span class="nudge-boost">)([\s\S]*?)(<\/span>)/;
-  if (re.test(html)) return html.replace(re, `$1${esc(voiced)}$3`);
+  const open = '<span class="nudge-boost">';
+  const start = html.indexOf(open);
+  if (start >= 0) {
+    const from = start + open.length;
+    const tags = /<span\b[^>]*>|<\/span>/g;
+    tags.lastIndex = from;
+    for (let depth = 1, m; (m = tags.exec(html));) {
+      depth += m[0] === '</span>' ? -1 : 1;
+      if (depth) continue;
+      const icon = html.slice(from, m.index).match(/^\s*<span class="satoru-icon[^>]*><\/span>/);
+      return `${html.slice(0, from)}${icon ? `${icon[0].trim()} ` : ''}${esc(voiced)}${html.slice(m.index)}`;
+    }
+    return html;
+  }
   const i = html.indexOf('>');
   return i < 0 ? html : html.slice(0, i + 1) + `<p class="nudge-voice">${esc(voiced)}</p>` + html.slice(i + 1);
 }
@@ -20937,7 +20962,7 @@ function renderToday() {
   // явного отдыха давно не было». Показываем ТОЛЬКО когда набралась история (иначе на старте зря
   // пугаем нулём дней) и порог значим (≥4) — приглашение, не счётчик вины.
   const restGapToday = (State.tasks || []).length >= 5 ? restGapDays() : 0;
-  const restNudge = restGapToday >= 4 ? `<div class="card nudge-card en-low"><span class="nudge-boost">🌿 ${restGapToday} ${plural(restGapToday, 'день', 'дня', 'дней')} без записей об отдыхе. Если сейчас нужна пауза — можно её выбрать.</span></div>` : '';
+  const restNudge = restGapToday >= 4 ? `<div class="card nudge-card en-low"><span class="nudge-boost">${satoruIconHTML('system.day-end', 'inline-glyph', '🌿')} <span>${restGapToday} ${plural(restGapToday, 'день', 'дня', 'дней')} без записей об отдыхе. Если сейчас нужна пауза — можно её выбрать.</span></span></div>` : '';
 
   const chestsAvail = lootChestsAvailable();
   const chestCarry = ensureLootbox().carry; // сколько из доступных — перенесены с прошлых дней (не потеряны)
@@ -20945,10 +20970,10 @@ function renderToday() {
   const nudgeCard = chestsAvail > 0 ? `<div class="card nudge-card"><button class="nudge" data-action="goto-rewards" ${chestTitle}>${satoruIconHTML('system.rewards', 'button-emblem', '🎁')} ${t('Заработанная награда ждёт — получить')} · ${chestsAvail}</button></div>` : '';
   // Нудж новичку: не начинай с нуля — импортируй реальный опыт
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
-  const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">🎖 Не начинай с нуля — импортируй свой реальный опыт</button><span class="nudge-boost">отметь свой уровень в сферах → стартовый опыт</span></div>` : '';
+  const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">${satoruIconHTML('action.import', 'button-glyph', '🎖')} ${esc(emojiFree(t('🎖 Не начинай с нуля — импортируй свой реальный опыт')))}</button><span class="nudge-boost">${esc(t('отметь свой уровень в сферах → стартовый опыт'))}</span></div>` : '';
   // Сидячий день (4+ ч планов без движения) → мягкий нудж добавить разминку (идея fb_mq3m7zjd)
   const hasMove = todays.some((t) => /размин|прогул|зарядк|растяжк|спорт|трениров|walk|stretch|gym/i.test(t.title)) || habits.some((h) => /размин|прогул|зарядк|растяжк|спорт|трениров/i.test(h.title));
-  const stretchNudge = (planned >= 240 && !hasMove) ? `<div class="card nudge-card"><button class="nudge" data-action="add-stretch">🤸 ${fmtDur(planned)} сидячих планов — вставить разминку 10 мин</button><span class="nudge-boost">баланс — это тоже квест</span></div>` : '';
+  const stretchNudge = (planned >= 240 && !hasMove) ? `<div class="card nudge-card"><button class="nudge" data-action="add-stretch">${satoruIconHTML('activity.workout', 'button-emblem', '🤸')} ${fmtDur(planned)} ${esc(t('сидячих планов — вставить разминку 10 мин'))}</button><span class="nudge-boost">${esc(t('баланс — это тоже квест'))}</span></div>` : '';
 
   // «Жизнь шла, а записывать было некогда» (fb_mragb9rg2tkz). Satoru умеет «запланировал → выполнил»,
   // но не «сделал → записал» — и в поездке становится бесполезным, хотя человек делает ровно то,
@@ -20960,7 +20985,7 @@ function renderToday() {
   const quietLong = observedQuietDaysBefore(30);
   const epNudge = quietLong >= 3
     ? `<div class="card nudge-card ep-nudge">
-        <button class="nudge" data-action="episode-open" data-from="${addDays(todayStr(), -quietLong)}" data-to="${addDays(todayStr(), -1)}">🎒 ${t('Тебя не было')} ${quietLong} ${locDay(quietLong, lang())} — ${t('что это было?')}</button>
+        <button class="nudge" data-action="episode-open" data-from="${addDays(todayStr(), -quietLong)}" data-to="${addDays(todayStr(), -1)}">${satoruIconHTML('system.calendar', 'button-glyph', '🎒')} ${t('Тебя не было')} ${quietLong} ${locDay(quietLong, lang())} — ${t('что это было?')}</button>
         <span class="nudge-boost">${t('Расскажи период целиком, одним куском — по дням разбивать не надо.')}</span></div>`
     : '';
   // Перегрев сферы (этап 3). Единственный нудж в приложении, который толкает делать МЕНЬШЕ, а не
@@ -20984,14 +21009,14 @@ function renderToday() {
   const amnCand = amnestyCandidates();
   const returnNudge = (currentPath() === 'trust' && amnCand.length >= 3 && (detectBoundaryPattern() || {}).id === 'norecover')
     ? `<div class="card nudge-card return-nudge">
-        <button class="nudge" data-action="amnesty-overdue">🌅 ${t('Отпустить накопившееся')} (${amnCand.length})</button>
+        <button class="nudge" data-action="amnesty-overdue">${satoruIconHTML('period.day', 'button-glyph', '🌅')} ${t('Отпустить накопившееся')} (${amnCand.length})</button>
         <span class="nudge-boost">${t('Они останутся в своих днях и никуда не денутся — просто перестанут висеть над тобой как незакрытые. Рекорд серии')} ${longestStreak()} ${t('не сгорает. Возвращаются с одного маленького дела, а не с разбора завала.')}</span></div>`
     : '';
   // Отпущенное сегодня — тихая строка с возвратом. Без неё амнистия читается как «дела пропали»,
   // а это ровно та тревога, ради снятия которой всё и делалось.
   const amnBack = amnestiedToday();
   const amnestyUndo = amnBack.length
-    ? `<div class="card nudge-card amnesty-undo"><span class="nudge-boost">🌅 ${t('Отпущено сегодня')}: ${amnBack.length} · <button class="link-btn" data-action="amnesty-undo">${t('вернуть обратно')}</button></span></div>`
+    ? `<div class="card nudge-card amnesty-undo"><span class="nudge-boost">${satoruIconHTML('period.day', 'inline-glyph', '🌅')} ${t('Отпущено сегодня')}: ${amnBack.length} · <button class="link-btn" data-action="amnesty-undo">${t('вернуть обратно')}</button></span></div>`
     : '';
   const quietN = observedQuietDaysBefore();
   const dayLogNudge = (quietN >= 2 || (doneCount === 0 && new Date().getHours() >= 18 && (State.tasks || []).length > 0))
@@ -21031,10 +21056,10 @@ function renderToday() {
   const prefs = State.settings.prefs || {};
   const showMobil = !prefs.noMobilityNudge && _mobilSnoozeDay !== today && trainingWithoutMobility();
   const mobilityNudge = showMobil ? `<div class="card nudge-card mobil-nudge">
-      <div class="mobil-text"><b>🧘 Мобилка спины и плеч</b><p class="muted">Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза. <i>Это не медицинский совет — при болях сверься со специалистом.</i></p></div>
-      <div class="mobil-acts"><button class="nudge" data-action="add-mobility">+ Растяжка 10 мин</button><button class="btn ghost sm" data-action="mobil-later">Позже</button><button class="btn ghost sm" data-action="mobil-never">Не показывать</button></div></div>` : '';
+      <div class="mobil-text"><b>${satoruIconHTML('activity.yoga', 'button-emblem', '🧘')} ${esc(t('Мобилка спины и плеч'))}</b><p class="muted">${esc(t('Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза.'))} <i>${esc(t('Это не медицинский совет — при болях сверься со специалистом.'))}</i></p></div>
+      <div class="mobil-acts"><button class="nudge" data-action="add-mobility">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Растяжка 10 мин'))}</button><button class="btn ghost sm" data-action="mobil-later">${esc(t('Позже'))}</button><button class="btn ghost sm" data-action="mobil-never">${esc(t('Не показывать'))}</button></div></div>` : '';
   // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
-  const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">⚡ Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">Включить</button><button class="btn ghost sm" data-action="dismiss-system-teaser">Позже</button></div></div>` : '';
+  const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">${satoruIconHTML('status.xp', 'inline-glyph', '⚡')} ${esc(t('Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.'))}</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">${esc(t('Включить'))}</button><button class="btn ghost sm" data-action="dismiss-system-teaser">${esc(t('Позже'))}</button></div></div>` : '';
 
   // Один список дней на оба раздела арены (§4 и §12) — см. arenaDayHistory.
   const arenaHist = arenaDayHistory(today);
@@ -28522,7 +28547,8 @@ function render() {
   // Стрик прямо на кнопке Тени: маленькая цифра вместо отдельной карточки на экране
   try {
     const fs = document.getElementById('fab-streak'), st = currentStreak();
-    if (fs) { if (st > 0) { fs.textContent = '🔥' + st; fs.hidden = false; } else fs.hidden = true; }
+    // R06: серия — иконкой реестра; число остаётся текстом, чтобы не перерисовывать без нужды.
+    if (fs) { if (st > 0) { if (fs.dataset.streak !== String(st)) { fs.innerHTML = `${satoruIconHTML('period.streak', 'inline-glyph', '🔥')}${st}`; fs.dataset.streak = String(st); } fs.hidden = false; } else fs.hidden = true; }
   } catch {}
   paintPwaLifecycleSurface();
   mountSettingsDiscovery();
@@ -34112,7 +34138,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v287';
+const PWA_CACHE_VERSION = 'satoru-v288';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -1,5 +1,14 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R06 / v288:** one Shadow — translated support hints with registry icons,
+  whole-line Shadow phrase, 44px chat/voice/companion controls, visible Den glyph,
+  12px streak badge. See SHADOW-V288-QA.md.
+- [ ] **R06 follow-up (product):** rest, low-energy, mobility and «System» teaser hints
+  are rendered but always filtered out on Today by the one-action rule
+  (`secretaryNudgeEligible`); decide whether to redesign them as one-action hints or
+  delete them. The companion name «Тень» is hard-coded in ~50 Russian strings with
+  case forms — keep unless the owner wants the companion renamed.
+
 - [x] **R05 / v287:** remaining screens meet R03B floors (icons, contrast, 12px,
   44px targets). See SCREENS-V287-QA.md.
 - [ ] **Release gate — monetisation:** Settings/paywall still offer «Оформить Pro»,
