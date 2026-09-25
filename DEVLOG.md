@@ -1,5 +1,11 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R08 — Today touch-target floors, v290
+
+Quest title button on dense Today 23 → 44 px (aligned with the check circle; row
++13 px at 375), «Как выбрать сложность?» summary 32 → 44 px. Route sweep: no other
+control under 42 px. TODAY-FLOORS-V290-QA.md. Shell/pins v290.
+
 ## [2026-09-25] R07 — AI lifecycle on the remaining surfaces, v289
 
 R04C follow-up. Shared `aiSurfaceRun(key, fetcher, stillCurrent)` on top of

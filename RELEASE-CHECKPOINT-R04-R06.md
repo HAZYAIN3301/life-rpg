@@ -16,6 +16,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R05 | remaining screens by R03B (owner choice 25.09: «Экраны + Тень») | **published** v287 | `6a036a5` | both domains commit `6a036a5`, `satoru-v287`; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | **published** v288 | `3a34a13` | both domains commit `3a34a13`, `satoru-v288` at 11:52 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R07 | follow-up: AI lifecycle on the remaining surfaces (owner 25.09: «делай дальше запланированное») | **published** v289 | `4af8474` | both domains commit `4af8474`, `satoru-v289` at 12:31 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
+| R08 | follow-up: Today touch-target floors (R05 audit remainder) | verified locally v290, publishing | — | — |
 
 ## Environment notes for this queue
 

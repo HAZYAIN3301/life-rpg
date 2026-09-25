@@ -1,5 +1,8 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R08 / v290:** Today quest title and difficulty help reach 44 px; no control
+  under 42 px on the 16 routes. See TODAY-FLOORS-V290-QA.md.
+
 - [x] **R06 / v288:** one Shadow — translated support hints with registry icons,
   whole-line Shadow phrase, 44px chat/voice/companion controls, visible Den glyph,
   12px streak badge. See SHADOW-V288-QA.md.
