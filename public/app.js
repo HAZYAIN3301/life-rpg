@@ -547,6 +547,29 @@ const I18N_EXTRA = {
   'Проект': { en: 'Project', de: 'Projekt', uk: 'Проєкт', es: 'Proyecto' },
   'Цвет сферы': { en: 'Area color', de: 'Bereichsfarbe', uk: 'Колір сфери', es: 'Color del área' },
   'Оттенок родителя': { en: 'Shade of parent', de: 'Farbton des übergeordneten Bereichs', uk: 'Відтінок батьківської сфери', es: 'Tono del área superior' },
+  // R04A: honest load/XP meaning (v283).
+  'больше обычного': { en: 'more than usual', de: 'mehr als üblich', uk: 'більше звичайного', es: 'más de lo habitual' },
+  'как обычно': { en: 'as usual', de: 'wie üblich', uk: 'як зазвичай', es: 'como de costumbre' },
+  'меньше обычного': { en: 'less than usual', de: 'weniger als üblich', uk: 'менше звичайного', es: 'menos de lo habitual' },
+  'нет записей за 7 дней': { en: 'no entries in 7 days', de: 'keine Einträge in 7 Tagen', uk: 'немає записів за 7 днів', es: 'sin registros en 7 días' },
+  'мало записей для нормы': { en: 'too few entries for a norm', de: 'zu wenige Einträge für eine Norm', uk: 'замало записів для норми', es: 'pocos registros para una norma' },
+  'По записанному опыту (XP): средний день последней недели против твоего обычного дня за предыдущие до 4 недель. Это сравнение с тобой, а не измерение усталости.': { en: 'Based on recorded experience (XP): your average day this past week against your usual day over up to 4 earlier weeks. It compares you with yourself; it does not measure fatigue.', de: 'Nach erfasster Erfahrung (XP): dein durchschnittlicher Tag der letzten Woche im Vergleich zu deinem üblichen Tag in bis zu 4 Wochen davor. Das ist ein Vergleich mit dir selbst, keine Messung von Erschöpfung.', uk: 'За записаним досвідом (XP): середній день останнього тижня проти твого звичайного дня за попередні до 4 тижнів. Це порівняння з тобою, а не вимірювання втоми.', es: 'Según la experiencia registrada (XP): tu día medio de la última semana frente a tu día habitual de hasta 4 semanas anteriores. Te compara contigo; no mide el cansancio.' },
+  'Норма ещё не сложилась': { en: 'No norm yet', de: 'Noch keine Norm', uk: 'Норма ще не склалася', es: 'Aún no hay norma' },
+  'Для сравнения нужно 14 дней записей до последней недели. Сейчас': { en: 'A comparison needs 14 days of entries before the last week. Now', de: 'Für einen Vergleich braucht es 14 Tage mit Einträgen vor der letzten Woche. Aktuell', uk: 'Для порівняння потрібно 14 днів записів до останнього тижня. Зараз', es: 'Para comparar se necesitan 14 días de registros antes de la última semana. Ahora' },
+  'Заметно больше обычного': { en: 'Noticeably more than usual', de: 'Deutlich mehr als üblich', uk: 'Помітно більше звичайного', es: 'Bastante más de lo habitual' },
+  'Нет записей 7+ дней': { en: 'No entries for 7+ days', de: 'Seit 7+ Tagen keine Einträge', uk: 'Немає записів 7+ днів', es: 'Sin registros 7+ días' },
+  'Вертикальная отметка на полосе — твой обычный день (×1).': { en: 'The vertical mark on each bar is your usual day (×1).', de: 'Die senkrechte Markierung auf dem Balken ist dein üblicher Tag (×1).', uk: 'Вертикальна позначка на смузі — твій звичайний день (×1).', es: 'La marca vertical de la barra es tu día habitual (×1).' },
+  'от обычного за неделю': { en: 'of your usual pace this week', de: 'deines üblichen Tempos in dieser Woche', uk: 'від звичайного за тиждень', es: 'de tu ritmo habitual esta semana' },
+  'Это по записанному опыту, а не по самочувствию. Если чувствуешь перегруз — можно дать этой сфере передышку.': { en: 'This comes from recorded experience, not from how you feel. If you feel overloaded, you can give this area a break.', de: 'Das beruht auf erfasster Erfahrung, nicht auf deinem Befinden. Wenn du dich überlastet fühlst, kannst du diesem Bereich eine Pause gönnen.', uk: 'Це за записаним досвідом, а не за самопочуттям. Якщо відчуваєш перевантаження — можна дати цій сфері перепочинок.', es: 'Esto sale de la experiencia registrada, no de cómo te sientes. Si te sientes sobrecargado, puedes darle un respiro a esta área.' },
+  'До уровня': { en: 'To level', de: 'Bis Level', uk: 'До рівня', es: 'Hasta el nivel' },
+  'Меньше всего времени за 3 недели': { en: 'Least time in 3 weeks', de: 'Am wenigsten Zeit in 3 Wochen', uk: 'Найменше часу за 3 тижні', es: 'Menos tiempo en 3 semanas' },
+  'Насколько ровно время распределено между сферами за 3 недели: 100 — поровну и во всех сферах. Это описание, а не оценка.': { en: 'How evenly time was spread across areas in 3 weeks: 100 means equal time in every area. It describes, it does not judge.', de: 'Wie gleichmäßig die Zeit in 3 Wochen auf die Bereiche verteilt war: 100 heißt gleich viel Zeit in jedem Bereich. Das beschreibt, es bewertet nicht.', uk: 'Наскільки рівно час розподілено між сферами за 3 тижні: 100 — порівну й у всіх сферах. Це опис, а не оцінка.', es: 'Qué tan repartido estuvo el tiempo entre áreas en 3 semanas: 100 significa el mismo tiempo en todas. Describe, no juzga.' },
+  'XP за закрытое дело: запланированные минуты × сложность + бонус за завершение; привычки, цели и эпизоды тоже дают XP. Это учёт сделанного, а не оценка тебя.': { en: 'XP for a completed task: planned minutes × difficulty + a completion bonus; habits, goals and episodes also give XP. It records what was done; it does not rate you.', de: 'XP für eine erledigte Aufgabe: geplante Minuten × Schwierigkeit + Abschlussbonus; auch Gewohnheiten, Ziele und Episoden geben XP. Das erfasst Erledigtes und bewertet dich nicht.', uk: 'XP за закриту справу: заплановані хвилини × складність + бонус за завершення; звички, цілі й епізоди теж дають XP. Це облік зробленого, а не оцінка тебе.', es: 'XP por una tarea cerrada: minutos planificados × dificultad + bonus por completarla; hábitos, metas y episodios también dan XP. Registra lo hecho; no te evalúa.' },
+  'Отметить сферы, которые восстанавливают': { en: 'Mark areas that restore you', de: 'Bereiche markieren, die dich erholen', uk: 'Позначити сфери, які відновлюють', es: 'Marcar áreas que te reponen' },
+  'Баланс появится после 7 дней записей. Это не оценка тебя.': { en: 'Balance appears after 7 days of entries. It is not a judgment of you.', de: 'Die Balance erscheint nach 7 Tagen mit Einträgen. Sie ist keine Bewertung von dir.', uk: 'Баланс з’явиться після 7 днів записів. Це не оцінка тебе.', es: 'El equilibrio aparece tras 7 días de registros. No es un juicio sobre ti.' },
+  'Ранги по сферам': { en: 'Ranks by area', de: 'Ränge nach Bereich', uk: 'Ранги за сферами', es: 'Rangos por área' },
+  'Закрыто': { en: 'Closed', de: 'Erledigt', uk: 'Закрито', es: 'Cerradas' },
+  'Открытые дела сегодня пока не считаются невыполненными.': { en: "Today's open tasks do not count as missed yet.", de: 'Heute offene Aufgaben zählen noch nicht als verpasst.', uk: 'Відкриті сьогодні справи поки не вважаються невиконаними.', es: 'Las tareas abiertas de hoy aún no cuentan como no hechas.' },
   'Восстанавливает: да': { en: 'Restorative: yes', de: 'Erholsam: ja', uk: 'Відновлює: так', es: 'Me repone: sí' },
   'Восстанавливает: нет': { en: 'Restorative: no', de: 'Erholsam: nein', uk: 'Відновлює: ні', es: 'Me repone: no' },
   'Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.': { en: 'Enable for an area you consider restful. This disables its overload warning; records, XP and rewards stay unchanged.', de: 'Aktiviere dies für einen Bereich, der dich erholt. Seine Überlastungswarnung wird deaktiviert; Einträge, XP und Belohnungen bleiben unverändert.', uk: 'Увімкни для сфери, яку вважаєш відпочинком. Це вимикає її попередження про перегрів; записи, XP і нагороди не змінюються.', es: 'Actívalo para un área que consideres descanso. Desactiva su aviso de sobrecarga; los registros, XP y recompensas no cambian.' },
@@ -8259,19 +8282,15 @@ function sphereRhythm(days) { return rhythmFor(balanceSpheres(), days || BALANCE
 // в старой модели такого вывода не могло появиться в принципе.
 //
 // Считаем НЕ абсолютные часы, а превышение сферой СВОЕЙ ЖЕ нормы: свежее окно (7 дней) против
-// личной базы (предыдущие 28). Нормы у всех разные, поэтому единого порога «много» не бывает —
-// перегрев определяется только относительно самого себя.
+// личной базы (до 28 предыдущих дней). Нормы у всех разные, поэтому единого порога «много» не бывает.
 //
 // ⚠️ Считаем по ОПЫТУ, а не по минутам (в отличие от индекса баланса, который на минутах).
 // Причина: у эпизодов и фоновых слоёв `min: 0` — по минутам неделя на выезде и весь фон были бы
 // НЕВИДИМЫ, то есть ровно те перегрузы, ради которых всё и затевалось, не детектировались бы.
-const LOAD_WIN = 7, LOAD_BASE_WIN = 28, LOAD_HOT = 1.7, LOAD_QUIET = 7;
-function windowXpMap(fromDate, toDate) {
-  const map = {};
-  for (const e of xpEvents()) if (e.skillId && e.date >= fromDate && e.date <= toDate) map[e.skillId] = (map[e.skillId] || 0) + (e.xp || 0);
-  return map;
-}
-function subtreeXp(id, map) { let v = map[id] || 0; for (const c of descendantSkills(id)) v += map[c.id] || 0; return v; }
+//
+// R04A: сама арифметика — в public/sphere-load-v1.js. База делится только на дни, которые
+// приложение действительно наблюдало (с первой записи), а недостаток истории или записей по
+// сфере называется словами, а не превращается в «Перегрев ×5.5» или «×0.0».
 // «Эта сфера меня восстанавливает» — снимает перегрев (предупреждать «ты перебрал отдыха» глупо).
 // Это же и калибровка интроверт/экстраверт из плана: для экстраверта сфера людей — заряд, а не расход.
 function sphereRestores(id) { const s = skillById(id); return !!(s && s.restores); }
@@ -8280,7 +8299,7 @@ async function persistSphereRestores(id) {
   const epoch = Store._writeEpoch, accountId = String(State.me?.id || '');
   const current = () => epoch === Store._writeEpoch && accountId === String(State.me?.id || '');
   const desired = !sphereRestores(id);
-  State._sphereRestoreBusy = true; render();
+  State._sphereRestoreBusy = true; State._sphereRestoreTarget = id; render();
   let saved = false;
   try {
     saved = await Store.updateNow('settings', settings => {
@@ -8295,34 +8314,30 @@ async function persistSphereRestores(id) {
     }
   }
 }
-function sphereLoads() {
-  const T = todayStr();
-  const recFrom = addDays(T, -(LOAD_WIN - 1));
-  const baseTo = addDays(recFrom, -1), baseFrom = addDays(baseTo, -(LOAD_BASE_WIN - 1));
-  const recMap = windowXpMap(recFrom, T), baseMap = windowXpMap(baseFrom, baseTo);
-  return balanceSpheres().map((s) => {
-    const rec = subtreeXp(s.id, recMap) / LOAD_WIN, base = subtreeXp(s.id, baseMap) / LOAD_BASE_WIN;
-    const la = skillLastActiveDeep(s.id);
-    // База должна быть содержательной: иначе первая же активность в новой сфере даёт ratio=∞
-    // и приложение кричит «перегрев» там, где человек просто начал.
-    const ratio = base >= 3 ? rec / base : null;
-    return {
-      id: s.id, name: s.name, color: s.color, rec, base, ratio,
-      quietDays: la ? daysSinceDate(la) : null,
-      hot: ratio != null && ratio >= LOAD_HOT && !sphereRestores(s.id),
-      restores: sphereRestores(s.id),
-    };
-  });
+function sphereLoads() { const result = sphereLoadResult(); return result ? result.rows : []; }
+function sphereLoadResult() {
+  const L = window.SphereLoadV1;
+  if (!L) return null;
+  let events;
+  try { events = xpEvents(); } catch { return null; }
+  const spheres = balanceSpheres().map((s) => ({
+    id: s.id, name: s.name, color: s.color,
+    memberIds: [s.id, ...descendantSkills(s.id).map((c) => c.id)],
+    restores: sphereRestores(s.id), lastActive: skillLastActiveDeep(s.id), lifetimeXp: skillXp(s.id),
+  }));
+  return L.compute({ events, spheres, today: todayStr() });
 }
-// Перегрев + то, что при этом молчит. Именно ПАРА даёт вывод, ради которого всё делалось:
-// не «ты много общался» (это и так видно), а «люди горят, а тело и учёба стоят — сделай день на себя».
-function loadInsight() {
-  const rows = sphereLoads();
-  const hot = rows.filter((r) => r.hot).sort((a, b) => b.ratio - a.ratio);
-  if (!hot.length) return null;
-  const quiet = rows.filter((r) => !r.hot && skillXp(r.id) > 0 && (r.quietDays == null || r.quietDays >= LOAD_QUIET))
-    .sort((a, b) => (b.quietDays || 999) - (a.quietDays || 999)).slice(0, 2);
-  return { hot: hot[0], quiet };
+// Заметно больше обычного + то, что при этом молчит. Именно ПАРА даёт вывод, ради которого всё делалось:
+// не «ты много общался» (это и так видно), а «люди в разгоне, а тело и учёба стоят — сделай день на себя».
+function loadInsight(result) {
+  const L = window.SphereLoadV1, current = result || sphereLoadResult();
+  return L && current ? L.insight(current) : null;
+}
+// Множитель «×1,7» в формате языка интерфейса: запятая там, где её ждут.
+function loadRatioText(ratio) {
+  const value = Number(ratio) || 0;
+  try { return '×' + new Intl.NumberFormat(lang(), { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value); }
+  catch { return '×' + value.toFixed(1); }
 }
 
 // ---- Индекс баланса = РОВНОСТЬ РИТМА внимания за окно + охват (не стоячий уровень). ----
@@ -14021,7 +14036,7 @@ function renderHeader(force = false) {
         <button type="button" class="up-meta" data-action="open-account-profile" title="${t('Открыть профиль')}"><span class="up-name">${esc(State.me.name)}${eqTitle ? ` <span class="eq-title">${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(eqTitle)}</span>` : ''}</span>
         <span class="up-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name}</span></button></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
-      <div class="xp-bar" data-guide-target="first-level-form"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
+      <div class="xp-bar" data-guide-target="first-level-form" title="${esc(`${t('До уровня')} ${oi.level + 1}: ${oi.into} / ${oi.need} XP`)}"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
       <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
@@ -20830,8 +20845,8 @@ function renderToday() {
   // сразу. Двоеточие вместо сказуемого решает это на всех языках.
   const loadNudge = (li && li.quiet.length)
     ? `<div class="card nudge-card load-nudge">
-        <button class="nudge" data-action="goto-stats">🌡 ${esc(li.hot.name)} — ×${li.hot.ratio.toFixed(1)} ${t('от нормы')}. ${t('Без внимания')}: ${li.quiet.map((q) => esc(q.name)).join(', ')}</button>
-        <span class="nudge-boost">${t('Не упрёк: просто похоже, что пора дать себе передышку в этой сфере.')}</span></div>`
+        <button class="nudge" data-action="goto-stats">${satoruIconHTML('status.balance', 'inline-glyph', '◇')} <span data-noi18n>${esc(li.hot.name)}</span>: ${loadRatioText(li.hot.ratio)} ${t('от обычного за неделю')}. ${t('Нет записей 7+ дней')}: <span data-noi18n>${li.quiet.map((q) => esc(q.name)).join(', ')}</span></button>
+        <span class="nudge-boost">${t('Это по записанному опыту, а не по самочувствию. Если чувствуешь перегруз — можно дать этой сфере передышку.')}</span></div>`
     : '';
   // 🌅 Возврат после срыва (DISCIPLINE-BOUNDARIES-PLAN §6 п.4). Отличается от эпизода выше:
   // тот просит РАССКАЗАТЬ, чем была пауза, а этот убирает стену, из-за которой не возвращаются.
@@ -21770,7 +21785,7 @@ function characterWardrobeV1HTML(cr, oi, arch) {
       <div class="character-identity-copy"><p class="character-kicker">Satoru</p><h2 id="character-route-title">${t('Персонаж')}</h2><p class="character-name"${State.me && State.me.name ? ' data-noi18n' : ''}>${State.me && State.me.name ? esc(State.me.name) : t('Герой')}</p>
         <div class="character-identity-chips"><span class="ch-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${esc(t(cr.name))} · ${t('Уровень')} ${charLevel()}</span><span class="ch-arch">${satoruIconHTML('profile.origin.mask', 'inline-emblem', '◇')} <b>${esc(t(arch.name))}</b></span>${equippedTitle() ? `<span class="ch-title" data-noi18n>${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(equippedTitle())}</span>` : ''}</div>
       </div>
-      <div class="character-identity-progress"><div class="xp-bar"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div><div class="character-form-line"><span>${t('Форма')}</span><b style="--form-color:${fm.color}">${of == null ? '—' : of + '%'} · ${esc(t(fm.text))}</b></div></div>
+      <div class="character-identity-progress"><div class="character-form-line character-xp-line"><span>${t('До уровня')} ${oi.level + 1}</span><b>${oi.into} / ${oi.need} XP</b></div><div class="xp-bar" aria-hidden="true"><span style="width:${oi.pct}%"></span></div><div class="character-form-line"><span>${t('Форма')}</span><b style="--form-color:${fm.color}">${of == null ? '—' : of + '%'} · ${esc(t(fm.text))}</b></div></div>
     </header>
     <div class="character-wardrobe-heading"><div><h3 id="character-wardrobe-title">${t('Гардероб')}</h3></div></div>
     <div class="character-wardrobe-layout">
@@ -23994,13 +24009,22 @@ function sphereRhythmSummary() {
 }
 function renderStats() {
   ensureAiKeys();
-  const since = addDays(todayStr(), -13);
-  const planned14 = (State.tasks || []).filter((t) => t.date >= since && t.date <= todayStr());
-  const rate = planned14.length ? Math.round((planned14.filter((t) => t.done).length / planned14.length) * 100) : null;
+  const since = addDays(todayStr(), -13), statsToday = todayStr();
+  // R04A: день ещё идёт — сегодняшнее открытое дело не считается невыполненным.
+  const planned14 = (State.tasks || []).filter((t) => t.date >= since && (t.date < statsToday || (t.date === statsToday && t.done)));
+  const done14 = planned14.filter((t) => t.done).length;
+  const rate = planned14.length ? Math.round((done14 / planned14.length) * 100) : null;
   const reflections = Object.entries(State.days || {}).filter(([, v]) => v && v.reflection && v.reflection.trim()).sort((a, b) => (a[0] < b[0] ? 1 : -1)).slice(0, 7).map(([d, v]) => `<li><span class="date">${d}</span><br>${esc(v.reflection)}</li>`).join('');
   const cr = charRank(), bal = balanceIndex();
-  const hasBalanceSignal = bal.active >= 2 && bal.windowMin > 0;
-  const balColor = !hasBalanceSignal ? 'var(--muted)' : (bal.index >= 70 ? '#5fbf7a' : bal.index >= 40 ? '#e0a23e' : '#e0526a');
+  const loadResult = sphereLoadResult();
+  // R04A: индекс по 21-дневному окну не показывается, пока записей меньше недели — иначе
+  // три дня истории выглядели бы как уверенная оценка распределения за три недели.
+  const statsHistoryStart = loadResult && loadResult.historyStart;
+  const statsHistoryDays = statsHistoryStart && window.SphereLoadV1 ? window.SphereLoadV1.daysBetween(statsHistoryStart, statsToday) + 1 : 0;
+  const balanceShortHistory = statsHistoryDays < 7;
+  const hasBalanceSignal = bal.active >= 2 && bal.windowMin > 0 && !balanceShortHistory;
+  // R04A: индекс описывает распределение времени, а не оценивает человека — без красного/зелёного.
+  const balColor = hasBalanceSignal ? 'var(--text-strong, var(--text))' : 'var(--muted)';
   const rankRow = (s, sub) => {
     const lvl = skillLevelOf(s.id), r = rankFor(lvl), rp = rankProgress(lvl);
     return `<div class="rank-row ${sub ? 'sub' : ''}">
@@ -24022,23 +24046,40 @@ function renderStats() {
   // Нагрузка сфер: превышение сферой СВОЕЙ нормы за 7 дней против личной базы за 28.
   // Тумблер «восстанавливает» стоит прямо здесь, а не в Настройках: он нужен ровно в тот момент,
   // когда видишь «перегрев отдыха» и понимаешь, что для этой сферы предупреждение бессмысленно.
-  const loads = sphereLoads().filter((r) => r.ratio != null || r.rec > 0);
-  const ins = loadInsight();
-  const loadCard = loads.length ? `<div class="card"><h3>${satoruIconHTML('status.balance', 'heading-glyph')} ${t('Нагрузка сфер')}</h3>
-    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Сравнение с твоей же нормой: последние 7 дней против предыдущих 28. Не «много вообще», а «много для тебя».')}</p>
-    ${ins ? `<p class="load-insight">${t('Перегрев')}: <b>${esc(ins.hot.name)}</b> — ×${ins.hot.ratio.toFixed(1)} ${t('от твоей нормы')}${ins.quiet.length ? `. ${t('Без внимания')}: ${ins.quiet.map((q) => esc(q.name)).join(', ')}` : ''}.</p>` : ''}
+  // R04A: строка говорит словами, ЧТО сравнивается, отметка на полосе — обычный день самого
+  // человека (×1), а недостаток истории или записей по сфере назван прямо, без выдуманного числа.
+  const ins = loadInsight(loadResult);
+  const loadStateText = { higher: 'больше обычного', usual: 'как обычно', lower: 'меньше обычного', none: 'нет записей за 7 дней', unknown: 'мало записей для нормы' };
+  const loads = loadResult ? loadResult.rows.filter((r) => r.ratio != null || r.recentXp > 0) : [];
+  // Переключатель «восстанавливает» нужен у строки ровно тогда, когда он что-то меняет (есть
+  // предупреждение) или уже включён; остальные сферы — в одном раскрытии, а не семь кнопок подряд.
+  const loadRestoreButton = (r) => `<button type="button" class="load-restore${r.restores ? ' on' : ''}"${State._sphereRestoreBusy ? ' disabled' : ''} data-action="toggle-restores" data-id="${r.id}" aria-pressed="${r.restores ? 'true' : 'false'}" aria-label="${esc(t('Эта сфера меня восстанавливает — не предупреждать о перегрузе'))}: ${esc(r.name)}">${satoruIconHTML('difficulty.easy', 'inline-glyph')}<span>${t(r.restores ? 'Восстанавливает: да' : 'Восстанавливает: нет')}</span></button>`;
+  const loadRestoreRest = loads.filter((r) => !r.hot && !r.restores);
+  // Фокус после сохранения возвращается на кнопку этой сферы — она не должна оказаться в закрытом раскрытии.
+  const loadRestoreOpen = !!document.querySelector('.load-restore-more[open]') || loadRestoreRest.some((r) => r.id === State._sphereRestoreTarget);
+  if (!State._sphereRestoreBusy) State._sphereRestoreTarget = null;
+  const loadIntro = `<p class="muted load-intro">${t('По записанному опыту (XP): средний день последней недели против твоего обычного дня за предыдущие до 4 недель. Это сравнение с тобой, а не измерение усталости.')}</p>`;
+  const loadCard = !loadResult || !loadResult.historyStart || (!loads.length && loadResult.baseReady) ? '' : `<div class="card load-card"><h3>${satoruIconHTML('status.balance', 'heading-glyph')} ${t('Нагрузка сфер')}</h3>
+    ${loadIntro}
+    ${!loadResult.baseReady ? `<p class="load-empty"><b>${t('Норма ещё не сложилась')}.</b> ${t('Для сравнения нужно 14 дней записей до последней недели. Сейчас')}: ${localizedDayCount(loadResult.observedBaseDays)}.</p>` : `
+    ${ins ? `<p class="load-insight">${t('Заметно больше обычного')}: <b data-noi18n>${esc(ins.hot.name)}</b> — ${loadRatioText(ins.hot.ratio)}${ins.quiet.length ? `. ${t('Нет записей 7+ дней')}: <span data-noi18n>${ins.quiet.map((q) => esc(q.name)).join(', ')}</span>` : ''}.</p>` : ''}
     <div class="load-rows">${loads.map((r) => {
-      const pct = r.ratio == null ? null : Math.max(4, Math.min(100, Math.round(r.ratio / 3 * 100)));
-      return `<div class="load-row">
-        <span class="load-name">${esc(r.name)}</span>
-        <span class="load-bar">${pct == null ? `<i class="load-none"></i>` : `<i style="width:${pct}%;background:${r.hot ? '#e0526a' : esc(r.color)}"></i>`}</span>
-        <span class="load-val ${r.hot ? 'is-hot' : ''}">${r.ratio == null ? t('мало данных') : '×' + r.ratio.toFixed(1)}</span>
-        <button type="button" class="load-restore${r.restores ? ' on' : ''}"${State._sphereRestoreBusy ? ' disabled' : ''} data-action="toggle-restores" data-id="${r.id}" aria-pressed="${r.restores ? 'true' : 'false'}" aria-label="${esc(t('Эта сфера меня восстанавливает — не предупреждать о перегрузе'))}: ${esc(r.name)}">${satoruIconHTML('difficulty.easy', 'inline-glyph')}<span>${t(r.restores ? 'Восстанавливает: да' : 'Восстанавливает: нет')}</span></button>
+      const state = r.state === 'unknown' ? 'unknown' : r.state;
+      const value = r.ratio == null ? t(loadStateText.unknown) : state === 'none' ? t(loadStateText.none) : `${loadRatioText(r.ratio)} · ${t(loadStateText[state])}`;
+      return `<div class="load-row is-${state}${r.hot ? ' is-hot' : ''}">
+        <span class="load-name" data-noi18n>${esc(r.name)}</span>
+        <span class="load-val">${value}</span>
+        <span class="load-bar" aria-hidden="true">${r.scalePct == null ? '<i class="load-none"></i>' : `<i style="width:${r.scalePct}%;background:${esc(r.color)}"></i>`}${r.ratio == null ? '' : `<b class="load-norm" style="left:${loadResult.normPct}%"></b>`}</span>
+        ${r.hot || r.restores ? loadRestoreButton(r) : ''}
       </div>`;
     }).join('')}</div>
-    <p class="muted" style="font-size:11.5px;margin:8px 0 0">${t('Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.')}</p></div>` : '';
+    <p class="muted load-legend">${t('Вертикальная отметка на полосе — твой обычный день (×1).')}</p>
+    ${loadRestoreRest.length ? `<details class="load-restore-more"${loadRestoreOpen ? ' open' : ''}><summary>${t('Отметить сферы, которые восстанавливают')}</summary>
+      <div class="load-restore-list">${loadRestoreRest.map((r) => `<div class="load-restore-item"><span data-noi18n>${esc(r.name)}</span>${loadRestoreButton(r)}</div>`).join('')}</div>
+      <p class="muted load-legend">${t('Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.')}</p></details>`
+    : `<p class="muted load-legend">${t('Включи для сферы, которую считаешь отдыхом. Это отключает её предупреждение о перегреве; записи, XP и награды не меняются.')}</p>`}`}</div>`;
   const epList = (State.episodes || []).slice().sort((a, b) => (a.from < b.from ? 1 : -1));
-  const episodesCard = `<div class="card"><h3>🎒 ${t('Эпизоды')}</h3>
+  const episodesCard = `<div class="card"><h3>${satoruIconHTML('system.calendar', 'heading-glyph', '◇')} ${t('Эпизоды')}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Периоды, когда жизнь шла, а записывать было некогда: поездки, интенсивы, болезнь.')}</p>
     ${epList.length ? `<div class="ep-cards">${epList.map((ep) => {
       const d = episodeDays(ep).length, xp = episodeTotalXp(ep);
@@ -24047,13 +24088,13 @@ function renderStats() {
       return `<div class="ep-card">
         <div class="ep-card-head">
           <span class="ep-card-title">${episodeType(ep.type).icon} ${esc(ep.title)}</span>
-          <button type="button" class="del" data-action="ep-del" data-id="${ep.id}" aria-label="${esc(t('Удалить эпизод'))}: ${esc(ep.title)}">✕</button>
+          <button type="button" class="del" data-action="ep-del" data-id="${ep.id}" aria-label="${esc(t('Удалить эпизод'))}: ${esc(ep.title)}">${satoruIconHTML('action.delete', 'inline-glyph', '✕')}</button>
         </div>
         <div class="ep-card-meta">${dmShort(ep.from)} — ${dmShort(ep.to)} · ${d} ${plural(d, 'день', 'дня', 'дней')} · +${xp} XP</div>
         <div class="ep-card-top">${top}</div>
       </div>`;
     }).join('')}</div>` : `<p class="muted" style="font-size:12.5px">${t('Пока пусто.')}</p>`}
-    <div class="propose-actions"><button class="btn ghost" data-action="episode-open">🎒 ${t('Записать эпизод')}</button></div></div>`;
+    <div class="propose-actions"><button class="btn ghost" data-action="episode-open">${satoruIconHTML('action.add', 'button-glyph', '+')} ${t('Записать эпизод')}</button></div></div>`;
   // Один вопрос — один ответ. Раньше здесь было две строки, и они называли разные
   // сферы: «Без внимания: Наука» и «Реже, чем ты решил: Тело» на одном экране, потому
   // что считались разной арифметикой в разных окнах. Побеждает объявленная частота:
@@ -24061,21 +24102,21 @@ function renderStats() {
   // объявленных частот — остаётся прежняя строка, ровно как была.
   const rhythmSummary = sphereRhythmSummary();
   const balanceSummary = rhythmSummary || (hasBalanceSignal
-    ? (bal.weakest && bal.index < 80 ? `${t('Без внимания')}: ${esc(bal.weakest.name)}` : t('Ритм сфер устойчив'))
-    : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.'));
+    ? (bal.weakest && bal.index < 80 ? `${t('Меньше всего времени за 3 недели')}: <span data-noi18n>${esc(bal.weakest.name)}</span>` : t('Ритм сфер устойчив'))
+    : (bal.active >= 2 && balanceShortHistory ? t('Баланс появится после 7 дней записей. Это не оценка тебя.') : t('Баланс появится, когда хотя бы две сферы получат внимание. Это не оценка тебя.')));
   return `<section class="stats-shell" data-guide-target="stats-overview" aria-labelledby="stats-title">
     <header class="stats-route-head"><h2 id="stats-title" tabindex="-1">${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Прогресс')}</h2></header>
-    <section class="card stats-lead weekly-insight" aria-labelledby="stats-week-title"><div><span class="th-kicker">${t('Последние 14 дней')}</span><h3 id="stats-week-title">${rate == null ? t('Пока нет планов') : `${rate}% · ${t('Выполнение (14 дн.)')}`}</h3><p class="muted">${balanceSummary}</p></div><div class="stats-lead-actions"><button class="btn" data-action="ai-review">${t('Разобрать неделю')}</button><button class="btn ghost" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Твоя неделя')}</button></div></section>
+    <section class="card stats-lead weekly-insight" aria-labelledby="stats-week-title"><div><span class="th-kicker">${t('Последние 14 дней')}</span><h3 id="stats-week-title">${rate == null ? t('Пока нет планов') : `${rate}% · ${t('Выполнение (14 дн.)')}`}</h3><p class="muted">${balanceSummary}</p>${rate == null ? '' : `<p class="muted stats-rate-detail">${t('Закрыто')} ${done14} ${t('из')} ${planned14.length}. ${t('Открытые дела сегодня пока не считаются невыполненными.')}</p>`}</div><div class="stats-lead-actions"><button class="btn" data-action="ai-review">${t('Разобрать неделю')}</button><button class="btn ghost" data-action="share-week">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${t('Твоя неделя')}</button></div></section>
     <div class="kpis stats-kpis-compact">
-      <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${cr.name}</div></div>
+      <div class="kpi"><div class="v">${rankIconHTML(cr, 'kpi-emblem')} ${charLevel()}</div><div class="l">${t('Уровень')} · ${cr.name}</div></div>
       <div class="kpi"><div class="v" style="color:${balColor}">${hasBalanceSignal ? bal.index : '—'}</div><div class="l">${hasBalanceSignal ? t('Индекс баланса') : t('Наблюдаем баланс')}</div></div>
-      <div class="kpi"><div class="v">${satoruIconHTML('status.streak', 'kpi-emblem', '◇')} ${currentStreak()}</div><div class="l">${t('Серия')} · ${longestStreak()}</div></div>
+      <div class="kpi"><div class="v">${satoruIconHTML('status.streak', 'kpi-emblem', '◇')} ${currentStreak()}</div><div class="l">${t('Серия')} · ${t('рекорд')} ${longestStreak()}</div></div>
       <div class="kpi"><div class="v">${overallXp()}</div><div class="l">${t('Всего опыта')}</div></div>
     </div>
     <details class="card stats-progressive"><summary>${t('Ритм и баланс')}</summary><div class="stats-progressive-body">
-      <div class="balance-card${hasBalanceSignal ? '' : ' is-observing'}"><div class="bal-head"><h3>⚖️ ${t('Баланс сфер')}</h3><div class="bal-score" style="color:${balColor}">${hasBalanceSignal ? `${bal.index}<small>/100</small>` : '—'}</div></div>${hasBalanceSignal ? `<div class="bal-meter" aria-hidden="true"><span style="width:${bal.index}%;background:${balColor}"></span></div>` : ''}<p class="muted">${balanceSummary}</p></div>
+      <div class="balance-card${hasBalanceSignal ? '' : ' is-observing'}"><div class="bal-head"><h3>${satoruIconHTML('status.balance', 'heading-glyph', '◇')} ${t('Баланс сфер')}</h3><div class="bal-score" style="color:${balColor}">${hasBalanceSignal ? `${bal.index}<small>/100</small>` : '—'}</div></div>${hasBalanceSignal ? `<div class="bal-meter" aria-hidden="true"><span style="width:${bal.index}%;background:var(--accent)"></span></div>` : ''}<p class="muted">${balanceSummary}</p>${hasBalanceSignal ? `<p class="muted stats-meaning">${t('Насколько ровно время распределено между сферами за 3 недели: 100 — поровну и во всех сферах. Это описание, а не оценка.')}</p>` : ''}</div>
       <section><h3>${t('Ранги по сферам')}</h3>${skillRanksRows || `<p class="muted">${t('Добавь навыки в Настройках.')}</p>`}</section>
-      <section><h3>${t('XP по дням')}</h3>${barChartSVG(xpByDay(14), { thinnable: true })}</section>
+      <section><h3>${t('XP по дням')}</h3><p class="muted stats-meaning">${t('XP за закрытое дело: запланированные минуты × сложность + бонус за завершение; привычки, цели и эпизоды тоже дают XP. Это учёт сделанного, а не оценка тебя.')}</p>${barChartSVG(xpByDay(14), { thinnable: true })}</section>
       ${advanced}${loadCard}
     </div></details>
     <details class="card stats-progressive"><summary>${t('История и контекст')}</summary><div class="stats-progressive-body">${episodesCard}<section><h3>${t('Рефлексии этой недели')}</h3>${reflections ? `<ul class="reflections">${reflections}</ul>` : `<p class="muted">${t('Пока нет записей.')}</p>`}</section></div></details>
@@ -33847,7 +33888,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v282';
+const PWA_CACHE_VERSION = 'satoru-v283';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

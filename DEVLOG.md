@@ -1,5 +1,20 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R04A — honest XP, load and insufficient base, v283
+
+Sphere load no longer divides the base by 28 days for a young history: new pure
+`SphereLoadV1` uses observed days only, names «no norm yet» (<14 days) and sparse
+spheres, and replaces «×0.0» with «no entries in 7 days». Each row states its
+meaning with a ×1 mark; names wrap. Balance index is neutral, explained and hidden
+before 7 days of records; «least time in 3 weeks» vs «no entries 7+ days» removes a
+contradicting «Без внимания». Completion ignores today's open tasks and shows N of M.
+XP formula explained on Progress; Hero shows «to level N». Restore toggles grouped;
+Today load hint uses the calm R03A style. XP/gold math, owner/CAS/WAL unchanged.
+Chromium 20-case matrix (5 locales, 375/1280, light/dark, dense/short/empty),
+contrast ≥5.97:1, WAL 503/retry/readback. WebKit unavailable in the cloud container.
+See PROGRESS-MEANING-V283-QA.md. Shell/pins v283; release receipt in
+RELEASE-CHECKPOINT-R04-R06.md.
+
 ## [2026-09-24] R03A / scoped R03B — Today components, v282
 
 Companion streak/chest now have 48px artwork, labels and a quiet reward shortcut.

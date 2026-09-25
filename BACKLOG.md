@@ -1,5 +1,11 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R04A / v283:** honest sphere load (observed-day base, named insufficient
+  base, no «×0.0»), neutral explained balance index gated on 7 days, completion
+  without today's open tasks, XP meaning and «to level N». See PROGRESS-MEANING-V283-QA.md.
+- [ ] **R04A follow-up:** WebKit/real-device check of Progress, Hero and Today support
+  (cloud container had Chromium only).
+
 - [x] **R03A / v282:** dense Today reference and shared control cleanup.
 
   Streak/chest 48px, calmer support, concrete localized entry copy, registry task/

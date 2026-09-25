@@ -17,7 +17,9 @@ test('Stats v135 exposes one labelled route surface', () => {
 
 test('Stats v135 does not render missing rhythm or plans as a negative score', () => {
   assert.match(app, /const rate = planned14\.length \? Math\.round\([\s\S]+?\) : null;/);
-  assert.match(app, /const hasBalanceSignal = bal\.active >= 2 && bal\.windowMin > 0;/);
+  assert.match(app, /const hasBalanceSignal = bal\.active >= 2 && bal\.windowMin > 0 && !balanceShortHistory;/);
+  // R04A v283: a 21-day index is not shown before a week of recorded history.
+  assert.match(app, /const balanceShortHistory = statsHistoryDays < 7;/);
   assert.match(app, /hasBalanceSignal \? bal\.index : '—'/);
   assert.match(app, /rate == null \? t\('Пока нет планов'\) : `\$\{rate\}%/);
   assert.match(app, /Баланс появится, когда хотя бы две сферы получат внимание\. Это не оценка тебя\./);
@@ -25,7 +27,7 @@ test('Stats v135 does not render missing rhythm or plans as a negative score', (
 
 test('Stats v135 keeps the global assistant reachable and ships the current offline shell', () => {
   assert.doesNotMatch(css, /body:has\(\.stats-shell\) #ai-fab[^}]*display:\s*none/);
-  assert.match(sw, /const CACHE = 'satoru-v282'/);
+  assert.match(sw, /const CACHE = 'satoru-v283'/);
 });
 
 test('Stats v135 additions are localized for every shipped locale', () => {
