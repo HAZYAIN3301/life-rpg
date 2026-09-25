@@ -539,6 +539,9 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // R09 (v291): одна подсказка — одно действие.
+  'Разминка / прогулка': { en: 'Warm-up / walk', de: 'Aufwärmen / Spaziergang', uk: 'Розминка / прогулянка', es: 'Calentamiento / paseo' },
+  'Подсказывать мобилку, если ты тренируешься без растяжки': { en: 'Suggest mobility work when you train without stretching', de: 'Mobility vorschlagen, wenn du ohne Dehnen trainierst', uk: 'Підказувати мобілку, якщо ти тренуєшся без розтяжки', es: 'Sugerir movilidad si entrenas sin estirar' },
   // R07 (v289): ИИ-окна — итог дня, эпизод, предложения, подбор сферы и шага — раньше были по-русски.
   'Тень не ответила за полторы минуты. Текст сохранён — можно повторить или продолжить вручную.': { en: 'Shadow did not answer within a minute and a half. Your text is saved — you can try again or continue manually.', de: 'Schatten hat in anderthalb Minuten nicht geantwortet. Dein Text ist gespeichert — du kannst es erneut versuchen oder manuell weitermachen.', uk: 'Тінь не відповіла за півтори хвилини. Текст збережено — можна повторити або продовжити вручну.', es: 'Sombra no respondió en un minuto y medio. Tu texto está guardado: puedes intentarlo de nuevo o seguir manualmente.' },
   'Запрос отменён. Текст на месте — можно повторить.': { en: 'Request cancelled. Your text is still here — you can try again.', de: 'Anfrage abgebrochen. Dein Text ist noch da — du kannst es erneut versuchen.', uk: 'Запит скасовано. Текст на місці — можна повторити.', es: 'Solicitud cancelada. Tu texto sigue aquí; puedes intentarlo de nuevo.' },
@@ -15129,7 +15132,7 @@ let _mobilSnoozeDay = null; // «Позже» для нуджа мобилки �
 function trainingWithoutMobility() {
   const since = addDays(todayStr(), -7);
   const strengthRe = /зал|штанг|жим|силов|присед|становая|тяга|дзюдо|единоборств|бокс|борьб|gym|judo/i;
-  const mobilityRe = /растяжк|мобил|йог|разминк|гибкост|шпагат|суставн|stretch|mobility/i;
+  const mobilityRe = /растяжк|мобил|йог|разминк|гибкост|шпагат|суставн|розтяж|мобіл|розмин|stretch|mobility|yoga|dehn|movilidad|estira/i;
   let strength = false, mobility = false;
   for (const t of State.tasks) if (t.done && dayOf(t) >= since) { const n = normRu(t.title); if (strengthRe.test(n)) strength = true; if (mobilityRe.test(n)) mobility = true; }
   for (const d in State.habitlog) if (d >= since) for (const hid in State.habitlog[d]) { const h = habitById(hid); if (h) { const n = normRu(h.title); if (strengthRe.test(n)) strength = true; if (mobilityRe.test(n)) mobility = true; } }
@@ -19543,7 +19546,6 @@ const NUDGE_SIG_HINT = {
   stretch: 'день целиком сидячий, движения не запланировано',
   mobility: 'активно тренируется, но регулярной растяжки давно не видно',
   import: 'новичок начинает с нуля, хотя за плечами реальный опыт',
-  sysTeaser: 'не открыл для себя спрятанный режим «Система»',
 };
 let _nudgeVoiceBusy = false, _nudgeVoiceFailAt = 0;
 function nudgeVoiceGet(sig) {
@@ -21176,12 +21178,14 @@ function renderToday() {
       <div class="en-head">${satoruIconHTML('status.energy', 'energy-emblem', '◔')}<b>${t('Нагрузка дня')}</b><span class="en-num" style="color:${eM.color}">${load.known ? `${load.done} / ${load.typical}` : String(load.done)}</span><span class="en-text muted">· ${esc(t(eM.text))}</span></div>
       <div class="en-bar"><span style="width:${load.known ? Math.min(100, Math.round((load.ratio || 0) / 2 * 100)) : 0}%;background:${eM.color}"></span></div>
       <p class="en-note muted">${load.known ? esc(t('Слева — сегодня, справа — твой обычный день.')) : esc(t('Обычный день определится, когда наберётся история.'))}</p></div>`;
-  const lowEnergyNudge = (window.DayLoadV1 && window.DayLoadV1.shouldSuggestStop(load)) ? `<div class="card nudge-card en-low"><span class="nudge-boost">${satoruIconHTML('status.warning', 'inline-glyph', '◔')} ${esc(t('Сегодня сделано заметно больше обычного. Остановиться сейчас — не слабость, а расчёт: завтра тоже день.'))}</span></div>` : '';
+  // R09: у каждой подсказки ровно одно действие — иначе блок поддержки её не покажет
+  // (secretaryNudgeEligible). Перегруз дня ведёт в существующее завершение дня.
+  const lowEnergyNudge = (window.DayLoadV1 && window.DayLoadV1.shouldSuggestStop(load)) ? `<div class="card nudge-card"><button class="nudge" data-action="evening-open">${satoruIconHTML('system.day-end', 'button-glyph', '☾')} ${esc(t('Завершить день'))}</button><span class="nudge-boost">${esc(t('Сегодня сделано заметно больше обычного. Остановиться сейчас — не слабость, а расчёт: завтра тоже день.'))}</span></div>` : '';
   // Честное состояние (fb #6): «тренируюсь → Здоровье растёт → баланс выглядит хорошим, хотя
   // явного отдыха давно не было». Показываем ТОЛЬКО когда набралась история (иначе на старте зря
   // пугаем нулём дней) и порог значим (≥4) — приглашение, не счётчик вины.
   const restGapToday = (State.tasks || []).length >= 5 ? restGapDays() : 0;
-  const restNudge = restGapToday >= 4 ? `<div class="card nudge-card en-low"><span class="nudge-boost">${satoruIconHTML('system.day-end', 'inline-glyph', '🌿')} <span>${restGapToday} ${plural(restGapToday, 'день', 'дня', 'дней')} без записей об отдыхе. Если сейчас нужна пауза — можно её выбрать.</span></span></div>` : '';
+  const restNudge = restGapToday >= 4 ? `<div class="card nudge-card"><button class="nudge" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-emblem', '◇')} ${esc(t('Отдохнуть с границей'))}</button><span class="nudge-boost">${restGapToday} ${plural(restGapToday, 'день', 'дня', 'дней')} без записей об отдыхе. Если сейчас нужна пауза — можно её выбрать.</span></div>` : '';
 
   const chestsAvail = lootChestsAvailable();
   const chestCarry = ensureLootbox().carry; // сколько из доступных — перенесены с прошлых дней (не потеряны)
@@ -21191,7 +21195,8 @@ function renderToday() {
   const noImports = !Object.keys((State.settings && State.settings.imported) || {}).length;
   const importNudge = (noImports && earnedXp() < 200) ? `<div class="card nudge-card"><button class="nudge" data-action="goto-import">${satoruIconHTML('action.import', 'button-glyph', '🎖')} ${esc(emojiFree(t('🎖 Не начинай с нуля — импортируй свой реальный опыт')))}</button><span class="nudge-boost">${esc(t('отметь свой уровень в сферах → стартовый опыт'))}</span></div>` : '';
   // Сидячий день (4+ ч планов без движения) → мягкий нудж добавить разминку (идея fb_mq3m7zjd)
-  const hasMove = todays.some((t) => /размин|прогул|зарядк|растяжк|спорт|трениров|walk|stretch|gym/i.test(t.title)) || habits.some((h) => /размин|прогул|зарядк|растяжк|спорт|трениров/i.test(h.title));
+  const moveRe = /размин|прогул|зарядк|растяжк|спорт|трениров|розмин|розтяж|walk|stretch|warm-up|gym|aufwärm|spazier|dehn|calentam|paseo|estira/i;
+  const hasMove = todays.some((t) => moveRe.test(t.title)) || habits.some((h) => moveRe.test(h.title));
   const stretchNudge = (planned >= 240 && !hasMove) ? `<div class="card nudge-card"><button class="nudge" data-action="add-stretch">${satoruIconHTML('activity.workout', 'button-emblem', '🤸')} ${fmtDur(planned)} ${esc(t('сидячих планов — вставить разминку 10 мин'))}</button><span class="nudge-boost">${esc(t('баланс — это тоже квест'))}</span></div>` : '';
 
   // «Жизнь шла, а записывать было некогда» (fb_mragb9rg2tkz). Satoru умеет «запланировал → выполнил»,
@@ -21274,11 +21279,10 @@ function renderToday() {
   // Профилактика травм (Блок 3, спек F): активные силовые/единоборства без мобилки → мягкая opt-in подсказка
   const prefs = State.settings.prefs || {};
   const showMobil = !prefs.noMobilityNudge && _mobilSnoozeDay !== today && trainingWithoutMobility();
-  const mobilityNudge = showMobil ? `<div class="card nudge-card mobil-nudge">
-      <div class="mobil-text"><b>${satoruIconHTML('activity.yoga', 'button-emblem', '🧘')} ${esc(t('Мобилка спины и плеч'))}</b><p class="muted">${esc(t('Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза.'))} <i>${esc(t('Это не медицинский совет — при болях сверься со специалистом.'))}</i></p></div>
-      <div class="mobil-acts"><button class="nudge" data-action="add-mobility">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Растяжка 10 мин'))}</button><button class="btn ghost sm" data-action="mobil-later">${esc(t('Позже'))}</button><button class="btn ghost sm" data-action="mobil-never">${esc(t('Не показывать'))}</button></div></div>` : '';
-  // Тизер режима «Система» — одноразово, после ур.2, если не включён (дискаверабилити)
-  const sysTeaser = (!systemMode() && charLevel() >= 2 && !isDiscovered('teaser:system')) ? `<div class="card nudge-card sys-teaser"><span class="nudge-boost">${satoruIconHTML('status.xp', 'inline-glyph', '⚡')} ${esc(t('Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.'))}</span><div class="sys-teaser-btns"><button class="btn sm" data-action="enable-system-teaser">${esc(t('Включить'))}</button><button class="btn ghost sm" data-action="dismiss-system-teaser">${esc(t('Позже'))}</button></div></div>` : '';
+  // «Позже» не нужно — подсказки и так сменяют друг друга; отключить можно в Настройках → Тень.
+  const mobilityNudge = showMobil ? `<div class="card nudge-card"><button class="nudge" data-action="add-mobility">${satoruIconHTML('activity.yoga', 'button-emblem', '🧘')} ${esc(t('Растяжка 10 мин'))}</button><span class="nudge-boost">${esc(t('Мобилка спины и плеч'))}: ${esc(t('Ты активно тренируешься (силовая / дзюдо), но регулярной растяжки давно не видно. Мобилка снижает риск зажимов и перегруза.'))}</span><small class="nudge-note">${esc(t('Это не медицинский совет — при болях сверься со специалистом.'))}</small></div>` : '';
+  // R09: тизер режима «Система» удалён — ту же находку раз в жизни говорит реплика Тени d_system
+  // (общий ключ открытия 'teaser:system'), а переключатель живёт в Настройки → Оформление.
 
   // Один список дней на оба раздела арены (§4 и §12) — см. arenaDayHistory.
   const arenaHist = arenaDayHistory(today);
@@ -21319,7 +21323,6 @@ function renderToday() {
     { id: 'stretch', tier: 5, html: stretchNudge },
     { id: 'mobility', tier: 5, html: mobilityNudge },
     { id: 'import', tier: 6, html: importNudge },
-    { id: 'sysTeaser', tier: 7, html: sysTeaser },
   ].filter((candidate) => secretaryNudgeEligible(candidate.html)));
   // Фаза B2: если Тень уже подобрала слова под этот сигнал — подставляем их; иначе показываем
   // статичный текст и в фоне просим фразу (без ключа запрос не уходит вовсе — остаётся статика).
@@ -27504,9 +27507,10 @@ function renderSettings() {
         <button class="btn ghost sm" data-action="tts-preview">${satoruIconHTML('media.sound', 'button-glyph', '◇')} ${t('Прослушать Тень')}</button>
       </div>` : ''}
       <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></section>
-    <section class="settings-subsection"><h3>🕯 ${t('Тень')}</h3>
+    <section class="settings-subsection"><h3>${satoruIconHTML('nav.shadow', 'heading-glyph', '🕯')} ${t('Тень')}</h3>
       <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Утром и вечером Тень встречает тебя один раз — говорит по твоему состоянию и зовёт к одному шагу. Здесь можно вызвать эту встречу заново, чтобы посмотреть.')}</p>
-      <button class="btn ghost sm" data-action="moment-replay">${t('Показать встречу сейчас')}</button></section>
+      <button class="btn ghost sm" data-action="moment-replay">${t('Показать встречу сейчас')}</button>
+      <label class="sound-toggle"><input type="checkbox" data-action="toggle-mobility-nudge" ${(State.settings.prefs || {}).noMobilityNudge ? '' : 'checked'}/> ${t('Подсказывать мобилку, если ты тренируешься без растяжки')}</label></section>
     ${ambientCard()}
     </div></details>
     <details class="card settings-disclosure"><summary>${t('Приложение и границы внимания')}</summary><div class="settings-disclosure-body settings-experience-stack">${pwaCard()}${attentionSettingsCard()}</div></details>
@@ -31174,6 +31178,7 @@ async function onClick(e) {
     render(); renderChatMessages(); return;
   }
   if (action === 'toggle-tts') { State.settings.tts = !!el.checked; autosaveSettings(); ttsStop(); render(); return; }
+  if (action === 'toggle-mobility-nudge') { State.settings.prefs = Object.assign({}, State.settings.prefs, { noMobilityNudge: !el.checked }); autosaveSettings(); render(); return; }
   if (action === 'set-ambient') {
     const next = structuredClone(State.settings); next.ambient = { ...next.ambient, mode: el.dataset.mode };
     await commitEquipment({ settings: next }, el, () => { applyAmbient(); syncDenAmbientVisual(next.ambient.mode); }); return;
@@ -31547,11 +31552,6 @@ async function onClick(e) {
     if (el.checked) systemNarrate('СИСТЕМА АКТИВИРОВАНА', t(systemVoice('activate')));
     render(); return;
   }
-  if (action === 'enable-system-teaser') {
-    State.settings.systemMode = true; markDiscovered('teaser:system'); Store.save('settings', State.settings); applyTheme();
-    systemNarrate('СИСТЕМА АКТИВИРОВАНА', t(systemVoice('activate'))); render(); return;
-  }
-  if (action === 'dismiss-system-teaser') { markDiscovered('teaser:system'); render(); return; }
   if (action === 'sound-test') { ['complete', 'coin', 'achievement'].forEach((n, i) => setTimeout(() => sfx(n), i * 420)); setTimeout(() => sfx('loot', 'legendary'), 1300); return; }
   if (action === 'show-paywall') { showPaywall(el.dataset.feature); return; }
   if (action === 'close-paywall') { closeAccountDialog('paywall'); return; }
@@ -32063,16 +32063,13 @@ async function onClick(e) {
   } else if (action === 'add-stretch') {
     const sk = State.settings.skills.find((s) => /спорт|здоров|sport|health/i.test(s.name)) || State.settings.skills.find((s) => ['str', 'end'].includes(guessAttr(s.name))) || State.settings.skills[0];
     if (!sk) return;
-    State.tasks.push({ id: uid(), title: 'Разминка / прогулка', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    State.tasks.push({ id: uid(), title: t('Разминка / прогулка'), skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     Store.save('tasks', State.tasks); toast(t('🤸 Разминка в плане — тело скажет спасибо')); render();
   } else if (action === 'add-mobility') {
     const sk = State.settings.skills.find((s) => /спорт|здоров|тело|sport|health/i.test(s.name)) || State.settings.skills.find((s) => ['str', 'end'].includes(guessAttr(s.name))) || State.settings.skills[0];
     if (!sk) return;
-    State.tasks.push({ id: uid(), title: 'Мобилка спины и плеч', skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
+    State.tasks.push({ id: uid(), title: t('Мобилка спины и плеч'), skillId: sk.id, skillIds: [sk.id], estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() });
     _mobilSnoozeDay = today; Store.save('tasks', State.tasks); toast(t('🧘 Мобилка в плане — спина и плечи скажут спасибо')); render();
-  } else if (action === 'mobil-later') { _mobilSnoozeDay = today; render();
-  } else if (action === 'mobil-never') {
-    State.settings.prefs = Object.assign({}, State.settings.prefs, { noMobilityNudge: true }); Store.save('settings', State.settings); toast(t('Подсказки мобилки отключены')); render();
   } else if (action === 'anti-slip') {
     const a = (State.antihabits || []).find((x) => x.id === id); if (!a) return;
     const next = structuredClone(State.antihabits), target = next.find((x) => x.id === id), day = habitDayKey();
@@ -34370,7 +34367,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v290';
+const PWA_CACHE_VERSION = 'satoru-v291';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

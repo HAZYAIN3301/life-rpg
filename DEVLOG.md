@@ -1,5 +1,13 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R09 — one hint, one action, v291
+
+Owner decision. Rest → «Отдохнуть с границей», day overload → «Завершить день»,
+mobility → one «Растяжка 10 мин» with the disclaimer line and a Settings switch;
+«System» teaser removed (duplicate of the `d_system` Shadow line). Created quests use
+the interface language; movement/mobility detection works in five languages; no
+danger colour on hint text. TODAY-HINTS-V291-QA.md. Shell/pins v291.
+
 ## [2026-09-25] R08 — Today touch-target floors, v290
 
 Quest title button on dense Today 23 → 44 px (aligned with the check circle; row

@@ -824,3 +824,5 @@
 :root[data-design=next] .task.task-entry-layout>.t-title{padding-top:0}
 :root[data-design=next] .task.task-entry-layout .t-title-edit{display:flex;align-items:center;min-height:44px;width:100%}
 :root[data-design=next] .difficulty-help>summary{display:flex;align-items:center;min-height:44px;cursor:pointer}
+/* R09 (v291): one hint — one action; the mobility disclaimer stays a readable 12px line under the hint. */
+:root[data-design=next] .nudge-note{display:block;flex:1 1 100%;margin-top:var(--sp-1);font-size:var(--type-micro);line-height:1.45;color:var(--muted)}

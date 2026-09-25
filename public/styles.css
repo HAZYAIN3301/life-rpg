@@ -3154,8 +3154,6 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .navsub-dot { margin-left: 5px; vertical-align: middle; }
 .navsec-new .navsec-l { color: var(--accent); }
 @keyframes disc-pulse { 0%,100% { transform: scale(1); opacity: 1 } 50% { transform: scale(1.35); opacity: .7 } }
-.sys-teaser { flex-direction: column; align-items: stretch; gap: 8px; }
-.sys-teaser-btns { display: flex; gap: 8px; }
 @media (prefers-reduced-motion: reduce) { .navsec-dot, .navsub-dot { animation: none; } }
 
 /* ============================================================
@@ -3485,9 +3483,6 @@ html[data-system="on"] .task, html[data-system="on"] .gear-item, html[data-syste
 .nudge:hover { filter: brightness(1.1); }
 .nudge-boost { color: #ffd479; font-weight: 600; font-size: 13px; }
 .en-low .nudge-boost { color: #ffb3b3; }
-.mobil-nudge { flex-direction: column; align-items: stretch; gap: 10px; }
-.mobil-text p { font-size: 12.5px; margin: 4px 0 0; line-height: 1.45; }
-.mobil-acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 /* анти-привычки (свобода от привычек) */
 .anti-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
 .anti-row:last-of-type { border-bottom: none; }
@@ -18691,7 +18686,7 @@ html.attention-dialog-open body { overscroll-behavior: none; }
   flex-wrap: wrap;
   gap: var(--sp-2);
 }
-.secretary-inline-nudge > :is(.nudge, .mobil-text) { min-width: 0; flex: 1 1 190px; }
+.secretary-inline-nudge > .nudge { min-width: 0; flex: 1 1 190px; }
 .secretary-inline-nudge .nudge-boost { min-width: 0; flex: 1 1 180px; overflow-wrap: anywhere; }
 .secretary-inline-nudge .tts-btn { margin-inline-start: auto; }
 

@@ -6,10 +6,9 @@
 - [x] **R06 / v288:** one Shadow — translated support hints with registry icons,
   whole-line Shadow phrase, 44px chat/voice/companion controls, visible Den glyph,
   12px streak badge. See SHADOW-V288-QA.md.
-- [ ] **R06 follow-up (product):** rest, low-energy, mobility and «System» teaser hints
-  are rendered but always filtered out on Today by the one-action rule
-  (`secretaryNudgeEligible`); decide whether to redesign them as one-action hints or
-  delete them. The companion name «Тень» is hard-coded in ~50 Russian strings with
+- [x] **R06 follow-up → R09 / v291 (owner: «одно действие или удалить»):** rest,
+  day overload and mobility hints have one action each; «System» teaser removed.
+  See TODAY-HINTS-V291-QA.md. The companion name «Тень» is hard-coded in ~50 Russian strings with
   case forms — owner 25.09: keep the name «Тень».
 
 - [x] **R05 / v287:** remaining screens meet R03B floors (icons, contrast, 12px,

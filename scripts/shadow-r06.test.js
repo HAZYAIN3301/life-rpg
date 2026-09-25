@@ -41,11 +41,12 @@ test('Today support hints use registry icons and translated text instead of syst
   for (const glyph of ['🌿', '🎖', '🤸', '🎒', '🌅', '🧘', '⚡']) {
     assert.doesNotMatch(block, new RegExp(`(?:>|nudge-boost">)${glyph}`), `${glyph} still leads a hint`);
   }
-  for (const id of ['system.day-end', 'action.import', 'activity.workout', 'system.calendar', 'period.day', 'activity.yoga', 'status.xp']) {
+  // R09 removed the «System» teaser (status.xp); its discovery lives in the Shadow drip line.
+  for (const id of ['status.balance', 'action.import', 'activity.workout', 'system.calendar', 'period.day', 'activity.yoga']) {
     assert.match(block, new RegExp(`satoruIconHTML\\('${id.replace('.', '\\.')}'`), id);
   }
   assert.doesNotMatch(block, />Включить<|>Позже<|>Не показывать<|>\+ Растяжка 10 мин</, 'buttons go through t()');
-  const keys = ['сидячих планов — вставить разминку 10 мин', 'баланс — это тоже квест', 'Мобилка спины и плеч', 'Растяжка 10 мин', 'Не показывать', 'Включить', 'Это не медицинский совет — при болях сверься со специалистом.', 'Спрятанная фишка: режим «Система» (Solo Leveling-вайб) — нарратор объявляет твои победы.'];
+  const keys = ['сидячих планов — вставить разминку 10 мин', 'баланс — это тоже квест', 'Мобилка спины и плеч', 'Растяжка 10 мин', 'Это не медицинский совет — при болях сверься со специалистом.'];
   for (const key of keys) {
     const at = APP.indexOf(`'${key}': {`);
     assert.notEqual(at, -1, key);
