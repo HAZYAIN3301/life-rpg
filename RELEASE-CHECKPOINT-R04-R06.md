@@ -12,8 +12,8 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R04A | honest XP / load / insufficient base | **published** v283 | `65a58bb` | both domains `/api/version` commit `65a58bb`, `satoru-v283` at 09:10 UTC 25.09; 20/20 SHA256 (10 files × 2 domains); login page smoke, 0 errors |
 | R04B | dense, understandable charts | **published** v284 | `06e7002` | both domains commit `06e7002`, `satoru-v284` at 09:37 UTC; 18/18 SHA256 (9 files × 2); login smoke 0 errors |
 | R04C | AI lifecycle: timeout, cancel, late response | **published** v285 | `e4adff1` | both domains commit `e4adff1`, `satoru-v285` at 09:5x UTC; 16/16 SHA256 (8 files × 2); login smoke 0 errors, `/api/ai/analyze` unauthenticated 401 |
-| R04D | export | implemented, verified locally | pending | pending |
-| R05/R06 | per NEXT.md (routes / companion) | needs NEXT.md scope | — | — |
+| R04D | export | **published** v286 | `1c3adf0` | both domains commit `1c3adf0`, `satoru-v286`; 18/18 SHA256 (9 files × 2); login smoke 0 errors; unauthenticated `/api/account/export` 401 (now reported in UI) |
+| R05/R06 | per NEXT.md (routes / companion) | **waiting for owner scope** (NEXT.md not readable in the cloud session); route audit done | — | — |
 
 ## Environment notes for this queue
 
@@ -46,3 +46,20 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
   design-next-v1.css, index.html, sw.js, ai-request-v1.js, progress-charts-v1.js,
   sphere-load-v1.js, styles.css on both domains. Server change (provider idle
   timeout) is live with the same commit. QA: AI-LIFECYCLE-V285-QA.md.
+- **R04D / v286** `1c3adf0` — full suite 3120/3120 PASS, 0 skipped (non-root);
+  fast-forward to master. SHA256 match (commit blobs) for app.js, design-next-v1.css,
+  index.html, sw.js, calendar-export-v1.js, ai-request-v1.js, progress-charts-v1.js,
+  sphere-load-v1.js, styles.css on both domains. QA: EXPORT-V286-QA.md.
+
+## R05/R06 preparation — route audit (Chromium, synthetic dense data)
+
+16 routes (today, notes, calendar, habits, shelf, den, character, pets, goals, tree,
+rewards, weekly, stats, party, leaderboard, settings) × RU/EN/DE/UK/ES at 375 and
+RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
+0 page errors. Objective findings to fold into R05 once its scope is confirmed:
+- weekly: task checkbox `toggle-task` 28×28 (SD-08 floor 42);
+- settings (RU): labels cut with «…» — «Разбор недели», «Тень подбирает слова
+  подсказки», «Чат-помощник» (TY-13); the last also at 1280;
+- today: task title edit buttons 23px high and companion toggle 42×40 (R03A area;
+  deliberately not changed without the owner's R05 scope);
+- pets: disclosure summary 24px high.

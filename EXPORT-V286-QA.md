@@ -52,6 +52,12 @@ Synthetic isolated accounts only.
 **Not verified here:** WebKit/iOS share sheet, importing the .ics into Apple/Google
 calendars (RFC structure checked instead), real devices.
 
+## Publication
+
+`1c3adf0` on master 25.09; both domains report it with `satoru-v286`; 18/18 SHA256
+matches; login page loads `CalendarExportV1` without console errors; unauthenticated
+`/api/account/export` returns 401, which the new button reports instead of saving.
+
 ## Remaining
 
 R05/R06 (scope needs NEXT.md). Web Share was only checked for presence.
