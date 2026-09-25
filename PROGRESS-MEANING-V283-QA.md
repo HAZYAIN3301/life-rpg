@@ -69,6 +69,13 @@ history in RU/EN/DE/UK/ES, 3-day history RU/EN, empty RU. No real accounts, no A
 browsers is disallowed), real devices, screen readers. Evidence is local to the
 session and not committed (synthetic cookies).
 
+## Publication
+
+`65a58bb` pushed to master 25.09. Both production domains report commit `65a58bb`
+and `satoru-v283`; 20/20 SHA256 matches (10 files × 2 domains); unauthenticated
+login page loads the v283 pin and `SphereLoadV1` without console errors. No
+production account was opened.
+
 ## Remaining
 
 R04B charts (XP-by-day and time-by-area labels still ~5px at 375), R04C AI

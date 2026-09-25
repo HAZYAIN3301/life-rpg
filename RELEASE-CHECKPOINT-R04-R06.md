@@ -9,8 +9,8 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 
 | Package | Scope | State | Commit | Deploy / hashes |
 |---|---|---|---|---|
-| R04A | honest XP / load / insufficient base | implemented, verified locally | pending | pending |
-| R04B | dense, understandable charts | queued | — | — |
+| R04A | honest XP / load / insufficient base | **published** v283 | `65a58bb` | both domains `/api/version` commit `65a58bb`, `satoru-v283` at 09:10 UTC 25.09; 20/20 SHA256 (10 files × 2 domains); login page smoke, 0 errors |
+| R04B | dense, understandable charts | in progress | — | — |
 | R04C | AI lifecycle: timeout, cancel, late response | queued | — | — |
 | R04D | export | queued | — | — |
 | R05/R06 | per NEXT.md (routes / companion) | needs NEXT.md scope | — | — |
@@ -26,3 +26,13 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
   with service workers blocked, to test rejected writes.
 - Production exposes `/api/version` (`commit`, `shellCache`) on both domains; deploy
   verification compares it and SHA256 of changed public files with the commit.
+
+## Receipts
+
+- **R04A / v283** `65a58bb` — full suite 3105/3105 PASS, 0 skipped (non-root);
+  syntax and `git diff --check` PASS. Pushed fast-forward `c1f30ed..65a58bb` to master.
+  Railway web deployed on both domains (~4 min after push). SHA256 match for app.js,
+  design-next-v1.css, index.html, sw.js, sphere-load-v1.js, styles.css,
+  interface-composition-v1.js, day-load-v1.js, chart-labels-v1.js,
+  failure-context-v1.js on satoruapp.com and the Railway domain. Piper/TTS
+  unchanged by this package (not re-verified). QA: PROGRESS-MEANING-V283-QA.md.
