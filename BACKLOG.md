@@ -1,5 +1,12 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R11 / v293:** dialogs and real content — programs create content in the
+  interface language, sphere names in labels translated, legacy windows are dialogs.
+  See DIALOGS-V293-QA.md.
+- [ ] **QA data note:** synthetic QA accounts must include goals, habits, notes and
+  rewards and keep standard (Russian-stored) sphere names; the older «dense» seeds had
+  only tasks and localized names and hid whole classes of defects.
+
 - [x] **R10 / v292:** collapsed sections and all Settings groups meet the same floors;
   telemetry consent translated; light theme without dark patches. See
   HIDDEN-CONTENT-V292-QA.md.

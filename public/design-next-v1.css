@@ -846,3 +846,26 @@
 @media (min-width:601px) and (pointer:fine){
  :root[data-design=next] .pet-hint{min-height:24px}
 }
+/* R11 (v293): dialogs and real content. Goal status and reward cost keep colour on the frame/icon, text in text colour (C-05);
+   sphere chips readable in light; legacy dialogs get 44px close/choice targets on touch; 12px floor for dialog notes. */
+:root[data-design=next] .goal-status{color:var(--text);border:1px solid var(--line-soft)}
+:root[data-design=next] .goal-status.gs-active{border-color:color-mix(in srgb,var(--good) 60%,var(--line-soft))}
+:root[data-design=next] .goal-status.gs-wait{border-color:color-mix(in srgb,var(--warn) 65%,var(--line-soft))}
+:root[data-design=next] .goal-status.gs-maint{border-color:color-mix(in srgb,#4f86f7 60%,var(--line-soft))}
+:root[data-design=next] .goal-status.gs-slip{border-color:color-mix(in srgb,var(--bad) 65%,var(--line-soft))}
+:root[data-design=next] .goal-status.gs-done{border-color:color-mix(in srgb,var(--good) 70%,var(--line-soft))}
+:root[data-design=next] .rw-cost{color:var(--text)}
+:root[data-design=next][data-theme="light"] .t-skill{color:var(--text-strong)}
+:root[data-design=next] :is(.bal-caret,.entry-group-label,.desire-opt small,.desire-sci,.attention-field small,.mobile-sheet-profile small,.mobile-sheet-entry small,.goal-map-section>summary small){font-size:var(--type-micro)}
+:root[data-design=next] .entry-group-label{margin:0 0 var(--sp-1)}
+:root[data-design=next] .task-menu-goal{display:flex;align-items:center;min-height:44px}
+:root[data-design=next] .modal-x{min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+:root[data-design=next] .gstep .check.sm{min-width:24px;min-height:24px}
+@media (max-width:600px),(pointer:coarse){
+ :root[data-design=next] #cat-pop .cat-role{min-height:44px}
+ :root[data-design=next] .entry-box :is(.ob-chip,[data-action="entry-reroll"]){min-height:44px;min-width:44px}
+}
+@media (max-width:600px),(pointer:coarse){
+ :root[data-design=next] .task-goal-chip{display:inline-flex;align-items:center;min-height:44px}
+}
+:root[data-design=next] :is(#cat-pop-title,#entry-title,#sphguide-title):focus{outline:none}

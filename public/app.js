@@ -539,6 +539,47 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // R11 (v293): стартовое содержимое программ-данжей — привычки и квесты новичка были по-русски на любом языке.
+  'с нуля': { en: 'from scratch', de: 'bei null', uk: 'з нуля', es: 'desde cero' },
+  'Редактор внешности': { en: 'Appearance editor', de: 'Aussehen bearbeiten', uk: 'Редактор зовнішності', es: 'Editor de apariencia' },
+  'Долгая ванна со свечами и пеной': { en: 'A long bath with candles and foam', de: 'Ein langes Bad mit Kerzen und Schaum', uk: 'Довга ванна зі свічками та піною', es: 'Un baño largo con velas y espuma' },
+  'Открыть связанную цель': { en: 'Open linked goal', de: 'Verknüpftes Ziel öffnen', uk: 'Відкрити пов’язану ціль', es: 'Abrir la meta vinculada' },
+  'Это нельзя отменить.': { en: 'This cannot be undone.', de: 'Das lässt sich nicht rückgängig machen.', uk: 'Це не можна скасувати.', es: 'Esto no se puede deshacer.' },
+  'Выйти на всех устройствах?': { en: 'Sign out on all devices?', de: 'Auf allen Geräten abmelden?', uk: 'Вийти на всіх пристроях?', es: '¿Cerrar sesión en todos los dispositivos?' },
+  'Все активные сессии будут завершены. Чтобы вернуться, понадобится войти снова.': { en: 'All active sessions will end. You will need to sign in again to come back.', de: 'Alle aktiven Sitzungen werden beendet. Um zurückzukommen, musst du dich erneut anmelden.', uk: 'Усі активні сесії буде завершено. Щоб повернутися, доведеться увійти знову.', es: 'Se cerrarán todas las sesiones activas. Para volver tendrás que iniciar sesión de nuevo.' },
+  'Учить материал / карточки': { en: 'Study material / flashcards', de: 'Stoff lernen / Karteikarten', uk: 'Вчити матеріал / картки', es: 'Estudiar material / tarjetas' },
+  'Зарядка / тренировка': { en: 'Morning exercise / workout', de: 'Morgengymnastik / Training', uk: 'Зарядка / тренування', es: 'Ejercicio matinal / entrenamiento' },
+  'Лечь спать до 23:30': { en: 'Go to bed by 23:30', de: 'Bis 23:30 ins Bett', uk: 'Лягти спати до 23:30', es: 'Acostarse antes de las 23:30' },
+  'Разобрать сложную тему': { en: 'Work through a hard topic', de: 'Ein schwieriges Thema durcharbeiten', uk: 'Розібрати складну тему', es: 'Estudiar a fondo un tema difícil' },
+  'Встретиться / позвонить близким': { en: 'Meet / call someone close', de: 'Nahestehende treffen / anrufen', uk: 'Зустрітися / подзвонити близьким', es: 'Quedar / llamar a alguien cercano' },
+  'Силовая тренировка': { en: 'Strength workout', de: 'Krafttraining', uk: 'Силове тренування', es: 'Entrenamiento de fuerza' },
+  'Кардио / пробежка': { en: 'Cardio / run', de: 'Cardio / Laufen', uk: 'Кардіо / пробіжка', es: 'Cardio / carrera' },
+  'Следить за КБЖУ': { en: 'Track calories and macros', de: 'Kalorien und Makros erfassen', uk: 'Стежити за КБЖВ', es: 'Controlar calorías y macros' },
+  'Длинная тренировка на пределе': { en: 'Long workout at your limit', de: 'Langes Training am Limit', uk: 'Довге тренування на межі', es: 'Entrenamiento largo al límite' },
+  'Восстановление: лечь до 23:00': { en: 'Recovery: bed by 23:00', de: 'Erholung: bis 23:00 ins Bett', uk: 'Відновлення: лягти до 23:00', es: 'Recuperación: a la cama antes de las 23:00' },
+  'Идеи в копилку (3 шт)': { en: 'Add ideas to the bank (3)', de: 'Ideen sammeln (3 Stück)', uk: 'Ідеї в скарбничку (3 шт)', es: 'Guardar ideas (3)' },
+  'Поработать над роликом': { en: 'Work on a video', de: 'Am Video arbeiten', uk: 'Попрацювати над роликом', es: 'Trabajar en un vídeo' },
+  'Прогулка / разминка': { en: 'Walk / warm-up', de: 'Spaziergang / Aufwärmen', uk: 'Прогулянка / розминка', es: 'Paseo / calentamiento' },
+  'Выпустить ролик / пост': { en: 'Publish a video / post', de: 'Video / Post veröffentlichen', uk: 'Випустити ролик / допис', es: 'Publicar un vídeo / post' },
+  'Ответить аудитории / разобрать метрики': { en: 'Reply to the audience / review metrics', de: 'Dem Publikum antworten / Kennzahlen prüfen', uk: 'Відповісти аудиторії / розібрати метрики', es: 'Responder a la audiencia / revisar métricas' },
+  'Глубокая работа 90 мин': { en: 'Deep work 90 min', de: 'Deep Work 90 Min.', uk: 'Глибока робота 90 хв', es: 'Trabajo profundo 90 min' },
+  'Записать траты': { en: 'Log expenses', de: 'Ausgaben notieren', uk: 'Записати витрати', es: 'Anotar gastos' },
+  'Прогулка / зал': { en: 'Walk / gym', de: 'Spaziergang / Fitnessstudio', uk: 'Прогулянка / зал', es: 'Paseo / gimnasio' },
+  'Закрыть ключевую задачу недели': { en: 'Finish the key task of the week', de: 'Die wichtigste Aufgabe der Woche abschließen', uk: 'Закрити ключову задачу тижня', es: 'Terminar la tarea clave de la semana' },
+  'Свести бюджет за неделю': { en: 'Balance the week’s budget', de: 'Wochenbudget abgleichen', uk: 'Звести бюджет за тиждень', es: 'Cuadrar el presupuesto de la semana' },
+  'Кодить pet-проект': { en: 'Code a side project', de: 'Am Side-Project coden', uk: 'Кодити pet-проєкт', es: 'Programar un proyecto personal' },
+  'Решить задачу (LeetCode)': { en: 'Solve a problem (LeetCode)', de: 'Eine Aufgabe lösen (LeetCode)', uk: 'Розв’язати задачу (LeetCode)', es: 'Resolver un problema (LeetCode)' },
+  'Английский 15 мин': { en: 'English 15 min', de: 'Englisch 15 Min.', uk: 'Англійська 15 хв', es: 'Inglés 15 min' },
+  'Разобрать новую технологию': { en: 'Learn a new technology', de: 'Eine neue Technologie durcharbeiten', uk: 'Розібрати нову технологію', es: 'Estudiar una tecnología nueva' },
+  'Размяться / прогуляться': { en: 'Stretch / take a walk', de: 'Dehnen / spazieren gehen', uk: 'Розім’ятися / прогулятися', es: 'Estirar / dar un paseo' },
+  'Медитация 10 мин': { en: 'Meditation 10 min', de: 'Meditation 10 Min.', uk: 'Медитація 10 хв', es: 'Meditación 10 min' },
+  'Дневник благодарности': { en: 'Gratitude journal', de: 'Dankbarkeitstagebuch', uk: 'Щоденник вдячності', es: 'Diario de gratitud' },
+  'Цифровой детокс 2 часа': { en: 'Digital detox 2 hours', de: 'Digital Detox 2 Stunden', uk: 'Цифровий детокс 2 години', es: 'Desintoxicación digital 2 horas' },
+  'Глубокий разговор с близким': { en: 'A deep talk with someone close', de: 'Ein tiefes Gespräch mit einem nahen Menschen', uk: 'Глибока розмова з близьким', es: 'Una conversación profunda con alguien cercano' },
+  'Движение 20 мин': { en: 'Movement 20 min', de: 'Bewegung 20 Min.', uk: 'Рух 20 хв', es: 'Movimiento 20 min' },
+  'Тихие 10 минут для себя': { en: 'Quiet 10 minutes for yourself', de: 'Ruhige 10 Minuten für dich', uk: 'Тихі 10 хвилин для себе', es: '10 minutos tranquilos para ti' },
+  'Главное дело недели': { en: 'The main task of the week', de: 'Die wichtigste Sache der Woche', uk: 'Головна справа тижня', es: 'Lo principal de la semana' },
+  'Время с близкими': { en: 'Time with loved ones', de: 'Zeit mit Nahestehenden', uk: 'Час із близькими', es: 'Tiempo con los tuyos' },
   // R10 (v292): скрытые разделы Настроек — цели телеметрии и подсказки были только по-русски.
   'ИИ оценит уровни по твоему описанию': { en: 'AI estimates levels from your description', de: 'Die KI schätzt Niveaus aus deiner Beschreibung', uk: 'ШІ оцінить рівні за твоїм описом', es: 'La IA estima niveles a partir de tu descripción' },
   'Работа приложения': { en: 'App operation', de: 'App-Betrieb', uk: 'Робота застосунку', es: 'Funcionamiento de la app' },
@@ -4990,6 +5031,8 @@ const I18N_DYN = [
   [/^Вставь ключ \((.+)\)$/, (l, m) => `${({ en: 'Paste key', de: 'Schlüssel einfügen', uk: 'Встав ключ', es: 'Pega la clave' })[l]} (${m[1]})`],
   [/^(\S+) \/ (\S+) токенов$/, (l, m) => `${m[1]} / ${m[2]} ${({ en: 'tokens', de: 'Tokens', uk: 'токенів', es: 'tokens' })[l]}`],
   [/^(\S+) \/ (\S+) токенов · лимит исчерпан — добавь свой ключ ниже ↓$/, (l, m) => `${m[1]} / ${m[2]} ${({ en: 'tokens · limit reached — add your own key below ↓', de: 'Tokens · Limit erreicht — füge unten deinen eigenen Schlüssel hinzu ↓', uk: 'токенів · ліміт вичерпано — додай свій ключ нижче ↓', es: 'tokens · límite alcanzado — añade tu clave abajo ↓' })[l]}`],
+  // R11: шлях сфер «Здоровье › Спорт» — каждая ступень переводится отдельно (стандартные имена сфер).
+  [/^[^›]+(?: › [^›]+)+$/, (l, m) => { const orig = m[0].split(' › '); const parts = orig.map((p) => { const r = i18nString(p, l); return r != null ? r : i18nWord(p, l); }); return parts.some((p, i) => p !== orig[i]) ? parts.join(' › ') : null; }],
   // Роздільники « · » та «, »: перекладаємо кожну частину рекурсивно через i18nString (щоб діяли й шаблони на кшталт «N прив.»). null, якщо нічого не змінилось.
   [/^.+ · .+$/, (l, m) => { const orig = m[0].split(' · '); const parts = orig.map((p) => { const r = i18nString(p, l); return r != null ? r : p; }); return parts.some((p, i) => p !== orig[i]) ? parts.join(' · ') : null; }],
   [/^[^,]+(?:, [^,]+)+$/, (l, m) => { const orig = m[0].split(', '); const parts = orig.map((p) => { const r = i18nString(p, l); return r != null ? r : p; }); return parts.some((p, i) => p !== orig[i]) ? parts.join(', ') : null; }],
@@ -6633,8 +6676,9 @@ function programSkillMap(prog, existingSkills) {
   });
   return { skills, map };
 }
-function programHabits(prog, map) { return (prog.habits || []).map((ph) => ({ id: 'h_' + uid(), title: ph.title, skillId: map[ph.skill.toLowerCase()], difficulty: ph.difficulty || 'normal', estimateMin: ph.estimateMin || 10, days: ph.days || [1, 2, 3, 4, 5], archived: false, createdAt: new Date().toISOString() })); }
-function programTasks(prog, map) { return (prog.quests || []).map((pq) => ({ id: uid(), title: pq.title, skillId: map[pq.skill.toLowerCase()], estimateMin: pq.estimateMin || 20, difficulty: pq.difficulty || 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() })); }
+// R11: стартовые привычки и квесты программы создаются на языке интерфейса — дальше это данные человека.
+function programHabits(prog, map) { return (prog.habits || []).map((ph) => ({ id: 'h_' + uid(), title: t(ph.title), skillId: map[ph.skill.toLowerCase()], difficulty: ph.difficulty || 'normal', estimateMin: ph.estimateMin || 10, days: ph.days || [1, 2, 3, 4, 5], archived: false, createdAt: new Date().toISOString() })); }
+function programTasks(prog, map) { return (prog.quests || []).map((pq) => ({ id: uid(), title: t(pq.title), skillId: map[pq.skill.toLowerCase()], estimateMin: pq.estimateMin || 20, difficulty: pq.difficulty || 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() })); }
 
 // Онбординг: чистый профиль из программы. Пишем файлы НАПРЯМУЮ (await), чтобы initApp их загрузил без гонки.
 async function applyProgramFresh(prog) {
@@ -7694,7 +7738,7 @@ function sphereChoiceRowHTML(skill, main, background, query = '') {
 }
 function sphereSelectedHTML(main, background) {
   return [...main.map(id => [id, 'sphere-pick', 'Основная']), ...background.map(id => [id, 'sphere-background-pick', 'Фон'])]
-    .map(([id, action, role]) => `<button type="button" class="sphere-selected-chip" data-action="${action}" data-id="${esc(id)}" aria-label="${esc(t('Убрать') + ': ' + skillLabel(id))}" title="${esc(skillLabel(id))}"><span data-noi18n>${esc(skillById(id).name)}</span><small>${esc(t(role))}</small><span aria-hidden="true">×</span></button>`).join('') || `<p class="muted">${esc(t('Нужна хотя бы одна основная сфера'))}</p>`;
+    .map(([id, action, role]) => `<button type="button" class="sphere-selected-chip" data-action="${action}" data-id="${esc(id)}" aria-label="${esc(t('Убрать') + ': ' + sphereNameText(skillLabel(id)))}" title="${esc(sphereNameText(skillLabel(id)))}"><span data-noi18n>${esc(skillById(id).name)}</span><small>${esc(t(role))}</small><span aria-hidden="true">×</span></button>`).join('') || `<p class="muted">${esc(t('Нужна хотя бы одна основная сфера'))}</p>`;
 }
 function sphereMultiResultsHTML(query, main, background, expanded = new Set()) {
   const q = String(query || '').trim(), visible = pickerVisibleSkills();
@@ -7709,7 +7753,7 @@ function sphereMultiResultsHTML(query, main, background, expanded = new Set()) {
     const kids = visible.filter(s => s.parentId === skill.id), open = expanded.has(skill.id);
     const row = sphereChoiceRowHTML(skill, main, background);
     if (!kids.length) return row;
-    return `<div class="sphere-choice-branch" data-branch-id="${esc(skill.id)}"><div class="sphere-branch-head"><button type="button" class="sphere-branch-toggle" data-action="sphere-branch-toggle" data-id="${esc(skill.id)}" aria-expanded="${open}" aria-label="${esc(t('Подсферы') + ': ' + skill.name)}">${open ? '⌄' : '›'}</button>${row}</div><div class="sphere-multi-kids"${open ? '' : ' hidden'}>${kids.map(s => branch(s, depth + 1)).join('')}</div></div>`;
+    return `<div class="sphere-choice-branch" data-branch-id="${esc(skill.id)}"><div class="sphere-branch-head"><button type="button" class="sphere-branch-toggle" data-action="sphere-branch-toggle" data-id="${esc(skill.id)}" aria-expanded="${open}" aria-label="${esc(t('Подсферы') + ': ' + sphereNameText(skill.name))}">${open ? '⌄' : '›'}</button>${row}</div><div class="sphere-multi-kids"${open ? '' : ' hidden'}>${kids.map(s => branch(s, depth + 1)).join('')}</div></div>`;
   };
   const roots = visible.filter(s => !s.parentId || !ids.has(s.parentId));
   const tree = roots.map(s => branch(s, 0)).join('');
@@ -8134,7 +8178,44 @@ function openDesirePicker(taskId, returnFocus = document.activeElement) {
   return overlay;
 }
 // Поп-ап выбора нескольких категорий для квеста (иллюстрация = работа + творчество)
-function openCategoryPicker(taskId) {
+// R11: старые окна (сферы квеста, «Заход», справка по сфере) получают поведение диалога: роль и
+// подпись, фокус внутрь, Escape закрывает тем же действием, что и крестик, а после закрытия фокус
+// возвращается на кнопку, которая окно открыла (её ищем по data-атрибутам — экран мог перерисоваться).
+let _legacyDialogReturn = null;
+function openerSelector(el) {
+  if (!el || el === document.body || !el.dataset) return '';
+  if (!el.dataset.action) return el.id ? `#${CSS.escape(el.id)}` : '';
+  return ['action', 'id', 'skill', 'task'].filter((k) => el.dataset[k]).map((k) => `[data-${k}="${CSS.escape(el.dataset[k])}"]`).join('');
+}
+function mountLegacyDialog(ov, { labelledBy, closeAction, reopen = false, focus = '' }) {
+  const box = ov.firstElementChild;
+  if (box) { box.setAttribute('role', 'dialog'); box.setAttribute('aria-modal', 'true'); box.setAttribute('aria-labelledby', labelledBy); }
+  const heading = ov.querySelector(`#${labelledBy}`); if (heading) heading.tabIndex = -1;
+  ov.querySelectorAll('.modal-x').forEach((x) => { x.type = 'button'; x.setAttribute('aria-label', t('Закрыть')); x.innerHTML = satoruIconHTML('action.close', 'inline-glyph', '✕'); });
+  if (!reopen) _legacyDialogReturn = { id: ov.id, selector: openerSelector(document.activeElement) };
+  ov.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault(); event.stopPropagation();
+    ov.querySelector(`[data-action="${closeAction}"]`)?.click();
+  });
+  document.body.appendChild(ov);
+  requestAnimationFrame(() => {
+    if (!ov.isConnected || ov.contains(document.activeElement)) return;
+    ((focus && ov.querySelector(focus)) || heading)?.focus({ preventScroll: true });
+  });
+}
+function closeLegacyDialog(id) {
+  document.getElementById(id)?.remove();
+  const back = _legacyDialogReturn && _legacyDialogReturn.id === id ? _legacyDialogReturn.selector : '';
+  if (_legacyDialogReturn && _legacyDialogReturn.id === id) _legacyDialogReturn = null;
+  if (back) requestAnimationFrame(() => document.querySelector(back)?.focus({ preventScroll: true }));
+}
+function reopenLegacyDialog(id, open) {
+  const focus = openerSelector(document.activeElement);
+  document.getElementById(id)?.remove();
+  open({ reopen: true, focus });
+}
+function openCategoryPicker(taskId, { reopen = false, focus = '' } = {}) {
   if (document.getElementById('cat-pop')) return;
   const t = questById(taskId); if (!t) return;   // ⚠️ `t` здесь — задача, глобальная t() затенена → переводим через t18()
   const ids = taskSkills(t), lids = taskLayers(t);
@@ -8156,11 +8237,11 @@ function openCategoryPicker(taskId) {
   walk(null, 0);
   const ov = document.createElement('div'); ov.id = 'cat-pop'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="desire-box"><button class="modal-x" data-action="close-cats">✕</button>
-    <h3>${t18('Сферы квеста')}</h3>
+    <h3 id="cat-pop-title">${t18('Сферы квеста')}</h3>
     <p class="muted">«${esc(t.title)}» · ${t18('основная получает опыт и время. Фон — сферы, которые дело задевает попутно: они держат форму и дают немного опыта сверху, не отнимая у основной.')}</p>
     <div class="cat-list">${list}</div>
     <div class="settings-actions" style="margin-top:14px"><button class="btn" data-action="close-cats">${t18('Готово')}</button></div></div>`;
-  document.body.appendChild(ov);
+  mountLegacyDialog(ov, { labelledBy: 'cat-pop-title', closeAction: 'close-cats', reopen, focus });
 }
 
 const ECONOMY_XP_BONUS_CAP_PCT = 60;
@@ -8603,7 +8684,7 @@ function radarSVG(scores) {
   });
   const dpoly = scores.map((s, i) => pt(i, R * Math.min(1, s.value / max)).join(',')).join(' ');
   const dots = scores.map((s, i) => { const [x, y] = pt(i, R * Math.min(1, s.value / max)); return `<circle cx="${x}" cy="${y}" r="4" fill="${s.color}" stroke="var(--panel)" stroke-width="2"/>`; }).join('');
-  return `<svg viewBox="0 0 ${W} 300" class="radar" role="img" aria-label="${esc(scores.map((s) => s.name).join(', '))}"><defs><radialGradient id="radg"><stop offset="0%" stop-color="rgba(108,140,255,.35)"/><stop offset="100%" stop-color="rgba(108,140,255,.08)"/></radialGradient></defs>${grid}${axes}<polygon points="${dpoly}" fill="url(#radg)" stroke="var(--accent)" stroke-width="2"/>${dots}${labels}</svg>`;
+  return `<svg viewBox="0 0 ${W} 300" class="radar" role="img" aria-label="${esc(scores.map((s) => sphereNameText(s.name)).join(', '))}"><defs><radialGradient id="radg"><stop offset="0%" stop-color="rgba(108,140,255,.35)"/><stop offset="100%" stop-color="rgba(108,140,255,.08)"/></radialGradient></defs>${grid}${axes}<polygon points="${dpoly}" fill="url(#radg)" stroke="var(--accent)" stroke-width="2"/>${dots}${labels}</svg>`;
 }
 function figureSVG() {
   const str = attrScore('str'), end = attrScore('end'), bmi = bodyBMI(), cr = charRank();
@@ -10003,18 +10084,20 @@ function openAvatarForgeEditor() {
   overlay.className = 'avatar-forge-overlay';
   overlay.setAttribute('role', 'dialog');
   overlay.setAttribute('aria-modal', 'true');
-  overlay.setAttribute('aria-label', 'Редактор внешности');
+  overlay.setAttribute('aria-label', t('Редактор внешности'));
+  overlay._returnFocus = document.activeElement;
   overlay.innerHTML = '<iframe id="avatar-forge-frame" src="/avatar-forge-v1.html?embedded=1&build=20260801-colorways-v1" title="Avatar Forge" allow="none"></iframe>';
   document.body.appendChild(overlay);
   document.documentElement.classList.add('avatar-forge-open');
-  requestAnimationFrame(() => overlay.classList.add('is-visible'));
+  requestAnimationFrame(() => { overlay.classList.add('is-visible'); overlay.querySelector('iframe')?.focus(); });
 }
 function closeAvatarForgeEditor() {
   const overlay = document.getElementById('avatar-forge-overlay');
   if (!overlay) return;
   overlay.classList.remove('is-visible');
   document.documentElement.classList.remove('avatar-forge-open');
-  setTimeout(() => overlay.remove(), 160);
+  const back = overlay._returnFocus;
+  setTimeout(() => { overlay.remove(); if (back && back.isConnected) back.focus({ preventScroll: true }); }, 160);
 }
 async function onAvatarForgeMessage(event) {
   const frame = document.getElementById('avatar-forge-frame');
@@ -12524,7 +12607,8 @@ function emptyDayHTML() {
   return `<div class="empty-repeat"><p class="muted">${t('На сегодня пусто.')}</p>
     <button class="btn ghost" data-action="repeat-yesterday">↻ ${t('Повторить вчерашний план')} (${src.length})</button></div>`;
 }
-function openEntryRitual() {
+function openEntryRitual({ reopen = false, focus = '' } = {}) {
+  if (!reopen && document.getElementById('entry-modal')) { reopenLegacyDialog('entry-modal', openEntryRitual); return; }
   document.getElementById('entry-modal')?.remove();
   const spheres = entryTopSpheres();
   const stuck = entryStuckTasks();
@@ -12548,20 +12632,20 @@ function openEntryRitual() {
     : t('Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.');
   const ov = document.createElement('div'); ov.id = 'entry-modal'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="ai-box entry-box"><button class="modal-x" data-action="entry-close">✕</button>
-    <h2>🕯 ${t('Заход')}</h2>
+    <h2 id="entry-title">${satoruIconHTML('system.focus', 'heading-glyph', '🕯')} ${t('Заход')}</h2>
     <p class="muted" style="font-size:13px;margin:0 0 10px">${lead}</p>
-    ${stuck.length ? `<p class="muted" style="font-size:11.5px;margin:0 0 4px">${t('Что не двигается')}</p>
+    ${stuck.length ? `<p class="muted entry-group-label">${t('Что не двигается')}</p>
     <div class="ob-group-chips" style="margin-bottom:8px">${taskChips}</div>` : ''}
-    ${spheres.length ? `<p class="muted" style="font-size:11.5px;margin:0 0 4px">${t('Или просто в любимое')}</p>
+    ${spheres.length ? `<p class="muted entry-group-label">${t('Или просто в любимое')}</p>
     <div class="ob-group-chips" style="margin-bottom:10px">${sphereChips}</div>` : ''}
     <div class="sg-row en-step"><b>🕯 ${t('Самый маленький вход')}</b><span>${esc(t(step))}</span></div>
     <div class="sg-row"><b>🍬 ${t('Обставь его')}</b><span>${esc(t(bundle))}</span></div>
     <div class="propose-actions">
-      <button class="btn" data-action="entry-accept">🕯 ${t('Захожу — 10 минут')}</button>
-      <button class="btn ghost sm" data-action="entry-reroll" title="${t('Другой вариант входа')}">↻</button>
+      <button class="btn" data-action="entry-accept">${satoruIconHTML('media.play', 'button-glyph', '🕯')} ${t('Захожу — 10 минут')}</button>
+      <button class="btn ghost sm" data-action="entry-reroll" title="${t('Другой вариант входа')}" aria-label="${t('Другой вариант входа')}">${satoruIconHTML('action.refresh', 'button-glyph', '↻')}</button>
       <button class="btn ghost sm" data-action="entry-close">${t('Не сегодня')}</button>
     </div></div>`;
-  document.body.appendChild(ov);
+  mountLegacyDialog(ov, { labelledBy: 'entry-title', closeAction: 'entry-close', reopen, focus });
 }
 function activityCountForDate(d) {
   const q = State.tasks.filter((x) => x.done && dayOf(x) === d).length;
@@ -13599,7 +13683,7 @@ function openFocusDurationPicker(taskId) {
   const chips = FOCUS_DURATION_PRESETS.map((m) => `<button type="button" class="ob-chip ${m === cur ? 'sel' : ''}" data-action="focus-pick-duration" data-task="${esc(taskId)}" data-min="${m}" aria-pressed="${m === cur}" style="--c:var(--accent)">${m} ${t('мин')}</button>`).join('');
   const ov = document.createElement('div'); ov.id = 'focus-dur-modal'; ov.className = 'modal-overlay';
   ov.innerHTML = `<section class="ai-box v204-dialog" role="dialog" aria-modal="true" aria-labelledby="focus-duration-title" aria-describedby="focus-duration-desc"><button type="button" class="modal-x" data-action="focus-duration-close" aria-label="${esc(t('Закрыть'))}">✕</button>
-    <h2 id="focus-duration-title" tabindex="-1">🎯 ${t('Сколько минут?')}</h2>
+    <h2 id="focus-duration-title" tabindex="-1">${satoruIconHTML('system.focus', 'heading-glyph', '🎯')} ${t('Сколько минут?')}</h2>
     <div class="ob-group-chips" style="margin:10px 0">${chips}</div>
     <p id="focus-duration-desc" class="muted" style="font-size:12.5px;margin:0">${t('Тап — и пошёл отсчёт. Поменять можно и позже, в Настройках.')}</p></section>`;
   mountAccountDialog(ov, { initial: `[data-min="${cur}"]`, returnFocus: document.activeElement });
@@ -13801,10 +13885,10 @@ function showRecoveryModal(code, onClose) {
   const ov = document.createElement('div'); ov.className = 'modal-overlay'; ov.id = 'recovery-modal';
   ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'recovery-title'); ov.setAttribute('aria-describedby', 'recovery-copy-note');
   ov.innerHTML = `<div class="recovery-box">
-    <h3 id="recovery-title" tabindex="-1">${t('🔑 Сохрани код восстановления')}</h3>
+    <h3 id="recovery-title" tabindex="-1">${satoruIconHTML('status.lock', 'heading-glyph', '🔑')} ${esc(emojiFree(t('🔑 Сохрани код восстановления')))}</h3>
     <p id="recovery-copy-note" class="muted">${t('Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.')}</p>
     <div class="recovery-code" id="recovery-code">${esc(code)}</div>
-    <button class="btn ghost" id="recovery-copy">${t('📋 Скопировать')}</button>
+    <button class="btn ghost" id="recovery-copy">${esc(emojiFree(t('📋 Скопировать')))}</button>
     <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">${t('Я сохранил → продолжить')}</button>
   </div>`;
   mountAccountDialog(ov, { initial: '#recovery-title', dismissible: false });
@@ -13824,13 +13908,13 @@ function openSphereGuide(name) {
        <div class="sg-row"><b>📈 ${t('Чем развивать')}</b><span>${esc(t(g.grow))}</span></div>`
     : `<p class="sg-what">${t('Это твоя сфера — значит, только ты решаешь, что в неё входит. Засчитывай любое осознанное действие в эту сторону, даже самое маленькое.')}</p>`;
   const ai = canUseAi()
-    ? `<button class="btn" data-action="sphguide-ai" data-skill="${esc(name)}">🤖 ${t('Обсудить с Тенью: мой уровень здесь')}</button>`
+    ? `<button class="btn" data-action="sphguide-ai" data-skill="${esc(name)}">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${t('Обсудить с Тенью: мой уровень здесь')}</button>`
     : `<p class="muted" style="font-size:12px;margin:8px 0 0">${t('Хочешь определить свой стартовый уровень в диалоге — добавь ключ ИИ в Настройках (есть бесплатные).')}</p>`;
   ov.innerHTML = `<div class="ai-box sg-box"><button class="modal-x" data-action="sphguide-close">✕</button>
-    <h2>${esc(name)}</h2>
+    <h2 id="sphguide-title">${esc(sphereNameText(name))}</h2>
     ${body}
     <div class="propose-actions">${ai}</div></div>`;
-  document.body.appendChild(ov);
+  mountLegacyDialog(ov, { labelledBy: 'sphguide-title', closeAction: 'sphguide-close' });
 }
 
 // ── Questionnaire v1: один ответ → одна цель → один первый шаг ──────────────
@@ -14924,7 +15008,7 @@ async function loadCalSubscribeBody(overlay, { focusAfter = false } = {}) {
     const webcal = 'webcal://' + base.replace(/^https?:\/\//, '');
     body.innerHTML = `
       <div class="cal-sub-link"><label for="cal-sub-url">${esc(t('Ссылка для подписки'))}</label><div class="cal-sub-link-row"><input id="cal-sub-url" readonly value="${esc(base)}"/><button type="button" class="btn ghost cal-sub-copy" data-action="copy-cal-url" data-url="${esc(base)}">${esc(t('Копировать'))}</button></div></div>
-      <a class="btn cal-sub-open" href="${esc(webcal)}">📲 ${esc(t('Открыть в Календаре'))}</a>
+      <a class="btn cal-sub-open" href="${esc(webcal)}">${satoruIconHTML('system.calendar', 'button-glyph', '📲')} ${esc(t('Открыть в Календаре'))}</a>
       <section class="cal-sub-help" aria-labelledby="cal-sub-help-title"><h3 id="cal-sub-help-title">${esc(t('Как подключить календарь'))}</h3>
         <p>${esc(t('Apple Календарь: добавь подписной календарь и вставь ссылку.'))}</p>
         <p>${esc(t('Google Календарь: открой «Другие календари» → «Добавить по URL» и вставь ссылку.'))}</p>
@@ -15329,8 +15413,8 @@ function habitsBuildHTML() {
     const guideCreated = guideV3HabitsStep('complete') && String(guideV3State()?.chapterMeta?.habits?.itemId || '') === String(h.id);
     return `<details class="card hb-card habit-compact-card" style="--c:${esc(sk.color)}"${guideCreated ? ` data-guide-target="habit-created" data-id="${esc(h.id)}" tabindex="-1" open` : ''}>
       <summary class="hb-top"><b data-noi18n>${esc(h.title)}</b><span class="muted">${h.archived ? t('Пауза') + ' · ' : ''}<span data-noi18n>${esc(sk.name)}</span> · ${fmtDur(h.estimateMin)}${st ? ` · 🔥${st}` : ''}</span></summary>
-      <div class="habit-editor-body"><button type="button" class="btn ghost habit-schedule-edit" data-action="habit-edit" data-id="${esc(h.id)}">${t('Расписание и параметры')}</button><label class="hb-field">${t('🪪 Идентичность')} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
-      <label class="hb-field">${t('📍 Сигнал / связка')} <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="${t('После [привычки] я…')}" /></label>
+      <div class="habit-editor-body"><button type="button" class="btn ghost habit-schedule-edit" data-action="habit-edit" data-id="${esc(h.id)}">${t('Расписание и параметры')}</button><label class="hb-field">${esc(emojiFree(t('🪪 Идентичность')))} <input data-action="habit-atomic" data-id="${h.id}" data-field="identity" value="${esc(a.identity || '')}" placeholder="${t('Я — человек, который…')}" /></label>
+      <label class="hb-field">${esc(emojiFree(t('📍 Сигнал / связка')))} <input data-action="habit-atomic" data-id="${h.id}" data-field="cue" value="${esc(a.cue || '')}" placeholder="${t('После [привычки] я…')}" /></label>
       <label class="hb-field">${esc(emojiFree(t('⏱ Версия 2 минут')))} <input data-action="habit-atomic" data-id="${h.id}" data-field="twoMin" value="${esc(a.twoMin || '')}" placeholder="${t('Минимум, чтобы просто начать')}" /></label></div>
     </details>`;
   }).join('') : `<p class="muted">${t('Пока нет привычек — добавь и спроектируй по 4 законам.')}</p>`;
@@ -18756,7 +18840,8 @@ function petSVG(color, state, traits, sphereId, idle = '') {
     ${wearLayerHTML('head', sp, sphereId)}
   </svg>`;
 }
-function petName(id) { const pn = (State.settings && State.settings.petNames) || {}; return pn[id] || skillById(id).name; }
+// R11: без своего имени питомец зовётся как сфера — на языке интерфейса, как и сама сфера.
+function petName(id) { const pn = (State.settings && State.settings.petNames) || {}; return pn[id] || sphereNameText(skillById(id).name); }
 function renderPets() {
   const spheres = topSkills();
   if (!spheres.length) return `<section class="pets-shell" data-guide-target="pets-overview" aria-labelledby="pets-title"><header class="pets-route-head"><h2 id="pets-title" tabindex="-1">${satoruIconHTML('nav.pets', 'heading-glyph', '◇')} ${t('Питомцы')}</h2></header>${companionCard()}<div class="card"><p class="muted">${t('Сначала добавь основные сферы жизни (Настройки → Навыки) — у каждой появится свой питомец рядом с твоим спутником.')}</p></div></section>`;
@@ -18781,11 +18866,11 @@ function renderPets() {
     const renaming = State._petRename === s.id;
     const renameError = renaming && State._petRenameError ? `<p class="pet-rename-error" role="alert">${t(State._petRenameError)}</p>` : '';
     const nameRow = renaming
-      ? `<form class="pet-rename-form" data-id="${s.id}" aria-label="${t('Переименовать')}: ${esc(nm)}"><label><span class="sr-only">${t('Имя питомца')}</span><input name="name" maxlength="20" value="${esc(nm)}" placeholder="${esc(s.name)}" aria-label="${t('Имя питомца')}"${renameError ? ' aria-describedby="pet-rename-error" aria-invalid="true"' : ''} /></label><div class="pet-rename-btns"><button type="submit" class="btn sm" aria-label="${t('Сохранить')}">✓</button><button type="button" class="btn ghost sm" data-action="pet-rename-cancel" aria-label="${t('Отмена')}">✕</button></div>${renameError ? renameError.replace('class="pet-rename-error"', 'class="pet-rename-error" id="pet-rename-error"') : ''}</form>`
+      ? `<form class="pet-rename-form" data-id="${s.id}" aria-label="${t('Переименовать')}: ${esc(nm)}"><label><span class="sr-only">${t('Имя питомца')}</span><input name="name" maxlength="20" value="${esc(nm)}" placeholder="${esc(sphereNameText(s.name))}" aria-label="${t('Имя питомца')}"${renameError ? ' aria-describedby="pet-rename-error" aria-invalid="true"' : ''} /></label><div class="pet-rename-btns"><button type="submit" class="btn sm" aria-label="${t('Сохранить')}">✓</button><button type="button" class="btn ghost sm" data-action="pet-rename-cancel" aria-label="${t('Отмена')}">✕</button></div>${renameError ? renameError.replace('class="pet-rename-error"', 'class="pet-rename-error" id="pet-rename-error"') : ''}</form>`
       : `<div class="pet-detail-actions"><button type="button" class="btn ghost sm" data-action="pet-rename" data-id="${s.id}">${t('Переименовать')}</button></div>`;
     // Клик по виду — хинт «что засчитывать в эту сферу» (боль Виолы: «как считать уровень творчества»).
     // Кормить питомца = записывать дела; хинт объясняет, какие именно.
-    const sub = `<button type="button" class="pet-sphere pet-hint muted" data-action="pet-hint" data-guide-target="pet-sphere" data-id="${s.id}" title="${esc(t(tr.hint || ''))}" aria-label="${t('Что засчитывается в сферу')}: ${esc(t(tr.hint || ''))}">${t(tr.kind || 'Зверёк')}${nm !== s.name ? ` · ${t('Сфера')}: ${esc(s.name)}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</button>`;
+    const sub = `<button type="button" class="pet-sphere pet-hint muted" data-action="pet-hint" data-guide-target="pet-sphere" data-id="${s.id}" title="${esc(t(tr.hint || ''))}" aria-label="${t('Что засчитывается в сферу')}: ${esc(t(tr.hint || ''))}">${t(tr.kind || 'Зверёк')}${nm !== sphereNameText(s.name) ? ` · ${t('Сфера')}: ${esc(sphereNameText(s.name))}` : ''} ${satoruIconHTML('status.info', 'pet-hint-icon', '◇')}</button>`;
     const guardianActions = activeSpecies === 'bodyToad' ? `<div class="body-toad-card-actions" aria-label="${t('Действия с хранителем тела')}">
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="greet">${t('Поприветствовать')}</button>
       <button class="btn ghost sm" data-action="body-toad-card-interact" data-id="${s.id}" data-mode="train">${t('Размяться')}</button>
@@ -21493,11 +21578,12 @@ function boardTakenLineHTML() {
 function goalDeadlineHTML(g) {
   if (!g.targetDate) return '';
   const left = Math.round((parseDate(g.targetDate) - parseDate(todayStr())) / 86400000);
-  return `<span class="goal-deadline ${left < 0 && !g.completedAt ? 'overdue' : ''}">📅 ${g.targetDate}${left >= 0 ? ` · ${left} ${plural(left, 'день', 'дня', 'дней')}` : !g.completedAt ? ` · ${t('просрочено')}` : ''}</span>`;
+  return `<span class="goal-deadline ${left < 0 && !g.completedAt ? 'overdue' : ''}">${satoruIconHTML('system.calendar', 'inline-glyph', '📅')} ${g.targetDate}${left >= 0 ? ` · ${left} ${plural(left, 'день', 'дня', 'дней')}` : !g.completedAt ? ` · ${t('просрочено')}` : ''}</span>`;
 }
 function goalStatusText(g) {
   const st = goalStatusInfo(g);
-  return st.txt.startsWith('⏳ Жду · ') ? `${t('⏳ Жду')} · ${st.txt.slice('⏳ Жду · '.length)}` : t(st.txt);
+  // R11: статус называется словом; цвет состояния остаётся на рамке (C-05), системный эмодзи не нужен.
+  return st.txt.startsWith('⏳ Жду · ') ? `${emojiFree(t('⏳ Жду'))} · ${st.txt.slice('⏳ Жду · '.length)}` : emojiFree(t(st.txt));
 }
 function goalProgressText(g) {
   if (goalProgressKind(g) === 'checklist') {
@@ -22607,7 +22693,7 @@ function showVoucherReward() {
   ov.id = 'voucher-ov'; ov.className = 'modal-overlay';
   ov.innerHTML = `<section class="guide-box voucher-box" role="dialog" aria-modal="true" aria-labelledby="voucher-title">
     <button class="modal-x" data-action="close-voucher" aria-label="${esc(t('Закрыть'))}">✕</button>
-    <h2 id="voucher-title" tabindex="-1">${satoruIconHTML('reward.voucher', 'heading-glyph', '◇')} ${t('Ваучер — бесплатная награда')}</h2>
+    <h2 id="voucher-title" tabindex="-1">${satoruIconHTML('reward.voucher', 'heading-glyph', '◇')} ${esc(emojiFree(t('🎁 Ваучер — бесплатная награда')))}</h2>
     <p class="muted">${t('Ваучеров доступно')}: ${owned.length} · ${t('лучший')}: ${esc(t(RARITY[tier].label))}. ${t('Выбери одну личную награду; ваучер спишется только после подтверждения.')}</p>
     <div class="rwc-list">${rows}</div>
   </section>`;
@@ -24625,18 +24711,20 @@ function applyImport(skillId, tierIdx) {
 function importCard() {
   const s = State.settings, im = s.imported || {};
   const row = (sk, sub) => {
-    const ladder = ladderFor(sk.name), levels = tierLevels(ladder);
+    const ladderId = ladderMatch(sk.name).id, ladder = ladderFor(sk.name), levels = tierLevels(ladder);
+    // R11: подсказка и ступени берутся из авторской копии лестницы на языке интерфейса.
+    const ladderText = (field, i) => { const key = treeLadderCopyKey(ladderId, field, i); const copy = key && treeLadderCanonicalFieldByKey(key); return copy ? (copy[lang()] || copy.ru) : t(field === 'hint' ? ladder.hint : ladder.tiers[i]); };
     const storedTier = Number(im[sk.id] && im[sk.id].tier);
     const curTier = Math.max(0, Math.min(levels.length - 1, Number.isFinite(storedTier) ? Math.round(storedTier) : 0));
-    const opts = ladder.tiers.map((t, i) => `<option value="${i}" ${i === curTier ? 'selected' : ''}>${i === 0 ? '— с нуля' : esc(t) + ' · ур.' + levels[i]}</option>`).join('');
+    const opts = ladder.tiers.map((_, i) => `<option value="${i}" ${i === curTier ? 'selected' : ''}>${i === 0 ? `— ${esc(t('с нуля'))}` : `${esc(ladderText('tier', i))} · ${esc(t('ур.'))}${levels[i]}`}</option>`).join('');
     const startRank = curTier > 0 ? rankFor(levels[curTier]) : null;
     const rankBadge = startRank ? `<span class="imp-rank" style="color:${esc(startRank.color)}">${esc(startRank.icon)} ${esc(startRank.name)}</span>` : '';
     return `<div class="import-row ${sub ? 'sub' : ''}">
       <div class="imp-left">
         <span class="imp-dot" style="background:${esc(sk.color)}"></span>
         <div class="imp-meta">
-          <span class="imp-name">${sub ? '↳ ' : ''}${esc(sk.name)}</span>
-          <span class="imp-hint">${esc(ladder.hint)}</span>
+          <span class="imp-name">${sub ? '↳ ' : ''}${esc(sphereNameText(sk.name))}</span>
+          <span class="imp-hint">${esc(ladderText('hint'))}</span>
         </div>
       </div>
       <div class="imp-right">
@@ -27442,14 +27530,14 @@ function renderSettings() {
         <label class="se-rhythm" title="${t('Как часто ты хочешь заниматься этой сферой. Пусто — частота не объявлена, и сфера не судится.')}"><input type="number" min="1" max="7" step="1" inputmode="numeric" data-field="targetPerWeek" value="${sk.targetPerWeek == null ? '' : esc(String(sk.targetPerWeek))}" placeholder="—" /> ${t('раз в неделю')}</label>
       </div>` : '';
     return `<div class="skill-edit ${depth > 0 ? 'is-sub' : ''} ${hidden ? 'se-hidden' : ''} ${sk.archived ? 'is-archived' : ''}" data-id="${sk.id}" style="--d:${depth}">
-      <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" aria-label="${t('Выше')}: ${esc(sk.name)}">${satoruIconHTML('action.collapse', 'inline-glyph')}</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" aria-label="${t('Ниже')}: ${esc(sk.name)}">${satoruIconHTML('action.expand', 'inline-glyph')}</button></span>
-      ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" aria-expanded="${!collapsed[sk.id]}" aria-label="${t('Подсферы')}: ${esc(sk.name)}">${satoruIconHTML(collapsed[sk.id] ? 'action.expand' : 'action.collapse', 'inline-glyph')}</button>` : '<span class="se-collapse-spacer"></span>'}
+      <span class="se-move"><button data-action="skill-move" data-id="${sk.id}" data-dir="-1" aria-label="${t('Выше')}: ${esc(sphereNameText(sk.name))}">${satoruIconHTML('action.collapse', 'inline-glyph')}</button><button data-action="skill-move" data-id="${sk.id}" data-dir="1" aria-label="${t('Ниже')}: ${esc(sphereNameText(sk.name))}">${satoruIconHTML('action.expand', 'inline-glyph')}</button></span>
+      ${pillar ? `<button class="se-collapse" data-action="skill-collapse" data-id="${sk.id}" aria-expanded="${!collapsed[sk.id]}" aria-label="${t('Подсферы')}: ${esc(sphereNameText(sk.name))}">${satoruIconHTML(collapsed[sk.id] ? 'action.expand' : 'action.collapse', 'inline-glyph')}</button>` : '<span class="se-collapse-spacer"></span>'}
       <label class="se-color">${t('Цвет сферы')}<input type="color" value="${esc(sk.color || '#6c8cff')}" data-field="color" /></label>
       ${sk.parentId ? `<label class="se-auto"><input type="checkbox" data-field="colorMode" ${window.SphereColorsV1.automatic(sk) ? 'checked' : ''} /> ${t('Оттенок родителя')}</label>` : ''}
       <label class="se-name">${t('Название')}<input type="text" value="${esc(sk.name)}" data-field="name" /></label>
       <label class="se-parent">${t('Вложенность сферы')}<select data-field="parentId">${parentOptions(sk)}</select></label>
       ${sk.archived ? `<span class="se-archived-badge" title="${t('Сфера в архиве')}">${t('Сфера в архиве')}</span><button class="btn ghost sm" data-action="restore-skill" data-id="${sk.id}">${t('Вернуть из архива')}</button>` : `<button class="btn ghost sm" data-action="archive-skill" data-id="${sk.id}" title="${t('Пропадает из пикеров выбора сферы, но история и опыт остаются')}">${t('В архив')}</button>`}
-      <button class="del" data-action="delete-skill" data-id="${sk.id}" aria-label="${t('Удалить совсем — вместе с историей и опытом')}: ${esc(sk.name)}">${satoruIconHTML('action.delete', 'inline-glyph')}</button>
+      <button class="del" data-action="delete-skill" data-id="${sk.id}" aria-label="${t('Удалить совсем — вместе с историей и опытом')}: ${esc(sphereNameText(sk.name))}">${satoruIconHTML('action.delete', 'inline-glyph')}</button>
       ${topExtra}</div>`;
   };
   // Рекурсивный рендер дерева сфер: глубина любая, свёрнутый узел прячет всё поддерево
@@ -31496,7 +31584,7 @@ async function onClick(e) {
       art.appendChild(food); setTimeout(() => food.remove(), 1000);
     }
     if (typeof sfx === 'function') sfx('complete');
-    toast('💛 ' + esc(petName(id)) + ' доволен');
+    toast(`${esc(petName(id))} — ${t('доволен')}`);
     return;
   }
   if (action === 'pet-hint') {
@@ -31712,7 +31800,7 @@ async function onClick(e) {
   }
   if (action === 'edit-cats') { openCategoryPicker(el.dataset.id); return; }
   if (action === 'edit-task-title') { State._editTask = el.dataset.id; render(); setTimeout(() => { const i = document.querySelector('.t-edit-form input'); if (i) { i.focus(); i.select(); } }, 0); return; }
-  if (action === 'close-cats') { const p = document.getElementById('cat-pop'); if (p) p.remove(); render(); return; }
+  if (action === 'close-cats') { closeLegacyDialog('cat-pop'); render(); return; }
   if (action === 'desire-cancel') { closeDesirePicker(); return; }
   if (action === 'desire-pick') {
     const task = questById(el.dataset.id), overlay = document.getElementById('desire-pop');
@@ -32904,14 +32992,14 @@ async function onClick(e) {
   } else if (action === 'entry-reroll') {
     State._entryRoll = (State._entryRoll || 0) + 1; openEntryRitual();
   } else if (action === 'entry-close') {
-    document.getElementById('entry-modal')?.remove();
+    closeLegacyDialog('entry-modal');
   } else if (action === 'entry-accept') {
     // Заход в дело, которое не двигается: НЕ создаём ничего нового — запускаем таймер на том
     // самом деле. Плодить рядом «🕯 Заход: …» значило бы обойти дело ещё раз, теперь с помощью
     // приложения, а весь смысл в том, чтобы уменьшить вход именно в него.
     if (State._entryTask) {
       const target = questById(State._entryTask);
-      document.getElementById('entry-modal')?.remove();
+      closeLegacyDialog('entry-modal');
       State._entryTask = null;
       if (!target) return;
       track('entry:accept-task');
@@ -32922,24 +33010,24 @@ async function onClick(e) {
     // Создаём заход как задачу (entry:true) и сразу запускаем фокус-таймер на 10 минут:
     // нулевой порог входа — один клик от «вечер уплывает» до «я уже внутри».
     const skillId = State._entrySkill || (entryTopSpheres()[0]);
-    if (!skillId) { document.getElementById('entry-modal')?.remove(); return; }
+    if (!skillId) { closeLegacyDialog('entry-modal'); return; }
     const step = entryStepFor(skillId);
     const q = { id: uid(), title: ('🕯 ' + t('Заход') + ': ' + t(step)).slice(0, 110), skillId, skillIds: [skillId],
       estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null,
       xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, entry: true, createdAt: new Date().toISOString() };
     State.tasks.push(q); Store.save('tasks', State.tasks);
-    document.getElementById('entry-modal')?.remove();
+    closeLegacyDialog('entry-modal');
     track('entry:accept');
     toast('🕯 ' + t('Тень зажгла огонёк: десять минут — и вечер твой'));
     startFocus(q.id);
   } else if (action === 'sphere-guide') {
     openSphereGuide(el.dataset.skill); track('sphere:guide');
   } else if (action === 'sphguide-close') {
-    document.getElementById('sphguide-modal')?.remove();
+    closeLegacyDialog('sphguide-modal');
   } else if (action === 'sphguide-ai') {
     // Углубление: не «вот тебе сфера», а разговор — определить СВОЙ уровень и что сюда писать
     const name = el.dataset.skill;
-    document.getElementById('sphguide-modal')?.remove();
+    closeLegacyDialog('sphguide-modal');
     openHelperChat();
     sendChat(`Помоги разобраться со сферой «${name}». Задай мне 3–4 наводящих вопроса, чтобы вместе определить мой честный стартовый уровень в ней, и подскажи, что именно мне стоит сюда записывать и какими действиями её развивать. Не льсти — если по моим ответам сфера мне не нужна, так и скажи.`);
     track('sphere:guide-ai');
@@ -32973,7 +33061,7 @@ async function onClick(e) {
     }
     q.skillIds = prim; q.skillId = prim[0]; q.layers = lay;
     Store.save('tasks', State.tasks);
-    const pop = document.getElementById('cat-pop'); if (pop) { pop.remove(); openCategoryPicker(q.id); }
+    if (document.getElementById('cat-pop')) reopenLegacyDialog('cat-pop', (opts) => openCategoryPicker(q.id, opts));
     render();
   } else if (action === 'ep-del') {
     const ep = (State.episodes || []).find((x) => x.id === el.dataset.id);
@@ -33947,7 +34035,7 @@ function onChange(e) {
     // (taskLayers это и так отфильтровал бы, но оставлять противоречие в данных не стоит.)
     if (el.checked && t.layers) t.layers = t.layers.filter((x) => x !== sid);
     Store.save('tasks', State.tasks);
-    const pop = document.getElementById('cat-pop'); if (pop) { pop.remove(); openCategoryPicker(t.id); } // перерисовать подписи ролей
+    if (document.getElementById('cat-pop')) reopenLegacyDialog('cat-pop', (opts) => openCategoryPicker(t.id, opts)); // перерисовать подписи ролей
     render(); return;
   }
   if (a === 'tree-field') {
@@ -34385,7 +34473,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v292';
+const PWA_CACHE_VERSION = 'satoru-v293';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

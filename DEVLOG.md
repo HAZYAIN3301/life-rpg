@@ -1,5 +1,16 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R11 — dialogs and real content, v293
+
+Full synthetic accounts (goals, habits, notes, rewards) seeded through app flows.
+Dungeon programs created Russian starter habits/quests in every language — 33 titles
+translated and created via t(). Raw Russian sphere names in labels/paths fixed with
+sphereNameText and a « › » splitter. Category picker, Entry and sphere guide became
+real dialogs (mountLegacyDialog/closeLegacyDialog: Escape, focus in/out). Translated
+goal-delete, sign-out-all, linked-goal, voucher, import ladder hints. Goal status and
+reward cost no longer colour text; 44 px close buttons; 12 px dialog notes.
+DIALOGS-V293-QA.md. Shell/pins v293.
+
 ## [2026-09-25] R10 — hidden content sweep, v292
 
 Opened every collapsed section and Settings group. Telemetry consent purposes were
