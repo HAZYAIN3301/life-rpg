@@ -1,5 +1,8 @@
 # START HERE — холодный старт для нового чата/LLM
 
+**Local follow-up:** WebKit/device checks and the external plan sync are in
+[LOCAL-SESSION-PROMPT.md](./LOCAL-SESSION-PROMPT.md); browser audits in `scripts/qa/`.
+
 **25.09 R04A–R06 queue:** состояние пакетов, коммиты и деплой-квитанции —
 [RELEASE-CHECKPOINT-R04-R06.md](./RELEASE-CHECKPOINT-R04-R06.md) (зеркало внешнего
 плана). v283 = R04A: честная нагрузка сфер/XP, PROGRESS-MEANING-V283-QA.md;

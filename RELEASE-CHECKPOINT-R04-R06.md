@@ -118,4 +118,6 @@ All packages R04A → R12 are published. Owner decisions 25.09: monetisation gat
 no change until the owner's documents arrive; the companion name «Тень» stays.
 The four filtered-out Today hints were resolved in R09 by the owner's choice. Open: WebKit and real-device
 checks for every package; real calendar import / iOS share sheet. The external plan
-(CHECKPOINT/START/NEXT) must be synced from this file by whoever has it.
+(CHECKPOINT/START/NEXT) must be synced from this file by whoever has it. The next
+local session starts from LOCAL-SESSION-PROMPT.md; the synthetic browser audits used
+for R04A–R12 are in `scripts/qa/` (Chromium/WebKit/Firefox via QA_BROWSER).
