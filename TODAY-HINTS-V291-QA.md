@@ -35,3 +35,9 @@ settings heading used a 🕯 emoji — now the registry Shadow icon.
   375 and EN 1280: clean, 0 page errors.
 
 **Not verified here:** WebKit, real devices.
+
+## Publication
+
+`2e345bf` on master 25.09; both domains report it with `satoru-v291` at 12:48 UTC;
+10/10 SHA256 matches against the commit (app.js, design-next-v1.css, index.html,
+sw.js, styles.css × 2 domains); login page loads the v291 shell without errors.
