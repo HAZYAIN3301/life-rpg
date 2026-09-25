@@ -13,8 +13,8 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R04B | dense, understandable charts | **published** v284 | `06e7002` | both domains commit `06e7002`, `satoru-v284` at 09:37 UTC; 18/18 SHA256 (9 files × 2); login smoke 0 errors |
 | R04C | AI lifecycle: timeout, cancel, late response | **published** v285 | `e4adff1` | both domains commit `e4adff1`, `satoru-v285` at 09:5x UTC; 16/16 SHA256 (8 files × 2); login smoke 0 errors, `/api/ai/analyze` unauthenticated 401 |
 | R04D | export | **published** v286 | `1c3adf0` | both domains commit `1c3adf0`, `satoru-v286`; 18/18 SHA256 (9 files × 2); login smoke 0 errors; unauthenticated `/api/account/export` 401 (now reported in UI) |
-| R05 | remaining screens by R03B (owner choice 25.09: «Экраны + Тень») | implemented, verified locally | pending | pending |
-| R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | queued | — | — |
+| R05 | remaining screens by R03B (owner choice 25.09: «Экраны + Тень») | **published** v287 | `6a036a5` | both domains commit `6a036a5`, `satoru-v287`; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
+| R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | in progress | — | — |
 
 ## Environment notes for this queue
 
@@ -64,3 +64,7 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
 - today: task title edit buttons 23px high and companion toggle 42×40 (R03A area;
   deliberately not changed without the owner's R05 scope);
 - pets: disclosure summary 24px high.
+- **R05 / v287** `6a036a5` — full suite 3124/3124 PASS, 0 skipped (non-root);
+  fast-forward to master. SHA256 match (commit blobs) for app.js, design-next-v1.css,
+  index.html, sw.js, styles.css, calendar-export-v1.js on both domains.
+  QA: SCREENS-V287-QA.md.

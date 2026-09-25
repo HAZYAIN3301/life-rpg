@@ -46,3 +46,8 @@ monetisation release gate, not part of R05.
   Tree switch, RU subscription card.
 
 **Not verified here:** WebKit, real devices, screen readers.
+
+## Publication
+
+`6a036a5` on master 25.09; both domains report it with `satoru-v287`; 12/12 SHA256
+matches; login page loads the v287 shell without console errors.
