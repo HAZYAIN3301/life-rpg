@@ -826,3 +826,23 @@
 :root[data-design=next] .difficulty-help>summary{display:flex;align-items:center;min-height:44px;cursor:pointer}
 /* R09 (v291): one hint — one action; the mobility disclaimer stays a readable 12px line under the hint. */
 :root[data-design=next] .nudge-note{display:block;flex:1 1 100%;margin-top:var(--sp-1);font-size:var(--type-micro);line-height:1.45;color:var(--muted)}
+/* R10 (v292): hidden content floors. The Phase 3 console surfaces used dark translucent fills (rgba(5,8,16,.2–.4));
+   in the light theme they became grey patches with 2.3–3.3:1 text. Light gets a neutral tint instead. */
+:root[data-design=next][data-theme="light"] :is(.cal-modes,.cal-schedule,.wk-hint,.wk-load,.wk-prog,.wk-task,.wk-habits-dots,.theme-toggle,.accent-swatches,.skill-edit,.habit-edit,.import-row,.knob,.gtype-guide,.goal-form,.gm-block,.gstep,.bal-meter,.raid-bar,.season-bar,.rank-row,.party-code,.raid-boss,.raid-lore,.raid-weak,.raid-note,.pm-row,.pb-bar,.lb-optout,.event-metrics span,.event-step,.party-empty-actions,.reward-track-preview,.path-card-mascot){background:color-mix(in srgb,var(--text) 5%,transparent)}
+:root[data-design=next][data-theme="light"] .cal{background:repeating-linear-gradient(180deg,transparent 0 47px,color-mix(in srgb,var(--text) 8%,transparent) 48px),color-mix(in srgb,var(--text) 3%,transparent)}
+:root[data-design=next][data-theme="light"] .lb-row{background:color-mix(in srgb,var(--text) 4%,transparent)}
+:root[data-design=next][data-theme="light"] :is(.pm-row.me,.lb-row.me){background:color-mix(in srgb,var(--accent) 12%,transparent)}
+/* Rank badges: the rank colour stays on the frame and tint, text uses the text colour (C-05). */
+:root[data-design=next] .rr-rank{color:var(--text)}
+:root[data-design=next] .rr-next{font-size:var(--type-micro)}
+/* Meaning-bearing text ≥12px (TY-05) in Settings, calendar and week. */
+:root[data-design=next] :is(.cal-h,.pc-meta,.profile-meta,.wk-empty,.actionable-kicker,.telemetry-purpose__state,.account-profile-stats small,.account-profile-bio-field small,.account-profile-layout-label,.shadow-voice-picker legend,.sphere-selected-chip small){font-size:var(--type-micro)}
+:root[data-design=next] .calv-day .cd-dot:not(:empty){font-size:var(--type-micro);min-width:18px;line-height:16px}
+:root[data-design=next] :is(.aikey-free,.aikey-paid){font-size:var(--type-micro)}
+:root[data-design=next] .aikey-free{color:var(--text);background:color-mix(in srgb,var(--good) 20%,transparent)}
+@media (max-width:600px),(pointer:coarse){
+ :root[data-design=next] .accent-sw{width:44px;height:44px}
+}
+@media (min-width:601px) and (pointer:fine){
+ :root[data-design=next] .pet-hint{min-height:24px}
+}

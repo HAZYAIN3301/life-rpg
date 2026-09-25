@@ -1,5 +1,9 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R10 / v292:** collapsed sections and all Settings groups meet the same floors;
+  telemetry consent translated; light theme without dark patches. See
+  HIDDEN-CONTENT-V292-QA.md.
+
 - [x] **R08 / v290:** Today quest title and difficulty help reach 44 px; no control
   under 42 px on the 16 routes. See TODAY-FLOORS-V290-QA.md.
 

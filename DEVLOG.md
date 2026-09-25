@@ -1,5 +1,14 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R10 — hidden content sweep, v292
+
+Opened every collapsed section and Settings group. Telemetry consent purposes were
+Russian in all languages (16 strings translated); program labels translated; Settings
+emoji → registry icons; 30 Phase 3 surfaces had dark translucent fills that became grey
+2.3–3.3:1 patches in the light theme — neutral light tint now; rank badge text no longer
+in the rank colour; hidden 10.5–11 px text → 12 px; accent swatches 44 px on touch.
+HIDDEN-CONTENT-V292-QA.md. Shell/pins v292.
+
 ## [2026-09-25] R09 — one hint, one action, v291
 
 Owner decision. Rest → «Отдохнуть с границей», day overload → «Завершить день»,

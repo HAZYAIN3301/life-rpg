@@ -10,6 +10,8 @@ test('account push test remains reachable without enrolling this browser', () =>
     const context = { State: { pushOn, apkAvailable: false }, navigator: supported ? { serviceWorker: {} } : {},
       window: supported ? { PushManager: {}, Notification: {} } : {}, Notification: { permission },
       ensurePushState() {}, ensureApkState() {}, t: x => x,
+      // R10: the card heading and APK link use the shared icon/emoji helpers.
+      esc: x => String(x), emojiFree: x => String(x).replace(/^[\p{Extended_Pictographic}\uFE0F\s]+/u, ''), satoruIconHTML: () => '',
       _pwaRegistration: 'ready', _deferredInstall: null, _pwaInstallBusy: false, _pushBusy: false };
     vm.createContext(context); vm.runInContext(card, context);
     assert.equal((context.pwaCard().match(/data-action="push-test"/g) || []).length, 1);

@@ -539,6 +539,24 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // R10 (v292): скрытые разделы Настроек — цели телеметрии и подсказки были только по-русски.
+  'ИИ оценит уровни по твоему описанию': { en: 'AI estimates levels from your description', de: 'Die KI schätzt Niveaus aus deiner Beschreibung', uk: 'ШІ оцінить рівні за твоїм описом', es: 'La IA estima niveles a partir de tu descripción' },
+  'Работа приложения': { en: 'App operation', de: 'App-Betrieb', uk: 'Робота застосунку', es: 'Funcionamiento de la app' },
+  'Сбои, потери данных, неудавшиеся сохранения. Без этого нельзя починить то, что сломалось у вас.': { en: 'Crashes, data loss, failed saves. Without this we cannot fix what broke for you.', de: 'Abstürze, Datenverluste, fehlgeschlagene Speicherungen. Ohne das können wir nicht reparieren, was bei dir kaputtgegangen ist.', uk: 'Збої, втрати даних, невдалі збереження. Без цього не полагодити те, що зламалося у вас.', es: 'Fallos, pérdida de datos, guardados fallidos. Sin esto no podemos arreglar lo que se rompió en tu caso.' },
+  'Без этих данных нельзя заметить, что приложение сломалось именно у вас.': { en: 'Without this data we cannot notice that the app broke for you specifically.', de: 'Ohne diese Daten merken wir nicht, dass die App gerade bei dir kaputt ist.', uk: 'Без цих даних не помітити, що застосунок зламався саме у вас.', es: 'Sin estos datos no podemos notar que la app se rompió justo en tu caso.' },
+  'Обнаружение вреда': { en: 'Harm detection', de: 'Schadenserkennung', uk: 'Виявлення шкоди', es: 'Detección de daño' },
+  'Признаки компульсии, ночных сессий, сожаления после использования.': { en: 'Signs of compulsive use, late-night sessions, regret after use.', de: 'Anzeichen zwanghafter Nutzung, nächtlicher Sitzungen, Reue nach der Nutzung.', uk: 'Ознаки компульсії, нічних сесій, жалю після використання.', es: 'Señales de uso compulsivo, sesiones nocturnas, arrepentimiento tras usarla.' },
+  'Улучшение полезности': { en: 'Usefulness improvement', de: 'Nützlichkeit verbessern', uk: 'Поліпшення корисності', es: 'Mejora de utilidad' },
+  'Помогает ли функция довести настоящее дело до конца.': { en: 'Whether a feature helps finish real work.', de: 'Ob eine Funktion hilft, eine echte Sache abzuschließen.', uk: 'Чи допомагає функція довести справжню справу до кінця.', es: 'Si una función ayuda a terminar algo real.' },
+  'Персонализация': { en: 'Personalisation', de: 'Personalisierung', uk: 'Персоналізація', es: 'Personalización' },
+  'Подстройка подсказок и порядка под ваши привычки.': { en: 'Tuning hints and order to your habits.', de: 'Hinweise und Reihenfolge an deine Gewohnheiten anpassen.', uk: 'Підлаштування підказок і порядку під ваші звички.', es: 'Ajustar sugerencias y orden a tus hábitos.' },
+  'Оптимизация вовлечения': { en: 'Engagement optimisation', de: 'Engagement-Optimierung', uk: 'Оптимізація залученості', es: 'Optimización de la participación' },
+  'Как сделать так, чтобы вы возвращались чаще и оставались дольше.': { en: 'How to make you come back more often and stay longer.', de: 'Wie man dich öfter zurückkommen und länger bleiben lässt.', uk: 'Як зробити, щоб ви поверталися частіше й залишалися довше.', es: 'Cómo hacer que vuelvas más a menudo y te quedes más tiempo.' },
+  'Поведенческие эксперименты': { en: 'Behavioural experiments', de: 'Verhaltensexperimente', uk: 'Поведінкові експерименти', es: 'Experimentos de comportamiento' },
+  'Проверка гипотез на живых людях: разные варианты механик разным людям.': { en: 'Testing hypotheses on real people: different mechanics for different people.', de: 'Hypothesen an echten Menschen testen: verschiedene Mechaniken für verschiedene Menschen.', uk: 'Перевірка гіпотез на живих людях: різні варіанти механік різним людям.', es: 'Probar hipótesis con personas reales: distintas mecánicas para distintas personas.' },
+  'Каждая цель включается отдельно. Улучшение продукта не означает оптимизацию вовлечения.': { en: 'Each purpose is switched on separately. Improving the product does not mean optimising engagement.', de: 'Jeder Zweck wird einzeln eingeschaltet. Produktverbesserung heißt nicht Engagement-Optimierung.', uk: 'Кожна мета вмикається окремо. Поліпшення продукту не означає оптимізацію залученості.', es: 'Cada propósito se activa por separado. Mejorar el producto no significa optimizar la participación.' },
+  'Здесь видны отдельные факты, их источник и то, где они используются. Старое свободное досье остаётся отдельной карточкой ниже.': { en: 'Here you see individual facts, where they came from and where they are used. The older free-form profile stays as a separate card below.', de: 'Hier siehst du einzelne Fakten, ihre Quelle und wo sie genutzt werden. Das ältere freie Profil bleibt als eigene Karte darunter.', uk: 'Тут видно окремі факти, їхнє джерело і де їх використовують. Старе вільне досьє лишається окремою карткою нижче.', es: 'Aquí ves hechos concretos, su origen y dónde se usan. El perfil libre anterior queda como tarjeta aparte abajo.' },
+  'Когда помощник начнёт использовать структурированную память, каждая запись появится здесь с объяснением.': { en: 'When the assistant starts using structured memory, each entry will appear here with an explanation.', de: 'Sobald der Assistent strukturiertes Gedächtnis nutzt, erscheint hier jeder Eintrag mit Erklärung.', uk: 'Коли помічник почне використовувати структуровану пам’ять, кожен запис з’явиться тут із поясненням.', es: 'Cuando el asistente empiece a usar memoria estructurada, cada entrada aparecerá aquí con una explicación.' },
   // R09 (v291): одна подсказка — одно действие.
   'Разминка / прогулка': { en: 'Warm-up / walk', de: 'Aufwärmen / Spaziergang', uk: 'Розминка / прогулянка', es: 'Calentamiento / paseo' },
   'Подсказывать мобилку, если ты тренируешься без растяжки': { en: 'Suggest mobility work when you train without stretching', de: 'Mobility vorschlagen, wenn du ohne Dehnen trainierst', uk: 'Підказувати мобілку, якщо ти тренуєшся без розтяжки', es: 'Sugerir movilidad si entrenas sin estirar' },
@@ -6681,12 +6699,12 @@ function applyProgramMerge(prog) {
   State.habits.push(...programHabits(prog, map));
   State.tasks.push(...programTasks(prog, map));
   Store.save('settings', State.settings); Store.save('habits', State.habits); Store.save('tasks', State.tasks);
-  toast(`📦 ${t('Программа добавлена')}: ${prog.name}`); render();
+  toast(`${t('Программа добавлена')}: ${t(prog.name)}`); render();
 }
 function programCard(p, action) {
   // aria-label: внутри кнопки только спаны — без него скринридер видит безымянную кнопку (a11y-находка альфа-аудита)
-  return `<button type="button" class="prog-card" data-action="${action}" data-prog="${p.id}" aria-label="${esc(t('Программа'))}: ${esc(p.name)} — ${esc(p.tagline)}">
-    <span class="pc-ic">${p.icon}</span>
+  return `<button type="button" class="prog-card" data-action="${action}" data-prog="${p.id}" aria-label="${esc(t('Программа'))}: ${esc(t(p.name))} — ${esc(t(p.tagline))}">
+    <span class="pc-ic" aria-hidden="true">${p.icon}</span>
     <span class="pc-body">
       <span class="pc-name">${esc(p.name)}</span>
       <span class="pc-tag">${esc(p.tagline)}</span>
@@ -15604,14 +15622,14 @@ function profileCard() {
   const busy = !!State._profileBusy;
   const saveError = State._profileSaveError || '';
   const when = prof.updatedAt ? new Date(prof.updatedAt).toLocaleDateString(({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' })[lang()] || 'en-US', { day: '2-digit', month: '2-digit' }) : '';
-  return `<section class="card profile-memory-card" aria-labelledby="profile-title"><h3 id="profile-title">${t('🧠 Что Тень о тебе помнит')}</h3>
+  return `<section class="card profile-memory-card" aria-labelledby="profile-title"><h3 id="profile-title">${satoruIconHTML('nav.shadow', 'heading-glyph', '🧠')} ${esc(emojiFree(t('🧠 Что Тень о тебе помнит')))}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 8px">${t('Это досье Тень берёт с собой в каждый разговор — поэтому оно короткое. Правь смело: твои правки важнее её выводов.')}</p>
     <textarea id="profile-text" class="profile-text" rows="10" maxlength="${mem.MAX_CHARS}" aria-label="${t('Текст профиля')}" aria-describedby="profile-meta profile-status" placeholder="${esc(t('Пока пусто. Тень составит профиль после первого разбора недели — или нажми «Обновить через ИИ».'))}">${esc(draft)}</textarea>
     <div id="profile-meta" class="profile-meta muted">${u.chars} / ${u.max}${when ? ` · ${t('обновлено')} ${when}` : ''}</div>
     <p id="profile-status" class="profile-save-status${saveError ? ' is-error' : ''}" role="status" aria-live="polite">${busy ? t('Сохраняю…') : esc(t(saveError))}</p>
     <div class="settings-actions" style="margin-top:8px">
       <button class="btn" data-action="profile-save" ${busy ? 'disabled' : ''}>${t('Сохранить правки')}</button>
-      <button class="btn ghost ${busy ? 'disabled' : ''}" data-action="profile-refresh" ${busy ? 'disabled' : ''}>${busy ? '⏳ ' + t('Обновляю…') : '🤖 ' + t('Обновить через ИИ')}</button>
+      <button class="btn ghost ${busy ? 'disabled' : ''}" data-action="profile-refresh" ${busy ? 'disabled' : ''}>${busy ? `${satoruIconHTML('action.refresh', 'button-glyph')} ${esc(t('Обновляю…'))}` : `${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${esc(t('Обновить через ИИ'))}`}</button>
     </div></section>`;
 }
 function aiKeysCard() {
@@ -15645,7 +15663,7 @@ function aiKeysCard() {
         <button class="btn pro-cta sm" data-action="show-paywall" data-feature="ИИ-ассистент">💎 Оформить Pro</button></div>`;
     }
   }
-  return `<div class="card"><h3>🤖 ИИ-ассистент (свой ключ)</h3>
+  return `<div class="card"><h3>${satoruIconHTML('nav.shadow', 'heading-glyph', '🤖')} ${esc(emojiFree(t('🤖 ИИ-ассистент (свой ключ)')))}</h3>
     ${k.ollama || State.settings?.aiPref === 'ollama' ? `<p class="muted">${esc(t(k.ollama ? 'Ollama: локальная модель, без перехода в облако.' : 'Ollama недоступна для этого аккаунта на этом сервере.'))} ${esc(k.ollamaStatus?.model || '')}</p>` : ''}
     ${houseBlock}
     <p class="muted">${t('Добавь ключ выбранного сервиса. Пустые поля оставляют сохранённые ключи без изменений.')}</p>
@@ -15763,11 +15781,11 @@ function parseWorkoutFile(name, text) {
 function fileImportCard() {
   const sport = (State.settings.skills || []).find((s) => /спорт|трен|фитнес|бег|здоров|sport|fitness|run|health/i.test(s.name)) || (State.settings.skills || [])[0];
   const opts = (State.settings.skills || []).filter((s) => !s.parentId).map((s) => `<option value="${s.id}" ${sport && s.id === sport.id ? 'selected' : ''}>${esc(s.name)}</option>`).join('');
-  return `<div class="card"><h3>${t('📂 Импорт тренировок файлом')}</h3>
+  return `<div class="card"><h3>${satoruIconHTML('action.import', 'heading-glyph', '📂')} ${esc(emojiFree(t('📂 Импорт тренировок файлом')))}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Работает с любыми часами без API: экспортируй GPX/TCX из Garmin Connect, Polar Flow, Suunto, Komoot и т.п. — файлы превратятся в выполненные квесты с XP (дата и длительность из файла, дубликаты пропускаются).')}</p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
       <select id="wkfile-skill">${opts}</select>
-      <label class="btn ghost sm" style="cursor:pointer">${t('📂 Выбрать файлы')}<input type="file" data-action="wkfile" accept=".gpx,.tcx" multiple style="display:none" /></label>
+      <label class="btn ghost sm" style="cursor:pointer">${satoruIconHTML('action.import', 'button-glyph', '📂')} ${esc(emojiFree(t('📂 Выбрать файлы')))}<input type="file" data-action="wkfile" accept=".gpx,.tcx" multiple style="display:none" /></label>
     </div></div>`;
 }
 async function importWorkoutFiles(files) {
@@ -15785,20 +15803,20 @@ async function importWorkoutFiles(files) {
 }
 function stravaCard() {
   const s = State.strava || {};
-  if (!Object.keys(s).length) return `<div class="card"><h3>🏃 Strava</h3><p class="muted">${t('Загрузка…')}</p></div>`;
+  if (!Object.keys(s).length) return `<div class="card"><h3>${satoruIconHTML('activity.run', 'heading-glyph', '🏃')} Strava</h3><p class="muted">${t('Загрузка…')}</p></div>`;
   if (!s.configured) {
-    return `<div class="card"><h3>${t('🏃 Strava — авто-импорт тренировок')}</h3>
+    return `<div class="card"><h3>${satoruIconHTML('activity.run', 'heading-glyph', '🏃')} ${esc(emojiFree(t('🏃 Strava — авто-импорт тренировок')))}</h3>
       <p class="muted" style="font-size:12.5px;margin:0">${t('Интеграция ещё не настроена на сервере. Нужно создать')} <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener">${t('Strava API-приложение')}</a> ${t('и добавить')} <code>STRAVA_CLIENT_ID</code> + <code>STRAVA_CLIENT_SECRET</code> ${t('в переменные Railway (Authorization Callback Domain = домен приложения).')}</p></div>`;
   }
   if (!s.connected) {
-    return `<div class="card"><h3>${t('🏃 Strava — авто-импорт тренировок')}</h3>
+    return `<div class="card"><h3>${satoruIconHTML('activity.run', 'heading-glyph', '🏃')} ${esc(emojiFree(t('🏃 Strava — авто-импорт тренировок')))}</h3>
       <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('Подключи Strava — твои пробежки, велозаезды и тренировки автоматически станут выполненными квестами с XP в выбранной сфере.')}</p>
       <button class="btn" data-action="strava-connect">${t('🔗 Подключить Strava')}</button></div>`;
   }
   const opts = leafSkills().map((sk) => `<option value="${sk.id}" ${stravaSkillId() === sk.id ? 'selected' : ''}>${esc(skillLabel(sk.id))}</option>`).join('');
   const locale = ({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' })[lang()] || 'en-US';
   const last = s.lastSync ? new Date(s.lastSync).toLocaleString(locale, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : t('ещё не было');
-  return `<div class="card"><h3>🏃 Strava</h3>
+  return `<div class="card"><h3>${satoruIconHTML('activity.run', 'heading-glyph', '🏃')} Strava</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 10px">${t('✓ Подключён:')} <b>${esc((s.athlete && s.athlete.name) || t('атлет'))}</b> · ${t('последняя синхронизация:')} ${esc(last)}</p>
     <label class="strava-skill">${t('Сфера для тренировок')}
       <select data-action="set-strava-skill">${opts}</select></label>
@@ -23656,7 +23674,7 @@ function pathCard() {
     <label class="sound-toggle" style="margin-top:10px"><input type="checkbox" data-action="toggle-system-skin-off" ${s.systemSkinOff ? 'checked' : ''}/> ${t('Правила Контроля без скина «Система» (обычная тема)')}</label>` : '';
   const muteExtra = cur ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-antagonist-mute" ${s.pathAntagonistMuted ? 'checked' : ''}/> ${t('Заглушить реплики маскота противоположной стороны')}</label>` : '';
   return `<div class="card path-card-settings">
-    <h3 id="path-settings-title" tabindex="-1">⚖️ ${t('Путь дисциплины')}</h3>
+    <h3 id="path-settings-title" tabindex="-1">${satoruIconHTML('status.balance', 'heading-glyph', '⚖️')} ${t('Путь дисциплины')}</h3>
     <p class="muted" style="margin:0 0 12px;font-size:13.5px">${t('Мягкий (Доверие) или жёсткий (Контроль). Награды одинаковы; различаются тон и способ разбирать просроченное. Сменить можно в любой момент.')}</p>
     <div class="path-opts">${opt(PATHS.trust)}${opt(PATHS.control)}</div>
     <button type="button" class="btn ghost path-review" data-action="open-path-choice">${t('Сравнить оба пути')}</button>
@@ -24629,7 +24647,7 @@ function importCard() {
   };
   const rows = topSkills().map((sk) => row(sk, false) + childSkills(sk.id).map((c) => row(c, true)).join('')).join('');
   return `<div class="card" id="import-card">
-    <div class="imp-head"><h3>🎖 Стартовый уровень</h3><button class="btn ghost sm" data-action="ai-import-levels" title="ИИ оценит уровни по твоему описанию">🤖 Оценить через ИИ</button></div>
+    <div class="imp-head"><h3>${satoruIconHTML('nav.skills', 'heading-glyph', '🎖')} ${esc(t('Стартовый уровень'))}</h3><button class="btn ghost sm" data-action="ai-import-levels" title="${esc(t('ИИ оценит уровни по твоему описанию'))}">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${esc(t('Оценить через ИИ'))}</button></div>
     <p class="muted" style="margin:0 0 4px">Ты не начинаешь с нуля. Отметь <b>честно</b> где ты сейчас — стартовый опыт начислится и <b>не сгорит</b> (как чёрный пояс).</p>
     <p class="muted" style="margin:0 0 12px;font-size:12.5px">Под каждой сферой — подсказка, как оценивать. Нет подходящей ступени? → <b>Оценить через ИИ</b>.</p>
     <div class="import-list">${rows}</div>
@@ -26029,7 +26047,7 @@ function attentionSettingsCard() {
       return `<div class="attention-policy-row"><div><b>${esc(policy.name)}</b><small>${policy.purposes.filter((rule) => rule.enabled !== false).map((rule) => `${esc(attentionPurposeName(rule.purpose))} · ${fmtDur(rule.defaultMinutes)}`).join(' · ')}</small><small class="attention-policy-link-state">${t(linked ? 'Уговор связан с Тенью' : 'Уговор ещё не связан')}</small></div><div class="attention-policy-actions"><button class="btn ghost" data-action="attention-edit-policy" data-policy-id="${esc(policy.id)}">${t(linked ? 'Изменить уговор' : 'Связать уговор')}</button><button class="btn ghost" data-action="attention-open-entry" data-policy-id="${esc(policy.id)}">${t('Проверить вход')}</button></div></div>`;
     }).join('')}</div>` : `<p class="muted">${t('Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.')}</p>`}
     ${browserCompanionSettingsHTML()}
-    <div class="attention-settings-shortcuts"><button class="btn ghost" data-action="recovery-open">🌿 ${t('Отдых с границей')}</button><button class="btn ghost" data-action="evening-configure">🌙 ${t(secretary.configured ? 'Изменить завершение вечера' : 'Настроить завершение вечера')}</button>${secretary.dailyReminder && secretary.eveningTime ? `<span class="muted">${t('Напоминание')}: ${esc(secretary.eveningTime)}</span>` : ''}</div>
+    <div class="attention-settings-shortcuts"><button class="btn ghost" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-emblem', '◇')} ${t('Отдых с границей')}</button><button class="btn ghost" data-action="evening-configure">${satoruIconHTML('system.day-end', 'button-glyph', '🌙')} ${t(secretary.configured ? 'Изменить завершение вечера' : 'Настроить завершение вечера')}</button>${secretary.dailyReminder && secretary.eveningTime ? `<span class="muted">${t('Напоминание')}: ${esc(secretary.eveningTime)}</span>` : ''}</div>
     <p class="attention-privacy-note">${State.attentionMode === 'contracts' ? t('По отдельному согласию синхронизируются правила, сессии и записанные исходы. История устройства и просмотренные материалы не собираются.') : t('Полные правила и исходы остаются на этом устройстве. В аккаунте хранится только названный тобой уговор: ярлык, граница и выигрыш — без URL и содержимого экрана.')}</p></div>`;
 }
 
@@ -27487,8 +27505,8 @@ function renderSettings() {
       </div></div>
       <div class="theme-row"><span class="theme-lbl">${t('Тема')}</span>
         <div class="theme-toggle" role="group" aria-label="${t('Тема')}">
-          <button type="button" class="theme-opt ${s.theme === 'dark' || !['light', 'system'].includes(s.theme) ? 'active' : ''}" data-action="set-theme" data-theme="dark" aria-pressed="${s.theme === 'dark' || !['light', 'system'].includes(s.theme)}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('🌙 Тёмная')}</button>
-          <button type="button" class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light" aria-pressed="${s.theme === 'light'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('☀️ Светлая')}</button>
+          <button type="button" class="theme-opt ${s.theme === 'dark' || !['light', 'system'].includes(s.theme) ? 'active' : ''}" data-action="set-theme" data-theme="dark" aria-pressed="${s.theme === 'dark' || !['light', 'system'].includes(s.theme)}" ${_themeChoiceBusy ? 'disabled' : ''}>${satoruIconHTML('system.day-end', 'button-glyph', '🌙')} ${esc(emojiFree(t('🌙 Тёмная')))}</button>
+          <button type="button" class="theme-opt ${s.theme === 'light' ? 'active' : ''}" data-action="set-theme" data-theme="light" aria-pressed="${s.theme === 'light'}" ${_themeChoiceBusy ? 'disabled' : ''}>${satoruIconHTML('period.day', 'button-glyph', '☀')} ${esc(emojiFree(t('☀️ Светлая')))}</button>
           <button type="button" class="theme-opt ${s.theme === 'system' ? 'active' : ''}" data-action="set-theme" data-theme="system" data-guide-target="system-theme-choice" aria-pressed="${s.theme === 'system'}" ${_themeChoiceBusy ? 'disabled' : ''}>${t('◐ Системная')}</button>
       </div></div>
       <div class="theme-row"><span class="theme-lbl">${t('Акцент')}</span>
@@ -27496,17 +27514,17 @@ function renderSettings() {
       <div class="theme-row"><span class="theme-lbl">${t('⚡ Режим «Система»')}</span>
         <label class="sound-toggle"><input type="checkbox" data-action="toggle-system" ${systemMode() ? 'checked' : ''}/> ${t('Нарратор-Система комментирует твои действия (Solo Leveling-вайб): драматичные объявления при выполнении квестов, левелапах, рангах, ачивках.')}</label></div></div>
     <details class="card settings-disclosure"><summary>${t('Звук и присутствие Тени')}</summary><div class="settings-disclosure-body settings-experience-stack">
-    <section class="settings-subsection"><h3>${t('🔊 Звук')}</h3>
+    <section class="settings-subsection"><h3>${satoruIconHTML('media.sound', 'heading-glyph', '🔊')} ${esc(emojiFree(t('🔊 Звук')))}</h3>
       <div class="sound-mode-row"><span>${t('Режим звука')}</span><div class="theme-toggle sound-mode-toggle" role="group" aria-label="${esc(t('Режим звука'))}">
         ${[['off', 'Выкл'], ['essential', 'Только важное'], ['full', 'Полный']].map(([id, label]) => `<button type="button" class="theme-opt ${sfxMode() === id ? 'active' : ''}" data-action="set-sound-mode" data-sound-mode="${id}" aria-pressed="${sfxMode() === id}">${t(label)}</button>`).join('')}
       </div></div>
       <p class="muted sound-mode-help">${t('Навигация и выбор звучат только в полном режиме. Веб-приложение не видит беззвучный переключатель iPhone.')}</p>
-      ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')}</label>` : ''}
+      ${ttsOK() ? `<label class="sound-toggle"><input type="checkbox" data-action="toggle-tts" ${ttsOn() ? 'checked' : ''}/> ${esc(t('Кнопка 🔊 — озвучить голосом Тени (реплики, подсказки, ответы Помощника)')).replace(/🔊\uFE0F?/u, satoruIconHTML('media.sound', 'inline-glyph', '🔊'))}</label>` : ''}
       ${ttsOK() && ttsOn() ? `<div class="tts-settings">
         ${shadowVoiceSettingsHTML()}
         <button class="btn ghost sm" data-action="tts-preview">${satoruIconHTML('media.sound', 'button-glyph', '◇')} ${t('Прослушать Тень')}</button>
       </div>` : ''}
-      <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${t('▶ Проверить звук')}</button></section>
+      <button class="btn ghost sm" data-action="sound-test" style="margin-top:8px">${satoruIconHTML('media.play', 'button-glyph', '▶')} ${esc(emojiFree(t('▶ Проверить звук')))}</button></section>
     <section class="settings-subsection"><h3>${satoruIconHTML('nav.shadow', 'heading-glyph', '🕯')} ${t('Тень')}</h3>
       <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Утром и вечером Тень встречает тебя один раз — говорит по твоему состоянию и зовёт к одному шагу. Здесь можно вызвать эту встречу заново, чтобы посмотреть.')}</p>
       <button class="btn ghost sm" data-action="moment-replay">${t('Показать встречу сейчас')}</button>
@@ -27520,7 +27538,7 @@ function renderSettings() {
     <div class="card"><h3>${t('Навыки / сферы жизни')}</h3><p class="muted" style="font-size:12px;margin:0 0 10px">${t('Вложенность любой глубины: Учёба → Школа → Биология. Выбери «Внутри …» — опыт суммируется вверх по всей цепочке. Изменения сохраняются автоматически.')}</p><div id="skills-list">${skills}</div><button class="btn ghost" data-action="add-skill" style="margin-top:6px">${t('+ Добавить сферу')}</button></div>
     <details class="card settings-disclosure"><summary>${t('Стартовый уровень')}</summary><div class="settings-disclosure-body">${importCard()}</div></details>
     <div class="card settings-route-link"><h3>${t('Привычки')}</h3><p class="muted">${t('Расписание, пауза и наблюдения — рядом с самими привычками.')}</p><button type="button" class="btn ghost" data-view="habits">${t('Открыть привычки')} →</button></div>
-    <details class="card settings-disclosure"><summary>${t('📦 Программы-данжи')}</summary><div class="settings-disclosure-body"><p class="muted">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div></details>
+    <details class="card settings-disclosure"><summary>${esc(emojiFree(t('📦 Программы-данжи')))}</summary><div class="settings-disclosure-body"><p class="muted">${t('Готовый набор сфер, привычек и стартовых квестов. Добавляется к тому, что уже есть.')}</p><div class="prog-grid">${DUNGEON_PROGRAMS.map((p) => programCard(p, 'add-program')).join('')}</div></div></details>
     ${groupEnd()}
     ${groupStart('connections', 'Тень и подключения', 'Память, ИИ и подключённые сервисы')}
     ${aiMemoryCard()}
@@ -27541,7 +27559,7 @@ function renderSettings() {
     <div class="card"><h3>${t('Формула золота')}</h3><div class="knobs">
         <div class="knob"><label>${t('Золото за минуту')}</label><input id="g-perMinute" type="number" step="0.1" value="${(s.gold || DEFAULT_SETTINGS.gold).perMinute}" /></div>
         <div class="knob"><label>${t('Бонус за выполнение')}</label><input id="g-bonus" type="number" step="1" value="${(s.gold || DEFAULT_SETTINGS.gold).completionBonus}" /></div></div></div>
-    <div class="card focus-settings-card"><h3>${t('🎯 Фокус и Помодоро')}</h3><div class="knobs">
+    <div class="card focus-settings-card"><h3>${satoruIconHTML('system.focus', 'heading-glyph', '🎯')} ${esc(emojiFree(t('🎯 Фокус и Помодоро')))}</h3><div class="knobs">
         <div class="knob"><label>${t('Помодоро')}</label><select id="f-pomodoro"><option value="1" ${f.pomodoro ? 'selected' : ''}>${t('Вкл')}</option><option value="0" ${!f.pomodoro ? 'selected' : ''}>${t('Выкл')}</option></select></div>
         <div class="knob"><label>${t('Работа, мин')}</label><input id="f-workMin" type="number" min="1" value="${f.workMin}" /></div>
         <div class="knob"><label>${t('Перерыв, мин')}</label><input id="f-breakMin" type="number" min="1" value="${f.breakMin}" /></div>
@@ -34303,14 +34321,14 @@ function pwaCard() {
   const install = installed ? `<span class="muted">${t('✓ Уже установлено как приложение')}</span>`
     : (_deferredInstall ? `<button class="btn" data-action="install-app" ${_pwaInstallBusy ? 'disabled' : ''}>${t('📲 Установить приложение')}</button>`
       : `<span class="muted" style="font-size:12px">${t('Меню браузера → «Установить приложение» / «На экран Домой»')}</span>`);
-  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">${t('📥 Скачать для Android (.apk)')}</a><span class="muted" style="font-size:12px">${t('установка из файла')}</span></div>` : '';
+  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">${satoruIconHTML('action.import', 'button-glyph', '📥')} ${esc(emojiFree(t('📥 Скачать для Android (.apk)')))}</a><span class="muted" style="font-size:12px">${t('установка из файла')}</span></div>` : '';
   const push = !canPush ? `<p class="muted" style="font-size:11.5px;margin:10px 0 0">${t('Уведомления недоступны в этом браузере.')}</p>`
     : (Notification.permission === 'denied'
       ? `<p class="account-notice" role="status">${t('Уведомления заблокированы в браузере. Разреши их в настройках сайта, затем повтори.')}</p>`
     : (State.pushOn
       ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable" ${_pushBusy ? 'disabled' : ''}>${t('🔕 Выключить уведомления')}</button><button class="btn ghost sm" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить')}</button><span class="muted" style="font-size:12px">${t('✓ компаньон зовёт 🌅 утром и 🌙 вечером')}</span></div>`
       : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable" ${_pushBusy ? 'disabled' : ''}>${t('🔔 Включить уведомления')}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`));
-  return `<div class="card pwa-card" aria-busy="${_pwaInstallBusy || _pushBusy}"><h3>${t('📲 Приложение')}</h3>
+  return `<div class="card pwa-card" aria-busy="${_pwaInstallBusy || _pushBusy}"><h3>${esc(emojiFree(t('📲 Приложение')))}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 6px">${t('Установи Satoru как приложение: иконка на телефоне и офлайн-режим. Уведомления — только по отдельному согласию ниже.')}</p>
     <p class="muted pwa-status" role="status">${offline} ${t('Установка и уведомления включаются отдельно.')}</p>
     <div class="pwa-row">${install}</div>${apk}${push}${!canPush || Notification.permission === 'denied' || !State.pushOn ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить уведомление аккаунта')}</button></div>` : ''}</div>`;
@@ -34367,7 +34385,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v291';
+const PWA_CACHE_VERSION = 'satoru-v292';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
