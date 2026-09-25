@@ -44,3 +44,9 @@ decision); inline links; the dchart value false positive (R10).
 - Screenshots: DE category picker 375, EN Entry dialog 375.
 
 **Not verified here:** WebKit, real devices, screen readers.
+
+## Publication
+
+`e1d4989` on master 25.09; both domains report it with `satoru-v293` at 13:36 UTC;
+10/10 SHA256 matches against the commit (app.js, design-next-v1.css, index.html,
+sw.js, styles.css × 2 domains); login page loads the v293 shell without errors.
