@@ -19,6 +19,13 @@ function appFunction(name) {
   assert.ok(end > start);
   return APP.slice(start, end + 2);
 }
+// R07: moment and nudge phrases run through the shared AI request lifecycle (timeout, account fence).
+const AiRequest = require('../public/ai-request-v1.js');
+function aiLifecycleSource() {
+  const map = APP.match(/const AI_SURFACE_TIMEOUT_MS = Object\.freeze\(\{[^}]*\}\);/);
+  assert.ok(map, 'AI_SURFACE_TIMEOUT_MS exists');
+  return `${map[0]}\nconst _aiSurfaceRequests = new Map();\n${appFunction('aiSurfaceCancel')}\n${appFunction('aiSurfaceRun')}\n`;
+}
 
 test('browser export works without DOM, clock, random, network or storage', () => {
   const forbidden = () => { throw new Error('impure access'); };
@@ -201,10 +208,11 @@ test('actual rest context distinguishes a recognised entry today from a gap in r
 
 test('actual moment uses local language copy offline and rejects an HTTP error carrying text', async () => {
   let calls = 0, body;
-  const context = vm.createContext({ window: { ShadowPersonaV1: Persona }, lang: () => 'uk', dayPick: (_, pool) => pool[1],
+  const context = vm.createContext({ window: { ShadowPersonaV1: Persona, AiRequestV1: AiRequest }, lang: () => 'uk', dayPick: (_, pool) => pool[1],
+    State: { me: { id: 'account-a' } }, Store: { _writeEpoch: 1 },
     canUseAi: () => false, aiProvider: () => 'unchanged-provider', stateNowContext: () => 'SYNTHETIC_OWNER_CONTEXT',
     fetch: async (_, request) => { calls++; body = JSON.parse(request.body); return { ok: false, json: async () => ({ text: 'must not display this failure payload' }) }; } });
-  vm.runInContext(appFunction('momentLine'), context);
+  vm.runInContext(aiLifecycleSource() + appFunction('momentLine'), context);
   assert.equal(await context.momentLine('m'), Persona.momentLines('m', 'uk')[1]);
   assert.equal(calls, 0);
   context.canUseAi = () => true;
@@ -217,14 +225,14 @@ test('actual moment uses local language copy offline and rejects an HTTP error c
 
 function nudgeHarness() {
   let resolve, reject, body, writes = 0, renders = 0, tracks = 0;
-  const context = vm.createContext({ window: { ShadowPersonaV1: Persona }, currentLang: 'en',
+  const context = vm.createContext({ window: { ShadowPersonaV1: Persona, AiRequestV1: AiRequest }, currentLang: 'en',
     State: { me: { id: 'account-a' }, settings: {} }, Store: { _writeEpoch: 1, save: () => { writes++; } },
     canUseAi: () => true, nudgeVoiceStale: () => true, nudgeVoiceBudgetLeft: () => 1, nudgeVoiceBudgetSpend: () => {},
     aiProvider: () => 'unchanged-provider', stateNowContext: () => 'SYNTHETIC_OWNER_CONTEXT',
     fetch: (_, request) => { body = JSON.parse(request.body); return new Promise((yes, no) => { resolve = yes; reject = no; }); },
     render: () => { renders++; }, track: () => { tracks++; },
   });
-  vm.runInContext('let _nudgeVoiceBusy = false, _nudgeVoiceFailAt = 0; function lang() { return currentLang; }\n' + appFunction('nudgeVoiceFetch'), context);
+  vm.runInContext('let _nudgeVoiceBusy = false, _nudgeVoiceFailAt = 0; function lang() { return currentLang; }\n' + aiLifecycleSource() + appFunction('nudgeVoiceFetch'), context);
   return { context, respond: text => resolve({ ok: true, json: async () => ({ text }) }), reject: () => reject(new Error('offline')),
     body: () => body, results: () => ({ writes, renders, tracks, failAt: vm.runInContext('_nudgeVoiceFailAt', context) }) };
 }

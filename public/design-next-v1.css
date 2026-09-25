@@ -809,3 +809,14 @@
 :root[data-design=next] .chat-form .cap-add{min-width:44px;min-height:44px;color:var(--on-accent)}
 :root[data-design=next] #ai-fab .fab-streak:not([hidden]){display:inline-flex;align-items:center;gap:1px;font-size:var(--type-micro);padding:1px 5px}
 :root[data-design=next] .den-stats .satoru-icon--glyph{display:inline-block;flex:0 0 auto;inline-size:16px;block-size:16px;padding:0;border:0;border-radius:0;background:currentColor}
+/* R07 (v289): AI surfaces share one lifecycle and one look — pending/notice lines, 44px chips and dictation, readable notes. */
+:root[data-design=next] .ai-surface .ai-surface-intro{font-size:var(--type-meta);line-height:1.5;margin:0 0 var(--sp-3);max-width:62ch}
+:root[data-design=next] .ai-surface .ai-surface-note{font-size:var(--type-micro);line-height:1.45;margin:var(--sp-2) 0 0}
+:root[data-design=next] .ai-box .ai-dictate{display:inline-flex;align-items:center;gap:var(--sp-1);min-height:44px;margin-bottom:var(--sp-2)}
+:root[data-design=next] .ai-box .propose-actions .btn{min-height:44px}
+:root[data-design=next] .ep-type,:root[data-design=next] .ep-soc{min-height:44px;font-size:var(--type-meta)}
+:root[data-design=next] .ep-type.on,:root[data-design=next] .ep-soc.on{color:var(--on-accent)}
+:root[data-design=next] .cat-chip{display:inline-flex;align-items:center;gap:var(--sp-1)}
+:root[data-design=next] button.cat-chip{min-height:44px}
+:root[data-design=next] .cat-chip:hover{color:var(--on-accent)}
+:root[data-design=next] .stuck-note:empty{display:none}

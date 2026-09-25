@@ -21,8 +21,10 @@
 
 - [x] **R04C / v285:** weekly review and chat have timeout, cancel and late-response
   fencing; server provider calls time out. See AI-LIFECYCLE-V285-QA.md.
-- [ ] **R04C follow-up:** move category suggestion, stuck-task step, day recap,
-  proposals and Inspiration AI calls onto `AiRequestV1` (client cancel/timeout).
+- [x] **R04C follow-up → R07 / v289:** category suggestion, stuck step, day recap,
+  episode, proposals, tree map, profile, onboarding, moment and hint phrase run on
+  `AiRequestV1` via `aiSurfaceRun`; Inspiration already had its own abort/timeout.
+  See AI-SURFACES-V289-QA.md.
 
 - [x] **R04B / v284:** readable HTML charts (XP by day, time by area in Progress and
   Calendar), usable rhythm wheel on phone/desktop, no truncated sphere names.

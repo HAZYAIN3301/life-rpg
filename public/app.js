@@ -539,6 +539,57 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // R07 (v289): ИИ-окна — итог дня, эпизод, предложения, подбор сферы и шага — раньше были по-русски.
+  'Тень не ответила за полторы минуты. Текст сохранён — можно повторить или продолжить вручную.': { en: 'Shadow did not answer within a minute and a half. Your text is saved — you can try again or continue manually.', de: 'Schatten hat in anderthalb Minuten nicht geantwortet. Dein Text ist gespeichert — du kannst es erneut versuchen oder manuell weitermachen.', uk: 'Тінь не відповіла за півтори хвилини. Текст збережено — можна повторити або продовжити вручну.', es: 'Sombra no respondió en un minuto y medio. Tu texto está guardado: puedes intentarlo de nuevo o seguir manualmente.' },
+  'Запрос отменён. Текст на месте — можно повторить.': { en: 'Request cancelled. Your text is still here — you can try again.', de: 'Anfrage abgebrochen. Dein Text ist noch da — du kannst es erneut versuchen.', uk: 'Запит скасовано. Текст на місці — можна повторити.', es: 'Solicitud cancelada. Tu texto sigue aquí; puedes intentarlo de nuevo.' },
+  'Тень не ответила за полторы минуты. Запрос отменён, текст на месте — можно повторить.': { en: 'Shadow did not answer within a minute and a half. The request was cancelled; your text is still here — you can try again.', de: 'Schatten hat in anderthalb Minuten nicht geantwortet. Die Anfrage wurde abgebrochen, dein Text ist noch da — du kannst es erneut versuchen.', uk: 'Тінь не відповіла за півтори хвилини. Запит скасовано, текст на місці — можна повторити.', es: 'Sombra no respondió en un minuto y medio. La solicitud se canceló; tu texto sigue aquí y puedes intentarlo de nuevo.' },
+  'Тень не ответила за две минуты. Запрос отменён, текст на месте — можно повторить.': { en: 'Shadow did not answer within two minutes. The request was cancelled; your text is still here — you can try again.', de: 'Schatten hat in zwei Minuten nicht geantwortet. Die Anfrage wurde abgebrochen, dein Text ist noch da — du kannst es erneut versuchen.', uk: 'Тінь не відповіла за дві хвилини. Запит скасовано, текст на місці — можна повторити.', es: 'Sombra no respondió en dos minutos. La solicitud se canceló; tu texto sigue aquí y puedes intentarlo de nuevo.' },
+  'Тень не ответила за полторы минуты. Профиль не изменён — повтори попытку.': { en: 'Shadow did not answer within a minute and a half. Your profile is unchanged — try again.', de: 'Schatten hat in anderthalb Minuten nicht geantwortet. Dein Profil ist unverändert — versuche es erneut.', uk: 'Тінь не відповіла за півтори хвилини. Профіль не змінено — спробуй ще раз.', es: 'Sombra no respondió en un minuto y medio. Tu perfil no ha cambiado; inténtalo de nuevo.' },
+  'Расскажи своими словами, что делал — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.': { en: 'Tell it in your own words, like you would a friend. Shadow sorts it into tasks, areas and time. Skip the small stuff (washing up, snacks).', de: 'Erzähl in deinen Worten, was du gemacht hast — wie einem Freund. Schatten ordnet es nach Aufgaben, Bereichen und Zeit. Kleinkram (Waschen, Snacks) brauchst du nicht.', uk: 'Розкажи своїми словами, що робив, — як другові. Тінь розкладе на справи, сфери й час. Дрібниці (умився, перекусив) не потрібні.', es: 'Cuéntalo con tus palabras, como a un amigo. Sombra lo ordena en tareas, áreas y tiempo. No hace falta lo pequeño (lavarse, picar algo).' },
+  'Голос не поддерживается в этом браузере — впиши текстом.': { en: 'Voice is not supported in this browser — type it instead.', de: 'Sprache wird in diesem Browser nicht unterstützt — tippe es stattdessen.', uk: 'Голос не підтримується в цьому браузері — впиши текстом.', es: 'La voz no es compatible con este navegador; escríbelo.' },
+  'Например: с утра учил биологию часа два, потом погулял минут сорок, вечером убрался дома и приготовил ужин…': { en: 'For example: studied biology for about two hours in the morning, then walked for forty minutes, tidied up and cooked dinner in the evening…', de: 'Zum Beispiel: morgens etwa zwei Stunden Biologie gelernt, dann vierzig Minuten spazieren, abends aufgeräumt und Abendessen gekocht…', uk: 'Наприклад: зранку вчив біологію годину-дві, потім погуляв хвилин сорок, увечері прибрав удома й приготував вечерю…', es: 'Por ejemplo: estudié biología unas dos horas por la mañana, luego caminé cuarenta minutos y por la noche ordené la casa y preparé la cena…' },
+  'Разобрать день': { en: 'Sort out the day', de: 'Tag auswerten', uk: 'Розібрати день', es: 'Ordenar el día' },
+  'Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень разберёт твой рассказ.': { en: 'This needs AI — add a key in Settings (free Gemini/Groq keys exist) and Shadow will sort out your story.', de: 'Dafür braucht es KI — füge in den Einstellungen einen Schlüssel hinzu (kostenlose Gemini/Groq gibt es), dann wertet Schatten deine Erzählung aus.', uk: 'Потрібен ШІ — додай ключ у Налаштуваннях (є безкоштовні Gemini/Groq), і Тінь розбере твою розповідь.', es: 'Hace falta IA: añade una clave en Ajustes (hay Gemini/Groq gratis) y Sombra ordenará tu relato.' },
+  'Попробуй ещё раз или подробнее.': { en: 'Try again or add more detail.', de: 'Versuche es erneut oder ausführlicher.', uk: 'Спробуй ще раз або детальніше.', es: 'Inténtalo de nuevo o con más detalle.' },
+  'Дел не распознал. Расскажи подробнее.': { en: 'No tasks recognised. Tell a bit more.', de: 'Keine Aufgaben erkannt. Erzähl etwas ausführlicher.', uk: 'Справ не розпізнав. Розкажи детальніше.', es: 'No reconocí tareas. Cuenta un poco más.' },
+  'минут': { en: 'minutes', de: 'Minuten', uk: 'хвилин', es: 'minutos' },
+  'Записать день': { en: 'Log the day', de: 'Tag eintragen', uk: 'Записати день', es: 'Registrar el día' },
+  'сними галочку, чтобы пропустить дело': { en: 'untick to skip a task', de: 'Haken entfernen, um eine Aufgabe auszulassen', uk: 'зніми позначку, щоб пропустити справу', es: 'desmarca para omitir una tarea' },
+  'Что это был за период': { en: 'What kind of period it was', de: 'Was für ein Zeitraum es war', uk: 'Що це був за період', es: 'Qué tipo de periodo fue' },
+  'Оценить уровни сфер': { en: 'Estimate area levels', de: 'Bereichsniveaus einschätzen', uk: 'Оцінити рівні сфер', es: 'Estimar niveles de las áreas' },
+  'Импорт целей текстом': { en: 'Import goals from text', de: 'Ziele aus Text importieren', uk: 'Імпорт цілей текстом', es: 'Importar metas desde texto' },
+  'Опиши, чем и насколько уверенно занимаешься. ИИ предложит стартовые уровни — ты одобришь или отклонишь.': { en: 'Describe what you do and how confident you are. AI suggests starting levels — you approve or reject them.', de: 'Beschreibe, was du machst und wie sicher du darin bist. Die KI schlägt Startniveaus vor — du nimmst sie an oder lehnst sie ab.', uk: 'Опиши, чим і наскільки впевнено займаєшся. ШІ запропонує стартові рівні — ти схвалиш або відхилиш.', es: 'Describe a qué te dedicas y con cuánta seguridad. La IA propone niveles iniciales; tú los apruebas o rechazas.' },
+  'Опиши свободным текстом свои цели, проекты, сферы. ИИ оформит их в цели и сферы — ты одобришь или отклонишь.': { en: 'Describe your goals, projects and areas in free text. AI turns them into goals and areas — you approve or reject them.', de: 'Beschreibe deine Ziele, Projekte und Bereiche in freiem Text. Die KI macht daraus Ziele und Bereiche — du nimmst sie an oder lehnst sie ab.', uk: 'Опиши вільним текстом свої цілі, проєкти, сфери. ШІ оформить їх у цілі та сфери — ти схвалиш або відхилиш.', es: 'Describe tus metas, proyectos y áreas en texto libre. La IA los convierte en metas y áreas; tú los apruebas o rechazas.' },
+  'Напр.: жму 130 кг на 2 раза; бегал до 36 км; немецкий — речь B2+, понимание C1; Abi около 1.3; монтирую видео пару лет…': { en: 'E.g.: bench 130 kg for 2 reps; ran up to 36 km; German — speaking B2+, understanding C1; editing videos for a couple of years…', de: 'Z. B.: 130 kg Bankdrücken für 2 Wdh.; bis 36 km gelaufen; Deutsch — Sprechen B2+, Verstehen C1; schneide seit ein paar Jahren Videos…', uk: 'Напр.: жму 130 кг на 2 рази; бігав до 36 км; німецька — мовлення B2+, розуміння C1; монтую відео кілька років…', es: 'Ej.: press de banca 130 kg a 2 repeticiones; he corrido hasta 36 km; alemán: habla B2+, comprensión C1; edito vídeos desde hace un par de años…' },
+  'Напр.: хочу Abi 1.0–1.1; дойти до C1 немецкого; закончить проект Jugend Forscht к лету; жим 150 кг; пробежать марафон осенью…': { en: 'E.g.: Abi 1.0–1.1; reach C1 German; finish the Jugend Forscht project by summer; bench 150 kg; run a marathon in autumn…', de: 'Z. B.: Abi 1,0–1,1; Deutsch auf C1; das Jugend-forscht-Projekt bis zum Sommer fertig; 150 kg Bankdrücken; im Herbst einen Marathon laufen…', uk: 'Напр.: Abi 1.0–1.1; дійти до C1 з німецької; закінчити проєкт Jugend Forscht до літа; жим 150 кг; пробігти марафон восени…', es: 'Ej.: Abi 1,0–1,1; llegar a C1 de alemán; terminar el proyecto Jugend Forscht antes del verano; press de banca 150 kg; correr un maratón en otoño…' },
+  'Предложить': { en: 'Suggest', de: 'Vorschlagen', uk: 'Запропонувати', es: 'Proponer' },
+  'Через свой Claude/ChatGPT': { en: 'Via your own Claude/ChatGPT', de: 'Über dein eigenes Claude/ChatGPT', uk: 'Через свій Claude/ChatGPT', es: 'Con tu propio Claude/ChatGPT' },
+  'без ключа': { en: 'no key', de: 'ohne Schlüssel', uk: 'без ключа', es: 'sin clave' },
+  'Нет API-ключа? Не беда — кнопка справа сделает всё через ИИ, которым ты уже пользуешься (хоть в браузере).': { en: 'No API key? No problem — the button next to it does everything through the AI you already use (even in a browser).', de: 'Kein API-Schlüssel? Kein Problem — der Button daneben erledigt alles über die KI, die du schon nutzt (auch im Browser).', uk: 'Немає API-ключа? Не біда — кнопка поруч зробить усе через ШІ, яким ти вже користуєшся (хоч у браузері).', es: '¿Sin clave de API? No pasa nada: el botón de al lado lo hace todo con la IA que ya usas (incluso en el navegador).' },
+  'Тень оформляет предложения…': { en: 'Shadow is drafting suggestions…', de: 'Schatten formuliert Vorschläge…', uk: 'Тінь оформлює пропозиції…', es: 'Sombra está preparando propuestas…' },
+  'ИИ вернул не тот формат. Попробуй переформулировать короче и конкретнее.': { en: 'The AI returned the wrong format. Try a shorter, more specific wording.', de: 'Die KI hat ein falsches Format geliefert. Formuliere kürzer und konkreter.', uk: 'ШІ повернув не той формат. Спробуй сформулювати коротше й конкретніше.', es: 'La IA devolvió un formato incorrecto. Prueba a formularlo más corto y concreto.' },
+  'Не удалось': { en: 'Failed', de: 'Fehlgeschlagen', uk: 'Не вдалося', es: 'No se pudo' },
+  'Ничего не нашлось. Добавь деталей или переформулируй.': { en: 'Nothing found. Add detail or rephrase.', de: 'Nichts gefunden. Füge Details hinzu oder formuliere um.', uk: 'Нічого не знайшлося. Додай деталей або переформулюй.', es: 'No se encontró nada. Añade detalles o reformúlalo.' },
+  'Применить выбранные': { en: 'Apply selected', de: 'Ausgewählte übernehmen', uk: 'Застосувати вибрані', es: 'Aplicar seleccionadas' },
+  'Предложений': { en: 'Suggestions', de: 'Vorschläge', uk: 'Пропозицій', es: 'Propuestas' },
+  'сними галочку, чтобы отклонить': { en: 'untick to reject', de: 'Haken entfernen, um abzulehnen', uk: 'зніми позначку, щоб відхилити', es: 'desmarca para rechazar' },
+  'Внутрь какой сферы': { en: 'Inside which area', de: 'In welchen Bereich', uk: 'У яку сферу', es: 'Dentro de qué área' },
+  'верхний уровень': { en: 'top level', de: 'oberste Ebene', uk: 'верхній рівень', es: 'nivel superior' },
+  'Новая сфера': { en: 'New area', de: 'Neuer Bereich', uk: 'Нова сфера', es: 'Nueva área' },
+  'внутри': { en: 'inside', de: 'innerhalb von', uk: 'усередині', es: 'dentro de' },
+  'ждёт': { en: 'waiting', de: 'wartet', uk: 'чекає', es: 'en espera' },
+  'на паузе': { en: 'paused', de: 'pausiert', uk: 'на паузі', es: 'en pausa' },
+  'Шагов': { en: 'Steps', de: 'Schritte', uk: 'Кроків', es: 'Pasos' },
+  'Обычно сюда': { en: 'Usually here', de: 'Meist hierhin', uk: 'Зазвичай сюди', es: 'Normalmente aquí' },
+  'применить': { en: 'apply', de: 'übernehmen', uk: 'застосувати', es: 'aplicar' },
+  'Подобрать сферу через ИИ': { en: 'Pick an area with AI', de: 'Bereich per KI wählen', uk: 'Підібрати сферу через ШІ', es: 'Elegir área con IA' },
+  'Тень подбирает сферу…': { en: 'Shadow is picking an area…', de: 'Schatten wählt einen Bereich…', uk: 'Тінь підбирає сферу…', es: 'Sombra está eligiendo un área…' },
+  'Тень не ответила вовремя — выбери сферу вручную': { en: 'Shadow did not answer in time — pick the area yourself', de: 'Schatten hat nicht rechtzeitig geantwortet — wähle den Bereich selbst', uk: 'Тінь не відповіла вчасно — обери сферу вручну', es: 'Sombra no respondió a tiempo: elige el área tú' },
+  'Сеть недоступна — выбери сферу вручную': { en: 'Network unavailable — pick the area yourself', de: 'Netzwerk nicht erreichbar — wähle den Bereich selbst', uk: 'Мережа недоступна — обери сферу вручну', es: 'Sin red: elige el área tú' },
+  'ИИ не подобрал — выбери вручную': { en: 'AI found no match — pick it yourself', de: 'Die KI hat nichts gefunden — wähle selbst', uk: 'ШІ не підібрав — обери вручну', es: 'La IA no encontró nada: elígelo tú' },
+  'Тень предлагает': { en: 'Shadow suggests', de: 'Schatten schlägt vor', uk: 'Тінь пропонує', es: 'Sombra sugiere' },
+  'Тень подбирает шаг…': { en: 'Shadow is finding a step…', de: 'Schatten sucht einen Schritt…', uk: 'Тінь підбирає крок…', es: 'Sombra está buscando un paso…' },
+  'Тень не ответила вовремя — напиши шаг сам': { en: 'Shadow did not answer in time — write the step yourself', de: 'Schatten hat nicht rechtzeitig geantwortet — schreib den Schritt selbst', uk: 'Тінь не відповіла вчасно — напиши крок сам', es: 'Sombra no respondió a tiempo: escribe el paso tú' },
   // R06 (v288): подсказки Тени на «Сегодня» — раньше были только по-русски.
   'сидячих планов — вставить разминку 10 мин': { en: 'of sitting plans — add a 10-min warm-up', de: 'Sitzpläne — 10 Min. Aufwärmen einfügen', uk: 'сидячих планів — додати розминку на 10 хв', es: 'de planes sentado — añade 10 min de calentamiento' },
   'баланс — это тоже квест': { en: 'balance is a quest too', de: 'Balance ist auch eine Quest', uk: 'баланс — це теж квест', es: 'el equilibrio también es una misión' },
@@ -7361,6 +7412,7 @@ function updateCatSuggest(inputEl) {
   const box = form.parentElement.querySelector('#cat-suggest'); if (!box) return;
   const sel = sphereFieldInput(form);
   const txt = inputEl.value.trim();
+  aiSurfaceCancel('cat'); // название изменилось — ответ про прежнее название уже не нужен
   const g = guessCategoryFromHistory(txt);
   // Бэклог «Трение» (fb_mrnivhqrssjx): раньше подсказка была чипом «применить» — лишний тап на
   // каждый квест. Теперь селект обновляется САМ по мере ввода (видно ДО отправки, override
@@ -7368,36 +7420,42 @@ function updateCatSuggest(inputEl) {
   // возвращается кнопкой-подсказкой, ничего не перебиваем.
   if (g && sel && !form.dataset.catTouched) {
     if (sel.value !== g.skillId) setSphereFieldValue(form, g.skillId);
-    box.innerHTML = `<span class="cat-chip cat-chip-auto">💡 ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(g.skillId))}</b></span>`;
+    box.innerHTML = `<span class="cat-chip cat-chip-auto">${satoruIconHTML('status.info', 'inline-glyph', '💡')} ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(g.skillId))}</b></span>`;
   } else if (g && sel && sel.value !== g.skillId) { // локальная эвристика по истории — мгновенно, бесплатно
-    box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">💡 Обычно сюда: <b>${esc(skillLabel(g.skillId))}</b> · применить</button>`;
+    box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(g.skillId)}">${satoruIconHTML('status.info', 'inline-glyph', '💡')} ${esc(t('Обычно сюда'))}: <b>${esc(skillLabel(g.skillId))}</b> · ${esc(t('применить'))}</button>`;
   } else if (!g && sel && guessFromDictionary(txt) && guessFromDictionary(txt).skillId && !form.dataset.catTouched) {
     // Истории нет (новый юзер / новое дело) → словарь частых активностей. Мгновенно и бесплатно,
     // до всякого ИИ: у новичка история пуста по определению, и без этого он не увидел бы подсказок вовсе.
     const d = guessFromDictionary(txt);
     if (sel.value !== d.skillId) setSphereFieldValue(form, d.skillId);
-    box.innerHTML = `<span class="cat-chip cat-chip-auto">💡 ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(d.skillId))}</b></span>`;
+    box.innerHTML = `<span class="cat-chip cat-chip-auto">${satoruIconHTML('status.info', 'inline-glyph', '💡')} ${esc(t('Сфера подставлена'))}: <b>${esc(skillLabel(d.skillId))}</b></span>`;
   } else if (!g && txt.length >= 4 && canUseAi()) { // нет в истории + ИИ доступен (свой ключ или Pro) → предложить спросить ИИ
-    box.innerHTML = `<button type="button" class="cat-chip cat-chip-ai" data-action="ai-cat-suggest" data-title="${esc(txt)}">🤖 Подобрать сферу через ИИ</button>`;
+    box.innerHTML = `<button type="button" class="cat-chip cat-chip-ai" data-action="ai-cat-suggest" data-title="${esc(txt)}">${satoruIconHTML('nav.shadow', 'inline-glyph', '🤖')} ${esc(t('Подобрать сферу через ИИ'))}</button>`;
   } else { box.innerHTML = ''; }
 }
 // ИИ-фолбэк авто-категории: для нового названия просим модель выбрать ОДНУ сферу из списка
 async function aiCatSuggest(title, box, sel) {
   if (!canUseAi() || !sel) return;
-  box.innerHTML = '<span class="cat-chip">🤖 думаю…</span>';
+  const titleInput = sel.closest('form')?.querySelector('input[name="title"]');
+  const chip = (text) => `<span class="cat-chip muted" role="status">${esc(text)}</span>`;
+  box.innerHTML = `<span class="cat-chip" role="status">${satoruIconHTML('action.refresh', 'inline-glyph')} ${esc(t('Тень подбирает сферу…'))}</span>`;
   const names = State.settings.skills.map((s) => skillLabel(s.id));
   const sys = 'Ты подбираешь сферу жизни для задачи в планировщике. Ответь СТРОГО одним точным названием сферы из списка — без кавычек, без пояснений.';
   const prompt = `Сферы (выбери ОДНУ, ровно как в списке):\n${names.join('\n')}\n\nЗадача: «${title}»\n\nОтвет (одно название):`;
-  try {
-    const r = await fetch('/api/ai/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system: sys, messages: [{ role: 'user', content: prompt }] }) });
-    const d = await r.json();
-    const ans = (d.text || '').trim().toLowerCase();
-    if (!r.ok || !ans) { box.innerHTML = ''; return; }
-    const match = State.settings.skills.find((s) => { const n = normRu(skillLabel(s.id)); return normRu(ans).includes(n) || n.includes(normRu(ans)); })
-      || State.settings.skills.find((s) => normRu(ans).includes(normRu(s.name)));
-    if (match) { box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(match.id)}">🤖 ИИ: <b>${esc(skillLabel(match.id))}</b> · применить</button>`; track('ai:catsuggest'); }
-    else box.innerHTML = '<span class="cat-chip muted">ИИ не подобрал — выбери вручную</span>';
-  } catch { box.innerHTML = ''; }
+  const out = await aiSurfaceRun('cat', async (signal) => {
+    const response = await fetch('/api/ai/chat', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system: sys, messages: [{ role: 'user', content: prompt }] }) });
+    return { ok: response.ok, data: await response.json() };
+  }, () => box.isConnected && (!titleInput || titleInput.value.trim() === title));
+  if (out.status === 'cancelled' || out.status === 'stale') return;
+  if (out.status === 'timeout') { box.innerHTML = chip(t('Тень не ответила вовремя — выбери сферу вручную')); return; }
+  if (out.status === 'error') { box.innerHTML = chip(t('Сеть недоступна — выбери сферу вручную')); return; }
+  const { ok, data: d } = out.value;
+  const ans = (d.text || '').trim().toLowerCase();
+  if (!ok || !ans) { box.innerHTML = chip(t('ИИ не подобрал — выбери вручную')); return; }
+  const match = State.settings.skills.find((s) => { const n = normRu(skillLabel(s.id)); return normRu(ans).includes(n) || n.includes(normRu(ans)); })
+    || State.settings.skills.find((s) => normRu(ans).includes(normRu(s.name)));
+  if (match) { box.innerHTML = `<button type="button" class="cat-chip" data-action="apply-cat" data-skill="${esc(match.id)}">${satoruIconHTML('nav.shadow', 'inline-glyph', '🤖')} ${esc(t('Тень предлагает'))}: <b>${esc(skillLabel(match.id))}</b> · ${esc(t('применить'))}</button>`; track('ai:catsuggest'); }
+  else box.innerHTML = chip(t('ИИ не подобрал — выбери вручную'));
 }
 function ladderMatch(skillName) {
   const normalized = normRu(skillName);
@@ -13849,19 +13907,28 @@ async function questionnaireAnalyze() {
   if (!q.consents.sendRawTextToAiProvider) { State._questionnaireError = t('Подтверди отправку этого ответа выбранному ИИ — или продолжи вручную.'); renderOnboardingScreen(); return; }
   if (State._questionnaireBusy) return;
   State._questionnaireBusy = true; State._questionnaireError = ''; q.status = 'analyzing'; questionnaireRemember(q); renderOnboardingScreen();
+  let stale = false;
   try {
-    const response = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'onboard', provider: aiProvider(), text: raw, context: '(новый аккаунт; нужна одна цель, один шаг и до трёх сфер)' }) });
-    const data = await response.json().catch(() => ({}));
-    const next = response.ok && !data.error ? questionnaireProposal(data, raw) : null;
+    const out = await aiSurfaceRun('onboard', async (signal) => {
+      const response = await fetch('/api/ai/propose', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'onboard', provider: aiProvider(), text: raw, context: '(новый аккаунт; нужна одна цель, один шаг и до трёх сфер)' }) });
+      return { ok: response.ok, data: await response.json().catch(() => ({})) };
+    });
+    // Выход из аккаунта во время разбора: ответ прошлого человека не попадает в чужую анкету.
+    if (out.status === 'cancelled' || out.status === 'stale') { stale = true; return; }
+    if (out.status === 'error') throw new Error('network');
+    const data = out.status === 'done' ? out.value.data : {};
+    const next = out.status === 'done' && out.value.ok && !data.error ? questionnaireProposal(data, raw) : null;
     if (!next) {
       q.status = 'draft'; questionnaireRemember(q); State._questionnaireStage = 'manual';
       State._questionnaireManual = { ...State._questionnaireManual, result: State._questionnaireManual.result || raw.slice(0, 160) };
-      State._questionnaireError = t('Не получилось разобрать ответ. Текст сохранён — можно повторить или продолжить вручную.');
+      State._questionnaireError = t(out.status === 'timeout'
+        ? 'Тень не ответила за полторы минуты. Текст сохранён — можно повторить или продолжить вручную.'
+        : 'Не получилось разобрать ответ. Текст сохранён — можно повторить или продолжить вручную.');
     } else { questionnaireRemember(next); State._questionnaireStage = 'review'; track('questionnaire:review'); }
   } catch {
     q.status = 'draft'; questionnaireRemember(q); State._questionnaireStage = 'manual';
     State._questionnaireError = t('Сеть недоступна. Текст сохранён — продолжи вручную или повтори позже.');
-  } finally { State._questionnaireBusy = false; renderOnboardingScreen(); }
+  } finally { State._questionnaireBusy = false; if (!stale) renderOnboardingScreen(); }
 }
 function questionnaireBuildManualReview() {
   const Q = questionnaireEngine(), q = questionnaireCurrent(), fields = questionnaireManualFromDOM();
@@ -15929,6 +15996,108 @@ function openAiModal(title, bodyHtml, loading) {
   ov.innerHTML = `<div class="ai-box" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title"><button class="modal-x" data-action="ai-close" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'inline-glyph')}</button><h3 id="ai-modal-title" tabindex="-1">${satoruIconHTML('nav.shadow', 'heading-glyph')} ${esc(String(title).replace(/^🤖\s*/, ''))}</h3>${loading ? `<div class="ai-pending" role="status">${satoruIconHTML('action.refresh', 'inline-glyph')} ${esc(t('Обрабатываю…'))}</div>` : ''}<div class="ai-body">${bodyHtml}</div></div>`;
   if (created) focusAiModal();
 }
+// ── R07: один жизненный цикл для остальных ИИ-поверхностей ──────────────────────
+// Подбор сферы, шаг для застрявшего дела, итог дня, эпизод, предложения, карта пути,
+// профиль, фраза момента и фраза подсказки ждали провайдера без ограничения: зависший
+// ответ держал «Разбираю…» до серверного таймаута, закрытие окна запрос не отменяло,
+// а поздний ответ мог заполнить уже другую форму или попасть к следующему аккаунту.
+// Теперь у поверхности не больше одного запроса. Новый запрос, закрытие окна, выход
+// из аккаунта или «Отменить запрос» прерывают прежний, и его ответ не показывается.
+const AI_SURFACE_TIMEOUT_MS = Object.freeze({ cat: 20000, stuck: 30000, dayrec: 90000, episode: 90000, propose: 120000, treemap: 90000, profile: 90000, onboard: 90000, moment: 8000, nudgeVoice: 20000 });
+const AI_SURFACE_UI = Object.freeze({
+  dayrec: { modal: 'dayrec-modal', result: 'dayrec-result', run: 'dayrec-run' },
+  episode: { modal: 'ep-modal', result: 'ep-result', run: 'ep-run' },
+  propose: { modal: 'propose-modal', result: 'propose-result', run: 'propose-run' },
+  treemap: { modal: 'treemap-modal', result: 'treemap-result', run: 'treemap-run' },
+});
+const _aiSurfaceRequests = new Map();
+let _aiSurfaceReturnFocus = null;
+function aiSurfaceCancel(key) {
+  const request = _aiSurfaceRequests.get(key);
+  if (!request) return false;
+  _aiSurfaceRequests.delete(key);
+  return request.cancel();
+}
+function aiSurfaceCancelAll() { for (const key of [..._aiSurfaceRequests.keys()]) aiSurfaceCancel(key); }
+async function aiSurfaceRun(key, fetcher, stillCurrent = () => true) {
+  const A = window.AiRequestV1;
+  if (!A) return { status: 'error' };
+  aiSurfaceCancel(key);
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch && !!stillCurrent();
+  const request = A.create({ timeoutMs: AI_SURFACE_TIMEOUT_MS[key], isCurrent: () => _aiSurfaceRequests.get(key) === request && current() });
+  _aiSurfaceRequests.set(key, request);
+  const out = await request.run(fetcher);
+  if (_aiSurfaceRequests.get(key) === request) _aiSurfaceRequests.delete(key);
+  // Таймаут или сбой уже закрытой поверхности (или прошлого аккаунта) — тоже молчание.
+  if ((out.status === 'timeout' || out.status === 'error') && !current()) return { status: 'stale' };
+  return out;
+}
+function aiSurfaceRunButton(key, busy) {
+  const ui = AI_SURFACE_UI[key];
+  const button = ui && document.querySelector(`#${ui.modal} [data-action="${ui.run}"]`);
+  if (!button) return null;
+  const hadFocus = document.activeElement === button;
+  button.disabled = !!busy;
+  if (busy) button.setAttribute('aria-busy', 'true'); else button.removeAttribute('aria-busy');
+  // Заблокированная кнопка теряет фокус — переводим его на «Отменить запрос», а не на body.
+  if (busy && hadFocus) document.querySelector(`#${ui.result} [data-action="ai-surface-cancel"]`)?.focus({ preventScroll: true });
+  return button;
+}
+function aiSurfacePendingHTML(key, text) {
+  return `<div class="ai-pending" role="status">${satoruIconHTML('action.refresh', 'inline-glyph')} ${esc(text)}</div><div class="ai-actions"><button type="button" class="btn ghost" data-action="ai-surface-cancel" data-key="${esc(key)}">${esc(t('Отменить запрос'))}</button></div>`;
+}
+function aiSurfaceNoticeHTML(text) { return `<p class="ai-notice" role="status">${esc(text)}</p>`; }
+function aiSurfaceOutcomeText(key, status) {
+  if (status === 'timeout') return t(AI_SURFACE_TIMEOUT_MS[key] >= 120000
+    ? 'Тень не ответила за две минуты. Запрос отменён, текст на месте — можно повторить.'
+    : 'Тень не ответила за полторы минуты. Запрос отменён, текст на месте — можно повторить.');
+  return t('Сетевая ошибка. Ничего не изменено — можно повторить.');
+}
+// Результат пришёл, кнопка «Отменить запрос» исчезла — фокус не должен упасть на body.
+function aiSurfaceSettle(key, status) {
+  const ui = AI_SURFACE_UI[key]; if (!ui) return;
+  const button = aiSurfaceRunButton(key, false);
+  const modal = document.getElementById(ui.modal);
+  if (!modal || modal.contains(document.activeElement)) return;
+  const res = document.getElementById(ui.result);
+  const target = status === 'done' ? (res && res.querySelector('input, button, select, textarea')) || button : button;
+  if (target) target.focus({ preventScroll: true });
+}
+function aiSurfaceUserCancel(key) {
+  if (!aiSurfaceCancel(key)) return;
+  const ui = AI_SURFACE_UI[key]; if (!ui) return;
+  const res = document.getElementById(ui.result);
+  if (res) res.innerHTML = aiSurfaceNoticeHTML(t('Запрос отменён. Текст на месте — можно повторить.'));
+  aiSurfaceRunButton(key, false)?.focus({ preventScroll: true });
+}
+function rememberAiSurfaceOpener() {
+  const active = document.activeElement;
+  _aiSurfaceReturnFocus = active && active !== document.body ? active : null;
+}
+// Закрытие окна ИИ-поверхности: запрос прерывается, диктовка останавливается, фокус возвращается.
+function closeAiSurfaceModal(key, { restoreFocus = true } = {}) {
+  aiSurfaceCancel(key);
+  if (key === 'dayrec' && _dayRec) { try { _dayRec.stop(); } catch { /* уже остановлен */ } _dayRec = null; }
+  if (key === 'episode' && _epRec) { try { _epRec.stop(); } catch { /* уже остановлен */ } _epRec = null; }
+  const ui = AI_SURFACE_UI[key];
+  document.getElementById(ui.modal)?.remove();
+  const target = _aiSurfaceReturnFocus;
+  _aiSurfaceReturnFocus = null;
+  if (restoreFocus && target && target.isConnected) target.focus({ preventScroll: true });
+}
+function aiSurfaceCloseHTML(action) {
+  return `<button type="button" class="modal-x" data-action="${action}" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'inline-glyph', '✕')}</button>`;
+}
+function speechLangTag() {
+  return window.VoiceInputV1 ? window.VoiceInputV1.langTag(lang()) : ({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' }[lang()] || 'ru-RU');
+}
+function dictationButtonHTML(listening) {
+  return listening
+    ? `${satoruIconHTML('media.stop', 'button-glyph', '■')} ${esc(t('Стоп'))}`
+    : `${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${esc(t('Говорить'))}`;
+}
+
 // ---- Движок «Предложений»: ИИ предлагает → ты одобряешь/отклоняешь ----
 let _proposals = []; // последний полученный набор предложений
 // Контекст: текущие сферы и цели, чтобы ИИ не дублировал и переиспользовал имена
@@ -15943,70 +16112,77 @@ function dayRecSphereId(name) {
 }
 function openDayRecap() {
   if (document.getElementById('dayrec-modal')) return;
+  rememberAiSurfaceOpener();
   const ov = document.createElement('div'); ov.id = 'dayrec-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov);
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   // Дата по умолчанию — сегодня, но можно закрыть и прошлый день: в поездке/после паузы
   // человек делал дела, а записывать было некогда (fb_mragb9rg2tkz). max=сегодня — вперёд нельзя.
   const dsel = `<label class="dayrec-day">${t('За какой день')}
       <input type="date" id="dayrec-date" value="${todayStr()}" max="${todayStr()}" /></label>`;
-  ov.innerHTML = `<div class="ai-box" role="dialog" aria-modal="true" aria-labelledby="dayrec-heading"><button class="modal-x" data-action="dayrec-close" aria-label="${t('Закрыть')}">✕</button>
-    <h2 id="dayrec-heading">🎤 ${t('Итог дня')}</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 10px">Расскажи своими словами, что делал — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.</p>
+  ov.innerHTML = `<div class="ai-box ai-surface" role="dialog" aria-modal="true" aria-labelledby="dayrec-heading">${aiSurfaceCloseHTML('dayrec-close')}
+    <h2 id="dayrec-heading">${satoruIconHTML('media.microphone', 'heading-glyph', '🎤')} ${esc(t('Итог дня'))}</h2>
+    <p class="muted ai-surface-intro">${esc(t('Расскажи своими словами, что делал — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.'))}</p>
     ${dsel}
-    ${SR ? `<button class="btn ghost" id="dayrec-mic" data-action="dayrec-mic" style="margin-bottom:8px">🎤 Говорить</button>` : '<p class="muted" style="font-size:12px">Голос не поддерживается в этом браузере — впиши текстом.</p>'}
-    <textarea id="dayrec-text" rows="5" placeholder="Например: с утра учил биологию часа два, потом погулял минут сорок, вечером убрался дома и приготовил ужин…"></textarea>
+    ${SR ? `<button type="button" class="btn ghost ai-dictate" id="dayrec-mic" data-action="dayrec-mic">${dictationButtonHTML(false)}</button>` : `<p class="muted ai-surface-note">${esc(t('Голос не поддерживается в этом браузере — впиши текстом.'))}</p>`}
+    <textarea id="dayrec-text" rows="5" placeholder="${esc(t('Например: с утра учил биологию часа два, потом погулял минут сорок, вечером убрался дома и приготовил ужин…'))}"></textarea>
     <div class="propose-actions">${canUseAi()
-      ? `<button class="btn" data-action="dayrec-run">🤖 Разобрать день</button>`
-      : `<p class="muted" style="font-size:12px;margin:6px 0 0">Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень разберёт твой рассказ.</p>`}</div>
+      ? `<button type="button" class="btn" data-action="dayrec-run">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${esc(t('Разобрать день'))}</button>`
+      : `<p class="muted ai-surface-note">${esc(t('Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень разберёт твой рассказ.'))}</p>`}</div>
     <div id="dayrec-result"></div></div>`;
   setTimeout(() => { const ta = document.getElementById('dayrec-text'); if (ta) ta.focus(); }, 30);
 }
 function dayRecMicToggle() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
   const btn = document.getElementById('dayrec-mic'), ta = document.getElementById('dayrec-text');
-  if (_dayRec) { try { _dayRec.stop(); } catch {} _dayRec = null; if (btn) { btn.textContent = '🎤 Говорить'; btn.classList.remove('rec'); } return; }
-  const rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = true; rec.interimResults = true;
+  if (_dayRec) { try { _dayRec.stop(); } catch {} _dayRec = null; if (btn) { btn.innerHTML = dictationButtonHTML(false); btn.classList.remove('rec'); } return; }
+  const rec = new SR(); rec.lang = speechLangTag(); rec.continuous = true; rec.interimResults = true;
   let base = ta ? ta.value : '';
   rec.onresult = (e) => { let fin = '', interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) fin += r[0].transcript; else interim += r[0].transcript; } if (fin) base = (base ? base + ' ' : '') + fin.trim(); if (ta) ta.value = (base + (interim ? ' ' + interim : '')).trim(); };
-  rec.onerror = () => {}; rec.onend = () => { if (_dayRec === rec) { _dayRec = null; if (btn) { btn.textContent = '🎤 Говорить'; btn.classList.remove('rec'); } } };
-  try { rec.start(); _dayRec = rec; if (btn) { btn.textContent = '⏹ Стоп'; btn.classList.add('rec'); } } catch {}
+  rec.onerror = () => {}; rec.onend = () => { if (_dayRec === rec) { _dayRec = null; if (btn) { btn.innerHTML = dictationButtonHTML(false); btn.classList.remove('rec'); } } };
+  try { rec.start(); _dayRec = rec; if (btn) { btn.innerHTML = dictationButtonHTML(true); btn.classList.add('rec'); } } catch {}
 }
 async function dayRecRun() {
   const ta = document.getElementById('dayrec-text'), text = (ta && ta.value || '').trim();
   if (!text) { toast(t('Расскажи или впиши, что делал')); return; }
   if (_dayRec) dayRecMicToggle();
-  const res = document.getElementById('dayrec-result'); if (res) res.innerHTML = '<p class="muted">🤖 Разбираю…</p>';
-  try {
-    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'daylog', provider: aiProvider(), text, context: proposeContext() }) });
-    const d = await r.json();
-    // Лимит провайдера — это «подожди», а не «не разобрал». Окно не закрываем и текст не
-    // теряем: человек мог надиктовать весь день, и терять это из-за секундной паузы нельзя.
-    if (d.error === 'rate_limit') {
-      const sec = Number(d.retryAfter) || 0;
-      if (res) res.innerHTML = `<p class="muted">${esc(sec
-        ? `${t('🤖 Модель занята лимитом. Повтори через')} ${sec} ${t('сек — ничего не потеряно')}`
-        : t('🤖 Модель занята лимитом. Повтори через минуту — ничего не потеряно'))}</p>`;
-      return;
-    }
-    if (d.error && aiHandleErr(d)) { const p = document.getElementById('dayrec-modal'); if (p) p.remove(); return; }
-    if (d.error) { if (res) res.innerHTML = `<p class="muted">Не разобрал (${esc(d.error)}). Попробуй ещё раз или подробнее.</p>`; return; }
-    const DIFFS = ['easy', 'normal', 'hard'];
-    _dayActs = (d.proposals || []).filter((p) => p && p.title).map((p) => ({ title: String(p.title).slice(0, 120), sphere: String(p.sphere || ''), minutes: Math.max(1, Math.round(Number(p.minutes) || 15)), time: String(p.time || ''), difficulty: DIFFS.includes(p.difficulty) ? p.difficulty : 'normal' }));
-    renderDayRecCards(); track('ai:daylog');
-  } catch (e) { if (res) res.innerHTML = '<p class="muted">Ошибка сети.</p>'; }
+  const modal = document.getElementById('dayrec-modal');
+  const res = document.getElementById('dayrec-result'); if (res) res.innerHTML = aiSurfacePendingHTML('dayrec', t('Разбираю…'));
+  aiSurfaceRunButton('dayrec', true);
+  const out = await aiSurfaceRun('dayrec', async (signal) => {
+    const response = await fetch('/api/ai/propose', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'daylog', provider: aiProvider(), text, context: proposeContext() }) });
+    return { ok: response.ok, data: await response.json() };
+  }, () => !!modal && modal.isConnected);
+  if (out.status === 'cancelled' || out.status === 'stale') return;
+  if (out.status !== 'done') { if (res) res.innerHTML = aiSurfaceNoticeHTML(aiSurfaceOutcomeText('dayrec', out.status)); aiSurfaceSettle('dayrec', out.status); return; }
+  const d = out.value.data;
+  // Лимит провайдера — это «подожди», а не «не разобрал». Окно не закрываем и текст не
+  // теряем: человек мог надиктовать весь день, и терять это из-за секундной паузы нельзя.
+  if (d.error === 'rate_limit') {
+    const sec = Number(d.retryAfter) || 0;
+    if (res) res.innerHTML = aiSurfaceNoticeHTML(sec
+      ? `${emojiFree(t('🤖 Модель занята лимитом. Повтори через'))} ${sec} ${t('сек — ничего не потеряно')}`
+      : emojiFree(t('🤖 Модель занята лимитом. Повтори через минуту — ничего не потеряно')));
+    aiSurfaceSettle('dayrec', 'error');
+    return;
+  }
+  if (d.error && aiHandleErr(d)) { closeAiSurfaceModal('dayrec', { restoreFocus: false }); return; }
+  if (d.error) { if (res) res.innerHTML = aiSurfaceNoticeHTML(`${t('Не разобрал')} (${d.error}). ${t('Попробуй ещё раз или подробнее.')}`); aiSurfaceSettle('dayrec', 'error'); return; }
+  const DIFFS = ['easy', 'normal', 'hard'];
+  _dayActs = (d.proposals || []).filter((p) => p && p.title).map((p) => ({ title: String(p.title).slice(0, 120), sphere: String(p.sphere || ''), minutes: Math.max(1, Math.round(Number(p.minutes) || 15)), time: String(p.time || ''), difficulty: DIFFS.includes(p.difficulty) ? p.difficulty : 'normal' }));
+  renderDayRecCards(); aiSurfaceSettle('dayrec', 'done'); track('ai:daylog');
 }
 function renderDayRecCards() {
   const res = document.getElementById('dayrec-result'); if (!res) return;
-  if (!_dayActs.length) { res.innerHTML = '<p class="muted">Дел не распознал. Расскажи подробнее.</p>'; return; }
+  if (!_dayActs.length) { res.innerHTML = aiSurfaceNoticeHTML(t('Дел не распознал. Расскажи подробнее.')); return; }
   res.innerHTML = `<div class="dayrec-list">${_dayActs.map((a, i) => {
     const sid = dayRecSphereId(a.sphere);
     return `<label class="dayrec-card"><input type="checkbox" data-dayrec="${i}" checked />
       <span class="drc-title">${esc(a.title)}</span>
       <select data-dayrec-sph="${i}" class="drc-sph">${(State.settings.skills || []).map((s) => `<option value="${s.id}" ${s.id === sid ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}</select>
-      <input type="number" min="1" data-dayrec-min="${i}" class="drc-min" value="${a.minutes}" title="минут" />
+      <input type="number" min="1" data-dayrec-min="${i}" class="drc-min" value="${a.minutes}" title="${esc(t('минут'))}" aria-label="${esc(t('минут'))}" />
       <select data-dayrec-diff="${i}" class="drc-diff" title="${t('Сложность')}">${[['easy', t('Лёгкая')], ['normal', t('Обычная')], ['hard', t('Сложная')]].map(([v, label]) => `<option value="${v}" ${a.difficulty === v ? 'selected' : ''}>${esc(label)}</option>`).join('')}</select>${a.time ? `<span class="drc-time">${esc(a.time)}</span>` : ''}</label>`;
   }).join('')}</div>
-  <div class="propose-actions"><button class="btn" data-action="dayrec-apply">✓ Записать день (${_dayActs.length})</button> <span class="muted" style="font-size:12px">сними галочку, чтобы пропустить дело</span></div>`;
+  <div class="propose-actions"><button type="button" class="btn" data-action="dayrec-apply">${satoruIconHTML('action.check', 'button-glyph', '✓')} ${esc(t('Записать день'))} (${_dayActs.length})</button> <span class="muted ai-surface-note">${esc(t('сними галочку, чтобы пропустить дело'))}</span></div>`;
 }
 function dayRecApply() {
   // День, за который пишем: из пикера (может быть прошлым — «в поездке не записывал»).
@@ -16031,7 +16207,7 @@ function dayRecApply() {
     State.tasks.push(task); n++;
   });
   if (!n) { toast(t('Ничего не выбрано')); return; }
-  Store.save('tasks', State.tasks); const m = document.getElementById('dayrec-modal'); if (m) m.remove();
+  Store.save('tasks', State.tasks); closeAiSurfaceModal('dayrec');
   toast(`✅ ${t('Записано')} ${n} ${plural(n, 'дело', 'дела', 'дел')} — ${day === today ? t('за сегодня') : dmShort(day)}`);
   checkAchievements(); render(); triggerAvatarReaction('happy', `Записано: ${n}`); publishLeaderboard();
 }
@@ -16099,36 +16275,37 @@ function episodeTotalXp(ep) { const d = episodeDays(ep).length; return episodePe
 let _epRec = null, _epRows = [], _epExtra = { highlights: [], social: null };
 function openEpisode(preFrom, preTo) {
   if (document.getElementById('ep-modal')) return;
+  rememberAiSurfaceOpener();
   const today = todayStr();
   const from = preFrom || addDays(today, -6), to = preTo || today;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const ov = document.createElement('div'); ov.id = 'ep-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov);
-  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="ep-close">✕</button>
-    <h2>🎒 ${t('Эпизод')}</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 10px">${t('Был период, когда записывать было некогда — поездка, интенсив, болезнь. Расскажи о нём целиком, одним куском. Разбивать по дням не надо.')}</p>
-    <div class="ep-types">${EPISODE_TYPES.map((x, i) => `<button type="button" class="ep-type${i === 0 ? ' on' : ''}" data-action="ep-type" data-id="${x.id}">${x.icon} ${t(x.name)}</button>`).join('')}</div>
+  ov.innerHTML = `<div class="ai-box ai-surface" role="dialog" aria-modal="true" aria-labelledby="ep-heading">${aiSurfaceCloseHTML('ep-close')}
+    <h2 id="ep-heading">${satoruIconHTML('system.calendar', 'heading-glyph', '🎒')} ${esc(t('Эпизод'))}</h2>
+    <p class="muted ai-surface-intro">${t('Был период, когда записывать было некогда — поездка, интенсив, болезнь. Расскажи о нём целиком, одним куском. Разбивать по дням не надо.')}</p>
+    <div class="ep-types" role="group" aria-label="${esc(t('Что это был за период'))}">${EPISODE_TYPES.map((x, i) => `<button type="button" class="ep-type${i === 0 ? ' on' : ''}" data-action="ep-type" data-id="${x.id}" aria-pressed="${i === 0 ? 'true' : 'false'}">${esc(t(x.name))}</button>`).join('')}</div>
     <label class="dayrec-day">${t('Название')}<input type="text" id="ep-title" maxlength="60" placeholder="${t('например: Хайлиг Хооге, проектная неделя')}" /></label>
     <div class="ep-dates">
       <label class="dayrec-day">${t('С')}<input type="date" id="ep-from" value="${from}" max="${today}" /></label>
       <label class="dayrec-day">${t('По')}<input type="date" id="ep-to" value="${to}" max="${today}" /></label>
     </div>
-    ${SR ? `<button class="btn ghost" id="ep-mic" data-action="ep-mic" style="margin-bottom:8px">🎤 ${t('Говорить')}</button>` : ''}
+    ${SR ? `<button type="button" class="btn ghost ai-dictate" id="ep-mic" data-action="ep-mic">${dictationButtonHTML(false)}</button>` : ''}
     <textarea id="ep-text" rows="5" placeholder="${t('Например: был на острове с классом, проектная неделя, исследовали ватт и солончаки, всё время на немецком, готовили сами, вечером играли в мяч…')}"></textarea>
     <div class="propose-actions">${canUseAi()
-      ? `<button class="btn" data-action="ep-run">🤖 ${t('Разобрать период')}</button>`
-      : `<button class="btn ghost" data-action="ep-manual">${t('Заполнить вручную')}</button><p class="muted" style="font-size:12px;margin:6px 0 0">${t('С ИИ-ключом Тень разберёт рассказ сама (бесплатные Gemini/Groq есть в Настройках).')}</p>`}</div>
+      ? `<button type="button" class="btn" data-action="ep-run">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${esc(t('Разобрать период'))}</button>`
+      : `<button type="button" class="btn ghost" data-action="ep-manual">${esc(t('Заполнить вручную'))}</button><p class="muted ai-surface-note">${esc(t('С ИИ-ключом Тень разберёт рассказ сама (бесплатные Gemini/Groq есть в Настройках).'))}</p>`}</div>
     <div id="ep-result"></div></div>`;
   setTimeout(() => { const el = document.getElementById('ep-title'); if (el) el.focus(); }, 30);
 }
 function epMicToggle() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition; if (!SR) return;
   const btn = document.getElementById('ep-mic'), ta = document.getElementById('ep-text');
-  if (_epRec) { try { _epRec.stop(); } catch {} _epRec = null; if (btn) { btn.textContent = '🎤 ' + t('Говорить'); btn.classList.remove('rec'); } return; }
-  const rec = new SR(); rec.lang = 'ru-RU'; rec.continuous = true; rec.interimResults = true;
+  if (_epRec) { try { _epRec.stop(); } catch {} _epRec = null; if (btn) { btn.innerHTML = dictationButtonHTML(false); btn.classList.remove('rec'); } return; }
+  const rec = new SR(); rec.lang = speechLangTag(); rec.continuous = true; rec.interimResults = true;
   let base = ta ? ta.value : '';
   rec.onresult = (e) => { let fin = '', interim = ''; for (let i = e.resultIndex; i < e.results.length; i++) { const r = e.results[i]; if (r.isFinal) fin += r[0].transcript; else interim += r[0].transcript; } if (fin) base = (base ? base + ' ' : '') + fin.trim(); if (ta) ta.value = (base + (interim ? ' ' + interim : '')).trim(); };
-  rec.onerror = () => {}; rec.onend = () => { if (_epRec === rec) { _epRec = null; if (btn) { btn.textContent = '🎤 ' + t('Говорить'); btn.classList.remove('rec'); } } };
-  try { rec.start(); _epRec = rec; if (btn) { btn.textContent = '⏹ ' + t('Стоп'); btn.classList.add('rec'); } } catch {}
+  rec.onerror = () => {}; rec.onend = () => { if (_epRec === rec) { _epRec = null; if (btn) { btn.innerHTML = dictationButtonHTML(false); btn.classList.remove('rec'); } } };
+  try { rec.start(); _epRec = rec; if (btn) { btn.innerHTML = dictationButtonHTML(true); btn.classList.add('rec'); } } catch {}
 }
 // Все сферы верхнего уровня с интенсивностью 0 — база, поверх которой ложится разбор ИИ.
 // Показываем ВСЕ, а не только распознанные: увидеть «Здоровье — не было» так же полезно,
@@ -16138,20 +16315,26 @@ async function epRun() {
   const ta = document.getElementById('ep-text'), text = (ta && ta.value || '').trim();
   if (!text) { toast(t('Расскажи или впиши, что это был за период')); return; }
   if (_epRec) epMicToggle();
-  const res = document.getElementById('ep-result'); if (res) res.innerHTML = `<p class="muted">🤖 ${t('Разбираю…')}</p>`;
-  try {
-    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'episode', provider: aiProvider(), text, context: proposeContext() }) });
-    const d = await r.json();
-    if (d.error && aiHandleErr(d)) { const p = document.getElementById('ep-modal'); if (p) p.remove(); return; }
-    if (d.error) { if (res) res.innerHTML = `<p class="muted">${t('Не разобрал')} (${esc(d.error)}). ${t('Попробуй подробнее или заполни вручную.')}</p><div class="propose-actions"><button class="btn ghost" data-action="ep-manual">${t('Заполнить вручную')}</button></div>`; return; }
-    _epRows = epBlankRows();
-    for (const p of d.proposals || []) {
-      const sid = dayRecSphereId(p.sphere); const row = _epRows.find((x) => x.skillId === sid);
-      if (row) { row.intensity = Math.max(0, Math.min(5, Math.round(Number(p.intensity) || 0))); row.why = String(p.why || '').slice(0, 60); }
-    }
-    _epExtra = { highlights: d.highlights || [], social: d.social || null };
-    renderEpProfile(); track('ai:episode');
-  } catch (e) { if (res) res.innerHTML = `<p class="muted">${t('Ошибка сети.')}</p>`; }
+  const modal = document.getElementById('ep-modal');
+  const res = document.getElementById('ep-result'); if (res) res.innerHTML = aiSurfacePendingHTML('episode', t('Разбираю…'));
+  aiSurfaceRunButton('episode', true);
+  const out = await aiSurfaceRun('episode', async (signal) => {
+    const response = await fetch('/api/ai/propose', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind: 'episode', provider: aiProvider(), text, context: proposeContext() }) });
+    return { ok: response.ok, data: await response.json() };
+  }, () => !!modal && modal.isConnected);
+  if (out.status === 'cancelled' || out.status === 'stale') return;
+  const manual = `<div class="propose-actions"><button type="button" class="btn ghost" data-action="ep-manual">${esc(t('Заполнить вручную'))}</button></div>`;
+  if (out.status !== 'done') { if (res) res.innerHTML = aiSurfaceNoticeHTML(aiSurfaceOutcomeText('episode', out.status)) + manual; aiSurfaceSettle('episode', out.status); return; }
+  const d = out.value.data;
+  if (d.error && aiHandleErr(d)) { closeAiSurfaceModal('episode', { restoreFocus: false }); return; }
+  if (d.error) { if (res) res.innerHTML = aiSurfaceNoticeHTML(`${t('Не разобрал')} (${d.error}). ${t('Попробуй подробнее или заполни вручную.')}`) + manual; aiSurfaceSettle('episode', 'error'); return; }
+  _epRows = epBlankRows();
+  for (const p of d.proposals || []) {
+    const sid = dayRecSphereId(p.sphere); const row = _epRows.find((x) => x.skillId === sid);
+    if (row) { row.intensity = Math.max(0, Math.min(5, Math.round(Number(p.intensity) || 0))); row.why = String(p.why || '').slice(0, 60); }
+  }
+  _epExtra = { highlights: d.highlights || [], social: d.social || null };
+  renderEpProfile(); aiSurfaceSettle('episode', 'done'); track('ai:episode');
 }
 function epManual() { _epRows = epBlankRows(); _epExtra = { highlights: [], social: null }; renderEpProfile(); }
 function renderEpProfile() {
@@ -16168,10 +16351,10 @@ function renderEpProfile() {
     <div class="ep-social">
       <span class="muted" style="font-size:12px">${t('Людей вокруг было')}</span>
       <div class="ep-social-btns">${[['low', 'мало'], ['normal', 'норм'], ['high', 'много']].map(([id, lbl]) =>
-        `<button type="button" class="ep-soc${soc === id ? ' on' : ''}" data-action="ep-social" data-id="${id}">${t(lbl)}</button>`).join('')}</div>
+        `<button type="button" class="ep-soc${soc === id ? ' on' : ''}" data-action="ep-social" data-id="${id}" aria-pressed="${soc === id ? 'true' : 'false'}">${t(lbl)}</button>`).join('')}</div>
     </div>
     ${(_epExtra.highlights || []).length ? `<p class="muted" style="font-size:12px;margin:10px 0 0">${t('Заметное')}: ${_epExtra.highlights.map((h) => esc(h)).join(' · ')}</p>` : ''}
-    <div class="propose-actions"><button class="btn" data-action="ep-save">✓ ${t('Записать эпизод')}</button></div>
+    <div class="propose-actions"><button type="button" class="btn" data-action="ep-save">${satoruIconHTML('action.check', 'button-glyph', '✓')} ${esc(t('Записать эпизод'))}</button></div>
   </div>`;
 }
 function epSetLevel(i, v) {
@@ -16202,7 +16385,7 @@ function epSave() {
   if (!ep.title) ep.title = t(episodeType(ep.type).name);
   State.episodes = State.episodes || []; State.episodes.push(ep);
   Store.save('episodes', State.episodes);
-  const m = document.getElementById('ep-modal'); if (m) m.remove();
+  closeAiSurfaceModal('episode');
   const days = episodeDays(ep).length, xp = episodeTotalXp(ep);
   toast(`${episodeType(ep.type).icon} ${t('Эпизод записан')} — ${days} ${plural(days, 'день', 'дня', 'дней')}, +${xp} XP`);
   checkAchievements(); render(); publishLeaderboard();
@@ -16223,20 +16406,21 @@ function openProposeModal(kind, prefill) {
   const isCal = kind === 'calibrate';
   const prov = aiProvider(), canAi = canUseAi(), aiLabel = prov ? aiProviderLabel(prov) : 'Pro';
   let ov = document.getElementById('propose-modal');
-  if (!ov) { ov = document.createElement('div'); ov.id = 'propose-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
-  ov.innerHTML = `<div class="ai-box"><button class="modal-x" data-action="propose-close">✕</button>
-    <h3>${isCal ? '📊 Оценить уровни сфер' : '📥 Импорт целей текстом'}</h3>
-    <p class="muted" style="font-size:12.5px;margin:0 0 10px">${isCal
+  if (!ov) { rememberAiSurfaceOpener(); ov = document.createElement('div'); ov.id = 'propose-modal'; ov.className = 'modal-overlay'; document.body.appendChild(ov); }
+  else aiSurfaceCancel('propose');
+  ov.innerHTML = `<div class="ai-box ai-surface" role="dialog" aria-modal="true" aria-labelledby="propose-heading">${aiSurfaceCloseHTML('propose-close')}
+    <h3 id="propose-heading">${isCal ? `${satoruIconHTML('nav.progress', 'heading-glyph', '📊')} ${esc(t('Оценить уровни сфер'))}` : `${satoruIconHTML('action.import', 'heading-glyph', '📥')} ${esc(t('Импорт целей текстом'))}`}</h3>
+    <p class="muted ai-surface-intro">${esc(t(isCal
       ? 'Опиши, чем и насколько уверенно занимаешься. ИИ предложит стартовые уровни — ты одобришь или отклонишь.'
-      : 'Опиши свободным текстом свои цели, проекты, сферы. ИИ оформит их в цели и сферы — ты одобришь или отклонишь.'}</p>
-    <textarea id="propose-text" rows="6" placeholder="${isCal
+      : 'Опиши свободным текстом свои цели, проекты, сферы. ИИ оформит их в цели и сферы — ты одобришь или отклонишь.'))}</p>
+    <textarea id="propose-text" rows="6" aria-labelledby="propose-heading" placeholder="${esc(t(isCal
       ? 'Напр.: жму 130 кг на 2 раза; бегал до 36 км; немецкий — речь B2+, понимание C1; Abi около 1.3; монтирую видео пару лет…'
-      : 'Напр.: хочу Abi 1.0–1.1; дойти до C1 немецкого; закончить проект Jugend Forscht к лету; жим 150 кг; пробежать марафон осенью…'}"></textarea>
+      : 'Напр.: хочу Abi 1.0–1.1; дойти до C1 немецкого; закончить проект Jugend Forscht к лету; жим 150 кг; пробежать марафон осенью…'))}"></textarea>
     <div class="propose-actions">
-      ${canAi ? `<button class="btn" data-action="propose-run" data-kind="${kind}">🤖 Предложить (${esc(aiLabel)})</button>` : ''}
-      <button class="btn ${canAi ? 'ghost' : ''}" data-action="bridge-copy" data-kind="${kind}">📋 Через свой Claude/ChatGPT${canAi ? '' : ' (без ключа)'}</button>
+      ${canAi ? `<button type="button" class="btn" data-action="propose-run" data-kind="${kind}">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${esc(t('Предложить'))} (${esc(aiLabel)})</button>` : ''}
+      <button type="button" class="btn ${canAi ? 'ghost' : ''}" data-action="bridge-copy" data-kind="${kind}">${satoruIconHTML('action.link', 'button-glyph', '📋')} ${esc(t('Через свой Claude/ChatGPT'))}${canAi ? '' : ` (${esc(t('без ключа'))})`}</button>
     </div>
-    ${canAi ? '' : '<p class="muted" style="font-size:11.5px;margin:8px 0 0">Нет API-ключа? Не беда — кнопка справа сделает всё через ИИ, которым ты уже пользуешься (хоть в браузере).</p>'}
+    ${canAi ? '' : `<p class="muted ai-surface-note">${esc(t('Нет API-ключа? Не беда — кнопка справа сделает всё через ИИ, которым ты уже пользуешься (хоть в браузере).'))}</p>`}
     <div id="propose-result"></div></div>`;
   setTimeout(() => { const t = document.getElementById('propose-text'); if (t) { if (prefill) t.value = prefill; t.focus(); } }, 30);
 }
@@ -16247,7 +16431,7 @@ function renderProposalCards(res, { issues = [], raw = '' } = {}) {
     res.innerHTML = `<p class="goal-proposal-error" role="alert">${t('Слишком много предложений в одном JSON. Раздели его на части.')}</p>${raw ? `<textarea id="bridge-json" rows="6">${esc(raw)}</textarea><button type="button" class="btn ghost" data-action="bridge-parse">${t('Разобрать исправленный JSON')}</button>` : ''}`;
     return;
   }
-  if (!_proposals.length) { res.innerHTML = '<p class="muted">Ничего не нашлось. Добавь деталей или переформулируй.</p>'; return; }
+  if (!_proposals.length) { res.innerHTML = aiSurfaceNoticeHTML(t('Ничего не нашлось. Добавь деталей или переформулируй.')); return; }
   const issue = issues[0];
   const issueCopy = issue ? t(issue.field === 'metric'
     ? 'Предложение {number}: метрика должна содержать число и согласованную единицу. Исправь JSON и разбери снова.'
@@ -16256,11 +16440,11 @@ function renderProposalCards(res, { issues = [], raw = '' } = {}) {
       let parentPick = '';
       if (p && p.type === 'sphere') {
         const dp = p.parent ? State.settings.skills.find((s) => normRu(s.name) === normRu(p.parent)) : null;
-        parentPick = `<select class="prop-parent" data-prop-parent="${i}" title="Внутрь какой сферы"><option value="">— верхний уровень —</option>${skillOptionsHTML(dp ? dp.id : '')}</select>`;
+        parentPick = `<select class="prop-parent" data-prop-parent="${i}" title="${esc(t('Внутрь какой сферы'))}" aria-label="${esc(t('Внутрь какой сферы'))}"><option value="">— ${esc(t('верхний уровень'))} —</option>${skillOptionsHTML(dp ? dp.id : '')}</select>`;
       }
       return `<label class="prop-row"><input type="checkbox" data-prop="${i}" checked/> <span class="prop-text">${esc(p ? proposalLabel(p) : t('Неверный формат'))}</span>${parentPick}</label>`;
     }).join('')}</div>
-    <div class="propose-actions"><button class="btn" data-action="propose-apply" ${issue ? 'disabled' : ''}>✓ Применить выбранные</button> <span class="muted" style="font-size:12px">${_proposals.length} предложений · сними галочку, чтобы отклонить</span></div>
+    <div class="propose-actions"><button type="button" class="btn" data-action="propose-apply" ${issue ? 'disabled' : ''}>${satoruIconHTML('action.check', 'button-glyph', '✓')} ${esc(t('Применить выбранные'))}</button> <span class="muted ai-surface-note">${esc(t('Предложений'))}: ${_proposals.length} · ${esc(t('сними галочку, чтобы отклонить'))}</span></div>
     <p class="goal-proposal-error" role="alert" ${issue ? '' : 'hidden'}>${esc(issueCopy)}</p>
     ${raw ? `<details class="goal-proposal-source"><summary>${t('Исходный JSON — открыть и исправить')}</summary><textarea id="bridge-json" rows="6">${esc(raw)}</textarea><button type="button" class="btn ghost" data-action="bridge-parse">${t('Разобрать исправленный JSON')}</button></details>` : ''}`;
 }
@@ -16268,19 +16452,25 @@ async function runPropose(kind) {
   const ta = document.getElementById('propose-text');
   const text = ((ta && ta.value) || '').trim();
   if (!text) { toast(t('Напиши текст')); return; }
+  const modal = document.getElementById('propose-modal');
   const res = document.getElementById('propose-result');
-  if (res) res.innerHTML = '<div class="ai-spin">⏳ ИИ думает…</div>';
-  try {
-    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, provider: aiProvider(), text, context: proposeContext() }) });
-    const d = await r.json();
-    if (d.error && aiHandleErr(d)) { const p = document.getElementById('propose-modal'); if (p) p.remove(); return; }
-    if (d.error === 'parse') { if (res) res.innerHTML = '<p class="muted">ИИ вернул не тот формат. Попробуй переформулировать короче и конкретнее.</p>'; return; }
-    if (!r.ok || !d.proposals) { if (res) res.innerHTML = `<p class="muted">Не удалось: ${esc(d.detail || d.error || 'ошибка')}.</p>`; return; }
-    const normalized = window.GoalProposalImportV1.normalize(d.proposals);
-    _proposals = normalized.proposals;
-    renderProposalCards(res, { issues: normalized.issues, raw: JSON.stringify({ proposals: d.proposals }) });
-    track('ai:propose:' + kind);
-  } catch { if (res) res.innerHTML = '<p class="muted">Сетевая ошибка.</p>'; }
+  if (res) res.innerHTML = aiSurfacePendingHTML('propose', t('Тень оформляет предложения…'));
+  aiSurfaceRunButton('propose', true);
+  const out = await aiSurfaceRun('propose', async (signal) => {
+    const response = await fetch('/api/ai/propose', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kind, provider: aiProvider(), text, context: proposeContext() }) });
+    return { ok: response.ok, data: await response.json() };
+  }, () => !!modal && modal.isConnected);
+  if (out.status === 'cancelled' || out.status === 'stale') return;
+  if (out.status !== 'done') { if (res) res.innerHTML = aiSurfaceNoticeHTML(aiSurfaceOutcomeText('propose', out.status)); aiSurfaceSettle('propose', out.status); return; }
+  const { ok, data: d } = out.value;
+  if (d.error && aiHandleErr(d)) { closeAiSurfaceModal('propose', { restoreFocus: false }); return; }
+  if (d.error === 'parse') { if (res) res.innerHTML = aiSurfaceNoticeHTML(t('ИИ вернул не тот формат. Попробуй переформулировать короче и конкретнее.')); aiSurfaceSettle('propose', 'error'); return; }
+  if (!ok || !d.proposals) { if (res) res.innerHTML = aiSurfaceNoticeHTML(`${t('Не удалось')}: ${d.detail || d.error || t('ошибка')}.`); aiSurfaceSettle('propose', 'error'); return; }
+  const normalized = window.GoalProposalImportV1.normalize(d.proposals);
+  _proposals = normalized.proposals;
+  renderProposalCards(res, { issues: normalized.issues, raw: JSON.stringify({ proposals: d.proposals }) });
+  aiSurfaceSettle('propose', 'done');
+  track('ai:propose:' + kind);
 }
 // ---- Копипаст-мост: используем СВОЙ внешний ИИ (без API-ключа) ----
 // Защищённый разбор JSON из ответа модели (клиентская версия серверного extractJson)
@@ -16343,14 +16533,15 @@ function parseBridgeResponse() {
   track('ai:bridge');
 }
 function proposalLabel(p) {
-  if (p.type === 'sphere') return `➕ Сфера: ${p.name}${p.parent ? ` (внутри «${p.parent}»)` : ''}`;
-  if (p.type === 'level') return `📊 Уровень: ${p.sphere} → ур.${Math.max(1, Math.round(Number(p.level) || 1))}${p.note ? ` — ${p.note}` : ''}`;
+  // R07: подписи предложений — словами на языке интерфейса, без системных эмодзи.
+  if (p.type === 'sphere') return `${t('Новая сфера')}: ${p.name}${p.parent ? ` (${t('внутри')} «${p.parent}»)` : ''}`;
+  if (p.type === 'level') return `${t('Уровень')}: ${p.sphere} → ${t('ур.')}${Math.max(1, Math.round(Number(p.level) || 1))}${p.note ? ` — ${p.note}` : ''}`;
   if (p.type === 'goal') {
     const m = (p.metric && p.metric.target != null) ? ` · ${p.metric.current}→${p.metric.target}${p.metric.unit ? ' ' + p.metric.unit : ''}` : '';
-    const w = p.status === 'waiting' ? ` · ⏳ждёт${p.window ? ' ' + p.window : ''}` : (p.status === 'paused' ? ' · ⏸' : '');
-    const spheres = (Array.isArray(p.spheres) ? p.spheres : [p.sphere]).filter(Boolean).join(' + '), steps = Array.isArray(p.steps) && p.steps.length ? ` · ${p.steps.length} шаг.` : '';
+    const w = p.status === 'waiting' ? ` · ${t('ждёт')}${p.window ? ' ' + p.window : ''}` : (p.status === 'paused' ? ` · ${t('на паузе')}` : '');
+    const spheres = (Array.isArray(p.spheres) ? p.spheres : [p.sphere]).filter(Boolean).join(' + '), steps = Array.isArray(p.steps) && p.steps.length ? ` · ${t('Шагов')}: ${p.steps.length}` : '';
     const action = p.nextAction && p.nextAction.title ? ` · → ${p.nextAction.title}` : '', project = p.project ? ` · ${p.project}` : '';
-    return `🎯 Цель: ${p.title}${project}${spheres ? ` · ${spheres}` : ''} · ${goalTypeLabel(p.horizon)}${steps}${action}${m}${w}`;
+    return `${t('Цель')}: ${p.title}${project}${spheres ? ` · ${spheres}` : ''} · ${goalTypeLabel(p.horizon)}${steps}${action}${m}${w}`;
   }
   return JSON.stringify(p).slice(0, 80);
 }
@@ -16401,7 +16592,7 @@ async function applyAcceptedProposals() {
     showError(State._proposalCommitError || t('Сервер не сохранил цели. Исходный JSON оставлен для повторной попытки.')); return;
   }
   if (changed) Object.assign(State, draft);
-  const m = document.getElementById('propose-modal'); if (m) m.remove();
+  closeAiSurfaceModal('propose');
   toast(`✓ ${t('Применено')}: ${n}`); checkAchievements(); render();
 }
 // Применяет принятые предложения. Порядок: сферы → уровни → цели (с резолвом родителей по имени).
@@ -16630,9 +16821,19 @@ async function refreshProfile(opts) {
     const visibleDraft = document.getElementById('profile-text');
     if (visibleDraft) State._profileDraft = String(visibleDraft.value || '');
     const system = 'Ты ведёшь краткое досье о человеке для приложения Satoru. Верни ТОЛЬКО текст профиля — без преамбулы, без код-блоков. ' + aiAnswerLangLine();
-    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: aiProvider(), system, prompt: mem.buildPrompt(profileFacts(), prof.text, mem.MAX_CHARS) }) });
-    const d = await r.json();
+    const out = await aiSurfaceRun('profile', async (signal) => {
+      const response = await fetch('/api/ai/analyze', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: aiProvider(), system, prompt: mem.buildPrompt(profileFacts(), prof.text, mem.MAX_CHARS) }) });
+      return { ok: response.ok, data: await response.json() };
+    });
+    // Профиль прошлого аккаунта не сохраняется в следующий: ответ после выхода отбрасывается.
+    if (out.status === 'cancelled' || out.status === 'stale') return false;
+    if (out.status !== 'done') {
+      State._profileSaveError = out.status === 'timeout' ? 'Тень не ответила за полторы минуты. Профиль не изменён — повтори попытку.' : 'Не удалось обновить профиль. Ничего не изменено — повтори попытку.';
+      if (!o.silent) toast(t(State._profileSaveError));
+      return false;
+    }
+    const r = { ok: out.value.ok }, d = out.value.data;
     if (d.error && aiHandleErr(d)) return false;
     if (!r.ok || !d.text) { State._profileSaveError = 'Не удалось обновить профиль. Ничего не изменено — повтори попытку.'; if (!o.silent) toast(t(State._profileSaveError)); return false; }
     // Бюджет режется на клиенте, а не доверием к модели: она регулярно промахивается
@@ -17779,11 +17980,16 @@ async function momentLine(kind) {
   if (!canUseAi()) return fallback();
   try {
     const system = persona.systemInstruction({ surface: 'moment', kind, lang: lang(), maxChars: 140 });
-    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ provider: aiProvider(), system, prompt: stateNowContext() }) });
-    const d = await r.json();
+    // Момент не ждёт провайдера дольше нескольких секунд: вместо «…» — готовая фраза Тени.
+    const out = await aiSurfaceRun('moment', async (signal) => {
+      const response = await fetch('/api/ai/analyze', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: aiProvider(), system, prompt: stateNowContext() }) });
+      return { ok: response.ok, data: await response.json() };
+    });
+    if (out.status !== 'done') return fallback();
+    const d = out.value.data;
     const txt = (d && d.text || '').replace(/\s+/g, ' ').replace(/^["«»']+|["«»']+$/g, '').trim().slice(0, 200);
-    return r.ok && txt ? txt : fallback();
+    return out.value.ok && txt ? txt : fallback();
   } catch { return fallback(); }
 }
 async function showMoment(kind) {
@@ -19382,9 +19588,14 @@ async function nudgeVoiceFetch(sig, staticText) {
   try {
     const system = window.ShadowPersonaV1.systemInstruction({ surface: 'nudge', lang: requestLang, maxChars: 120 });
     const prompt = `СИГНАЛ: ${window.ShadowPersonaV1.nudgeHint(sig, requestLang) || sig}\nСТАНДАРТНАЯ ФОРМУЛИРОВКА (смысл сохрани, слова замени своими): ${staticText || ''}\n\n${stateNowContext()}`;
-    const r = await fetch('/api/ai/analyze', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt }) });
-    const d = await r.json();
-    if (!current()) return;
+    // R07: зависший провайдер больше не держит _nudgeVoiceBusy до перезагрузки вкладки.
+    const out = await aiSurfaceRun('nudgeVoice', async (signal) => {
+      const response = await fetch('/api/ai/analyze', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, prompt }) });
+      return { ok: response.ok, data: await response.json() };
+    }, current);
+    if (out.status === 'cancelled' || out.status === 'stale' || !current()) return;
+    if (out.status !== 'done') { _nudgeVoiceFailAt = Date.now(); return; }
+    const r = { ok: out.value.ok }, d = out.value.data;
     const text = (d && d.text || '').replace(/\s+/g, ' ').replace(/^["«»']+|["«»']+$/g, '').trim().slice(0, 160);
     if (!r.ok || !text) { _nudgeVoiceFailAt = Date.now(); return; }
     State.settings.nudgeVoice = { sig, text, at: new Date().toISOString(), lang: requestLang, personaVersion: window.ShadowPersonaV1.VERSION };
@@ -20703,7 +20914,7 @@ function stuckAskHTML(today) {
         ${canUseAi() ? `<button class="btn ghost sm" data-action="stuck-ai-step" data-id="${esc(String(pick.id))}">${satoruIconHTML('nav.shadow', 'inline-glyph')} ${t('Пусть Тень предложит шаг')}</button>` : ''}
         <button class="btn ghost sm" data-action="stuck-cancel">${t('Не сейчас')}</button>
       </div>
-      <span class="stuck-note" id="stuck-ai-note"></span></div>`;
+      <span class="stuck-note" id="stuck-ai-note" role="status" aria-live="polite"></span></div>`;
   }
 
   const item = (k, v) => `<span class="kv-item"><span class="kv-k">${t(k)}</span><b class="kv-v">${v}</b></span>`;
@@ -20729,24 +20940,32 @@ function stuckAskHTML(today) {
 // тот долг, против которого оно построено. Без ключа форма работает целиком.
 async function stuckAiStep(id) {
   const q = questById(id);
-  const note = document.getElementById('stuck-ai-note');
   if (!q || !canUseAi()) return;
-  if (note) note.textContent = '🤖 ' + t('думаю…');
+  // Форма живёт внутри «Сегодня» и пересоздаётся рендером — элементы ищем заново на каждом шаге.
+  const setNote = (text) => { const note = document.getElementById('stuck-ai-note'); if (note) note.textContent = text; };
+  const typed = document.getElementById('stuck-step')?.value || '';
+  setNote(t('Тень подбирает шаг…'));
   const sys = 'Ты помогаешь человеку сдвинуть отложенную задачу. Верни РОВНО ОДИН первый шаг: конкретное физическое действие на 5–15 минут, без подготовки и без принятия решений. Никаких списков, пояснений и кавычек — одна строка до 100 символов. ' + aiAnswerLangLine();
   const prompt = `Задача, которую человек откладывает: «${taskDisplayTitle(q)}».\nОн не знает, КАК к ней подступиться.\n\nПервый шаг (одна строка):`;
-  try {
-    const r = await fetch('/api/ai/chat', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+  const out = await aiSurfaceRun('stuck', async (signal) => {
+    const response = await fetch('/api/ai/chat', {
+      method: 'POST', signal, headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ provider: aiProvider(), system: sys, messages: [{ role: 'user', content: prompt }] }),
     });
-    const d = await r.json();
-    const ans = String((d && d.text) || '').trim().replace(/^["«»\-–—•\s]+/, '').replace(/["«»\s]+$/, '').split('\n')[0];
-    if (!r.ok || !ans) { if (note) note.textContent = t('Не получилось — напиши шаг сам'); return; }
-    const field = document.getElementById('stuck-step');
-    if (field) { field.value = ans.slice(0, 110); field.focus(); }
-    if (note) note.textContent = t('Проверь и поправь — добавится только по твоей кнопке');
-    track('stuck:ai-step');
-  } catch { if (note) note.textContent = t('Не получилось — напиши шаг сам'); }
+    return { ok: response.ok, data: await response.json() };
+  }, () => String(State._stuckSplit) === String(id));
+  if (out.status === 'cancelled' || out.status === 'stale') return;
+  if (out.status === 'timeout') { setNote(t('Тень не ответила вовремя — напиши шаг сам')); return; }
+  if (out.status === 'error') { setNote(t('Не получилось — напиши шаг сам')); return; }
+  const { ok, data: d } = out.value;
+  const ans = String((d && d.text) || '').trim().replace(/^["«»\-–—•\s]+/, '').replace(/["«»\s]+$/, '').split('\n')[0];
+  if (!ok || !ans) { setNote(t('Не получилось — напиши шаг сам')); return; }
+  const field = document.getElementById('stuck-step');
+  // Пока Тень думала, человек начал писать сам — его текст не перетираем.
+  if (field && field.value.trim() && field.value !== typed) { setNote(`${t('Тень предлагает')}: ${ans.slice(0, 110)}`); return; }
+  if (field) { field.value = ans.slice(0, 110); field.focus(); }
+  setNote(t('Проверь и поправь — добавится только по твоей кнопке'));
+  track('stuck:ai-step');
 }
 function firstValueEngine() { return window.FirstValueV1 || null; }
 function firstValuePresentation() { return window.FirstValueUiV1 || null; }
@@ -21498,6 +21717,7 @@ function mountTreeDialog(overlay, initialSelector) {
 }
 function closeTreeDialog(id) {
   const overlay = document.getElementById(id) || document.querySelector('[data-tree-dialog]');
+  if (!overlay || overlay.id === 'treemap-modal') aiSurfaceCancel('treemap');
   if (overlay) overlay.remove();
   document.getElementById('app')?.removeAttribute('inert');
   const returnFocus = _treeDialogReturnFocus;
@@ -21575,7 +21795,7 @@ function openTreeMapAI() {
     <label class="tm-q">${t('Что скучно или не хочется? (необязательно)')}
       <input id="treemap-dislikes" placeholder="${t('беговая дорожка, соревнования / темы про профессии')}" /></label>
     <div class="propose-actions">${canUseAi()
-      ? `<button class="btn" data-action="treemap-run">🤖 ${t('Собрать карту')}</button>`
+      ? `<button type="button" class="btn" data-action="treemap-run">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${esc(t('Собрать карту'))}</button>`
       : `<p class="muted" style="font-size:12px;margin:6px 0 0">${t('Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень соберёт твою карту.')}</p>`}</div>
     <div id="treemap-result"></div></div>`;
   mountTreeDialog(ov, '#treemap-now');
@@ -21592,30 +21812,36 @@ async function treeMapRun() {
     likes ? `НРАВИТСЯ (по возможности строй вехи через это): ${likes}` : '',
     dislikes ? `СКУЧНО / НЕ ХОЧУ (исключи эти темы и форматы из вех): ${dislikes}` : '',
   ].filter(Boolean).join('\n');
-  const res = document.getElementById('treemap-result'); if (res) res.innerHTML = `<p class="muted">🤖 ${t('Собираю…')}</p>`;
-  try {
-    const r = await fetch('/api/ai/propose', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ kind: 'treemap', provider: aiProvider(), text, context: treeMapContext(State.treeSkill) }) });
-    const d = await r.json();
-    if (d.error && aiHandleErr(d)) { closeTreeDialog('treemap-modal'); return; }
-    if (d.error || !Array.isArray(d.proposals)) { if (res) res.innerHTML = `<p class="muted">${t('Не разобрал ответ — попробуй ещё раз')}</p>`; return; }
-    _treeMapItems = d.proposals.filter((p) => p && p.title).slice(0, 6)
-      .map((p) => ({
-        title: String(p.title).slice(0, 80),
-        criterion: String(p.criterion || p.desc || '').slice(0, 240),
-        nextAction: String(p.nextAction || '').slice(0, 200),
-      }));
-    renderTreeMapCards(); track('tree:aimap-run');
-  } catch { if (res) res.innerHTML = `<p class="muted">${t('Ошибка сети — попробуй ещё раз')}</p>`; }
+  const modal = document.getElementById('treemap-modal');
+  const skillId = State.treeSkill;
+  const res = document.getElementById('treemap-result'); if (res) res.innerHTML = aiSurfacePendingHTML('treemap', t('Собираю…'));
+  aiSurfaceRunButton('treemap', true);
+  const out = await aiSurfaceRun('treemap', async (signal) => {
+    const response = await fetch('/api/ai/propose', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'treemap', provider: aiProvider(), text, context: treeMapContext(skillId) }) });
+    return { ok: response.ok, data: await response.json() };
+  }, () => !!modal && modal.isConnected && State.treeSkill === skillId);
+  if (out.status === 'cancelled' || out.status === 'stale') return;
+  if (out.status !== 'done') { if (res) res.innerHTML = aiSurfaceNoticeHTML(aiSurfaceOutcomeText('treemap', out.status)); aiSurfaceSettle('treemap', out.status); return; }
+  const d = out.value.data;
+  if (d.error && aiHandleErr(d)) { closeTreeDialog('treemap-modal'); return; }
+  if (d.error || !Array.isArray(d.proposals)) { if (res) res.innerHTML = aiSurfaceNoticeHTML(t('Не разобрал ответ — попробуй ещё раз')); aiSurfaceSettle('treemap', 'error'); return; }
+  _treeMapItems = d.proposals.filter((p) => p && p.title).slice(0, 6)
+    .map((p) => ({
+      title: String(p.title).slice(0, 80),
+      criterion: String(p.criterion || p.desc || '').slice(0, 240),
+      nextAction: String(p.nextAction || '').slice(0, 200),
+    }));
+  renderTreeMapCards(); aiSurfaceSettle('treemap', 'done'); track('tree:aimap-run');
 }
 function renderTreeMapCards() {
   const res = document.getElementById('treemap-result'); if (!res) return;
-  if (!_treeMapItems.length) { res.innerHTML = `<p class="muted">${t('Пусто — попробуй описать подробнее')}</p>`; return; }
+  if (!_treeMapItems.length) { res.innerHTML = aiSurfaceNoticeHTML(t('Пусто — попробуй описать подробнее')); return; }
   res.innerHTML = `<div class="dayrec-list">${_treeMapItems.map((it, i) => `
     <label class="drc-row"><input type="checkbox" data-treemap="${i}" checked />
-      <span><b>⚑ ${esc(it.title)}</b>${it.criterion ? `<br><span class="muted tree-map-proposal"><strong>${esc(t('Критерий'))}:</strong> ${esc(it.criterion)}</span>` : ''}${it.nextAction ? `<br><span class="muted tree-map-proposal"><strong>${esc(t('Следующий шаг'))}:</strong> ${esc(it.nextAction)}</span>` : ''}</span></label>`).join('')}</div>
-  <div class="propose-actions"><button class="btn" data-action="treemap-apply">🚩 ${t('Принять карту')}</button>
-    <span class="muted" style="font-size:12px">${t('сними галочки с лишнего — порядок снизу вверх сохранится')}</span></div>`;
+      <span><b>${satoruIconHTML('nav.skills', 'inline-glyph', '⚑')} ${esc(it.title)}</b>${it.criterion ? `<br><span class="muted tree-map-proposal"><strong>${esc(t('Критерий'))}:</strong> ${esc(it.criterion)}</span>` : ''}${it.nextAction ? `<br><span class="muted tree-map-proposal"><strong>${esc(t('Следующий шаг'))}:</strong> ${esc(it.nextAction)}</span>` : ''}</span></label>`).join('')}</div>
+  <div class="propose-actions"><button type="button" class="btn" data-action="treemap-apply">${satoruIconHTML('action.check', 'button-glyph', '✓')} ${esc(t('Принять карту'))}</button>
+    <span class="muted ai-surface-note">${esc(t('сними галочки с лишнего — порядок снизу вверх сохранится'))}</span></div>`;
 }
 function applyPersonalMap(skillId, items) {
   const tr = State.tree[skillId]; if (!tr || !items.length) return 0;
@@ -32525,7 +32751,7 @@ async function onClick(e) {
   } else if (action === 'bridge-copy') { copyBridgePrompt(el.dataset.kind);
   } else if (action === 'bridge-parse') { parseBridgeResponse();
   } else if (action === 'propose-apply') { applyAcceptedProposalsGuarded();
-  } else if (action === 'propose-close') { const m = document.getElementById('propose-modal'); if (m) m.remove();
+  } else if (action === 'propose-close') { closeAiSurfaceModal('propose');
   } else if (action === 'treemap-open') {
     openTreeMapAI(); track('tree:aimap-open'); return;
   } else if (action === 'treemap-close') {
@@ -32630,7 +32856,7 @@ async function onClick(e) {
     stuckNoteAsked(id, q ? (Number(q.postponedCount) || 0) : 0);
     State._stuckSplit = null; render();
   } else if (action === 'stuck-cancel') {
-    State._stuckSplit = null; render();
+    aiSurfaceCancel('stuck'); State._stuckSplit = null; render();
   } else if (action === 'stuck-ai-step') {
     stuckAiStep(el.dataset.id);
   } else if (action === 'stuck-step-add') {
@@ -32706,14 +32932,14 @@ async function onClick(e) {
   } else if (action === 'dayrec-mic') { dayRecMicToggle();
   } else if (action === 'dayrec-run') { dayRecRun();
   } else if (action === 'dayrec-apply') { dayRecApply();
-  } else if (action === 'dayrec-close') { if (_dayRec) { try { _dayRec.stop(); } catch {} _dayRec = null; } const m = document.getElementById('dayrec-modal'); if (m) m.remove();
+  } else if (action === 'dayrec-close') { closeAiSurfaceModal('dayrec');
   } else if (action === 'episode-open') { openEpisode(el.dataset.from || '', el.dataset.to || '');
   } else if (action === 'ep-mic') { epMicToggle();
   } else if (action === 'ep-run') { epRun();
   } else if (action === 'ep-manual') { epManual();
   } else if (action === 'ep-save') { epSave();
-  } else if (action === 'ep-type') { document.querySelectorAll('.ep-type').forEach((b) => b.classList.toggle('on', b === el));
-  } else if (action === 'ep-social') { _epExtra.social = el.dataset.id; document.querySelectorAll('.ep-soc').forEach((b) => b.classList.toggle('on', b === el));
+  } else if (action === 'ep-type') { document.querySelectorAll('.ep-type').forEach((b) => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el ? 'true' : 'false'); });
+  } else if (action === 'ep-social') { _epExtra.social = el.dataset.id; document.querySelectorAll('.ep-soc').forEach((b) => { b.classList.toggle('on', b === el); b.setAttribute('aria-pressed', b === el ? 'true' : 'false'); });
   } else if (action === 'toggle-restores') {
     await persistSphereRestores(el.dataset.id);
   } else if (action === 'toggle-layer') {
@@ -32740,7 +32966,7 @@ async function onClick(e) {
       State.episodes = State.episodes.filter((x) => x.id !== ep.id);
       Store.save('episodes', State.episodes); toast(t('Эпизод удалён')); render(); publishLeaderboard();
     }
-  } else if (action === 'ep-close') { if (_epRec) { try { _epRec.stop(); } catch {} _epRec = null; } const m = document.getElementById('ep-modal'); if (m) m.remove();
+  } else if (action === 'ep-close') { closeAiSurfaceModal('episode');
   } else if (action === 'open-helper') { openHelperChat(el);
   } else if (action === 'helper-close') { closeHelperChat();
   } else if (action === 'helper-to-settings') { closeHelperChat({ restoreFocus: false }); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit = '.connections-ai'; render();
@@ -32779,6 +33005,7 @@ async function onClick(e) {
     const sel = sphereFieldInput(form); const box = card && card.querySelector('#cat-suggest');
     if (box && sel) aiCatSuggest(el.dataset.title, box, sel);
   } else if (action === 'ai-close' || action === 'ai-review-cancel') { closeAiModal();
+  } else if (action === 'ai-surface-cancel') { aiSurfaceUserCancel(el.dataset.key || '');
   } else if (action === 'ai-review-retry') { runWeeklyReview(_aiModalReturnFocus);
   } else if (action === 'chat-stop') { stopChatRequest();
   } else if (action === 'notes-retry') {
@@ -33118,6 +33345,11 @@ function clearAllData() {
   // R04C: запросы прошлого аккаунта прерываются, их окна и поздние ответы не переживают выход.
   cancelWeeklyReview(); document.getElementById('ai-modal')?.remove(); _aiModalReturnFocus = null;
   if (_chatRequest) { const request = _chatRequest; _chatRequest = null; request.cancel(); }
+  // R07: то же для остальных ИИ-поверхностей — запросы прерываются, их окна закрываются.
+  aiSurfaceCancelAll();
+  for (const key of ['dayrec', 'episode', 'propose']) if (document.getElementById(AI_SURFACE_UI[key].modal)) closeAiSurfaceModal(key, { restoreFocus: false });
+  if (document.getElementById('treemap-modal')) closeTreeDialog('treemap-modal');
+  _aiSurfaceReturnFocus = null;
   State._chatFileGeneration = (State._chatFileGeneration || 0) + 1;
   State.telemetryConsent = null; State._telemetryConsentLoaded = false; State._telemetryConsentBusy = false; State._telemetryConsentError = '';
   State.aiMemory = null; State._aiMemoryLoaded = false; State._aiMemoryBusy = false; State._aiMemoryError = ''; State._aiMemoryEditing = '';
@@ -34138,7 +34370,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v288';
+const PWA_CACHE_VERSION = 'satoru-v289';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -34344,6 +34576,10 @@ async function init() {
     if (handleTreeDialogKeydown(e)) return;
     if (e.key === 'Escape' && document.getElementById('ai-modal')) { e.preventDefault(); closeAiModal(); return; }
     if (e.key === 'Escape' && document.getElementById('share-ov')) { e.preventDefault(); closeWeekShare(); return; }
+    if (e.key === 'Escape') {
+      const surface = ['propose', 'episode', 'dayrec'].find((key) => document.getElementById(AI_SURFACE_UI[key].modal));
+      if (surface) { e.preventDefault(); closeAiSurfaceModal(surface); return; }
+    }
     if (e.target.matches?.(':is(.hsub,.goals-view-tabs,.today-tabs,.today-mode-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
       const at = tabs.indexOf(e.target); let next = at;

@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R07 — AI lifecycle on the remaining surfaces, v289
+
+R04C follow-up. Shared `aiSurfaceRun(key, fetcher, stillCurrent)` on top of
+`AiRequestV1`: one request per surface, per-surface timeout, cancel on replacement /
+window close / sign-out / «Cancel request», account-epoch fence, silent late answers.
+Wired: category suggestion, stuck step (does not overwrite typed text), day recap,
+episode, proposals, tree map, profile refresh (no cross-account save), onboarding
+analysis, moment line (8 s fallback), hint phrase. Recap/episode/proposal dialogs:
+labelled dialogs, Escape + focus return, registry icons, five-language copy (≈50
+new rows), 44px chips; dictation uses the interface language instead of `ru-RU`.
+AI-SURFACES-V289-QA.md. Shell/pins v289.
+
 ## [2026-09-25] R06 — one Shadow: chat, hints, Den, voice, v288
 
 Owner-chosen scope. Today support hints (stretch, mobility, «System» teaser) were
