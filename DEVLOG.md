@@ -1,5 +1,15 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-25] R04D — export, v286
+
+Account archive is fetched and verified before saving (expired session no longer
+saves an error file) with a receipt. New pure `CalendarExportV1` writes RFC 5545
+.ics (75-octet UTF-8 folding, escaping, validated times, clean titles) while keeping
+`@gojo` UIDs for re-import; file `satoru-calendar-DATE.ics`. «Your week» PNG is
+localized, overlap-free, 1200×680, satoruapp.com, with render-error handling and an
+accessible dialog. Memory export gets a dated file and receipt. EXPORT-V286-QA.md.
+Shell/pins v286.
+
 ## [2026-09-25] R04C — AI lifecycle: timeout, cancel, late response, v285
 
 New pure `AiRequestV1` gives each AI request an AbortController, timeout and one

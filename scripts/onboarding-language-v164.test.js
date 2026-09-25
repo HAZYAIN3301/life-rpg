@@ -73,7 +73,7 @@ test('language step has complete locale copy and accessible touch targets', () =
 });
 
 test('v164 invalidates the PWA shell and cache-busts app and styles', () => {
-  assert.match(SW, /const CACHE = 'satoru-v285'/);
-  assert.match(INDEX, /styles\.css\?v=20260925-ai-v285-1/);
-  assert.match(INDEX, /app\.js\?v=20260925-ai-v285-1/);
+  assert.match(SW, /const CACHE = 'satoru-v286'/);
+  assert.match(INDEX, /styles\.css\?v=20260925-export-v286-1/);
+  assert.match(INDEX, /app\.js\?v=20260925-export-v286-1/);
 });

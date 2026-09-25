@@ -586,6 +586,25 @@ const I18N_EXTRA = {
   'Остановлено. Ничего не изменено — вопрос вернулся в поле ввода.': { en: 'Stopped. Nothing changed — your question is back in the input field.', de: 'Gestoppt. Nichts wurde geändert — deine Frage steht wieder im Eingabefeld.', uk: 'Зупинено. Нічого не змінено — питання повернулося в поле введення.', es: 'Detenido. Nada cambió; tu pregunta volvió al campo de texto.' },
   'Тень не ответила за полторы минуты. Запрос отменён, ничего не изменено — вопрос вернулся в поле ввода.': { en: 'Shadow did not answer within a minute and a half. The request was cancelled and nothing changed — your question is back in the input field.', de: 'Schatten hat innerhalb von anderthalb Minuten nicht geantwortet. Die Anfrage wurde abgebrochen, nichts wurde geändert — deine Frage steht wieder im Eingabefeld.', uk: 'Тінь не відповіла за півтори хвилини. Запит скасовано, нічого не змінено — питання повернулося в поле введення.', es: 'Sombra no respondió en un minuto y medio. La solicitud se canceló y nada cambió; tu pregunta volvió al campo de texto.' },
   'Сетевая ошибка. Ничего не изменено — вопрос вернулся в поле ввода.': { en: 'Network error. Nothing changed — your question is back in the input field.', de: 'Netzwerkfehler. Nichts wurde geändert — deine Frage steht wieder im Eingabefeld.', uk: 'Помилка мережі. Нічого не змінено — питання повернулося в поле введення.', es: 'Error de red. Nada cambió; tu pregunta volvió al campo de texto.' },
+  // R04D: exports (v286).
+  'Скачать PNG': { en: 'Download PNG', de: 'PNG herunterladen', uk: 'Завантажити PNG', es: 'Descargar PNG' },
+  'Моя неделя в Satoru': { en: 'My week in Satoru', de: 'Meine Woche in Satoru', uk: 'Мій тиждень у Satoru', es: 'Mi semana en Satoru' },
+  'Готовлю картинку…': { en: 'Preparing the image…', de: 'Bild wird erstellt…', uk: 'Готую зображення…', es: 'Preparando la imagen…' },
+  'Не удалось создать картинку. Попробуй ещё раз.': { en: 'The image could not be created. Please try again.', de: 'Das Bild konnte nicht erstellt werden. Bitte versuche es erneut.', uk: 'Не вдалося створити зображення. Спробуй ще раз.', es: 'No se pudo crear la imagen. Inténtalo de nuevo.' },
+  'Картинка сохранена': { en: 'Image saved', de: 'Bild gespeichert', uk: 'Зображення збережено', es: 'Imagen guardada' },
+  'Готовлю архив…': { en: 'Preparing the archive…', de: 'Archiv wird erstellt…', uk: 'Готую архів…', es: 'Preparando el archivo…' },
+  'Сессия истекла. Войди снова и повтори экспорт — архив не скачан.': { en: 'Your session expired. Sign in again and repeat the export — no archive was downloaded.', de: 'Deine Sitzung ist abgelaufen. Melde dich erneut an und wiederhole den Export — es wurde kein Archiv heruntergeladen.', uk: 'Сесія завершилася. Увійди знову й повтори експорт — архів не завантажено.', es: 'Tu sesión caducó. Vuelve a entrar y repite la exportación; no se descargó ningún archivo.' },
+  'Архив не собран. Ничего не изменено — повтори позже.': { en: 'The archive could not be built. Nothing changed — try again later.', de: 'Das Archiv konnte nicht erstellt werden. Nichts wurde geändert — versuche es später erneut.', uk: 'Архів не зібрано. Нічого не змінено — повтори пізніше.', es: 'No se pudo crear el archivo. Nada cambió; inténtalo más tarde.' },
+  'Сервер вернул не архив Satoru. Файл не сохранён — повтори позже.': { en: 'The server did not return a Satoru archive. No file was saved — try again later.', de: 'Der Server hat kein Satoru-Archiv geliefert. Keine Datei gespeichert — versuche es später erneut.', uk: 'Сервер повернув не архів Satoru. Файл не збережено — повтори пізніше.', es: 'El servidor no devolvió un archivo de Satoru. No se guardó nada; inténtalo más tarde.' },
+  'Архив сохранён': { en: 'Archive saved', de: 'Archiv gespeichert', uk: 'Архів збережено', es: 'Archivo guardado' },
+  'наборов данных': { en: 'data sets', de: 'Datensätze', uk: 'наборів даних', es: 'conjuntos de datos' },
+  'Сетевая ошибка. Архив не скачан — повтори.': { en: 'Network error. The archive was not downloaded — try again.', de: 'Netzwerkfehler. Das Archiv wurde nicht heruntergeladen — versuche es erneut.', uk: 'Помилка мережі. Архів не завантажено — повтори.', es: 'Error de red. No se descargó el archivo; inténtalo de nuevo.' },
+  'Файл календаря сохранён': { en: 'Calendar file saved', de: 'Kalenderdatei gespeichert', uk: 'Файл календаря збережено', es: 'Archivo de calendario guardado' },
+  'квестов со временем, местное время': { en: 'timed quests, local time', de: 'Quests mit Uhrzeit, Ortszeit', uk: 'квестів із часом, місцевий час', es: 'misiones con hora, hora local' },
+  'Пропущено с неверным временем': { en: 'Skipped with an invalid time', de: 'Mit ungültiger Uhrzeit übersprungen', uk: 'Пропущено з неправильним часом', es: 'Omitidas por hora no válida' },
+  'Открой файл в календаре, чтобы импортировать.': { en: 'Open the file in your calendar to import it.', de: 'Öffne die Datei in deinem Kalender, um sie zu importieren.', uk: 'Відкрий файл у календарі, щоб імпортувати.', es: 'Abre el archivo en tu calendario para importarlo.' },
+  'Нет квестов с корректным временем — проверь время в Календаре': { en: 'No quests with a valid time — check the times in Calendar', de: 'Keine Quests mit gültiger Uhrzeit — prüfe die Zeiten im Kalender', uk: 'Немає квестів із правильним часом — перевір час у Календарі', es: 'No hay misiones con una hora válida; revisa las horas en el Calendario' },
+  'Память сохранена в файл': { en: 'Memory saved to a file', de: 'Gedächtnis in eine Datei gespeichert', uk: 'Пам’ять збережено у файл', es: 'Memoria guardada en un archivo' },
   'Закрыто': { en: 'Closed', de: 'Erledigt', uk: 'Закрито', es: 'Cerradas' },
   'Открытые дела сегодня пока не считаются невыполненными.': { en: "Today's open tasks do not count as missed yet.", de: 'Heute offene Aufgaben zählen noch nicht als verpasst.', uk: 'Відкриті сьогодні справи поки не вважаються невиконаними.', es: 'Las tareas abiertas de hoy aún no cuentan como no hechas.' },
   'Восстанавливает: да': { en: 'Restorative: yes', de: 'Erholsam: ja', uk: 'Відновлює: так', es: 'Me repone: sí' },
@@ -14850,19 +14869,11 @@ async function showCalSubscribeModal(returnFocus = document.activeElement) {
   return ov;
 }
 // Экспорт запланированных квестов (с датой и временем) в iCalendar (#8). Разовый экспорт, не живая подписка.
-function buildICS() {
-  const tasks = (State.tasks || []).filter((t) => t.date && t.startTime);
-  const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-  const escV = (s) => String(s || '').replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
-  const dt = (date, time) => `${date.replace(/-/g, '')}T${(time || '09:00').replace(':', '')}00`;
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Satoru//Life Planner//RU', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:Satoru'];
-  tasks.forEach((t) => {
-    const dur = Math.max(5, Number(t.estimateMin) || 30);
-    lines.push('BEGIN:VEVENT', `UID:${t.id}@gojo`, `DTSTAMP:${stamp}`, `DTSTART:${dt(t.date, t.startTime)}`, `DURATION:PT${dur}M`,
-      `SUMMARY:${escV('🎯 ' + t.title)}`, `DESCRIPTION:${escV('Satoru · ' + (skillById(t.skillId).name || ''))}`, 'END:VEVENT');
-  });
-  lines.push('END:VCALENDAR');
-  return lines.join('\r\n');
+// R04D: .ics строит CalendarExportV1 (RFC 5545: свёртка, экранирование, проверка времени).
+function calendarExportResult() {
+  const X = window.CalendarExportV1;
+  if (!X) return null;
+  return X.build(State.tasks || [], { sphereOf: (task) => sphereNameText((skillById(taskSkills(task)[0] || task.skillId) || {}).name || '') });
 }
 function calendarTasksForDate(date) {
   return (State.tasks || []).filter((task) => task.date === date).sort((a, b) => {
@@ -22492,95 +22503,98 @@ async function commitEconomyConfirmation(overlay) {
 // ============================================================
 //  Wrapped / шеринг-карточка
 // ============================================================
-function showWeekShare(ws, st) {
-  if (document.getElementById('share-ov')) return;
+// R04D: карточка недели экспортируется картинкой, поэтому текст переводится ДО сборки SVG —
+// переводчик DOM до PNG не доходит. Раньше в EN/DE/ES картинка уходила с «Квестов/Привычек/
+// Часов/ур.», подпись «Главная сфера недели» лежала поверх названия сферы, а внизу стоял
+// старый адрес railway. Теперь: переведённые подписи, время в формате приложения, без
+// наложений, satoruapp.com, PNG в двойной плотности и понятная ошибка, если рендер не вышел.
+const WEEK_CARD_W = 600, WEEK_CARD_H = 340;
+function weekShareSVG(ws, st) {
   const end = addDays(ws, 6);
-  const nm = (State.me && State.me.name) || 'Герой';
+  const nm = (State.me && State.me.name) || t('Герой');
   const lvl = charLevel(), rk = rankFor(lvl);
-  const topArea = st.byArea.filter(a => a.value > 0).sort((a, b) => b.value - a.value)[0];
-  const hrs = Math.round(st.min / 60 * 10) / 10;
-
-  // SVG share card 600×340
-  const svgW = 600, svgH = 340;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgW} ${svgH}" width="${svgW}" height="${svgH}">
+  const topArea = st.byArea.filter((a) => a.value > 0).sort((a, b) => b.value - a.value)[0];
+  const font = 'font-family="system-ui,-apple-system,Segoe UI,Roboto,sans-serif"';
+  const stats = [
+    { label: 'XP', val: String(st.xp), x: 30 },
+    { label: t('Квестов'), val: String(st.quests), x: 165 },
+    { label: t('Привычек'), val: String(st.habitsC), x: 310 },
+    { label: t('Времени'), val: fmtDur(st.min), x: 445 },
+  ];
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${WEEK_CARD_W} ${WEEK_CARD_H}" width="${WEEK_CARD_W}" height="${WEEK_CARD_H}" role="img" aria-label="${esc(`${t('Твоя неделя')} ${dmShort(ws)} – ${dmShort(end)}`)}">
     <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#12111a"/>
-        <stop offset="100%" stop-color="#1e1b2e"/>
-      </linearGradient>
-      <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="${esc(rk.color)}"/>
-        <stop offset="100%" stop-color="#a78bfa"/>
-      </linearGradient>
+      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#12111a"/><stop offset="100%" stop-color="#1e1b2e"/></linearGradient>
+      <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${esc(rk.color)}"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
     </defs>
-    <!-- background -->
-    <rect width="${svgW}" height="${svgH}" rx="20" fill="url(#bg)"/>
-    <!-- accent bar -->
-    <rect x="0" y="0" width="${svgW}" height="4" rx="2" fill="url(#acc)"/>
-    <!-- brand -->
-    <text x="30" y="42" font-family="system-ui,sans-serif" font-size="13" fill="${esc(rk.color)}" font-weight="700" letter-spacing="2">SATORU</text>
-    <!-- paper origin crest + name -->
+    <rect width="${WEEK_CARD_W}" height="${WEEK_CARD_H}" rx="20" fill="url(#bg)"/>
+    <rect x="0" y="0" width="${WEEK_CARD_W}" height="4" rx="2" fill="url(#acc)"/>
+    <text x="30" y="42" ${font} font-size="13" fill="${esc(rk.color)}" font-weight="700" letter-spacing="2">SATORU</text>
+    <text x="${WEEK_CARD_W - 30}" y="42" ${font} font-size="13" fill="#a3a3b8" text-anchor="end">${esc(dmShort(ws))} – ${esc(dmShort(end))}</text>
     <path d="M48 51l18 7-3 21c-2 9-7 14-15 18-8-4-13-9-15-18l-3-21z" fill="#1f2742" stroke="${esc(rk.color)}" stroke-width="2"/>
-    <text x="48" y="82" font-family="system-ui,sans-serif" font-size="21" fill="#f1dfba" font-weight="800" text-anchor="middle">?</text>
-    <text x="76" y="74" font-family="system-ui,sans-serif" font-size="20" fill="#fff" font-weight="700">${esc(nm)}</text>
-    <text x="76" y="94" font-family="system-ui,sans-serif" font-size="13" fill="${esc(rk.color)}" font-weight="600">${esc(rk.name)} · ур.${lvl}</text>
-    <!-- week label -->
-    <text x="${svgW - 30}" y="42" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0" text-anchor="end">${esc(dmShort(ws))} – ${esc(dmShort(end))}</text>
-    <!-- divider -->
-    <line x1="30" y1="112" x2="${svgW - 30}" y2="112" stroke="#2d2b3a" stroke-width="1"/>
-    <!-- stats grid -->
-    ${[
-      { label: 'XP', val: st.xp, x: 30 },
-      { label: 'Квестов', val: st.quests, x: 165 },
-      { label: 'Привычек', val: st.habitsC, x: 310 },
-      { label: 'Часов', val: hrs, x: 455 },
-    ].map(({ label, val, x }) => `
-      <text x="${x}" y="158" font-family="system-ui,sans-serif" font-size="32" fill="#fff" font-weight="800">${val}</text>
-      <text x="${x}" y="178" font-family="system-ui,sans-serif" font-size="12" fill="#8b8ba0">${label}</text>
-    `).join('')}
-    <!-- top skill -->
-    ${topArea ? `
-    <rect x="30" y="202" width="${svgW - 60}" height="48" rx="10" fill="#1a1829"/>
-    <text x="46" y="231" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0">${t('Главная сфера недели')}</text>
-    <text x="46" y="241" font-family="system-ui,sans-serif" font-size="13" fill="#8b8ba0">·</text>
-    <rect x="30" y="202" width="4" height="48" rx="2" fill="${esc(topArea.color)}"/>
-    <text x="46" y="236" font-family="system-ui,sans-serif" font-size="16" fill="#fff" font-weight="700">${esc(topArea.label)}</text>
-    <text x="${svgW - 46}" y="236" font-family="system-ui,sans-serif" font-size="14" fill="${esc(topArea.color)}" font-weight="700" text-anchor="end">${Math.round(topArea.value / 60 * 10) / 10} ч</text>
-    ` : ''}
-    <!-- footer -->
-    <text x="30" y="${svgH - 20}" font-family="system-ui,sans-serif" font-size="11" fill="#4a4860">life-rpg-production-416a.up.railway.app</text>
+    <text x="48" y="82" ${font} font-size="21" fill="#f1dfba" font-weight="800" text-anchor="middle">?</text>
+    <text x="76" y="74" ${font} font-size="20" fill="#fff" font-weight="700">${esc(nm)}</text>
+    <text x="76" y="94" ${font} font-size="13" fill="#d7d3ea" font-weight="600">${esc(t(rk.name))} · ${esc(t('Уровень'))} ${lvl}</text>
+    <line x1="30" y1="112" x2="${WEEK_CARD_W - 30}" y2="112" stroke="#2d2b3a" stroke-width="1"/>
+    ${stats.map(({ label, val, x }) => `<text x="${x}" y="156" ${font} font-size="${val.length > 6 ? 24 : 32}" fill="#fff" font-weight="800">${esc(val)}</text>
+    <text x="${x}" y="178" ${font} font-size="12" fill="#a3a3b8">${esc(label)}</text>`).join('')}
+    ${topArea ? `<rect x="30" y="200" width="${WEEK_CARD_W - 60}" height="58" rx="10" fill="#1a1829"/>
+    <rect x="30" y="200" width="4" height="58" rx="2" fill="${esc(topArea.color)}"/>
+    <text x="46" y="222" ${font} font-size="12" fill="#a3a3b8">${esc(t('Главная сфера недели'))}</text>
+    <text x="46" y="246" ${font} font-size="16" fill="#fff" font-weight="700">${esc(sphereNameText(topArea.label))}</text>
+    <text x="${WEEK_CARD_W - 46}" y="246" ${font} font-size="15" fill="#fff" font-weight="700" text-anchor="end">${esc(fmtDur(topArea.value))}</text>` : ''}
+    <text x="30" y="${WEEK_CARD_H - 20}" ${font} font-size="11" fill="#77758c">satoruapp.com</text>
   </svg>`;
-
+}
+function closeWeekShare() {
+  const overlay = document.getElementById('share-ov');
+  if (!overlay) return;
+  const opener = overlay._opener;
+  overlay.remove();
+  if (opener && opener.isConnected) opener.focus();
+}
+function showWeekShare(ws, st, opener) {
+  if (document.getElementById('share-ov')) return;
+  const svg = weekShareSVG(ws, st);
   const ov = document.createElement('div');
   ov.id = 'share-ov'; ov.className = 'modal-overlay';
-  ov.innerHTML = `<div class="guide-box" style="max-width:640px">
-    <button class="modal-x" data-action="close-share">✕</button>
-    <h2>${t('📤 Твоя неделя')}</h2>
-    <div id="share-card-wrap" style="border-radius:14px;overflow:hidden;margin:14px 0">${svg}</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn" data-action="download-share-card">${t('⬇️ Скачать PNG')}</button>
-      ${navigator.share ? `<button class="btn ghost" data-action="web-share-card">${t('🔗 Поделиться')}</button>` : ''}
+  ov.innerHTML = `<div class="guide-box week-share-box" role="dialog" aria-modal="true" aria-labelledby="week-share-title">
+    <button type="button" class="modal-x" data-action="close-share" aria-label="${esc(t('Закрыть'))}">${satoruIconHTML('action.close', 'inline-glyph', '✕')}</button>
+    <h2 id="week-share-title" tabindex="-1">${satoruIconHTML('action.export', 'heading-glyph', '◇')} ${esc(t('Твоя неделя'))}</h2>
+    <div id="share-card-wrap" class="week-share-card">${svg}</div>
+    <div class="week-share-actions">
+      <button type="button" class="btn" data-action="download-share-card">${satoruIconHTML('action.export', 'button-glyph', '↓')} ${esc(t('Скачать PNG'))}</button>
+      ${navigator.share ? `<button type="button" class="btn ghost" data-action="web-share-card">${satoruIconHTML('action.link', 'button-glyph', '◇')} ${esc(t('Поделиться'))}</button>` : ''}
     </div>
+    <p class="muted week-share-status" role="status" aria-live="polite"></p>
   </div>`;
   document.body.appendChild(ov);
-  // stash data for download handler
+  ov._opener = opener || null;
   ov.dataset.svgData = encodeURIComponent(svg);
   ov.dataset.filename = `satoru-week-${ws}.png`;
+  document.getElementById('week-share-title')?.focus();
+}
+function weekShareStatus(message) {
+  const status = document.querySelector('#share-ov .week-share-status');
+  if (status) status.textContent = message;
 }
 
-function svgToPng(svgStr, w, h) {
+function svgToPng(svgStr, w, h, scale = 2) {
+  // null вместо вечного ожидания: сломанный SVG или отказ canvas должен дать понятную ошибку.
   return new Promise((resolve) => {
     const blob = new Blob([svgStr], { type: 'image/svg+xml' });
     const url = URL.createObjectURL(blob);
     const img = new Image();
     img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      URL.revokeObjectURL(url);
-      canvas.toBlob(resolve, 'image/png');
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = w * scale; canvas.height = h * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w * scale, h * scale);
+        URL.revokeObjectURL(url);
+        canvas.toBlob((png) => resolve(png || null), 'image/png');
+      } catch { URL.revokeObjectURL(url); resolve(null); }
     };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
     img.src = url;
   });
 }
@@ -22925,11 +22939,57 @@ function accountDataCard() {
   return `<div class="card settings-data-card account-data-card"><h4>${t('Экспорт и импорт аккаунта')}</h4>
     <p class="muted">${t('Архив содержит твои JSON-данные. Медиафайлы заметок, пароли, ключи ИИ, Strava-токены и push-подписка не экспортируются.')}</p>
     <div class="settings-actions">
-      <a class="btn ghost" href="/api/account/export" download>${t('Скачать архив JSON')}</a>
+      <button type="button" class="btn ghost" data-action="account-export"${State._accountExportBusy ? ' disabled aria-busy="true"' : ''}>${State._accountExportBusy ? t('Готовлю архив…') : t('Скачать архив JSON')}</button>
       <label class="btn ghost account-import-label"><span>${t('Импортировать архив')}</span><input id="account-import-file" type="file" accept="application/json,.json" /></label>
     </div>
+    <p id="account-export-status" class="account-export-status${State._accountExportResult && !State._accountExportResult.ok ? ' is-error' : ''}" role="status" aria-live="polite">${State._accountExportResult ? esc(State._accountExportResult.message) : ''}</p>
     <p id="account-import-status" class="muted" role="status" aria-live="polite"></p>
   </div>`;
+}
+// R04D: архив скачивается только после проверенного ответа. Раньше ссылка <a download>
+// при истёкшей сессии молча сохраняла файл с текстом ошибки вместо данных.
+function accountExportFilename(disposition) {
+  const match = /filename="?([^";]+)"?/i.exec(String(disposition || ''));
+  const name = match ? match[1].trim() : '';
+  return /^[\w.-]+\.json$/.test(name) ? name : `satoru-account-${todayStr()}.json`;
+}
+function formatKilobytes(bytes) {
+  const kb = Math.max(1, Math.round((Number(bytes) || 0) / 1024));
+  try { return new Intl.NumberFormat(lang(), { style: 'unit', unit: 'kilobyte', unitDisplay: 'short' }).format(kb); } catch { return `${kb} KB`; }
+}
+async function exportAccountArchive() {
+  if (State._accountExportBusy) return;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch;
+  State._accountExportBusy = true; State._accountExportResult = null; render();
+  let result = null;
+  try {
+    const response = await fetch('/api/account/export', { cache: 'no-store' });
+    if (!current()) return;
+    if (response.status === 401) result = { ok: false, message: t('Сессия истекла. Войди снова и повтори экспорт — архив не скачан.') };
+    else if (!response.ok) result = { ok: false, message: t('Архив не собран. Ничего не изменено — повтори позже.') };
+    else {
+      const text = await response.text();
+      if (!current()) return;
+      let archive = null; try { archive = JSON.parse(text); } catch { archive = null; }
+      if (!archive || archive.format !== 'satoru-account' || !archive.data || typeof archive.data !== 'object') {
+        result = { ok: false, message: t('Сервер вернул не архив Satoru. Файл не сохранён — повтори позже.') };
+      } else {
+        const name = accountExportFilename(response.headers.get('Content-Disposition'));
+        const url = URL.createObjectURL(new Blob([text], { type: 'application/json;charset=utf-8' }));
+        const link = document.createElement('a'); link.href = url; link.download = name; document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        const sets = Object.values(archive.data).filter((value) => value != null).length;
+        result = { ok: true, message: `${t('Архив сохранён')}: ${name} · ${sets} ${t('наборов данных')} · ${formatKilobytes(new Blob([text]).size)}` };
+      }
+    }
+  } catch { if (current()) result = { ok: false, message: t('Сетевая ошибка. Архив не скачан — повтори.') }; }
+  finally {
+    if (current()) {
+      State._accountExportBusy = false; State._accountExportResult = result; render();
+      document.querySelector('[data-action="account-export"]')?.focus();
+    }
+  }
 }
 
 function accountImportCurrent(overlay) {
@@ -24057,7 +24117,7 @@ function renderWeekly() {
     <header class="card calv-head"><div class="calv-title"><div class="calv-title-main"><button type="button" class="btn ghost sm cal-nav-prev" data-action="week-prev" aria-label="${esc(t('Предыдущая неделя'))}">${satoruIconHTML('action.back', 'cal-action-icon', '‹')}</button><h2 id="calendar-screen-title" class="week-screen-title" tabindex="-1">${esc(t('Неделя'))} ${dmShort(ws)} – ${dmShort(end)}${isThis ? ` <span class="muted">· ${esc(t('(текущая)'))}</span>` : ''}</h2><button type="button" class="btn ghost sm cal-nav-next" data-action="week-next" aria-label="${esc(t('Следующая неделя'))}">${satoruIconHTML('action.forward', 'cal-action-icon', '›')}</button></div>${calModeToggle('week')}${calendarToolsHTML()}</div><div class="calv-strip week-overview" role="group" aria-label="${esc(t('Дни выбранной недели'))}">${strip}</div></header>
     ${calendarMoveReceiptHTML()}
     <main class="week-work"><section class="card week-work-card" aria-labelledby="week-work-title"><div class="week-work-head"><div><h3 id="week-work-title"><span class="week-work-title-desktop">${esc(t('Квесты недели'))}</span><span class="week-work-title-mobile">${esc(t('Квесты выбранного дня'))}</span></h3><span class="muted week-selected-summary">${esc(selectedWeekday)} ${dmShort(selectedDay.date)} · ${selectedDay.tasks.length} · ${fmtDur(selectedDay.planned)}</span></div></div><div class="wk-mobile-detail" role="region" aria-label="${esc(t('Выбранный день'))}"><div class="wk-detail-tasks">${detailRows || `<div class="wk-detail-empty"><p>${esc(t('Нет квестов на этот день'))}</p></div>`}</div>${weekAddAreaHTML(selectedDay.date, 'detail')}</div><div class="wk-grid-wrap"><div class="wk-grid">${board}</div></div><p class="wk-hint muted">${esc(t('На desktop можно перетащить квест в другой день; тап, клик или Enter открывает расписание.'))}</p></section></main>
-    <aside class="week-secondary"><div class="card week-summary-card"><div class="week-summary-head"><h3>${esc(t('Итоги недели'))}</h3><button type="button" class="btn ghost" data-action="share-week" aria-label="${esc(t('Поделиться итогами недели'))}">${satoruIconHTML('action.share', 'button-glyph', '📤')} ${esc(t('Поделиться'))}</button></div><div class="kpis"><div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div><div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">${t('Золото')}</div></div><div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div><div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div><div class="kpi"><div class="v">${fmtDur(st.min)}</div><div class="l">${t('Времени')}</div></div></div></div>
+    <aside class="week-secondary"><div class="card week-summary-card"><div class="week-summary-head"><h3>${esc(t('Итоги недели'))}</h3><button type="button" class="btn ghost" data-action="share-week" aria-label="${esc(t('Поделиться итогами недели'))}">${satoruIconHTML('action.export', 'button-glyph', '◇')} ${esc(t('Поделиться'))}</button></div><div class="kpis"><div class="kpi"><div class="v">${st.xp}</div><div class="l">${t('XP за неделю')}</div></div><div class="kpi"><div class="v">🪙 ${st.gold}</div><div class="l">${t('Золото')}</div></div><div class="kpi"><div class="v">${st.quests}</div><div class="l">${t('Квестов')}</div></div><div class="kpi"><div class="v">${st.habitsC}</div><div class="l">${t('Привычек')}</div></div><div class="kpi"><div class="v">${fmtDur(st.min)}</div><div class="l">${t('Времени')}</div></div></div></div>
     <div class="card week-chart-card"><h3>${satoruIconHTML('nav.progress', 'heading-glyph', '◇')} ${t('Время по сферам')}</h3>${timeBySphereChartHTML(st.byArea)}</div>
     <div class="card week-review-card"><h3>🎯 ${t('Намерение на неделю')}</h3>
       <textarea id="week-intention" placeholder="${esc(t('Что главное на этой неделе? Куда направить фокус…'))}">${esc(wk.intention || '')}</textarea>
@@ -27032,7 +27092,7 @@ async function mutateAiMemory(id, op, patch) {
   } catch (error) { console.error('ai memory save', error); State._aiMemoryError = 'Не удалось изменить память. Ничего не потеряно.'; State._aiMemoryBusy = false; render(); return false; }
 }
 async function downloadAiMemory() {
-  try { const response = await fetch('/api/ai/memory/export'); if (!response.ok) throw new Error('export'); const blob = await response.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'satoru-ai-memory.json'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1500); }
+  try { const response = await fetch('/api/ai/memory/export'); if (!response.ok) throw new Error('export'); const blob = await response.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `satoru-ai-memory-${todayStr()}.json`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1500); toast(`${t('Память сохранена в файл')}: ${a.download}`); }
   catch { State._aiMemoryError = 'Не удалось скачать память.'; render(); }
 }
 function aiMemoryCard() {
@@ -32371,22 +32431,28 @@ async function onClick(e) {
     render();
   } else if (action === 'share-week') {
     const ws = State.weekStart || weekStart(todayStr()), st = rangeStats(ws, addDays(ws, 6));
-    showWeekShare(ws, st);
-  } else if (action === 'close-share') { const s = document.getElementById('share-ov'); if (s) s.remove();
+    showWeekShare(ws, st, el);
+  } else if (action === 'close-share') { closeWeekShare();
   } else if (action === 'download-share-card') {
     const ov = document.getElementById('share-ov'); if (!ov) return;
     const svgStr = decodeURIComponent(ov.dataset.svgData);
-    svgToPng(svgStr, 600, 340).then(blob => {
+    weekShareStatus(t('Готовлю картинку…'));
+    svgToPng(svgStr, WEEK_CARD_W, WEEK_CARD_H).then((blob) => {
+      if (!ov.isConnected) return;
+      if (!blob) { weekShareStatus(t('Не удалось создать картинку. Попробуй ещё раз.')); return; }
       const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-      a.download = ov.dataset.filename || 'satoru-week.png'; a.click();
+      a.download = ov.dataset.filename || 'satoru-week.png'; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+      weekShareStatus(`${t('Картинка сохранена')}: ${a.download}`);
     });
   } else if (action === 'web-share-card') {
     const ov = document.getElementById('share-ov'); if (!ov) return;
     const svgStr = decodeURIComponent(ov.dataset.svgData);
-    svgToPng(svgStr, 600, 340).then(async blob => {
+    svgToPng(svgStr, WEEK_CARD_W, WEEK_CARD_H).then(async (blob) => {
+      if (!ov.isConnected) return;
+      if (!blob) { weekShareStatus(t('Не удалось создать картинку. Попробуй ещё раз.')); return; }
       const file = new File([blob], ov.dataset.filename || 'satoru-week.png', { type: 'image/png' });
-      try { await navigator.share({ files: [file], title: 'Моя неделя в Satoru' }); } catch {}
+      try { await navigator.share({ files: [file], title: t('Моя неделя в Satoru') }); } catch { /* закрыли системное окно — это не ошибка */ }
     });
   } else if (action === 'wk-add-task') {
     State.wkAddDate = el.dataset.date;
@@ -32706,10 +32772,16 @@ async function onClick(e) {
     navigator.clipboard.writeText(url).then(() => toast(t('✓ Ссылка скопирована'))).catch(() => {
       const inp = document.getElementById('cal-sub-url'); if (inp) { inp.select(); document.execCommand('copy'); toast(t('✓ Скопировано')); }
     });
+  } else if (action === 'account-export') { exportAccountArchive();
   } else if (action === 'export-ics') {
-    const ics = buildICS();
-    if (!/BEGIN:VEVENT/.test(ics)) { toast(t('Нет квестов со временем — поставь их в Календаре')); return; }
-    try { const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'gojo-calendar.ics'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000); toast(t('📆 .ics скачан — открой его в Календаре для импорта')); } catch { toast(t('Не удалось создать файл')); }
+    const result = calendarExportResult();
+    if (!result) { toast(t('Не удалось создать файл')); return; }
+    if (!result.count) { toast(result.skipped ? t('Нет квестов с корректным временем — проверь время в Календаре') : t('Нет квестов со временем — поставь их в Календаре')); return; }
+    try {
+      const blob = new Blob([result.text], { type: 'text/calendar;charset=utf-8' }); const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = window.CalendarExportV1.filename(todayStr()); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast(`${t('Файл календаря сохранён')}: ${result.count} ${t('квестов со временем, местное время')}${result.skipped ? `. ${t('Пропущено с неверным временем')}: ${result.skipped}` : ''}. ${t('Открой файл в календаре, чтобы импортировать.')}`);
+    } catch { toast(t('Не удалось создать файл')); }
   } else if (action === 'cal-mode') { cleanupWkDrag(); sfx('select'); State._calendarAddOpen = false; State.calMode = el.dataset.mode; State.view = 'calendar'; if (State.calMode === 'week') State.weekStart = weekStart(State.calDate || todayStr()); State._calendarFocusAfterCommit = `.cal-mode[data-mode="${CSS.escape(State.calMode)}"]`; render();
   } else if (action === 'cal-month-date') { State.calDate = el.dataset.date; State.wkAddDate = null; State._calendarFocusAfterCommit = '#month-detail-title'; render();
   } else if (action === 'month-open-day') { State.calMode = 'day'; State._calendarFocusAfterCommit = '#calendar-screen-title'; render();
@@ -33008,6 +33080,7 @@ function clearAllData() {
   State._inspirationSection = 'today'; State._inspirationSetupOpen = false; State._inspirationDraft = null;
   State.profile = null; State.aiKeys = null; State.strava = null; State.chatLog = [];
   delete State._chatPlanAttachment; State._chatBusy = false;
+  State._accountExportBusy = false; State._accountExportResult = null;
   // R04C: запросы прошлого аккаунта прерываются, их окна и поздние ответы не переживают выход.
   cancelWeeklyReview(); document.getElementById('ai-modal')?.remove(); _aiModalReturnFocus = null;
   if (_chatRequest) { const request = _chatRequest; _chatRequest = null; request.cancel(); }
@@ -34031,7 +34104,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v285';
+const PWA_CACHE_VERSION = 'satoru-v286';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -34236,6 +34309,7 @@ async function init() {
     }
     if (handleTreeDialogKeydown(e)) return;
     if (e.key === 'Escape' && document.getElementById('ai-modal')) { e.preventDefault(); closeAiModal(); return; }
+    if (e.key === 'Escape' && document.getElementById('share-ov')) { e.preventDefault(); closeWeekShare(); return; }
     if (e.target.matches?.(':is(.hsub,.goals-view-tabs,.today-tabs,.today-mode-tabs)[role="tablist"] [role="tab"]') && ['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
       const tabs = Array.from(e.target.closest('[role="tablist"]').querySelectorAll('[role="tab"]'));
       const at = tabs.indexOf(e.target); let next = at;

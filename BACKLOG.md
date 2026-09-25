@@ -1,5 +1,10 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R04D / v286:** verified account archive download, RFC 5545 .ics with stable
+  UIDs, localized 2× «Your week» PNG, dated memory export. See EXPORT-V286-QA.md.
+- [ ] **R04D follow-up:** import a generated .ics into Apple and Google Calendar on a
+  real device; check the iOS share sheet for the week image.
+
 - [x] **R04C / v285:** weekly review and chat have timeout, cancel and late-response
   fencing; server provider calls time out. See AI-LIFECYCLE-V285-QA.md.
 - [ ] **R04C follow-up:** move category suggestion, stuck-task step, day recap,

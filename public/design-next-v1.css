@@ -769,3 +769,16 @@
 :root[data-design=next] .chat-msg.typing{display:flex;flex-wrap:wrap;align-items:center;gap:var(--sp-2)}
 :root[data-design=next] .chat-msg.typing .chat-stop{min-height:44px;margin-left:auto;letter-spacing:normal}
 :root[data-design=next] #helper-modal .chat-msg.typing .chat-stop{min-height:44px}
+/* R04D (v286): exports report what was saved; the week card is a readable, accessible dialog. */
+:root[data-design=next] .week-share-box{max-width:640px}
+:root[data-design=next] .week-share-box h2{padding-right:48px}
+:root[data-design=next] .week-share-box h2:focus{outline:none}
+:root[data-design=next] .week-share-box>.modal-x{display:flex;align-items:center;justify-content:center;width:44px;height:44px}
+:root[data-design=next] .week-share-card{margin:var(--sp-3) 0;border-radius:14px;overflow:hidden}
+:root[data-design=next] .week-share-card svg{display:block;width:100%;height:auto}
+:root[data-design=next] .week-share-actions{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+:root[data-design=next] .week-share-actions .btn{min-height:44px}
+:root[data-design=next] .week-share-status{min-height:1.4em;margin:var(--sp-2) 0 0;font-size:var(--type-meta)}
+:root[data-design=next] .account-export-status{margin:var(--sp-2) 0 0;font-size:var(--type-meta);line-height:1.45;color:var(--text-soft);overflow-wrap:anywhere}
+:root[data-design=next] .account-export-status.is-error{color:var(--text);border-left:3px solid var(--warn);padding-left:var(--sp-2)}
+:root[data-design=next] .account-export-status:empty{display:none}
