@@ -15,7 +15,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R04D | export | **published** v286 | `1c3adf0` | both domains commit `1c3adf0`, `satoru-v286`; 18/18 SHA256 (9 files × 2); login smoke 0 errors; unauthenticated `/api/account/export` 401 (now reported in UI) |
 | R05 | remaining screens by R03B (owner choice 25.09: «Экраны + Тень») | **published** v287 | `6a036a5` | both domains commit `6a036a5`, `satoru-v287`; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R06 | Shadow companion coherence: chat, support hints, Den, voice, states and tone | **published** v288 | `3a34a13` | both domains commit `3a34a13`, `satoru-v288` at 11:52 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
-| R07 | follow-up: AI lifecycle on the remaining surfaces (owner 25.09: «делай дальше запланированное») | verified locally v289, publishing | — | — |
+| R07 | follow-up: AI lifecycle on the remaining surfaces (owner 25.09: «делай дальше запланированное») | **published** v289 | `4af8474` | both domains commit `4af8474`, `satoru-v289` at 12:31 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 
 ## Environment notes for this queue
 
@@ -74,6 +74,12 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
   match (commit blobs) for app.js, design-next-v1.css, index.html, sw.js (changed)
   and styles.css, icon-registry.js (unchanged) on both domains; login page loads the
   v288 shell without console errors. QA: SHADOW-V288-QA.md.
+
+- **R07 / v289** `4af8474` — full suite 3136/3136 PASS, 0 skipped (non-root);
+  fast-forward `2bf47a4..4af8474` to master. Both domains deployed (~3 min). SHA256
+  match against the commit blobs for app.js, design-next-v1.css, index.html, sw.js
+  (changed) and styles.css, ai-request-v1.js on both domains; login page loads the
+  v289 shell without console errors. QA: AI-SURFACES-V289-QA.md.
 
 ## Queue status after R06
 

@@ -47,3 +47,10 @@ Inspiration was already covered: its requests have their own AbortController, a
 
 **Not verified here:** WebKit, real devices, a real provider's slow answers, real
 microphone. Timeouts are client-side; the server keeps its own 120 s provider limit.
+
+## Publication
+
+`4af8474` on master 25.09; both domains report it with `satoru-v289` at 12:31 UTC;
+12/12 SHA256 matches against the commit (app.js, design-next-v1.css, index.html,
+sw.js, styles.css, ai-request-v1.js × 2 domains); login page loads the v289 shell
+without console errors.
