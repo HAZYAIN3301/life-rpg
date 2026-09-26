@@ -1,5 +1,15 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-26] v296 — extension package in the Mac app, goal import
+
+Owner reports. (1) Inside the app shell the extension ZIP navigated the web view and
+rendered as text; the link now opens in the default browser (target=_blank, the native
+shell hands it to the system). (2) Proposal commits re-validated every stored quest, so
+one old quest pointing to a deleted sphere rejected any import with «Связи целей или сфер
+не прошли проверку»; stale references kept unchanged on the same record are tolerated,
+new ones still rejected, and the 400 carries a reason code the client explains.
+OWNER-BUGS-V296-QA.md. Shell/pins v296.
+
 ## [2026-09-26] R13 — WebKit (Safari) parity, v295
 
 First WebKit run of the R04A–R12 synthetic audits (owner's Mac, 69 runs per engine vs

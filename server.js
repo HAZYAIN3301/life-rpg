@@ -3058,15 +3058,22 @@ function goalGraphSkillIds(settings) {
   }
   return ids;
 }
-function skillReferencesKnown(record, knownSkills) {
+// previous — the same record (by id) as it is already stored. A sphere deleted long ago
+// may still be referenced by an old quest; that stale id is tolerated while the record
+// keeps it, but a commit can never introduce a new reference to an unknown sphere.
+function skillReferencesKnown(record, knownSkills, previous = null) {
   const scalar = ['skillId'];
   const arrays = ['skillIds', 'backgroundSkillIds', 'layers', 'sphereIds', 'backgroundSphereIds'];
+  const legacy = (key, id) => !!previous && typeof previous === 'object'
+    && (previous[key] === id || (Array.isArray(previous[key]) && previous[key].includes(id)));
   for (const key of scalar) {
-    if (record[key] != null && (typeof record[key] !== 'string' || !knownSkills.has(record[key]))) return false;
+    if (record[key] != null && (typeof record[key] !== 'string'
+      || (!knownSkills.has(record[key]) && !legacy(key, record[key])))) return false;
   }
   for (const key of arrays) {
     if (record[key] == null) continue;
-    if (!Array.isArray(record[key]) || record[key].some((id) => typeof id !== 'string' || !knownSkills.has(id))) return false;
+    if (!Array.isArray(record[key]) || record[key].some((id) => typeof id !== 'string'
+      || (!knownSkills.has(id) && !legacy(key, id)))) return false;
   }
   return true;
 }
@@ -3088,46 +3095,62 @@ function skillTreeShapeValid(value) {
   }
   return true;
 }
-function goalCommitPayloadValid(data) {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+function goalCommitPayloadValid(data, stored = null) { return !goalCommitPayloadIssue(data, stored); }
+// Returns null for a valid goal graph, otherwise a reason code (no user content) that
+// the client turns into a precise message. stored = { goals, tasks } already on disk.
+function goalCommitPayloadIssue(data, stored = null) {
+  if (!data || typeof data !== 'object' || Array.isArray(data)) return 'shape';
   const names = Object.keys(data).sort().join(',');
   // Two-file commits remain valid for an already-open v168 tab during the
   // v169 rollout. New clients always include groups and get full referential
   // validation across all three files.
   const extended = goalGraphExtendedPayload(data);
-  if (!extended && !['goals,tasks', 'goals,groups,tasks'].includes(names)) return false;
-  if (!Array.isArray(data.goals) || !Array.isArray(data.tasks)) return false;
-  if (data.groups !== undefined && !GoalsInitiativesV1.validateGroups(data.groups)) return false;
+  if (!extended && !['goals,tasks', 'goals,groups,tasks'].includes(names)) return 'shape';
+  if (!Array.isArray(data.goals) || !Array.isArray(data.tasks)) return 'shape';
+  if (data.groups !== undefined && !GoalsInitiativesV1.validateGroups(data.groups)) return 'groups';
   const knownSkills = extended ? goalGraphSkillIds(data.settings) : null;
-  if (extended && (!knownSkills || !skillTreeShapeValid(data.skilltree))) return false;
+  if (extended && !knownSkills) return 'spheres';
+  if (extended && !skillTreeShapeValid(data.skilltree)) return 'skilltree';
+  const byId = (list) => new Map((Array.isArray(list) ? list : [])
+    .filter((item) => item && typeof item === 'object' && typeof item.id === 'string').map((item) => [item.id, item]));
+  const storedGoals = byId(stored && stored.goals), storedTasks = byId(stored && stored.tasks);
   const goalIds = new Set();
-  if (!data.goals.every((goal) => goalRecordValid(goal, goalIds))) return false;
+  if (!data.goals.every((goal) => goalRecordValid(goal, goalIds))) return 'goal_record';
   const groupIds = data.groups === undefined ? null : new Set(data.groups.map((group) => group.id));
   for (const goal of data.goals) {
-    if (goal.parentId != null && !goalIds.has(goal.parentId)) return false;
-    if (groupIds && goal.groupId != null && !groupIds.has(goal.groupId)) return false;
+    if (goal.parentId != null && !goalIds.has(goal.parentId)) return 'goal_parent';
+    if (groupIds && goal.groupId != null && !groupIds.has(goal.groupId)) return 'goal_group';
     const seen = new Set([goal.id]); let parentId = goal.parentId; let depth = 0;
     while (parentId != null) {
-      if (seen.has(parentId) || ++depth > 24) return false;
+      if (seen.has(parentId) || ++depth > 24) return 'goal_parent';
       seen.add(parentId);
       const parent = data.goals.find((candidate) => candidate.id === parentId);
-      if (!parent) return false;
+      if (!parent) return 'goal_parent';
       parentId = parent.parentId == null ? null : parent.parentId;
     }
-    if (knownSkills && !skillReferencesKnown(goal, knownSkills)) return false;
+    if (knownSkills && !skillReferencesKnown(goal, knownSkills, storedGoals.get(goal.id))) return 'goal_sphere';
   }
   const taskIds = new Set();
-  return data.tasks.every((task) => task && typeof task === 'object' && !Array.isArray(task)
-    && typeof task.id === 'string' && task.id && !taskIds.has(task.id) && (taskIds.add(task.id), true)
-    && typeof task.title === 'string' && task.title.trim()
-    && (task.goalId == null || (typeof task.goalId === 'string' && goalIds.has(task.goalId)))
-    && (!knownSkills || skillReferencesKnown(task, knownSkills)));
+  for (const task of data.tasks) {
+    if (!(task && typeof task === 'object' && !Array.isArray(task)
+      && typeof task.id === 'string' && task.id && !taskIds.has(task.id) && (taskIds.add(task.id), true)
+      && typeof task.title === 'string' && task.title.trim())) return 'task_record';
+    if (task.goalId != null && !(typeof task.goalId === 'string' && goalIds.has(task.goalId))) return 'task_goal';
+    if (knownSkills && !skillReferencesKnown(task, knownSkills, storedTasks.get(task.id))) return 'task_sphere';
+  }
+  return null;
 }
 // Goals and their linked daily tasks are one graph. Every goal mutation sends
 // both files so deleting/reparenting cannot leave a task pointing at a missing
 // node. Replaying the same candidate is safe and produces the same files.
 function commitGoalData(uid, payload) {
-  if (!payload || !goalCommitPayloadValid(payload.data)) throw new Error('invalid_goal_commit');
+  const extended = !!payload && goalGraphExtendedPayload(payload.data);
+  const storedFiles = extended ? commitmentActualFiles(uid, ['goals', 'tasks']) : null;
+  const issue = payload ? goalCommitPayloadIssue(payload.data, storedFiles && {
+    goals: storedFiles.goals.exists ? storedFiles.goals.value : [],
+    tasks: storedFiles.tasks.exists ? storedFiles.tasks.value : [],
+  }) : 'shape';
+  if (issue) { const error = new Error('invalid_goal_commit'); error.reason = issue; throw error; }
   if (Buffer.byteLength(JSON.stringify(payload.data)) > 4 * 1024 * 1024) throw new Error('goal_commit_too_large');
   if (goalGraphExtendedPayload(payload.data)) {
     const transition = assertGoalGraphTransition(uid, payload);
@@ -6778,7 +6801,9 @@ const server = http.createServer(async (req, res) => {
     } catch (error) {
       if (sendCommitmentBoundaryError(res, error)) return;
       const clientError = error && (error.message === 'invalid_goal_commit' || error.message === 'goal_commit_too_large');
-      return sendJson(res, clientError ? 400 : 500, { error: clientError ? error.message : 'goal_commit_failed_no_changes_lost' });
+      return sendJson(res, clientError ? 400 : 500, clientError
+        ? { error: error.message, ...(error.reason ? { reason: error.reason } : {}) }
+        : { error: 'goal_commit_failed_no_changes_lost' });
     }
   }
 

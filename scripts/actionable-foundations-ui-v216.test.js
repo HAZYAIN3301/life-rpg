@@ -99,9 +99,9 @@ test('generic profile PUT перечитывает память прямо пе�
 });
 
 test('release pins обновлены согласованно', () => {
-  assert.match(sw, /const CACHE = 'satoru-v295'/);
-  assert.match(html, /app\.js\?v=20260926-webkit-v295-1/);
-  assert.match(html, /styles\.css\?v=20260926-webkit-v295-1/);
+  assert.match(sw, /const CACHE = 'satoru-v296'/);
+  assert.match(html, /app\.js\?v=20260926-owner-v296-1/);
+  assert.match(html, /styles\.css\?v=20260926-owner-v296-1/);
 });
 
 test('zero-memory handoff ведёт к актуальным источникам и гасит старый task brief', () => {

@@ -171,12 +171,13 @@ test('invalid proposal graph and unknown skill references change none of the fiv
   invalidGoal.data.goals[0].skillIds = ['skill-does-not-exist'];
   const invalidTask = proposalGraph('invalid-task', 'invalid-task', baseline.data);
   invalidTask.data.tasks[0].skillId = 'skill-does-not-exist';
-  for (const invalid of [invalidGoal, invalidTask]) {
+  for (const [invalid, reason] of [[invalidGoal, 'goal_sphere'], [invalidTask, 'task_sphere']]) {
     const rejected = await api(runtime.base, '/api/goals/commit', {
       method: 'POST', cookie: account.cookie, body: invalid,
     });
     assert.equal(rejected.response.status, 400, JSON.stringify(rejected.data));
     assert.equal(rejected.data.error, 'invalid_goal_commit');
+    assert.equal(rejected.data.reason, reason);
     assert.deepEqual(await readGraph(runtime.base, account.cookie), before);
   }
 
@@ -186,6 +187,40 @@ test('invalid proposal graph and unknown skill references change none of the fiv
     method: 'POST', cookie: account.cookie, body: unknownFile,
   })).response.status, 400);
   assert.deepEqual(await readGraph(runtime.base, account.cookie), before);
+});
+
+test('an old quest pointing to a deleted sphere does not block a proposal commit; new unknown spheres still do', { timeout: 50000 }, async (t) => {
+  const runtime = await startServer();
+  t.after(() => { runtime.child.kill('SIGTERM'); fs.rmSync(runtime.dataDir, { recursive: true, force: true }); });
+  const account = await register(runtime.base, 'proposal-legacy');
+  // History written by the ordinary data path long before the sphere was deleted.
+  const legacy = plainGraph('legacy');
+  legacy.tasks.push({ id: 'old-quest', title: 'Old quest', date: '2026-08-01', done: true, skillId: 'skill-deleted', skillIds: ['skill-deleted'] });
+  legacy.goals.push({ id: 'old-goal', title: 'Old goal', skillIds: ['skill-deleted'], steps: [] });
+  await putGraph(runtime.base, account.cookie, legacy);
+
+  const next = structuredClone(legacy);
+  next.goals.push({ id: 'goal-new', title: 'New goal', parentId: 'goal-legacy', skillIds: [legacy.settings.skills[0].id], steps: [] });
+  const accepted = await api(runtime.base, '/api/goals/commit', {
+    method: 'POST', cookie: account.cookie, body: { base: graphBase(legacy), data: next },
+  });
+  assert.equal(accepted.response.status, 200, JSON.stringify(accepted.data));
+  assert.deepEqual(await readGraph(runtime.base, account.cookie), next);
+
+  for (const [mutate, reason] of [
+    [(graph) => { graph.tasks.find((task) => task.id === 'old-quest').skillId = 'skill-other-missing'; }, 'task_sphere'],
+    [(graph) => { graph.tasks[0].skillIds = ['skill-deleted']; }, 'task_sphere'],
+    [(graph) => { graph.goals.push({ id: 'goal-bad', title: 'Bad goal', skillIds: ['skill-deleted'], steps: [] }); }, 'goal_sphere'],
+    [(graph) => { graph.goals.push({ id: 'goal-orphan', title: 'Orphan', parentId: 'goal-missing', steps: [] }); }, 'goal_parent'],
+  ]) {
+    const candidateGraph = structuredClone(next); mutate(candidateGraph);
+    const rejected = await api(runtime.base, '/api/goals/commit', {
+      method: 'POST', cookie: account.cookie, body: { base: graphBase(next), data: candidateGraph },
+    });
+    assert.equal(rejected.response.status, 400, JSON.stringify(rejected.data));
+    assert.deepEqual(rejected.data, { error: 'invalid_goal_commit', reason });
+    assert.deepEqual(await readGraph(runtime.base, account.cookie), next);
+  }
 });
 
 test('extended goal commit requires exact base and rejects a stale five-file revision', { timeout: 50000 }, async (t) => {

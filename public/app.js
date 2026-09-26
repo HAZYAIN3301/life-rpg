@@ -1494,6 +1494,7 @@ const I18N_EXTRA = {
   'Установка Satoru Attention': { en: 'Install Satoru Attention', de: 'Satoru Attention installieren', uk: 'Встановлення Satoru Attention', es: 'Instalar Satoru Attention' },
   'Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.': { en: 'While the extension is being published in the store, the test installation takes three clear steps.', de: 'Während die Erweiterung im Store veröffentlicht wird, braucht die Testinstallation drei klare Schritte.', uk: 'Поки розширення публікується в магазині, тестове встановлення займає три зрозумілі кроки.', es: 'Mientras se publica la extensión en la tienda, la instalación de prueba requiere tres pasos claros.' },
   'Скачать пакет': { en: 'Download package', de: 'Paket herunterladen', uk: 'Завантажити пакет', es: 'Descargar paquete' },
+  'Откроется в браузере по умолчанию — там же устанавливается расширение.': { en: 'Opens in your default browser — the extension is installed there.', de: 'Öffnet sich in deinem Standardbrowser — dort wird die Erweiterung installiert.', uk: 'Відкриється в браузері за замовчуванням — там і встановлюється розширення.', es: 'Se abre en tu navegador predeterminado: la extensión se instala allí.' },
   'Открой страницу расширений': { en: 'Open the extensions page', de: 'Öffne die Erweiterungsseite', uk: 'Відкрий сторінку розширень', es: 'Abre la página de extensiones' },
   'Скопировать адрес': { en: 'Copy address', de: 'Adresse kopieren', uk: 'Скопіювати адресу', es: 'Copiar dirección' },
   'Включи «Режим разработчика» и нажми «Загрузить распакованное». Выбери распакованную папку Satoru Attention.': { en: 'Enable “Developer mode” and press “Load unpacked”. Select the unzipped Satoru Attention folder.', de: 'Aktiviere den „Entwicklermodus“ und klicke auf „Entpackte Erweiterung laden“. Wähle den entpackten Satoru-Attention-Ordner.', uk: 'Увімкни «Режим розробника» й натисни «Завантажити розпаковане». Обери розпаковану папку Satoru Attention.', es: 'Activa «Modo desarrollador» y pulsa «Cargar descomprimida». Elige la carpeta descomprimida de Satoru Attention.' },
@@ -1855,6 +1856,8 @@ const I18N_EXTRA = {
   'Данные изменились в другом окне. Скопируй JSON перед обновлением страницы.': { en: 'Data changed in another tab. Copy the JSON before reloading.', de: 'Daten wurden in einem anderen Tab geändert. Kopiere das JSON vor dem Neuladen.', uk: 'Дані змінилися в іншій вкладці. Скопіюй JSON перед оновленням сторінки.', es: 'Los datos cambiaron en otra pestaña. Copia el JSON antes de recargar.' },
   'Слишком большой пакет целей. Раздели JSON на части и сохрани по очереди.': { en: 'This goal batch is too large. Split the JSON and save each part in turn.', de: 'Dieses Zielpaket ist zu groß. Teile das JSON auf und speichere die Teile nacheinander.', uk: 'Цей пакет цілей завеликий. Розділи JSON і збережи частини послідовно.', es: 'Este lote de metas es demasiado grande. Divide el JSON y guarda cada parte por turno.' },
   'Связи целей или сфер не прошли проверку. Исправь JSON и попробуй снова.': { en: 'Goal or area links failed validation. Correct the JSON and try again.', de: 'Ziel- oder Bereichsverknüpfungen wurden abgelehnt. Korrigiere das JSON und versuche es erneut.', uk: 'Зв’язки цілей або сфер не пройшли перевірку. Виправ JSON і спробуй знову.', es: 'Los vínculos entre metas o áreas no pasaron la validación. Corrige el JSON e inténtalo otra vez.' },
+  'Цель или квест ссылается на сферу, которой нет в аккаунте. Проверь названия сфер в JSON и разбери его снова.': { en: 'A goal or quest points to an area that is not in your account. Check the area names in the JSON and parse it again.', de: 'Ein Ziel oder Quest verweist auf einen Bereich, den es in deinem Konto nicht gibt. Prüfe die Bereichsnamen im JSON und lies es erneut ein.', uk: 'Ціль або квест посилається на сферу, якої немає в акаунті. Перевір назви сфер у JSON і розбери його знову.', es: 'Una meta o misión apunta a un área que no existe en tu cuenta. Revisa los nombres de las áreas en el JSON y vuelve a analizarlo.' },
+  'Родительская цель из JSON не найдена. Проверь поле parent — оно должно совпадать с названием существующей или новой цели.': { en: 'A parent goal from the JSON was not found. Check the parent field — it must match the title of an existing or new goal.', de: 'Ein übergeordnetes Ziel aus dem JSON wurde nicht gefunden. Prüfe das Feld parent — es muss dem Titel eines bestehenden oder neuen Ziels entsprechen.', uk: 'Батьківську ціль із JSON не знайдено. Перевір поле parent — воно має збігатися з назвою наявної або нової цілі.', es: 'No se encontró una meta superior del JSON. Revisa el campo parent: debe coincidir con el título de una meta existente o nueva.' },
   'Сервер не сохранил цели. Исходный JSON оставлен для повторной попытки.': { en: 'The server did not save the goals. The original JSON is still here for another try.', de: 'Der Server hat die Ziele nicht gespeichert. Das ursprüngliche JSON bleibt für einen neuen Versuch erhalten.', uk: 'Сервер не зберіг цілі. Початковий JSON залишився для повторної спроби.', es: 'El servidor no guardó las metas. El JSON original sigue aquí para intentarlo de nuevo.' },
   'Подтверждение сохранения устарело. Перечитай данные перед повтором.': { en: 'The save confirmation became stale. Reload the data before retrying.', de: 'Die Speicherbestätigung ist veraltet. Lade die Daten vor einem neuen Versuch.', uk: 'Підтвердження збереження застаріло. Перечитай дані перед повтором.', es: 'La confirmación de guardado quedó obsoleta. Recarga los datos antes de reintentar.' },
   'Сеть прервала сохранение. Проверь список целей перед повтором.': { en: 'The connection broke during saving. Check the goal list before retrying.', de: 'Die Verbindung brach beim Speichern ab. Prüfe die Zielliste vor einem neuen Versuch.', uk: 'З’єднання обірвалося під час збереження. Перевір список цілей перед повтором.', es: 'La conexión se cortó al guardar. Revisa la lista de metas antes de reintentar.' },
@@ -12841,8 +12844,14 @@ async function proposalDataCommit(data) {
       if (await commitmentBoundaryRejected(response)) return reject(t('Данные изменились в другом окне. Скопируй JSON перед обновлением страницы.'));
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
+        // v296: the server names the failed check (no content) — say which link is wrong.
+        const reason = typeof body.reason === 'string' ? body.reason : '';
         return reject(t(body.error === 'goal_commit_too_large'
           ? 'Слишком большой пакет целей. Раздели JSON на части и сохрани по очереди.'
+          : body.error === 'invalid_goal_commit' && ['goal_sphere', 'task_sphere'].includes(reason)
+            ? 'Цель или квест ссылается на сферу, которой нет в аккаунте. Проверь названия сфер в JSON и разбери его снова.'
+          : body.error === 'invalid_goal_commit' && reason === 'goal_parent'
+            ? 'Родительская цель из JSON не найдена. Проверь поле parent — оно должно совпадать с названием существующей или новой цели.'
           : body.error === 'invalid_goal_commit' || body.error === 'invalid_commitment_graph'
             ? 'Связи целей или сфер не прошли проверку. Исправь JSON и попробуй снова.'
             : 'Сервер не сохранил цели. Исходный JSON оставлен для повторной попытки.'));
@@ -25040,13 +25049,19 @@ function closeBrowserCompanionInstaller({ restoreFocus = true } = {}) {
 function openBrowserCompanionInstaller(opener) {
   if (BROWSER_COMPANION_STORE_URL) { window.open(BROWSER_COMPANION_STORE_URL, '_blank', 'noopener'); return; }
   closeBrowserCompanionInstaller({ restoreFocus: false });
+  // v296: the Mac/iPhone app's web view cannot save files and showed the ZIP as text.
+  // Inside the app the package opens in the default browser, where the extension lives.
+  const inAppShell = !!window.webkit?.messageHandlers?.satoruShell;
+  const downloadLink = inAppShell
+    ? `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" target="_blank" rel="noopener">${t('Скачать пакет')}</a><p>${t('Откроется в браузере по умолчанию — там же устанавливается расширение.')}</p>`
+    : `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>${t('Скачать пакет')}</a>`;
   const overlay = document.createElement('div'); overlay.id = 'browser-companion-installer'; overlay.className = 'attention-overlay browser-companion-installer-overlay';
   overlay.innerHTML = `<section class="browser-companion-installer" role="dialog" aria-modal="true" aria-labelledby="browser-companion-installer-title" aria-describedby="browser-companion-installer-description">
     <button type="button" class="modal-x" data-action="browser-companion-close-installer" aria-label="${t('Закрыть')}">✕</button>
     <span class="browser-companion-installer-kicker">Satoru Attention</span><h2 id="browser-companion-installer-title" tabindex="-1">${t('Установка Satoru Attention')}</h2>
     <p id="browser-companion-installer-description">${t('Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.')}</p>
     <ol class="browser-companion-install-steps">
-      <li><span>1</span><div><b>${t('Скачать пакет')}</b><a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>${t('Скачать пакет')}</a></div></li>
+      <li><span>1</span><div><b>${t('Скачать пакет')}</b>${downloadLink}</div></li>
       <li><span>2</span><div><b>${t('Открой страницу расширений')}</b><code>brave://extensions</code><button type="button" class="btn ghost" data-action="browser-companion-copy-address" data-address="brave://extensions">${t('Скопировать адрес')}</button></div></li>
       <li><span>3</span><div><b>${t('Завершить установку')}</b><p>${t('Включи «Режим разработчика» и нажми «Загрузить распакованное». Выбери распакованную папку Satoru Attention.')}</p></div></li>
     </ol>
@@ -34496,7 +34511,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v295';
+const PWA_CACHE_VERSION = 'satoru-v296';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
