@@ -13,6 +13,7 @@ const BOUNDARY_ALARM = 'satoru-attention-boundary';
 const RECOVERY_ALARM = 'satoru-attention-recovery';
 const PROTECTION_ALARM = 'satoru-protection-schedule';
 const SITE_SCRIPT_PREFIX = 'satoru-site-';
+const REDDIT_GUARD_ID = 'satoru-guard-reddit';
 const RULE_BASE = 20_000;
 const CLOCK_OBSERVE_INTERVAL_MS = 30_000;
 const EXTENSION_ROOT = chrome.runtime.getURL('');
@@ -180,11 +181,19 @@ async function expectedScripts(state) {
   return scripts;
 }
 
-async function reconcileContentScripts(state) {
+// 0.8.0: Reddit stays open; the guard closes 18+ subreddits/profiles and hides their posts.
+// Same conditions as the adult list, and only with all-site access (needed to run on reddit.com).
+async function expectedGuardScripts(protectionSettings, at) {
+  if (!Protection.redditGuardActive(protectionSettings, new Date(at)) || !(await broadProtectionPermission())) return [];
+  return [{ id: REDDIT_GUARD_ID, matches: ['*://*.reddit.com/*'], js: ['reddit-guard.js'], css: ['reddit-guard.css'],
+    runAt: 'document_start', persistAcrossSessions: true, allFrames: false }];
+}
+
+async function reconcileContentScripts(state, protectionSettings, at) {
   const registered = await chrome.scripting.getRegisteredContentScripts();
-  const ours = registered.map((script) => script.id).filter((id) => id.startsWith(SITE_SCRIPT_PREFIX));
+  const ours = registered.map((script) => script.id).filter((id) => id.startsWith(SITE_SCRIPT_PREFIX) || id === REDDIT_GUARD_ID);
   if (ours.length) await chrome.scripting.unregisterContentScripts({ ids: ours });
-  const scripts = await expectedScripts(state);
+  const scripts = [...await expectedScripts(state), ...await expectedGuardScripts(protectionSettings || await loadProtection(), at || currentIso())];
   if (scripts.length) await chrome.scripting.registerContentScripts(scripts);
 }
 
@@ -207,10 +216,13 @@ async function verifiedStatus() {
     if (enforcement.permittedSites !== enabled.length || (protection.enabled && !broad)) enforcement.state = 'permission_removed';
     else {
       const rules = await chrome.declarativeNetRequest.getDynamicRules();
-      const scripts = (await chrome.scripting.getRegisteredContentScripts()).filter(script => script.id.startsWith(SITE_SCRIPT_PREFIX));
+      const registeredScripts = await chrome.scripting.getRegisteredContentScripts();
+      const scripts = registeredScripts.filter(script => script.id.startsWith(SITE_SCRIPT_PREFIX));
+      const guards = registeredScripts.filter(script => script.id === REDDIT_GUARD_ID);
       const rulesets = (await chrome.declarativeNetRequest.getEnabledRulesets()).slice().sort();
       const applied = Health.sameRules(rules, await expectedRules(state, protection, at))
         && Health.sameScripts(scripts, await expectedScripts(state))
+        && Health.sameScripts(guards, await expectedGuardScripts(protection, at))
         && JSON.stringify(rulesets) === JSON.stringify(await expectedRulesets(protection, at));
       enforcement.state = !applied ? 'unknown' : enabled.length || protection.enabled ? 'active' : 'not_configured';
     }
@@ -320,7 +332,7 @@ async function reconcileEnforcement(state, options = {}) {
   const at = currentIso();
   const protectionSettings = options.protectionSettings || await loadProtection();
   await reconcileRules(state, protectionSettings, at);
-  await reconcileContentScripts(state);
+  await reconcileContentScripts(state, protectionSettings, at);
   await scheduleBoundary(state, at);
   await scheduleProtectionBoundary(protectionSettings);
   if (options.redirectTabs !== false) await redirectDeniedTabs(state, protectionSettings, at);

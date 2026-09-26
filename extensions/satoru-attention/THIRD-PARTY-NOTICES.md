@@ -32,12 +32,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-## OISD NSFW (adult-content rulesets, since 0.7.0)
+## Adult-content rulesets (OISD NSFW since 0.7.0; HaGeZi, StevenBlack, Satoru since 0.8.0)
 
-- Files: `rules/adult-redirect.json`, `rules/adult-block.json` (generated), metadata `adult-list.js`.
-- Source: OISD NSFW, https://nsfw.oisd.nl/domainswild2 — maintainer Stephan van Ruth, https://oisd.nl.
-- Version: 202609261407 (upstream header), SHA-256 of the download recorded in `adult-list.js`.
-- License: GNU General Public License v3.0 — full text in `rules/LICENSE-OISD.txt`. The list is
-  shipped as separate data files; the domains are unchanged apart from normalisation (lower-case,
-  syntax check, removal of subdomains already covered by a listed parent, never Satoru's own hosts).
-- Rebuild: `node scripts/build-browser-adult-ruleset-v297.mjs <downloaded list>` in the web repository.
+- Files: `rules/adult-redirect.json`, `rules/adult-block.json` (generated), metadata `adult-list.js`
+  (name, URL, license, upstream version and SHA-256 of every source).
+- OISD NSFW — https://nsfw.oisd.nl/domainswild2, maintainer Stephan van Ruth, https://oisd.nl.
+  License: GNU General Public License v3.0.
+- HaGeZi's NSFW — https://github.com/hagezi/dns-blocklists. License: GNU General Public License v3.0.
+- Full GPL-3.0 text for both: `rules/LICENSE-GPL-3.0.txt`.
+- StevenBlack hosts, porn-only alternate — https://github.com/StevenBlack/hosts. License: MIT,
+  text in `rules/LICENSE-MIT-StevenBlack.txt`.
+- Satoru supplement — `rules/adult-extra.txt`, part of this extension.
+- The lists are shipped as separate data files; domains are unchanged apart from normalisation
+  (lower-case, syntax check, removal of subdomains already covered by a listed parent, never
+  Satoru's own hosts or whole general platforms such as reddit.com, tumblr.com or itch.io).
+- Rebuild: `node scripts/build-browser-adult-ruleset-v299.mjs <oisd> <hagezi> <stevenblack>` in
+  the web repository.

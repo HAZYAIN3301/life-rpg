@@ -115,11 +115,11 @@ test('0.7.0 adult list: default category, exact ruleset choice and honest counts
   assert.equal(Protection.summary({ ...on, categories: { adult: false } }, Catalog, new Date(), list).adultList.active, false);
 });
 
-test('0.7.0 bundled rulesets: manifest, rule shape, allowlist precedence and metadata agree', () => {
+test('bundled rulesets (0.7.0+): manifest, rule shape, allowlist precedence and metadata agree', () => {
   const fs = require('node:fs');
   const path = require('node:path');
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'manifest.json'), 'utf8'));
-  assert.equal(manifest.version, '0.7.0');
+  assert.equal(manifest.version, '0.8.0');
   assert.deepEqual(manifest.declarative_net_request.rule_resources, [
     { id: 'adult_redirect', enabled: false, path: 'rules/adult-redirect.json' },
     { id: 'adult_block', enabled: false, path: 'rules/adult-block.json' },
@@ -127,8 +127,11 @@ test('0.7.0 bundled rulesets: manifest, rule shape, allowlist precedence and met
   const meta = require('./adult-list.js');
   const redirect = JSON.parse(fs.readFileSync(path.join(__dirname, 'rules/adult-redirect.json'), 'utf8'));
   const block = JSON.parse(fs.readFileSync(path.join(__dirname, 'rules/adult-block.json'), 'utf8'));
-  assert.equal(meta.license, 'GPL-3.0');
-  assert.ok(fs.readFileSync(path.join(__dirname, 'rules/LICENSE-OISD.txt'), 'utf8').includes('GNU GENERAL PUBLIC LICENSE'));
+  assert.deepEqual(meta.sources.map((source) => [source.name, source.license]), [
+    ['OISD NSFW', 'GPL-3.0'], ['HaGeZi NSFW', 'GPL-3.0'], ['StevenBlack porn-only', 'MIT'], ['Satoru supplement', 'Satoru']]);
+  for (const source of meta.sources) assert.match(source.sha256, /^[0-9a-f]{64}$/);
+  assert.ok(fs.readFileSync(path.join(__dirname, 'rules/LICENSE-GPL-3.0.txt'), 'utf8').includes('GNU GENERAL PUBLIC LICENSE'));
+  assert.ok(fs.readFileSync(path.join(__dirname, 'rules/LICENSE-MIT-StevenBlack.txt'), 'utf8').includes('The MIT License'));
   assert.equal(redirect.length, meta.rules); assert.equal(block.length, meta.rules);
   const domains = new Set();
   for (const [index, rule] of block.entries()) {
@@ -144,8 +147,11 @@ test('0.7.0 bundled rulesets: manifest, rule shape, allowlist precedence and met
   }
   assert.equal(domains.size, meta.domains);
   assert.ok(meta.domains > 100_000);
-  for (const own of ['satoruapp.com', 'life-rpg-production-416a.up.railway.app']) assert.equal(domains.has(own), false);
-  for (const popular of ['pornhub.com', 'spankbang.com', 'eporner.com', 'beeg.com', 'xhamster.desi']) assert.ok(domains.has(popular), popular);
+  for (const kept of ['satoruapp.com', 'life-rpg-production-416a.up.railway.app', 'reddit.com', 'redd.it', 'tumblr.com', 'imgur.com', 'itch.io', 'blogspot.com', 'x.com'])
+    assert.equal(domains.has(kept), false, kept);
+  for (const popular of ['pornhub.com', 'spankbang.com', 'eporner.com', 'beeg.com', 'xhamster.desi', 'redgifs.com',
+    // 0.8.0: sites the owner reported as still reachable with 0.7.0
+    'playbun.com', 'igenfun.com', 'dieboerse.de', 'viraly.wtf', 'furaffinity.net', 'kemono.cr', 'candy.ai', 'joyreactor.cc']) assert.ok(domains.has(popular), popular);
   for (const rule of redirect) {
     assert.deepEqual(rule.action, { type: 'redirect', redirect: { extensionPath: '/block.html' } });
     assert.deepEqual(rule.condition.resourceTypes, ['main_frame']);
@@ -156,4 +162,25 @@ test('0.7.0 bundled rulesets: manifest, rule shape, allowlist precedence and met
   assert.match(worker, /importScripts\('core\.js', 'protection\.js', 'protection-catalog\.js', 'adult-list\.js', 'health\.js'\);/);
   assert.match(worker, /chrome\.declarativeNetRequest\.updateEnabledRulesets\(\{\s*enableRulesetIds: wanted, disableRulesetIds:/);
   assert.match(worker, /getEnabledRulesets\(\)\)\.slice\(\)\.sort\(\);[\s\S]*JSON\.stringify\(rulesets\) === JSON\.stringify\(await expectedRulesets\(protection, at\)\)/);
+});
+
+test('0.8.0 Reddit guard: follows the adult category, registered only with all-site access, verified by health', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const on = Protection.normalizeSettings({ enabled: true, categories: { adult: true } });
+  assert.equal(Protection.redditGuardActive(on), true);
+  assert.equal(Protection.redditGuardActive({ ...on, categories: { adult: false } }), false);
+  assert.equal(Protection.redditGuardActive({ ...on, enabled: false }), false);
+  const worker = fs.readFileSync(path.join(__dirname, 'service-worker.js'), 'utf8');
+  assert.match(worker, /if \(!Protection\.redditGuardActive\(protectionSettings, new Date\(at\)\) \|\| !\(await broadProtectionPermission\(\)\)\) return \[\];/);
+  assert.match(worker, /matches: \['\*:\/\/\*\.reddit\.com\/\*'\], js: \['reddit-guard\.js'\], css: \['reddit-guard\.css'\]/);
+  assert.match(worker, /Health\.sameScripts\(guards, await expectedGuardScripts\(protection, at\)\)/);
+  const guard = fs.readFileSync(path.join(__dirname, 'reddit-guard.js'), 'utf8');
+  // Only Reddit's own same-origin metadata is read; unknown answers fail open; verdicts stay local.
+  assert.match(guard, /\/r\/\$\{item\.name\}\/about\.json\?raw_json=1/);
+  assert.match(guard, /data\.over18 === true/);
+  assert.match(guard, /data\.subreddit\.over_18 === true/);
+  assert.match(guard, /const REVEAL_AFTER_MS = 4000;/);
+  assert.doesNotMatch(guard, /https?:\/\/(?!www\.reddit\.com|old\.reddit\.com)[a-z0-9.-]+\//i);
+  assert.match(fs.readFileSync(path.join(__dirname, 'reddit-guard.css'), 'utf8'), /shreddit-post\[nsfw\], shreddit-post\[is-nsfw\], \.thing\.over18/);
 });

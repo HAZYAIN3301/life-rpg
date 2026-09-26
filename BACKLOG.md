@@ -7,6 +7,12 @@
   page reports success. Needs WKDownloadDelegate (or web fallback after owner check).
 - [x] **Browser extension blocking strength (owner 26.09):** Satoru Attention 0.7.0 bundles
   OISD NSFW (505 602 domains). See EXTENSION-ADULT-LIST-V297-QA.md.
+- [x] **v299:** merged adult list + Reddit NSFW guard (extension 0.8.0). EXTENSION-REDDIT-V299-QA.md.
+- [ ] **Extension 0.9.0 (owner 26.09):** lock for 18+ (7/30/90 days, no early unlock, only
+  tightening), lively Shadow motivation on block pages, chess puzzle every N minutes for
+  doomscroll sites, Chrome Web Store submission kit, Brave policy profile (force-install,
+  no private windows/dev mode) — owner submits/installs. iOS Family Controls: spec for the
+  native session.
 - [ ] **Extension list freshness:** the adult list updates only with a new extension build;
   consider a server-refreshed list after the store listing (owner chose bundled for now).
 

@@ -1,5 +1,12 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-26] v299 — Satoru Attention 0.8.0: merged adult list, Reddit NSFW guard
+
+Reported sites still opened with OISD alone. Merged OISD + HaGeZi + StevenBlack + Satoru
+supplement (535 578 domains, general platforms never listed whole). Reddit stays open; the new
+reddit-guard closes communities/profiles Reddit marks 18+ and hides their posts in feeds.
+EXTENSION-REDDIT-V299-QA.md. Shell/pins v299.
+
 ## [2026-09-26] v298 — app shell downloads open in the system browser
 
 The TestFlight Mac app still rendered the extension ZIP as text. Inside the shell every

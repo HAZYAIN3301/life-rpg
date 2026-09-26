@@ -7,6 +7,10 @@
   const status = document.querySelector('#block-schedule');
   const options = document.querySelector('#open-options');
   I18n.localizeDocument(language);
+  // 0.8.0: the Reddit guard says why only this part of Reddit is closed.
+  const reason = new URLSearchParams(location.search).get('reason');
+  const reasonLine = document.querySelector('#block-reason');
+  if (reason === 'reddit' && reasonLine) { reasonLine.textContent = t('blockedRedditNsfw'); reasonLine.hidden = false; }
   title.focus({ preventScroll: true });
 
   chrome.runtime.sendMessage({ type: 'GET_OPTIONS' }).then((result) => {

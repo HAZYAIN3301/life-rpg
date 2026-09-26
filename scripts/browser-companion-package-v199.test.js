@@ -31,7 +31,7 @@ test('every manifest file exists and both v215 compatibility ZIPs are real artif
     assert.ok(messages.extensionName?.message);
     assert.ok(messages.extensionDescription?.message);
   }
-  assert.equal(manifest.version, '0.7.0');
+  assert.equal(manifest.version, '0.8.0');
   for (const name of ['satoru-attention-v215.zip', 'satoru-attention-store-v215.zip']) {
     const zip = path.join(ROOT, 'public', 'downloads', name);
     assert.ok(fs.existsSync(zip), `${name}: install artifact must not ship as a 404`);
@@ -65,7 +65,13 @@ test('companion stays local-only; attention is exact-host and protection is expl
   const options = read('options.js');
   const worker = read('service-worker.js');
   const bridge = read('bridge.js');
-  const allJs = fs.readdirSync(EXT).filter((name) => name.endsWith('.js') && !name.endsWith('.test.js')).map(read).join('\n');
+  const allJs = fs.readdirSync(EXT).filter((name) => name.endsWith('.js') && !name.endsWith('.test.js') && name !== 'reddit-guard.js').map(read).join('\n');
+  // 0.8.0 exception, documented in README and the privacy page: the Reddit guard reads Reddit's own
+  // same-origin about.json (relative path, on reddit.com only). Nothing else may touch the network.
+  const redditGuard = read('reddit-guard.js');
+  assert.equal((redditGuard.match(/\bfetch\s*\(/g) || []).length, 1);
+  assert.match(redditGuard, /const path = item\.kind === 'r' \? `\/r\/\$\{item\.name\}\/about\.json\?raw_json=1` : `\/user\/\$\{item\.name\}\/about\.json\?raw_json=1`;\s*const response = await fetch\(path,/);
+  assert.doesNotMatch(redditGuard, /XMLHttpRequest|WebSocket|sendBeacon|chrome\.storage\.sync|https?:\/\//);
   assert.match(core, /return host \? \[`https:\/\/\$\{host\}\/\*`, `http:\/\/\$\{host\}\/\*`\] : \[\]/);
   assert.match(options, /const origins = Core\.hostPatterns\(hostname\)[\s\S]*chrome\.permissions\.request\(\{ origins \}\)/);
   assert.match(options, /Core\.hostPatterns\(hostname\)/);

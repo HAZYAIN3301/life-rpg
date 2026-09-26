@@ -1,0 +1,3 @@
+/* Satoru Attention 0.8.0 — Reddit NSFW guard: hide posts Reddit already marks as 18+ before the
+ * script checks their subreddit. Selectors only match explicit NSFW markers. */
+shreddit-post[nsfw], shreddit-post[is-nsfw], .thing.over18, [data-nsfw="true"] { display: none !important; }

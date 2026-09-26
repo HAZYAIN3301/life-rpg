@@ -231,6 +231,11 @@
     return rules;
   }
 
+  // 0.8.0: the Reddit NSFW guard follows the adult category exactly (reddit.com itself is never listed).
+  function redditGuardActive(settings, at = new Date()) {
+    return adultRulesets(settings, at).length > 0;
+  }
+
   function defaultAdultList() {
     return typeof globalThis !== 'undefined' && globalThis.SatoruAdultList ? globalThis.SatoruAdultList : null;
   }
@@ -263,7 +268,7 @@
   }
 
   return Object.freeze({
-    VERSION, MAX_LIST_ITEMS, CATEGORY_KEYS, RESERVED_DOMAINS, RESOURCE_TYPES, ADULT_RULESETS, adultRulesets,
+    VERSION, MAX_LIST_ITEMS, CATEGORY_KEYS, RESERVED_DOMAINS, RESOURCE_TYPES, ADULT_RULESETS, adultRulesets, redditGuardActive,
     SEARCH_DOMAINS, YOUTUBE_RESTRICT_DOMAINS, emptySettings, normalizeSettings,
     normalizeDomain, uniqueDomains, normalizeSchedule, recreationActive,
     nextScheduleBoundary, blockedDomains, decision, buildRules, summary,

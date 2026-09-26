@@ -1,0 +1,11 @@
+# Satoru supplement to the upstream adult lists. One domain per line; subdomains are covered.
+# Added only for sites that are adult-first and missing from OISD NSFW, HaGeZi NSFW and
+# StevenBlack porn at build time. Reason and date per group.
+# 2026-09-26 — reported by the owner as still reachable with 0.7.0:
+playbun.com
+igenfun.com
+dieboerse.de
+viraly.wtf
+# 2026-09-26 — nudity generators missing from the upstream lists:
+clothoff.io
+nsfwgenerator.ai
