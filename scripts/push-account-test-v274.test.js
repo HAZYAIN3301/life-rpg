@@ -12,6 +12,8 @@ test('account push test remains reachable without enrolling this browser', () =>
       ensurePushState() {}, ensureApkState() {}, t: x => x,
       // R10: the card heading and APK link use the shared icon/emoji helpers.
       esc: x => String(x), emojiFree: x => String(x).replace(/^[\p{Extended_Pictographic}\uFE0F\s]+/u, ''), satoruIconHTML: () => '',
+      // R13: the card checks the platform for the iOS push hint and the APK offer.
+      isIOS: () => false,
       _pwaRegistration: 'ready', _deferredInstall: null, _pwaInstallBusy: false, _pushBusy: false };
     vm.createContext(context); vm.runInContext(card, context);
     assert.equal((context.pwaCard().match(/data-action="push-test"/g) || []).length, 1);

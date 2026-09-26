@@ -1,5 +1,14 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **R13 / v295:** WebKit parity — click focus in Safari, Settings → App push
+  controls/iOS hint/APK gate. See WEBKIT-PARITY-V295-QA.md.
+- [ ] **Owner device checklist (26.09):** iPhone Safari + installed PWA — VoiceOver on
+  auth, dialogs, .ics import in Apple/Google Calendar (no duplicates on re-import),
+  «Your week» share sheet, select height, large text, reduced motion. Results go into
+  RELEASE-CHECKPOINT-R04-R06.md.
+- [ ] **WebKit observation:** native `<select>` renders 23 px on macOS Safari (ignores
+  min-height); decide after the iPhone check whether selects need a custom appearance.
+
 - [x] **R11 / v293:** dialogs and real content — programs create content in the
   interface language, sphere names in labels translated, legacy windows are dialogs.
   See DIALOGS-V293-QA.md.

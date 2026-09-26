@@ -2089,6 +2089,8 @@ const I18N_EXTRA = {
   '🔕 Выключить уведомления': { en: '🔕 Disable notifications', de: '🔕 Benachrichtigungen deaktivieren', uk: '🔕 Вимкнути сповіщення', es: '🔕 Desactivar notificaciones' },
   'Проверить': { en: 'Test', de: 'Testen', uk: 'Перевірити', es: 'Probar' },
   '✓ компаньон зовёт 🌅 утром и 🌙 вечером': { en: '✓ companion calls 🌅 morning and 🌙 evening', de: '✓ Begleiter ruft 🌅 morgens und 🌙 abends', uk: '✓ супутник кличе 🌅 вранці й 🌙 ввечері', es: '✓ el compañero llama 🌅 por la mañana y 🌙 por la noche' },
+  '✓ компаньон зовёт утром и вечером': { en: '✓ companion calls in the morning and evening', de: '✓ Begleiter ruft morgens und abends', uk: '✓ супутник кличе вранці й ввечері', es: '✓ el compañero llama por la mañana y por la noche' },
+  'На iPhone и iPad уведомления работают в установленном приложении: Поделиться → «На экран Домой».': { en: 'On iPhone and iPad, notifications work in the installed app: Share → “Add to Home Screen”.', de: 'Auf iPhone und iPad funktionieren Benachrichtigungen in der installierten App: Teilen → „Zum Home-Bildschirm“.', uk: 'На iPhone та iPad сповіщення працюють у встановленому застосунку: Поділитися → «На екран Додому».', es: 'En iPhone y iPad, las notificaciones funcionan en la app instalada: Compartir → «Añadir a pantalla de inicio».' },
   '🧭 домен': { en: '🧭 domain', de: '🧭 Domäne', uk: '🧭 домен', es: '🧭 dominio' },
   'авто': { en: 'auto', de: 'auto', uk: 'авто', es: 'auto' },
   '🏁 проект': { en: '🏁 project', de: '🏁 Projekt', uk: '🏁 проєкт', es: '🏁 proyecto' },
@@ -34302,7 +34304,8 @@ function toggleReminders() {
 // Точка входа — проверяем сессию, потом грузим нужный экран
 // ---- PWA: «установи как приложение» ----
 function isStandalone() { return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true; }
-function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream; }
+// iPadOS Safari по умолчанию называет себя Mac — узнаём его по сенсорному экрану.
+function isIOS() { return (/iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1); }
 // Заметный гид-баннер установки (на «Сегодня»), закрываемый
 // ---- Founder Pass: Фаза 0 (MONETIZATION-VALIDATION-BRIEF) ----
 //
@@ -34426,15 +34429,16 @@ function pwaCard() {
   const offline = _pwaRegistration === 'ready' ? t('Офлайн-режим готов.')
     : (_pwaRegistration === 'failed' || _pwaRegistration === 'unsupported' ? t('Офлайн-режим пока недоступен в этом браузере.') : t('Проверяем офлайн-режим…'));
   const install = installed ? `<span class="muted">${t('✓ Уже установлено как приложение')}</span>`
-    : (_deferredInstall ? `<button class="btn" data-action="install-app" ${_pwaInstallBusy ? 'disabled' : ''}>${t('📲 Установить приложение')}</button>`
+    : (_deferredInstall ? `<button class="btn" data-action="install-app" ${_pwaInstallBusy ? 'disabled' : ''}>${satoruIconHTML('action.import', 'button-glyph', '')} ${esc(emojiFree(t('📲 Установить приложение')))}</button>`
       : `<span class="muted" style="font-size:12px">${t('Меню браузера → «Установить приложение» / «На экран Домой»')}</span>`);
-  const apk = State.apkAvailable ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">${satoruIconHTML('action.import', 'button-glyph', '📥')} ${esc(emojiFree(t('📥 Скачать для Android (.apk)')))}</a><span class="muted" style="font-size:12px">${t('установка из файла')}</span></div>` : '';
-  const push = !canPush ? `<p class="muted" style="font-size:11.5px;margin:10px 0 0">${t('Уведомления недоступны в этом браузере.')}</p>`
+  const apk = State.apkAvailable && !isIOS() ? `<div class="pwa-row" style="margin-top:10px"><a class="btn ghost" href="satoru.apk" download="Satoru.apk">${satoruIconHTML('action.import', 'button-glyph', '📥')} ${esc(emojiFree(t('📥 Скачать для Android (.apk)')))}</a><span class="muted" style="font-size:12px">${t('установка из файла')}</span></div>` : '';
+  // R13: на iPhone/iPad Web Push есть только у установленного приложения — говорим, как его получить.
+  const push = !canPush ? `<p class="muted" style="font-size:12px;margin:10px 0 0">${t(isIOS() && !installed ? 'На iPhone и iPad уведомления работают в установленном приложении: Поделиться → «На экран Домой».' : 'Уведомления недоступны в этом браузере.')}</p>`
     : (Notification.permission === 'denied'
       ? `<p class="account-notice" role="status">${t('Уведомления заблокированы в браузере. Разреши их в настройках сайта, затем повтори.')}</p>`
     : (State.pushOn
-      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable" ${_pushBusy ? 'disabled' : ''}>${t('🔕 Выключить уведомления')}</button><button class="btn ghost sm" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить')}</button><span class="muted" style="font-size:12px">${t('✓ компаньон зовёт 🌅 утром и 🌙 вечером')}</span></div>`
-      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable" ${_pushBusy ? 'disabled' : ''}>${t('🔔 Включить уведомления')}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`));
+      ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-disable" ${_pushBusy ? 'disabled' : ''}>${satoruIconHTML('status.bell-muted', 'button-glyph', '')} ${esc(emojiFree(t('🔕 Выключить уведомления')))}</button><button class="btn ghost sm" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить')}</button><span class="muted" style="font-size:12px">${t('✓ компаньон зовёт утром и вечером')}</span></div>`
+      : `<div class="pwa-row" style="margin-top:10px"><button class="btn" data-action="push-enable" ${_pushBusy ? 'disabled' : ''}>${satoruIconHTML('status.bell', 'button-glyph', '')} ${esc(emojiFree(t('🔔 Включить уведомления')))}</button><span class="muted" style="font-size:12px">${t('позову вернуться — тепло, без вины')}</span></div>`));
   return `<div class="card pwa-card" aria-busy="${_pwaInstallBusy || _pushBusy}"><h3>${esc(emojiFree(t('📲 Приложение')))}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 6px">${t('Установи Satoru как приложение: иконка на телефоне и офлайн-режим. Уведомления — только по отдельному согласию ниже.')}</p>
     <p class="muted pwa-status" role="status">${offline} ${t('Установка и уведомления включаются отдельно.')}</p>
@@ -34492,7 +34496,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v294';
+const PWA_CACHE_VERSION = 'satoru-v295';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -34644,6 +34648,16 @@ function applyEntryRoute() {
     : { action: intent.action, target: intent.target, source: 'shortcut' };
 }
 
+// R13: Safari/WebKit не ставит фокус на кнопку при щелчке или касании. Окна запоминают,
+// откуда их открыли, через document.activeElement — без этого фокус после закрытия
+// уходил на body, а «Отменить запрос» ИИ не получал фокус. Только настоящие нажатия:
+// программный a.click() временной ссылки скачивания не должен забирать фокус.
+function focusActivatedControl(event) {
+  if (!event.isTrusted || !(event.target instanceof Element)) return;
+  const control = event.target.closest('button, a[href], summary');
+  if (!control || control.disabled || document.activeElement === control) return;
+  control.focus({ preventScroll: true });
+}
 async function init() {
   captureEntryRoute();
   initPWA();
@@ -34652,6 +34666,7 @@ async function init() {
   startI18nObserver();
   observeGuideV3BlockingSurfaces();
   document.addEventListener('submit', onSubmit);
+  document.addEventListener('click', focusActivatedControl, true);
   document.addEventListener('click', onClick);
   document.addEventListener('toggle', (e) => {
     const panel = e.target;

@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-26] R13 — WebKit (Safari) parity, v295
+
+First WebKit run of the R04A–R12 synthetic audits (owner's Mac, 69 runs per engine vs
+Chromium). WebKit-only defects fixed: Safari does not focus a clicked/tapped button, so
+openers read from document.activeElement were BODY and AI pending focus never reached
+«Cancel request» — focusActivatedControl (capture phase, trusted clicks only) focuses
+the pressed control before action handlers. Settings → App: Web Push buttons/status
+without emoji (bell registry icons), 12 px note, honest iPhone/iPad hint (push only in
+the Home Screen app), no Android APK offer on iOS; isIOS recognises iPadOS. Native
+selects 23 px on macOS WebKit and missing backdrop blur recorded, not changed.
+WEBKIT-PARITY-V295-QA.md. Shell/pins v295.
+
 ## [2026-09-25] R12 — sign-in, registration and first run, v294
 
 Auth labels were not linked to inputs (linkAuthFormLabels); first-run questionnaire

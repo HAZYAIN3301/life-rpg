@@ -20,6 +20,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R09 | owner decision: one Today hint — one action (rest, overload, mobility; teaser removed) | **published** v291 | `2e345bf` | both domains commit `2e345bf`, `satoru-v291` at 12:48 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 | R10 | follow-up: hidden content (collapsed sections, Settings groups, light theme) | **published** v292 | `41e00cb` | both domains commit `41e00cb`, `satoru-v292` at 13:10 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R11 | follow-up: dialogs and real content (programs, sphere names, legacy windows) | **published** v293 | `e1d4989` | both domains commit `e1d4989`, `satoru-v293` at 13:36 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
+| R13 | local session 26.09: WebKit parity (Safari click focus, Settings → App on Safari/iOS) | **candidate** v295 | — | pending |
 | R12 | follow-up: sign-in, registration and first run | **published** v294 | `0d7f3f5` | both domains commit `0d7f3f5`, `satoru-v294` at 14:02 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 
 ## Environment notes for this queue
