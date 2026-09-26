@@ -1,7 +1,27 @@
 # START HERE — холодный старт для нового чата/LLM
 
-**Local follow-up:** WebKit/device checks and the external plan sync are in
-[LOCAL-SESSION-PROMPT.md](./LOCAL-SESSION-PROMPT.md); browser audits in `scripts/qa/`.
+**Состояние на 27.09 (прод: v300, master `5091ca8`+, расширение Satoru Attention 0.9.0).**
+- Опубликовано 26.09: v295 WebKit-паритет; v296 импорт целей (старые квесты с удалённой
+  сферой больше не блокируют импорт) и ZIP в Mac-приложении; v298 скачивания из оболочки
+  через второй домен; v297/v299/v300 — расширение 0.7.0 → 0.9.0: список 18+ (535 578 доменов),
+  фильтр Reddit NSFW, замок 7/30/90 дней без досрочного снятия, мотивация на странице блокировки.
+  Квитанции — RELEASE-CHECKPOINT-R04-R06.md; QA-файлы перечислены ниже.
+- Решения владельца 26.09: замок досрочно не снимается никак; список 18+ = OISD+HaGeZi+
+  StevenBlack+Satoru внутри расширения (GPL/MIT отдельными файлами); «18+» отмечена по
+  умолчанию; Reddit должен работать; думскролл — шахматная задача каждые N минут + экран
+  мотивации; iOS Family Controls — отдельной нативной сессией; магазин и политику Brave
+  готовим мы, отправляет/ставит владелец. Оплата/Pro — не трогать до документов владельца.
+- Открыто (подробно — верх BACKLOG): владелец отправляет 0.9.0 в Chrome Web Store
+  (`extensions/satoru-attention/store-kit-v300/SUBMISSION.md`) и присылает ID; расширение
+  0.10.0 (шахматы, экран мотивации); ответы владельца по чек-листу устройств; натив:
+  blob-экспорт в оболочке и Family Controls (внешний план `tasks/13-family-controls.md`).
+- Не проверено: живой reddit.com (фильтр проверен на поддельном), Brave владельца, профиль
+  замка браузера (нужен ID из магазина), Mac-приложение после v298, реальные iPhone-проверки.
+- Рабочие места: основной клон `~/Projects/life-rpg` (master); worktree
+  `~/Projects/life-rpg-webkit-20260926` (ветка = master). Внешний план
+  `~/Projects/satoru-release-plan-20260924` (CHECKPOINT/START/NEXT). Не работать в Documents.
+- LOCAL-SESSION-PROMPT.md выполнен 26.09 (кроме ответов владельца по устройствам) — не повторять.
+
 26.09: WebKit matrix done, v295 = R13 WebKit parity (WEBKIT-PARITY-V295-QA.md); real
 device checks — owner checklist, results in RELEASE-CHECKPOINT-R04-R06.md.
 v296 = owner bugs: extension package in the Mac app, goal import (OWNER-BUGS-V296-QA.md).

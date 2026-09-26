@@ -15,6 +15,10 @@
 - [ ] **Extension 0.10.0:** chess puzzle every N minutes on doomscroll sites (Lichess CC0
   puzzles), motivation screen before entering; later Inspiration images on the block page.
 - [ ] **Native session:** Family Controls per plan task 13.
+- [ ] **Unverified in real use (27.09):** Mac TestFlight app downloads the extension ZIP via the
+  system browser after v298 (owner: press ⟳ first); Reddit guard on live reddit.com (verified
+  only on a synthetic fake Reddit); 0.9.0 lock in the owner's Brave; Brave lock profile
+  (`brave://policy`, force-install on a non-MDM Mac is uncertain).
 - [ ] **Extension list freshness:** the adult list updates only with a new extension build;
   consider a server-refreshed list after the store listing (owner chose bundled for now).
 

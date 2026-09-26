@@ -1,9 +1,9 @@
 # Satoru Attention — signed store publication checklist
 
-**Current Chrome/Brave candidate: v260 / 0.6.0.** Use
-[`store-kit-v260/SUBMISSION.md`](store-kit-v260/SUBMISSION.md), its build receipt and
-`public/downloads/satoru-attention-chrome-store-v260.zip`. No store submission or
-signed update has been performed. The v215 cross-store package list below is retained
+**Current Chrome/Brave candidate: v300 / 0.9.0.** Use
+[`store-kit-v300/SUBMISSION.md`](store-kit-v300/SUBMISSION.md) (Russian owner guide, also the
+Brave/Chrome lock profile), its `release.json` and `public/downloads/satoru-attention-chromium-v300.zip`.
+No store submission or signed update has been performed (27.09). The v260 kit is historical. The v215 cross-store package list below is retained
 for those earlier engine candidates; it is not fresh Firefox/Safari QA for v260.
 
 The historical v215 builder created the three engine packages and upload aliases below.

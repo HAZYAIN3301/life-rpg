@@ -125,6 +125,17 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
   logged-out page loads v295 in WebKit (iPhone profile) and Chromium without page errors.
   QA: WEBKIT-PARITY-V295-QA.md. Real-device checks: owner checklist (pending).
 
+## Status 27.09 (local session on the owner's Mac)
+
+Published: v295 (R13 WebKit parity), v296 (goal import + app-shell ZIP), v297/v299/v300
+(Satoru Attention 0.7.0 → 0.9.0), v298 (shell downloads via the other domain) — rows and
+receipts above. Owner decisions 26.09: no early unlock for the lock; bundled merged adult
+list with Adult checked by default; Reddit stays open with the NSFW guard; doomscroll = chess
+puzzle every N minutes + motivation (next: 0.10.0); iOS Family Controls in the native session;
+store submission and the Brave lock profile are the owner's actions. Open: owner device
+checklist answers, Chrome Web Store submission (then site link + profile ID), extension 0.10.0,
+native blob exports and Family Controls. Current overview: START-HERE.md.
+
 ## Queue status after R06
 
 All packages R04A → R12 are published. Owner decisions 25.09: monetisation gate —
