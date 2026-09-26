@@ -24797,6 +24797,25 @@ let _attentionEmergencyTimer = null;
 const BROWSER_COMPANION_ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
 const BROWSER_COMPANION_STATUS_TTL_MS = 25000;
 const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v297.zip';
+// v298: inside the Mac/iPhone app shell a same-origin download navigates the web view (the ZIP
+// rendered as text). The native shell hands every main-frame link to another host to the system
+// browser, so shell downloads point at our second domain, which serves the same files.
+const APP_SHELL_HOSTS = ['satoruapp.com', 'life-rpg-production-416a.up.railway.app'];
+function inAppShell() { return !!window.webkit?.messageHandlers?.satoruShell; }
+function appShellExternalUrl(href) {
+  const url = new URL(href, location.href);
+  const other = APP_SHELL_HOSTS.find((host) => host !== url.host) || APP_SHELL_HOSTS[0];
+  return `https://${other}${url.pathname}${url.search}`;
+}
+function appShellDownloadLink(event) {
+  if (!event.isTrusted || !(event.target instanceof Element)) return;
+  const link = event.target.closest('a[href]');
+  if (!link) return;
+  const url = new URL(link.getAttribute('href'), location.href);
+  if (url.origin !== location.origin || !(link.hasAttribute('download') || url.pathname.startsWith('/downloads/'))) return;
+  // Rewrite before the default action: a plain link, no download/target, to the other host.
+  link.href = appShellExternalUrl(url.href); link.removeAttribute('download'); link.removeAttribute('target');
+}
 // One-click installation on desktop Chromium is only legal through a signed
 // Chrome Web Store listing. Until its real ID exists, the guided test build is
 // shown instead of rendering a fake or broken store button.
@@ -25049,11 +25068,10 @@ function closeBrowserCompanionInstaller({ restoreFocus = true } = {}) {
 function openBrowserCompanionInstaller(opener) {
   if (BROWSER_COMPANION_STORE_URL) { window.open(BROWSER_COMPANION_STORE_URL, '_blank', 'noopener'); return; }
   closeBrowserCompanionInstaller({ restoreFocus: false });
-  // v296: the Mac/iPhone app's web view cannot save files and showed the ZIP as text.
+  // v296/v298: the Mac/iPhone app's web view cannot save files and showed the ZIP as text.
   // Inside the app the package opens in the default browser, where the extension lives.
-  const inAppShell = !!window.webkit?.messageHandlers?.satoruShell;
-  const downloadLink = inAppShell
-    ? `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" target="_blank" rel="noopener">${t('Скачать пакет')}</a><p>${t('Откроется в браузере по умолчанию — там же устанавливается расширение.')}</p>`
+  const downloadLink = inAppShell()
+    ? `<a class="btn" href="${esc(appShellExternalUrl(BROWSER_COMPANION_DOWNLOAD))}">${t('Скачать пакет')}</a><p>${t('Откроется в браузере по умолчанию — там же устанавливается расширение.')}</p>`
     : `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>${t('Скачать пакет')}</a>`;
   const overlay = document.createElement('div'); overlay.id = 'browser-companion-installer'; overlay.className = 'attention-overlay browser-companion-installer-overlay';
   overlay.innerHTML = `<section class="browser-companion-installer" role="dialog" aria-modal="true" aria-labelledby="browser-companion-installer-title" aria-describedby="browser-companion-installer-description">
@@ -34511,7 +34529,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v297';
+const PWA_CACHE_VERSION = 'satoru-v298';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -34682,6 +34700,7 @@ async function init() {
   observeGuideV3BlockingSurfaces();
   document.addEventListener('submit', onSubmit);
   document.addEventListener('click', focusActivatedControl, true);
+  if (inAppShell()) document.addEventListener('click', appShellDownloadLink, true);
   document.addEventListener('click', onClick);
   document.addEventListener('toggle', (e) => {
     const panel = e.target;

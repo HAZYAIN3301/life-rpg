@@ -20,13 +20,36 @@ const i18n = () => {
 
 test('inside the app shell the extension package opens in the default browser instead of the web view', () => {
   const installer = fnSource('openBrowserCompanionInstaller');
-  assert.match(installer, /const inAppShell = !!window\.webkit\?\.messageHandlers\?\.satoruShell;/);
-  const shellLink = installer.slice(installer.indexOf('? `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}"'), installer.indexOf(': `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>'));
-  assert.match(shellLink, /target="_blank" rel="noopener"/, 'native shell opens target=_blank links in the system browser');
-  assert.doesNotMatch(shellLink, /\sdownload[\s>]/, 'a download attribute would keep the navigation inside the web view');
+  assert.match(installer, /const downloadLink = inAppShell\(\)/);
+  const shellLink = installer.slice(installer.indexOf('? `<a class="btn" href="${esc(appShellExternalUrl(BROWSER_COMPANION_DOWNLOAD))}"'), installer.indexOf(': `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>'));
+  assert.ok(shellLink.length > 20, 'shell branch links to the other host');
+  assert.doesNotMatch(shellLink, /\sdownload[\s>]|target=/, 'a plain link to another host is what the native shell sends to the system browser');
   assert.match(installer, /<li><span>1<\/span><div><b>\$\{t\('Скачать пакет'\)\}<\/b>\$\{downloadLink\}<\/div><\/li>/);
   const I18N = i18n();
   for (const l of ['en', 'de', 'uk', 'es']) assert.ok(I18N[l]['Откроется в браузере по умолчанию — там же устанавливается расширение.'], l);
+});
+
+test('v298: every same-origin download in the app shell is rewritten to the other host before navigation', () => {
+  const src = ['inAppShell', 'appShellExternalUrl', 'appShellDownloadLink'].map(fnSource).join('\n');
+  const lines = APP.split('\n'); const hosts = lines.find((l) => l.startsWith('const APP_SHELL_HOSTS ='));
+  class Element {}
+  const make = (origin) => new Function('Element', 'location', 'window', `${hosts}\n${src}\nreturn { appShellExternalUrl, appShellDownloadLink };`)(Element, { href: origin + '/', origin }, {});
+  const onMain = make('https://satoruapp.com');
+  assert.equal(onMain.appShellExternalUrl('downloads/satoru-attention-chromium-v297.zip'),
+    'https://life-rpg-production-416a.up.railway.app/downloads/satoru-attention-chromium-v297.zip');
+  assert.equal(make('https://life-rpg-production-416a.up.railway.app').appShellExternalUrl('/downloads/a.zip'), 'https://satoruapp.com/downloads/a.zip');
+  const link = (href, attrs = {}) => {
+    const a = Object.assign(new Element(), { attrs: { href, ...attrs }, getAttribute(k) { return this.attrs[k] ?? null; },
+      hasAttribute(k) { return k in this.attrs; }, removeAttribute(k) { delete this.attrs[k]; } });
+    Object.defineProperty(a, 'href', { set(v) { this.attrs.href = v; } });
+    return a;
+  };
+  const click = (a) => onMain.appShellDownloadLink({ isTrusted: true, target: Object.assign(new Element(), { closest: () => a }) });
+  const zip = link('downloads/x.zip', { download: '', target: '_blank' }); click(zip);
+  assert.deepEqual(zip.attrs, { href: 'https://life-rpg-production-416a.up.railway.app/downloads/x.zip' });
+  const page = link('settings.html'); click(page); assert.deepEqual(page.attrs, { href: 'settings.html' }, 'ordinary links untouched');
+  const external = link('https://example.com/file.zip', { download: '' }); click(external); assert.equal(external.attrs.href, 'https://example.com/file.zip');
+  assert.match(fnSource('init'), /if \(inAppShell\(\)\) document\.addEventListener\('click', appShellDownloadLink, true\);/);
 });
 
 test('a rejected proposal commit says which link failed', () => {

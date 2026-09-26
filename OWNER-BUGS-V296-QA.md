@@ -19,6 +19,15 @@ A one-line note says so (5 languages). Ordinary browsers keep the direct downloa
 `download`, click requests a new window and the app page stays; without the bridge —
 direct download `satoru-attention-chromium-v260.zip`. Real Mac app: owner.
 
+**v298 follow-up.** The owner still saw the ZIP as text in the TestFlight Mac app (it may also
+have run a page loaded before v296). The shell link no longer relies on `target=_blank`:
+inside the shell every same-origin download (`download` attribute or `/downloads/`) is
+rewritten, before the default action, to a plain link on our other domain
+(satoruapp.com ↔ life-rpg-production-416a.up.railway.app, same files). The native shell's
+`decidePolicyFor` sends every link-activated main-frame navigation to a foreign host to the
+system browser — the path all external links already use. Checked in WebKit with a simulated
+bridge (plain link to the other host, no download/target) and without it (direct download).
+
 **Related, not changed (native):** the shell also cancels `blob:` navigations, so
 exports built in the page (.ics, account archive, «Your week» PNG) most likely do not
 save inside the Mac/iPhone app. Needs `WKDownloadDelegate` in satoru-ios — native owner.

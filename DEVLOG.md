@@ -1,5 +1,12 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-26] v298 — app shell downloads open in the system browser
+
+The TestFlight Mac app still rendered the extension ZIP as text. Inside the shell every
+same-origin download link is rewritten to a plain link on the other domain (satoruapp.com ↔
+Railway), which the native navigation policy hands to the system browser. Details in
+OWNER-BUGS-V296-QA.md. Shell/pins v298.
+
 ## [2026-09-26] v297 — Satoru Attention 0.7.0, OISD NSFW adult list
 
 Owner: popular adult sites were not blocked in Brave. The Adult category had 11 domains.
