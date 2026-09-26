@@ -130,6 +130,26 @@
           </div>
         </fieldset>
         <aside class="notice" data-i18n="protectionLimit">This protects this browser. It cannot block another browser, an OS-level VPN, extension removal or incognito unless the extension is allowed there.</aside>
+        <fieldset class="field lock-card" id="lock-card">
+          <legend data-i18n="lockTitle">Lock</legend>
+          <p class="fine" data-i18n="lockLead">While locked, protection can only get stricter. There is no early unlock.</p>
+          <p id="lock-state" class="status" role="status" aria-live="polite"></p>
+          <div class="row lock-row">
+            <label class="field"><span data-i18n="lockDuration">Duration</span>
+              <select id="lock-days"><option value="7">7</option><option value="30" selected>30</option><option value="90">90</option></select>
+            </label>
+            <label class="switch-row"><input id="lock-confirm" type="checkbox"><span data-i18n="lockConfirm">I understand: there is no early unlock.</span></label>
+          </div>
+          <button id="lock-start" type="button" class="warn" data-i18n="lockStart">Lock protection</button>
+        </fieldset>
+
+        <fieldset class="field motivation-card">
+          <legend data-i18n="motivationTitle">Your reasons</legend>
+          <p class="fine" data-i18n="motivationLead">Up to five short lines.</p>
+          <textarea id="motivation-reasons" rows="4" maxlength="600" data-i18n-placeholder="motivationPlaceholder"></textarea>
+          <button id="motivation-save" type="button" data-i18n="motivationSave">Save reasons</button>
+        </fieldset>
+
         <p id="protection-status" class="status" role="status" aria-live="polite"></p>
         <button id="apply-protection" type="submit" class="primary" data-i18n="saveProtection">Apply protection</button>
       </form>

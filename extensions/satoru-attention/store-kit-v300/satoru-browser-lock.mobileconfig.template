@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Satoru Attention browser lock (template). Replace EXTENSION_ID with the Chrome Web Store item ID
+     after approval, then: plutil -lint, double-click, System Settings → Privacy & Security → Profiles → Install.
+     Removal: the same Profiles pane → select the profile → "−" (administrator password). -->
+<plist version="1.0">
+<dict>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>PayloadType</key><string>com.apple.ManagedClient.preferences</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PayloadIdentifier</key><string>com.satoruapp.attention.lock.brave</string>
+      <key>PayloadUUID</key><string>ACCED6EA-4836-406E-B178-3FF9D1A3E6A2</string>
+      <key>PayloadDisplayName</key><string>Satoru Attention — Brave</string>
+      <key>PayloadContent</key>
+      <dict>
+        <key>com.brave.Browser</key>
+        <dict>
+          <key>Forced</key>
+          <array>
+            <dict>
+              <key>mcx_preference_settings</key>
+              <dict>
+                <key>ExtensionInstallForcelist</key>
+                <array><string>EXTENSION_ID;https://clients2.google.com/service/update2/crx</string></array>
+                <key>IncognitoModeAvailability</key><integer>1</integer>
+                <key>TorDisabled</key><true/>
+                <key>BrowserGuestModeEnabled</key><false/>
+                <key>DeveloperToolsAvailability</key><integer>1</integer>
+              </dict>
+            </dict>
+          </array>
+        </dict>
+      </dict>
+    </dict>
+    <dict>
+      <key>PayloadType</key><string>com.apple.ManagedClient.preferences</string>
+      <key>PayloadVersion</key><integer>1</integer>
+      <key>PayloadIdentifier</key><string>com.satoruapp.attention.lock.chrome</string>
+      <key>PayloadUUID</key><string>345DD13F-1FB1-41DB-9F3C-7A62EDC5E143</string>
+      <key>PayloadDisplayName</key><string>Satoru Attention — Google Chrome</string>
+      <key>PayloadContent</key>
+      <dict>
+        <key>com.google.Chrome</key>
+        <dict>
+          <key>Forced</key>
+          <array>
+            <dict>
+              <key>mcx_preference_settings</key>
+              <dict>
+                <key>ExtensionInstallForcelist</key>
+                <array><string>EXTENSION_ID;https://clients2.google.com/service/update2/crx</string></array>
+                <key>IncognitoModeAvailability</key><integer>1</integer>
+                <key>BrowserGuestModeEnabled</key><false/>
+                <key>DeveloperToolsAvailability</key><integer>1</integer>
+              </dict>
+            </dict>
+          </array>
+        </dict>
+      </dict>
+    </dict>
+  </array>
+  <key>PayloadDisplayName</key><string>Satoru — browser lock</string>
+  <key>PayloadDescription</key><string>Keeps Satoru Attention installed and enabled in Brave and Chrome; disables private, Tor and guest windows and developer tools for that extension.</string>
+  <key>PayloadIdentifier</key><string>com.satoruapp.attention.lock</string>
+  <key>PayloadOrganization</key><string>Satoru</string>
+  <key>PayloadType</key><string>Configuration</string>
+  <key>PayloadUUID</key><string>93BCFAFD-371C-4555-BD42-307ECE08E97A</string>
+  <key>PayloadVersion</key><integer>1</integer>
+  <key>PayloadScope</key><string>System</string>
+</dict>
+</plist>

@@ -11,6 +11,12 @@
   const ADULT_RULESETS = Object.freeze({ redirect: 'adult_redirect', block: 'adult_block' });
   // Owner decision 26.09: a fresh protection setup starts with the adult category checked.
   const DEFAULT_CATEGORIES = Object.freeze({ adult: true });
+  // 0.9.0 lock (owner decision 26.09): 7/30/90 days, no early unlock, protection can only get
+  // stricter. Lock time is counted from observations: each adds at most 12 h and a clock set
+  // backwards adds nothing, so moving the system clock forward cannot end a lock quickly.
+  const LOCK_DAYS = Object.freeze([7, 30, 90]);
+  const LOCK_MAX_STEP_MS = 12 * 60 * 60 * 1000;
+  const DAY_MS = 24 * 60 * 60 * 1000;
   const MAX_LIST_ITEMS = 500;
   const CATEGORY_KEYS = Object.freeze(['social', 'video', 'gaming', 'dating', 'gambling', 'adult', 'piracy']);
   const RESERVED_DOMAINS = Object.freeze(['life-rpg-production-416a.up.railway.app']);
@@ -76,6 +82,73 @@
     };
   }
 
+  function isoOrNull(value) {
+    const ms = Date.parse(value);
+    return typeof value === 'string' && Number.isFinite(ms) ? new Date(ms).toISOString() : null;
+  }
+
+  function normalizeLock(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+    const startedAt = isoOrNull(raw.startedAt);
+    const observedAt = isoOrNull(raw.observedAt);
+    const requiredMs = Number(raw.requiredMs);
+    const elapsedMs = Number(raw.elapsedMs);
+    if (!startedAt || !observedAt || !Number.isFinite(requiredMs) || requiredMs <= 0
+      || requiredMs > 400 * DAY_MS || !Number.isFinite(elapsedMs) || elapsedMs < 0) return null;
+    return { startedAt, observedAt, requiredMs: Math.round(requiredMs), elapsedMs: Math.min(Math.round(elapsedMs), Math.round(requiredMs)) };
+  }
+
+  function lockRemainingMs(settings) {
+    const lock = normalizeLock(settings && settings.lock);
+    return lock ? Math.max(0, lock.requiredMs - lock.elapsedMs) : 0;
+  }
+
+  function lockActive(settings) { return lockRemainingMs(settings) > 0; }
+
+  // Credits real time to the lock. Returns normalized settings; a finished lock is removed.
+  function observeLock(settings, at = new Date()) {
+    const current = normalizeSettings(settings);
+    if (!current.lock) return current;
+    const now = at instanceof Date ? at.getTime() : Date.parse(at);
+    const last = Date.parse(current.lock.observedAt);
+    if (!Number.isFinite(now)) return current;
+    const delta = now - last;
+    const lock = { ...current.lock };
+    if (delta > 0) {
+      lock.elapsedMs = Math.min(lock.requiredMs, lock.elapsedMs + Math.min(delta, LOCK_MAX_STEP_MS));
+      lock.observedAt = new Date(now).toISOString();
+    }
+    return { ...current, lock: lock.elapsedMs >= lock.requiredMs ? null : lock };
+  }
+
+  // Starting or extending: only while protection is on; an existing lock never gets shorter.
+  function startLock(settings, days, at = new Date()) {
+    const current = observeLock(settings, at);
+    if (!LOCK_DAYS.includes(Number(days))) return { ok: false, error: 'lock_days_invalid' };
+    if (!current.enabled) return { ok: false, error: 'lock_requires_protection' };
+    const now = at instanceof Date ? at.toISOString() : isoOrNull(at);
+    if (!now) return { ok: false, error: 'lock_time_invalid' };
+    const wanted = Number(days) * DAY_MS;
+    const lock = current.lock
+      ? { ...current.lock, requiredMs: current.lock.elapsedMs + Math.max(lockRemainingMs(current), wanted) }
+      : { startedAt: now, observedAt: now, requiredMs: wanted, elapsedMs: 0 };
+    return { ok: true, settings: { ...current, lock } };
+  }
+
+  // Anything that lets more through than before. Used to refuse edits while locked.
+  function protectionLoosens(previous, next) {
+    const before = normalizeSettings(previous);
+    const after = normalizeSettings(next);
+    if (before.enabled && !after.enabled) return true;
+    if (CATEGORY_KEYS.some((key) => before.categories[key] && !after.categories[key])) return true;
+    if (after.allowlist.some((domain) => !before.allowlist.includes(domain))) return true;
+    if (before.denylist.some((domain) => !after.denylist.includes(domain))) return true;
+    if (['safeSearch', 'youtubeRestricted', 'blockBypass'].some((key) => before[key] && !after[key])) return true;
+    if (after.recreation.enabled && (!before.recreation.enabled
+      || JSON.stringify(after.recreation) !== JSON.stringify(before.recreation))) return true;
+    return false;
+  }
+
   function emptySettings() {
     return {
       version: VERSION,
@@ -87,6 +160,7 @@
       safeSearch: false,
       youtubeRestricted: false,
       blockBypass: false,
+      lock: null,
     };
   }
 
@@ -109,6 +183,7 @@
       safeSearch: source.safeSearch === true,
       youtubeRestricted: source.youtubeRestricted === true,
       blockBypass: source.blockBypass === true,
+      lock: normalizeLock(source.lock),
     };
   }
 
@@ -245,7 +320,9 @@
   // the Satoru block page when all-site access exists. Allowlist and recreation still apply.
   function adultRulesets(settings, at = new Date(), options = {}) {
     const current = normalizeSettings(settings);
-    if (!current.enabled || !current.categories.adult || recreationActive(current, at)) return [];
+    // A locked adult list ignores the recreation pause: moving the clock into a recreation window
+    // must not open it.
+    if (!current.enabled || !current.categories.adult || (recreationActive(current, at) && !lockActive(current))) return [];
     return options.canRedirect ? [ADULT_RULESETS.block, ADULT_RULESETS.redirect] : [ADULT_RULESETS.block];
   }
 
@@ -269,6 +346,7 @@
 
   return Object.freeze({
     VERSION, MAX_LIST_ITEMS, CATEGORY_KEYS, RESERVED_DOMAINS, RESOURCE_TYPES, ADULT_RULESETS, adultRulesets, redditGuardActive,
+    LOCK_DAYS, LOCK_MAX_STEP_MS, normalizeLock, lockRemainingMs, lockActive, observeLock, startLock, protectionLoosens,
     SEARCH_DOMAINS, YOUTUBE_RESTRICT_DOMAINS, emptySettings, normalizeSettings,
     normalizeDomain, uniqueDomains, normalizeSchedule, recreationActive,
     nextScheduleBoundary, blockedDomains, decision, buildRules, summary,

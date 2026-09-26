@@ -1,5 +1,12 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-26] v300 — Satoru Attention 0.9.0: lock, motivation, store kit
+
+No early unlock (owner): 7/30/90-day lock, service-worker owned, refuses every loosening, time
+credited ≤12 h per observation; locked adult list ignores Recreation Time. Block page with
+attempt count, Shadow's lines, tips and the person's reasons. Chrome Web Store kit + Brave/Chrome
+lock profile template (owner submits/installs). EXTENSION-LOCK-V300-QA.md. Shell/pins v300.
+
 ## [2026-09-26] v299 — Satoru Attention 0.8.0: merged adult list, Reddit NSFW guard
 
 Reported sites still opened with OISD alone. Merged OISD + HaGeZi + StevenBlack + Satoru

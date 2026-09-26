@@ -119,7 +119,7 @@ test('bundled rulesets (0.7.0+): manifest, rule shape, allowlist precedence and 
   const fs = require('node:fs');
   const path = require('node:path');
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'manifest.json'), 'utf8'));
-  assert.equal(manifest.version, '0.8.0');
+  assert.ok(['0.8.0', '0.9.0'].includes(manifest.version), manifest.version);
   assert.deepEqual(manifest.declarative_net_request.rule_resources, [
     { id: 'adult_redirect', enabled: false, path: 'rules/adult-redirect.json' },
     { id: 'adult_block', enabled: false, path: 'rules/adult-block.json' },
@@ -183,4 +183,57 @@ test('0.8.0 Reddit guard: follows the adult category, registered only with all-s
   assert.match(guard, /const REVEAL_AFTER_MS = 4000;/);
   assert.doesNotMatch(guard, /https?:\/\/(?!www\.reddit\.com|old\.reddit\.com)[a-z0-9.-]+\//i);
   assert.match(fs.readFileSync(path.join(__dirname, 'reddit-guard.css'), 'utf8'), /shreddit-post\[nsfw\], shreddit-post\[is-nsfw\], \.thing\.over18/);
+});
+
+test('0.9.0 lock: no early unlock, only tightening, clock jumps credit at most 12 h, recreation cannot open the adult list', () => {
+  const t0 = new Date('2026-09-26T12:00:00Z');
+  const on = Protection.normalizeSettings({ enabled: true, categories: { adult: true, social: true }, denylist: ['a.example'],
+    safeSearch: true, recreation: { enabled: true, days: [0, 1, 2, 3, 4, 5, 6], start: '00:00', end: '23:59' } });
+  assert.deepEqual(Protection.startLock({ ...on, enabled: false }, 30, t0), { ok: false, error: 'lock_requires_protection' });
+  assert.deepEqual(Protection.startLock(on, 14, t0), { ok: false, error: 'lock_days_invalid' });
+  const locked = Protection.startLock(on, 30, t0).settings;
+  assert.equal(Protection.lockRemainingMs(locked), 30 * 86_400_000);
+  // Loosening, each on its own.
+  for (const change of [{ enabled: false }, { categories: { ...locked.categories, adult: false } }, { allowlist: ['b.example'] },
+    { denylist: [] }, { safeSearch: false }, { recreation: { ...locked.recreation, start: '01:00' } }]) {
+    assert.equal(Protection.protectionLoosens(locked, { ...locked, ...change }), true, JSON.stringify(change));
+  }
+  // Tightening is fine.
+  for (const change of [{ categories: { ...locked.categories, piracy: true } }, { denylist: ['a.example', 'c.example'] },
+    { youtubeRestricted: true }, { recreation: { ...locked.recreation, enabled: false } }]) {
+    assert.equal(Protection.protectionLoosens(locked, { ...locked, ...change }), false, JSON.stringify(change));
+  }
+  // Recreation covers the whole day, yet the locked adult list stays on.
+  assert.deepEqual(Protection.adultRulesets(on, t0, { canRedirect: false }), []);
+  assert.deepEqual(Protection.adultRulesets(locked, t0, { canRedirect: false }), ['adult_block']);
+  // A 40-day clock jump credits 12 h; a clock set backwards credits nothing; honest time finishes the lock.
+  const jumped = Protection.observeLock(locked, new Date('2026-11-05T12:00:00Z'));
+  assert.equal(Protection.lockRemainingMs(jumped), 30 * 86_400_000 - 12 * 3_600_000);
+  const back = Protection.observeLock(jumped, new Date('2026-09-01T00:00:00Z'));
+  assert.equal(Protection.lockRemainingMs(back), Protection.lockRemainingMs(jumped));
+  let honest = locked; let at = t0.getTime();
+  for (let hour = 1; hour <= 30 * 24; hour += 1) { at += 3_600_000; honest = Protection.observeLock(honest, new Date(at)); }
+  assert.equal(honest.lock, null, 'finished after 30 real days');
+  // Extending never shortens.
+  const extended = Protection.startLock(locked, 7, t0).settings;
+  assert.equal(Protection.lockRemainingMs(extended), 30 * 86_400_000);
+  assert.equal(Protection.lockRemainingMs(Protection.startLock(locked, 90, t0).settings), 90 * 86_400_000);
+  // Stored garbage never becomes a lock.
+  assert.equal(Protection.normalizeSettings({ lock: { startedAt: 'x', observedAt: 'y', requiredMs: 5, elapsedMs: 0 } }).lock, null);
+});
+
+test('0.9.0 service worker owns the lock and refuses loosening while locked', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const worker = fs.readFileSync(path.join(__dirname, 'service-worker.js'), 'utf8');
+  assert.match(worker, /const candidate = \{ \.\.\.Protection\.normalizeSettings\(message\.settings\), lock: previous\.lock \};/);
+  assert.match(worker, /if \(Protection\.lockActive\(previous\) && Protection\.protectionLoosens\(previous, candidate\)\) \{\s*return \{ ok: false, error: 'protection_locked'/);
+  assert.match(worker, /if \(type === 'LOCK_PROTECTION'\)[\s\S]*Protection\.startLock\(previous, message\.days, new Date\(\)\)/);
+  assert.match(worker, /chrome\.alarms\.create\(LOCK_ALARM, \{ periodInMinutes: 30 \}\)/);
+  const I18n = require('./i18n.js');
+  for (const lang of ['en', 'ru', 'de', 'uk', 'es']) {
+    for (const key of ['lockTitle', 'lockLead', 'lockActiveState', 'error_protection_locked', 'lockTaunt4', 'blockAttemptN', 'blockTip4', 'motivationLead']) {
+      assert.notEqual(I18n.translate(lang, key), key, `${lang}.${key}`);
+    }
+  }
 });

@@ -1,0 +1,155 @@
+{
+  "release": "v300",
+  "extensionVersion": "0.9.0",
+  "target": "Chrome and Brave desktop",
+  "published": false,
+  "outputs": [
+    {
+      "path": "public/downloads/satoru-attention-chromium-v300.zip",
+      "bytes": 5693293,
+      "sha256": "2a2a1f0b7c8d72d715ce47e9ab17392f63ebdcb0f3948cb059f8a27f48f49f5e"
+    }
+  ],
+  "runtime": [
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "sha256": "94467f53be1fc60bfc8b588ecab399a4105b7df43418e28f0ba4e9ff1e67baaa"
+    },
+    {
+      "path": "_locales/de/messages.json",
+      "sha256": "6b0da1b9304e721a28e1d9effae87fa861ac86ca58fa9879c400821331b0e4bc"
+    },
+    {
+      "path": "_locales/en/messages.json",
+      "sha256": "a3f8ab148f6d9d2219c46a00b45316199b91467bc6a82ae306d8ab3d4e2ddb61"
+    },
+    {
+      "path": "_locales/es/messages.json",
+      "sha256": "a51f106f8230cff0d9cdf28f2f1e34dc948026ddc0657337db6be9bf375c2d74"
+    },
+    {
+      "path": "_locales/ru/messages.json",
+      "sha256": "2a7899efcb8c27b360c8ab012aafcb823b635f25d3fd4ee837cd89755d2b3f88"
+    },
+    {
+      "path": "_locales/uk/messages.json",
+      "sha256": "235be7bdd6353062e94161c971bc9f63ed8caf9acd03bcc6736c3e133eef6d7d"
+    },
+    {
+      "path": "adult-list.js",
+      "sha256": "7fa930beb5dcd6b84aa14551c7d2a6b8ac1a0b1ac0a43bee30b92e5d2b1063e7"
+    },
+    {
+      "path": "block.html",
+      "sha256": "c4b582700d8252aed907c477b9c1d959da553036395cfea56410f010867df31b"
+    },
+    {
+      "path": "block.js",
+      "sha256": "c297f1aeef9329882adeda6ba53c3561db317b2a3c74316112ea40823a719302"
+    },
+    {
+      "path": "boundary-test-receipt.js",
+      "sha256": "941d54bb082ed1f6c5de94fe3c345043507c697d1b20961a97bb0a205ae0e23c"
+    },
+    {
+      "path": "bridge.js",
+      "sha256": "50e6ce4186beccf8b9b1e2baa72e16ae31f151b65477b233b83b253ef988238c"
+    },
+    {
+      "path": "core.js",
+      "sha256": "8ae844d664f7a863c7aeac2ef17c29c81d7acb79c220771c0a69bf04adb77aa5"
+    },
+    {
+      "path": "gate.html",
+      "sha256": "1a7dc9dc02b3e156f6a04653ba9ec4d89c1655bb015873ee22f83bb71202c8a0"
+    },
+    {
+      "path": "gate.js",
+      "sha256": "184b452ecd6cc99d96084ba101637ca212a390bc9136583120fb748c44f5b10c"
+    },
+    {
+      "path": "health-ui.js",
+      "sha256": "5e31c1eb429d777cf0d8933402685d3da9cf276bcc5e10a35a279efeadaefe6f"
+    },
+    {
+      "path": "health.js",
+      "sha256": "4092dce51bb49eb284173ebf2e1a533036857da8dd172b12507840631b376c29"
+    },
+    {
+      "path": "i18n.js",
+      "sha256": "503e346d9d297f7cfcf2e0e1420a56179ebde00199b6868ecbe86ab5212c140c"
+    },
+    {
+      "path": "icon-192.png",
+      "sha256": "b652539f04dce6b98bf8ef3d47609fedf2e4c63b19b9f042339ee0b8e76825d8"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "167bfb3726ad172ffb4f726182552b1bc1d294716cf8ca74769a5f69d2aa1ba9"
+    },
+    {
+      "path": "options.html",
+      "sha256": "66d6acabf8bc18f60a993cd883fc5ac367adb06ab101849b756d65c9aaffa019"
+    },
+    {
+      "path": "options.js",
+      "sha256": "8e6b0b75f4717823712d4cad54f1abafa03970c59d894aa6a9ad43c414c71794"
+    },
+    {
+      "path": "popup.html",
+      "sha256": "f5b7c17562720fd8e45a75c97ab97491608d2004c8725def5457ab5e3f825a47"
+    },
+    {
+      "path": "popup.js",
+      "sha256": "23cb3ab4373eac0c3377fce129f2a0c659de460b0ab9c3788a7b1b0ef29d98f2"
+    },
+    {
+      "path": "protection-catalog.js",
+      "sha256": "62a63bc284d5657cb41246a4bbd5197e53dbe2b1bab3af65191653114e30726a"
+    },
+    {
+      "path": "protection.js",
+      "sha256": "3bf74245f788c979da1cbe1eab49ed50670e4db195de4366b23ba7f32adb7b07"
+    },
+    {
+      "path": "reddit-guard.css",
+      "sha256": "3fb52d02f20817a68f51bdd8c934ef5f6036bf07f85547fefcd220cf47ada84d"
+    },
+    {
+      "path": "reddit-guard.js",
+      "sha256": "7548f9444dbd6800209d3e942409aaf60166caf9796aef14b03f2f8a28126c1b"
+    },
+    {
+      "path": "rules/LICENSE-GPL-3.0.txt",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "rules/LICENSE-MIT-StevenBlack.txt",
+      "sha256": "8e52717212b5051232dd31fb2247310bd91d5295eaab380dbea6454d0268443b"
+    },
+    {
+      "path": "rules/adult-block.json",
+      "sha256": "6758284c5587f821a3b417118531cfcb9522f2265fb0fcf2c9faf7f6c78513b5"
+    },
+    {
+      "path": "rules/adult-extra.txt",
+      "sha256": "acc8374b570bea0ba970157d28d055133e2658bf8247a1ed171900da04a4829f"
+    },
+    {
+      "path": "rules/adult-redirect.json",
+      "sha256": "3efacff05f77e03cada54039a2f6f7a5b46d5d9cb3652558f0e825806c60a45f"
+    },
+    {
+      "path": "service-worker.js",
+      "sha256": "54f4b4989b404adcbce7a47455ce6565294998a2edf878b9ec99471aff07e9c8"
+    },
+    {
+      "path": "site-guard.js",
+      "sha256": "f8afeeeb0d8ff86f1d5258511a07cb1d1e7a2f0c39faf97f1f3a4d6da511cbe1"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "6eea0c3ec55e2650b1988f5f52693893096078bf5a7393bb92599036659cfe6a"
+    }
+  ]
+}

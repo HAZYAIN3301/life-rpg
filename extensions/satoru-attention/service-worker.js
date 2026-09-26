@@ -12,6 +12,7 @@ const PROTECTION_KEY = 'satoruProtectionStateV1';
 const BOUNDARY_ALARM = 'satoru-attention-boundary';
 const RECOVERY_ALARM = 'satoru-attention-recovery';
 const PROTECTION_ALARM = 'satoru-protection-schedule';
+const LOCK_ALARM = 'satoru-protection-lock';
 const SITE_SCRIPT_PREFIX = 'satoru-site-';
 const REDDIT_GUARD_ID = 'satoru-guard-reddit';
 const RULE_BASE = 20_000;
@@ -55,6 +56,19 @@ async function saveState(state) {
 async function loadProtection() {
   const stored = await chrome.storage.local.get(PROTECTION_KEY);
   return Protection.normalizeSettings(stored[PROTECTION_KEY]);
+}
+
+// 0.9.0 lock: credit elapsed time (at most 12 h per observation) and persist the result.
+async function loadObservedProtection() {
+  const stored = await loadProtection();
+  const observed = Protection.observeLock(stored, new Date());
+  if (JSON.stringify(observed.lock) === JSON.stringify(stored.lock)) return stored;
+  return saveProtection(observed);
+}
+
+async function scheduleLockAlarm(settings) {
+  if (Protection.lockActive(settings)) await chrome.alarms.create(LOCK_ALARM, { periodInMinutes: 30 });
+  else await chrome.alarms.clear(LOCK_ALARM);
 }
 
 async function saveProtection(settings) {
@@ -335,6 +349,7 @@ async function reconcileEnforcement(state, options = {}) {
   await reconcileContentScripts(state, protectionSettings, at);
   await scheduleBoundary(state, at);
   await scheduleProtectionBoundary(protectionSettings);
+  await scheduleLockAlarm(protectionSettings);
   if (options.redirectTabs !== false) await redirectDeniedTabs(state, protectionSettings, at);
   await updateActionState(state, protectionSettings, at);
 }
@@ -462,7 +477,7 @@ async function handleExtensionMessage(message, sender) {
   }
   if (type === 'GET_OPTIONS') {
     const state = await loadState();
-    const protection = await loadProtection();
+    const protection = await loadObservedProtection();
     const permissions = {};
     for (const policy of state.policies) permissions[policy.id] = await permissionFor(policy);
     return { ok: true, state, permissions, protection,
@@ -472,12 +487,24 @@ async function handleExtensionMessage(message, sender) {
   }
   if (type === 'SAVE_PROTECTION') {
     return serialized(async () => {
-      const previous = await loadProtection();
-      const candidate = Protection.normalizeSettings(message.settings);
+      const previous = await loadObservedProtection();
+      // The lock is owned here: a page can neither drop nor shorten it.
+      const candidate = { ...Protection.normalizeSettings(message.settings), lock: previous.lock };
+      if (Protection.lockActive(previous) && Protection.protectionLoosens(previous, candidate)) {
+        return { ok: false, error: 'protection_locked', remainingMs: Protection.lockRemainingMs(previous), settings: previous };
+      }
       if (candidate.enabled && !(await broadProtectionPermission())) {
         return { ok: false, error: 'protection_permission_required' };
       }
       return commitProtectionWithEnforcement(previous, candidate);
+    });
+  }
+  if (type === 'LOCK_PROTECTION') {
+    return serialized(async () => {
+      const previous = await loadObservedProtection();
+      const result = Protection.startLock(previous, message.days, new Date());
+      if (!result.ok) return result;
+      return commitProtectionWithEnforcement(previous, result.settings);
     });
   }
   if (type === 'START_SESSION') {
@@ -647,10 +674,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (![BOUNDARY_ALARM, RECOVERY_ALARM, PROTECTION_ALARM].includes(alarm.name)) return;
+  if (![BOUNDARY_ALARM, RECOVERY_ALARM, PROTECTION_ALARM, LOCK_ALARM].includes(alarm.name)) return;
   serialized(async () => {
     const state = await loadState();
-    await reconcileEnforcement(state);
+    await reconcileEnforcement(state, { protectionSettings: await loadObservedProtection() });
   }).catch(() => undefined);
 });
 

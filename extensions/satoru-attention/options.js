@@ -43,6 +43,13 @@
   const protectionInactiveWarning = document.querySelector('#protection-inactive-warning');
   const activateProtection = document.querySelector('#activate-protection');
   const applyProtection = document.querySelector('#apply-protection');
+  const lockState = document.querySelector('#lock-state');
+  const lockDays = document.querySelector('#lock-days');
+  const lockConfirm = document.querySelector('#lock-confirm');
+  const lockStart = document.querySelector('#lock-start');
+  const motivationReasons = document.querySelector('#motivation-reasons');
+  const motivationSave = document.querySelector('#motivation-save');
+  const MOTIVATION_KEY = 'satoruMotivationV1';
   const denyInput = document.querySelector('#deny-domain');
   const allowInput = document.querySelector('#allow-domain');
   const denyList = document.querySelector('#deny-list');
@@ -265,6 +272,28 @@
     protectionBadge.className = `state-pill${current.enabled ? ' on' : configured ? ' attention' : ''}`;
   }
 
+  // 0.9.0 lock: show time left and disable every control that could loosen protection.
+  function formatLockTime(ms) {
+    const hours = Math.max(1, Math.ceil(ms / 3_600_000));
+    return t('lockTime', { days: Math.floor(hours / 24), hours: hours % 24 });
+  }
+  function lockTaunt() { return t(`lockTaunt${1 + Math.floor(Math.random() * 4)}`); }
+  function renderLock(settings) {
+    const remaining = Protection.lockRemainingMs(settings);
+    const locked = remaining > 0;
+    for (const option of lockDays.options) option.textContent = t('lockDays', { count: option.value });
+    lockState.textContent = locked ? t('lockActiveState', { time: formatLockTime(remaining) }) : '';
+    lockStart.textContent = t(locked ? 'lockExtend' : 'lockStart');
+    protectionEnabled.disabled = locked && settings.enabled;
+    for (const input of protectionForm.querySelectorAll('[data-category]')) input.disabled = locked && input.checked;
+    allowInput.disabled = locked; protectionForm.querySelector('#add-allow').disabled = locked;
+    for (const button of denyList.querySelectorAll('button[data-remove-domain]')) button.disabled = locked;
+    recreationEnabled.disabled = locked && !settings.recreation.enabled;
+    for (const input of protectionForm.querySelectorAll('[data-recreation-day], #recreation-start, #recreation-end')) input.disabled = locked;
+    for (const input of [safeSearch, youtubeRestricted, blockBypass]) input.disabled = locked && input.checked;
+    document.querySelector('#lock-card').classList.toggle('is-locked', locked);
+  }
+
   function renderProtection(settings, summary = null) {
     currentProtection = Protection.normalizeSettings(settings);
     protectionEnabled.checked = currentProtection.enabled;
@@ -285,6 +314,7 @@
     const state = summary || Protection.summary(currentProtection, ProtectionCatalog, new Date());
     renderProtectionActivationState(currentProtection);
     protectionBadge.title = currentProtection.enabled ? t('protectionCount', { count: state.blockedDomains }) : '';
+    renderLock(currentProtection);
     protectionDirty = false;
   }
 
@@ -490,6 +520,10 @@
         }
       }
       const result = await send({ type: 'SAVE_PROTECTION', settings });
+      if (result?.error === 'protection_locked') {
+        if (result.settings) renderProtection(result.settings);
+        setProtectionStatus(`${t('error_protection_locked', { time: formatLockTime(result.remainingMs) })} ${lockTaunt()}`, 'error'); return;
+      }
       if (!result?.ok) {
         setProtectionStatus(errorText(result && result.error), 'error'); return;
       }
@@ -503,6 +537,33 @@
         queueMicrotask(queueProtectionSave);
       }
     }
+  });
+
+  lockStart.addEventListener('click', async () => {
+    if (actionBusy) return;
+    if (!lockConfirm.checked) { setProtectionStatus(t('lockNeedsConfirm'), 'error'); lockConfirm.focus(); return; }
+    actionBusy = true; lockStart.disabled = true;
+    try {
+      const result = await send({ type: 'LOCK_PROTECTION', days: Number(lockDays.value) });
+      if (!result?.ok) { setProtectionStatus(errorText(result && result.error), 'error'); return; }
+      lockConfirm.checked = false;
+      renderProtection(result.settings, result.summary);
+      setProtectionStatus(t('lockStarted'), 'success');
+    } finally { actionBusy = false; lockStart.disabled = false; }
+  });
+
+  // Your own reasons: shown on the block page. Local only, max five lines.
+  chrome.storage.local.get(MOTIVATION_KEY).then((stored) => {
+    const reasons = stored[MOTIVATION_KEY]?.reasons;
+    if (Array.isArray(reasons)) motivationReasons.value = reasons.join('\n');
+  }).catch(() => undefined);
+  motivationSave.addEventListener('click', async () => {
+    const reasons = motivationReasons.value.split('\n').map((line) => line.trim().slice(0, 120)).filter(Boolean).slice(0, 5);
+    try {
+      await chrome.storage.local.set({ [MOTIVATION_KEY]: { reasons } });
+      motivationReasons.value = reasons.join('\n');
+      setProtectionStatus(t('motivationSaved'), 'success');
+    } catch { setProtectionStatus(t('saveFailed'), 'error'); }
   });
 
   siteSelect.addEventListener('change', () => { editingPolicyId = ''; loadDraft(); });

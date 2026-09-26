@@ -218,3 +218,12 @@ body[data-page="popup"] h1 { font: 800 1.15rem/1.2 Inter, sans-serif; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
 }
+
+/* 0.9.0 lock and motivation */
+.lock-card.is-locked { border-color: var(--warm); }
+.lock-row { align-items: end; gap: 12px; flex-wrap: wrap; }
+.motivation-card textarea { width: 100%; min-height: 96px; resize: vertical; }
+.block-motivation { font-weight: 600; }
+.block-reasons { margin-top: 12px; text-align: left; }
+.block-reasons h2 { font-size: 1rem; margin: 0 0 6px; }
+.block-reasons ul { margin: 0; padding-left: 1.2em; }
