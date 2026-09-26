@@ -37,6 +37,10 @@ or changed reference to a missing sphere is still rejected. The 400 now carries 
 reason code (`task_sphere`, `goal_sphere`, `goal_parent`, `task_goal`, … — no content)
 and the client names the failed link (5 languages) instead of the generic message.
 
+**Published:** `3accbc7`, both domains `satoru-v296` at 14:23 UTC, 10/10 SHA256
+(app.js, index.html, sw.js, styles.css, design-next-v1.css), logged-out smoke in WebKit
+(iPhone profile) and Chromium without page errors. Server change live with the commit.
+
 **Checked:** repro variants on the fixed server — clean account, old quest with a
 deleted sphere, stale task goal, stale goal parent/sphere: all commit (29–30 goals,
 24 spheres). Server tests: legacy reference accepted and stored exactly; a changed
