@@ -21,10 +21,9 @@ test('v260 Chrome/Brave upload is exact-source, local-only and separate from sto
   assert.deepEqual(entries, receipt.runtime.map(item => item.path).sort());
   assert.ok(entries.includes('health.js')); assert.ok(entries.includes('boundary-test-receipt.js'));
   assert.equal(entries.some(name => /\.test\.|store-kit|SUBMISSION|package\.json/.test(name)), false);
-  for (const item of receipt.runtime) {
-    assert.equal(hash(fs.readFileSync(path.join(root, 'extensions/satoru-attention', item.path))), item.sha256, `${item.path} requires a package rebuild`);
-    assert.equal(hash(execFileSync('unzip', ['-p', zip, item.path])), item.sha256);
-  }
+  // Since v297 the live sources are compared with the v297 package (browser-companion-package-v297);
+  // the v260 artifact keeps its own receipt so the old download stays byte-exact.
+  for (const item of receipt.runtime) assert.equal(hash(execFileSync('unzip', ['-p', zip, item.path])), item.sha256);
   const current = JSON.parse(execFileSync('unzip', ['-p', zip, 'manifest.json'], { encoding: 'utf8' }));
   const previous = JSON.parse(execFileSync('unzip', ['-p', path.join(root, 'public/downloads/satoru-attention-chromium-v215.zip'), 'manifest.json'], { encoding: 'utf8' }));
   for (const field of ['permissions', 'host_permissions', 'optional_host_permissions']) assert.deepEqual(current[field], previous[field], field);

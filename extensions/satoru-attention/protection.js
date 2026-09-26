@@ -7,6 +7,10 @@
   'use strict';
 
   const VERSION = 1;
+  // 0.7.0: the adult category is backed by the bundled OISD NSFW rulesets (rules/adult-*.json).
+  const ADULT_RULESETS = Object.freeze({ redirect: 'adult_redirect', block: 'adult_block' });
+  // Owner decision 26.09: a fresh protection setup starts with the adult category checked.
+  const DEFAULT_CATEGORIES = Object.freeze({ adult: true });
   const MAX_LIST_ITEMS = 500;
   const CATEGORY_KEYS = Object.freeze(['social', 'video', 'gaming', 'dating', 'gambling', 'adult', 'piracy']);
   const RESERVED_DOMAINS = Object.freeze(['life-rpg-production-416a.up.railway.app']);
@@ -76,7 +80,7 @@
     return {
       version: VERSION,
       enabled: false,
-      categories: Object.fromEntries(CATEGORY_KEYS.map((key) => [key, false])),
+      categories: Object.fromEntries(CATEGORY_KEYS.map((key) => [key, DEFAULT_CATEGORIES[key] === true])),
       denylist: [],
       allowlist: [],
       recreation: normalizeSchedule(null),
@@ -88,7 +92,10 @@
 
   function normalizeSettings(raw) {
     const source = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
-    const categories = Object.fromEntries(CATEGORY_KEYS.map((key) => [key, source.categories?.[key] === true]));
+    // Saved choices are kept exactly; only a setup that never stored categories gets the default.
+    const saved = source.categories && typeof source.categories === 'object' && !Array.isArray(source.categories);
+    const categories = Object.fromEntries(CATEGORY_KEYS.map((key) => [key,
+      saved ? source.categories[key] === true : DEFAULT_CATEGORIES[key] === true]));
     const allowlist = uniqueDomains(source.allowlist);
     const allowed = new Set(allowlist);
     const denylist = uniqueDomains(source.denylist).filter((domain) => !allowed.has(domain));
@@ -224,11 +231,26 @@
     return rules;
   }
 
-  function summary(settings, catalog, at = new Date()) {
+  function defaultAdultList() {
+    return typeof globalThis !== 'undefined' && globalThis.SatoruAdultList ? globalThis.SatoruAdultList : null;
+  }
+
+  // Static rulesets that must be enabled right now. The block set always runs for the adult
+  // category (frames too, and main frames when host access is missing); the redirect set adds
+  // the Satoru block page when all-site access exists. Allowlist and recreation still apply.
+  function adultRulesets(settings, at = new Date(), options = {}) {
     const current = normalizeSettings(settings);
+    if (!current.enabled || !current.categories.adult || recreationActive(current, at)) return [];
+    return options.canRedirect ? [ADULT_RULESETS.block, ADULT_RULESETS.redirect] : [ADULT_RULESETS.block];
+  }
+
+  function summary(settings, catalog, at = new Date(), adultList = defaultAdultList()) {
+    const current = normalizeSettings(settings);
+    const listDomains = adultRulesets(current, at).length && adultList && Number.isInteger(adultList.domains) ? adultList.domains : 0;
     return {
       enabled: current.enabled,
-      blockedDomains: blockedDomains(current, catalog, at).length,
+      blockedDomains: blockedDomains(current, catalog, at).length + listDomains,
+      adultList: adultList ? { source: adultList.source, version: adultList.version, domains: adultList.domains, active: listDomains > 0 } : null,
       allowlistedDomains: current.allowlist.length,
       denylistedDomains: current.denylist.length,
       activeCategories: CATEGORY_KEYS.filter((key) => current.categories[key]),
@@ -241,7 +263,7 @@
   }
 
   return Object.freeze({
-    VERSION, MAX_LIST_ITEMS, CATEGORY_KEYS, RESERVED_DOMAINS, RESOURCE_TYPES,
+    VERSION, MAX_LIST_ITEMS, CATEGORY_KEYS, RESERVED_DOMAINS, RESOURCE_TYPES, ADULT_RULESETS, adultRulesets,
     SEARCH_DOMAINS, YOUTUBE_RESTRICT_DOMAINS, emptySettings, normalizeSettings,
     normalizeDomain, uniqueDomains, normalizeSchedule, recreationActive,
     nextScheduleBoundary, blockedDomains, decision, buildRules, summary,

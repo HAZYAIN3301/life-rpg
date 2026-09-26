@@ -5,6 +5,7 @@
 26.09: WebKit matrix done, v295 = R13 WebKit parity (WEBKIT-PARITY-V295-QA.md); real
 device checks — owner checklist, results in RELEASE-CHECKPOINT-R04-R06.md.
 v296 = owner bugs: extension package in the Mac app, goal import (OWNER-BUGS-V296-QA.md).
+v297 = Satoru Attention 0.7.0 with the OISD NSFW adult list (EXTENSION-ADULT-LIST-V297-QA.md).
 
 **25.09 R04A–R06 queue:** состояние пакетов, коммиты и деплой-квитанции —
 [RELEASE-CHECKPOINT-R04-R06.md](./RELEASE-CHECKPOINT-R04-R06.md) (зеркало внешнего

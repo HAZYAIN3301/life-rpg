@@ -31,3 +31,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+## OISD NSFW (adult-content rulesets, since 0.7.0)
+
+- Files: `rules/adult-redirect.json`, `rules/adult-block.json` (generated), metadata `adult-list.js`.
+- Source: OISD NSFW, https://nsfw.oisd.nl/domainswild2 — maintainer Stephan van Ruth, https://oisd.nl.
+- Version: 202609261407 (upstream header), SHA-256 of the download recorded in `adult-list.js`.
+- License: GNU General Public License v3.0 — full text in `rules/LICENSE-OISD.txt`. The list is
+  shipped as separate data files; the domains are unchanged apart from normalisation (lower-case,
+  syntax check, removal of subdomains already covered by a listed parent, never Satoru's own hosts).
+- Rebuild: `node scripts/build-browser-adult-ruleset-v297.mjs <downloaded list>` in the web repository.

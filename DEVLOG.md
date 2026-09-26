@@ -1,5 +1,13 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-26] v297 — Satoru Attention 0.7.0, OISD NSFW adult list
+
+Owner: popular adult sites were not blocked in Brave. The Adult category had 11 domains.
+Now the bundled OISD NSFW list (505 602 domains, GPL-3.0 as separate data) ships as two
+static DNR rulesets toggled by the service worker (block set always, redirect set with
+all-site access); allowlist and recreation still win; Adult checked for new setups. New
+package v297 (5.4 MB), no longer precached by the site SW. EXTENSION-ADULT-LIST-V297-QA.md.
+
 ## [2026-09-26] v296 — extension package in the Mac app, goal import
 
 Owner reports. (1) Inside the app shell the extension ZIP navigated the web view and

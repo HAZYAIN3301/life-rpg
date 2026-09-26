@@ -14,6 +14,7 @@ const policy = () => Core.cleanPolicy({ id: 'test-site', hostname: 'example.test
 function harness(stored = {}) {
   let listener;
   let rules = [];
+  let rulesets = [];
   let scripts = [];
   let permission = true;
   let failRead = false;
@@ -24,7 +25,10 @@ function harness(stored = {}) {
     runtime: { id: 'test-extension', getURL: value => rootUrl + value, openOptionsPage: async () => {}, onStartup: event(), onInstalled: event(), onMessage: { addListener(fn) { listener = fn; } } },
     storage: { local: { get: async key => ({ [key]: structuredClone(stored[key]) }), set: async values => { if (failWrite) throw new Error('storage'); Object.assign(stored, structuredClone(values)); } } },
     permissions: { contains: async () => { if (failRead) throw new Error('permission'); return permission; }, onAdded: event(), onRemoved: event() },
-    declarativeNetRequest: { getDynamicRules: async () => structuredClone(rules), updateDynamicRules: async input => { rules = input.addRules; } },
+    declarativeNetRequest: { getDynamicRules: async () => structuredClone(rules), updateDynamicRules: async input => { rules = input.addRules; },
+      // 0.7.0 static adult rulesets.
+      getEnabledRulesets: async () => [...rulesets],
+      updateEnabledRulesets: async ({ enableRulesetIds = [], disableRulesetIds = [] }) => { rulesets = [...new Set([...rulesets.filter(id => !disableRulesetIds.includes(id)), ...enableRulesetIds])]; } },
     scripting: { getRegisteredContentScripts: async () => structuredClone(scripts), unregisterContentScripts: async () => { scripts = []; }, registerContentScripts: async next => { scripts = next; } },
     alarms: { create: async () => {}, clear: async () => {}, onAlarm: event() },
     tabs: { create: async input => { const tab = { id: tabs.length + 1, ...input }; tabs.push(tab); return tab; }, query: async () => [], update: async (id, input) => { Object.assign(tabs.find(tab => tab.id === id), input); }, remove: async id => { const index = tabs.findIndex(tab => tab.id === id); if (index >= 0) tabs.splice(index, 1); } },

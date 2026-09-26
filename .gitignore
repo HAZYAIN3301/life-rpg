@@ -22,3 +22,6 @@ public/assets/shadow/gif-preview/
 # Synthetic QA runs (scripts/qa): session cookies of synthetic accounts and the isolated data dir
 qa-accounts/
 qa-data/
+
+# Chromium writes indexed DNR rulesets here when the unpacked extension is loaded
+extensions/satoru-attention/_metadata/

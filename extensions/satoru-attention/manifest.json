@@ -3,7 +3,7 @@
   "name": "__MSG_extensionName__",
   "short_name": "Satoru Attention",
   "description": "__MSG_extensionDescription__",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "default_locale": "en",
   "minimum_chrome_version": "111",
   "icons": {
@@ -60,5 +60,19 @@
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "adult_redirect",
+        "enabled": false,
+        "path": "rules/adult-redirect.json"
+      },
+      {
+        "id": "adult_block",
+        "enabled": false,
+        "path": "rules/adult-block.json"
+      }
+    ]
   }
 }

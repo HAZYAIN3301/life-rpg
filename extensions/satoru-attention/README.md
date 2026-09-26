@@ -88,6 +88,19 @@ Browser Protection on and applies the change from the same user action. Existing
 selected-but-disabled rules are labeled **Not applied** and get a one-click **Enable and
 apply** action instead of looking active while producing no blocking rules.
 
+### Adult list (0.7.0)
+
+The Adult content category is backed by the bundled OISD NSFW list (~505 000 domains,
+version and SHA-256 in `adult-list.js`, GPL-3.0 text in `rules/LICENSE-OISD.txt`). It ships as
+two static DNR rulesets: `adult_block` (main frames and embedded frames, works without host
+access) and `adult_redirect` (main frames → Satoru block page, only with all-site access).
+The service worker enables exactly the sets the settings need; the allowlist (priority 10 000)
+and the recreation schedule still win. A new protection setup starts with Adult checked;
+saved choices are never changed. Limits: tabs already open on a listed site are not redirected
+until they navigate; private windows are covered only when Brave/Chrome allows the extension
+there; a newer list arrives with a new extension version (rebuild with
+`scripts/build-browser-adult-ruleset-v297.mjs`).
+
 ## Behavior
 
 - A configured site is redirected to `gate.html` until a purpose and bounded duration are

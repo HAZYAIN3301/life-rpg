@@ -5,8 +5,10 @@
 - [ ] **Native (satoru-ios owner):** app shell cancels `blob:` navigations — in-page
   exports (.ics, archive, week PNG) likely do not save in the Mac/iPhone app while the
   page reports success. Needs WKDownloadDelegate (or web fallback after owner check).
-- [ ] **Browser extension blocking strength (owner 26.09):** adult-content blocking misses
-  popular sites in Brave; owner wants NextDNS-level coverage. Investigation next.
+- [x] **Browser extension blocking strength (owner 26.09):** Satoru Attention 0.7.0 bundles
+  OISD NSFW (505 602 domains). See EXTENSION-ADULT-LIST-V297-QA.md.
+- [ ] **Extension list freshness:** the adult list updates only with a new extension build;
+  consider a server-refreshed list after the store listing (owner chose bundled for now).
 
 - [x] **R13 / v295:** WebKit parity — click focus in Safari, Settings → App push
   controls/iOS hint/APK gate. See WEBKIT-PARITY-V295-QA.md.

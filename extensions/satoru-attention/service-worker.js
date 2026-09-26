@@ -1,6 +1,6 @@
 'use strict';
 
-importScripts('core.js', 'protection.js', 'protection-catalog.js', 'health.js');
+importScripts('core.js', 'protection.js', 'protection-catalog.js', 'adult-list.js', 'health.js');
 
 const Core = self.SatoruAttentionCore;
 const Protection = self.SatoruProtection;
@@ -149,9 +149,19 @@ async function expectedRules(state, protectionSettings, at) {
   return addRules;
 }
 
+async function expectedRulesets(protectionSettings, at) {
+  return Protection.adultRulesets(protectionSettings, new Date(at), { canRedirect: await broadProtectionPermission() }).sort();
+}
+
 async function reconcileRules(state, protectionSettings, at) {
   const existing = await chrome.declarativeNetRequest.getDynamicRules();
   await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: existing.map(rule => rule.id), addRules: await expectedRules(state, protectionSettings, at) });
+  // Bundled adult list (static rulesets): enable exactly the sets the current settings need.
+  const wanted = await expectedRulesets(protectionSettings, at);
+  const all = Object.values(Protection.ADULT_RULESETS);
+  await chrome.declarativeNetRequest.updateEnabledRulesets({
+    enableRulesetIds: wanted, disableRulesetIds: all.filter((id) => !wanted.includes(id)),
+  });
 }
 
 async function expectedScripts(state) {
@@ -198,8 +208,10 @@ async function verifiedStatus() {
     else {
       const rules = await chrome.declarativeNetRequest.getDynamicRules();
       const scripts = (await chrome.scripting.getRegisteredContentScripts()).filter(script => script.id.startsWith(SITE_SCRIPT_PREFIX));
+      const rulesets = (await chrome.declarativeNetRequest.getEnabledRulesets()).slice().sort();
       const applied = Health.sameRules(rules, await expectedRules(state, protection, at))
-        && Health.sameScripts(scripts, await expectedScripts(state));
+        && Health.sameScripts(scripts, await expectedScripts(state))
+        && JSON.stringify(rulesets) === JSON.stringify(await expectedRulesets(protection, at));
       enforcement.state = !applied ? 'unknown' : enabled.length || protection.enabled ? 'active' : 'not_configured';
     }
   } catch { /* Keep unknown when a browser API cannot confirm the current state. */ }

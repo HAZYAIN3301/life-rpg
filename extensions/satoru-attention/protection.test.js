@@ -93,3 +93,67 @@ test('normalization deduplicates lists, removes deny/allow conflicts and bounds 
   assert.equal(normalized.categories.video, true);
   assert.equal('unknown' in normalized.categories, false);
 });
+
+test('0.7.0 adult list: default category, exact ruleset choice and honest counts', () => {
+  // A setup that never stored categories starts with adult checked; saved choices stay exact.
+  assert.equal(Protection.emptySettings().categories.adult, true);
+  assert.equal(Protection.normalizeSettings({}).categories.adult, true);
+  assert.equal(Protection.normalizeSettings({ categories: { social: true } }).categories.adult, false);
+  assert.equal(Protection.normalizeSettings({ categories: { adult: false } }).categories.adult, false);
+  const on = Protection.normalizeSettings({ enabled: true, categories: { adult: true } });
+  assert.deepEqual(Protection.adultRulesets(on, new Date(), { canRedirect: true }), ['adult_block', 'adult_redirect']);
+  assert.deepEqual(Protection.adultRulesets(on, new Date(), { canRedirect: false }), ['adult_block']);
+  assert.deepEqual(Protection.adultRulesets({ ...on, enabled: false }), []);
+  assert.deepEqual(Protection.adultRulesets({ ...on, categories: { adult: false } }), []);
+  const saturday = new Date('2026-09-12T19:00:00');
+  const recreation = { ...on, recreation: { enabled: true, days: [6], start: '18:00', end: '20:00' } };
+  assert.deepEqual(Protection.adultRulesets(recreation, saturday, { canRedirect: true }), [], 'recreation pauses the list');
+  const list = { source: 'OISD NSFW', version: '202609261407', domains: 505602 };
+  const counted = Protection.summary(on, Catalog, new Date(), list);
+  assert.equal(counted.blockedDomains, Protection.blockedDomains(on, Catalog).length + 505602);
+  assert.deepEqual(counted.adultList, { ...list, active: true });
+  assert.equal(Protection.summary({ ...on, categories: { adult: false } }, Catalog, new Date(), list).adultList.active, false);
+});
+
+test('0.7.0 bundled rulesets: manifest, rule shape, allowlist precedence and metadata agree', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'manifest.json'), 'utf8'));
+  assert.equal(manifest.version, '0.7.0');
+  assert.deepEqual(manifest.declarative_net_request.rule_resources, [
+    { id: 'adult_redirect', enabled: false, path: 'rules/adult-redirect.json' },
+    { id: 'adult_block', enabled: false, path: 'rules/adult-block.json' },
+  ]);
+  const meta = require('./adult-list.js');
+  const redirect = JSON.parse(fs.readFileSync(path.join(__dirname, 'rules/adult-redirect.json'), 'utf8'));
+  const block = JSON.parse(fs.readFileSync(path.join(__dirname, 'rules/adult-block.json'), 'utf8'));
+  assert.equal(meta.license, 'GPL-3.0');
+  assert.ok(fs.readFileSync(path.join(__dirname, 'rules/LICENSE-OISD.txt'), 'utf8').includes('GNU GENERAL PUBLIC LICENSE'));
+  assert.equal(redirect.length, meta.rules); assert.equal(block.length, meta.rules);
+  const domains = new Set();
+  for (const [index, rule] of block.entries()) {
+    assert.equal(rule.id, index + 1);
+    assert.deepEqual(rule.action, { type: 'block' });
+    assert.deepEqual(rule.condition.resourceTypes, ['main_frame', 'sub_frame']);
+    assert.ok(rule.priority < 10_000, 'the dynamic allowlist (10 000) must win');
+    assert.deepEqual(redirect[index].condition.requestDomains, rule.condition.requestDomains);
+    for (const domain of rule.condition.requestDomains) {
+      assert.equal(Protection.normalizeDomain(domain), domain, domain);
+      assert.ok(!domains.has(domain), domain); domains.add(domain);
+    }
+  }
+  assert.equal(domains.size, meta.domains);
+  assert.ok(meta.domains > 100_000);
+  for (const own of ['satoruapp.com', 'life-rpg-production-416a.up.railway.app']) assert.equal(domains.has(own), false);
+  for (const popular of ['pornhub.com', 'spankbang.com', 'eporner.com', 'beeg.com', 'xhamster.desi']) assert.ok(domains.has(popular), popular);
+  for (const rule of redirect) {
+    assert.deepEqual(rule.action, { type: 'redirect', redirect: { extensionPath: '/block.html' } });
+    assert.deepEqual(rule.condition.resourceTypes, ['main_frame']);
+    assert.ok(rule.priority > block[0].priority && rule.priority < 10_000);
+  }
+  assert.ok(manifest.web_accessible_resources.some((entry) => entry.resources.includes('block.html')));
+  const worker = fs.readFileSync(path.join(__dirname, 'service-worker.js'), 'utf8');
+  assert.match(worker, /importScripts\('core\.js', 'protection\.js', 'protection-catalog\.js', 'adult-list\.js', 'health\.js'\);/);
+  assert.match(worker, /chrome\.declarativeNetRequest\.updateEnabledRulesets\(\{\s*enableRulesetIds: wanted, disableRulesetIds:/);
+  assert.match(worker, /getEnabledRulesets\(\)\)\.slice\(\)\.sort\(\);[\s\S]*JSON\.stringify\(rulesets\) === JSON\.stringify\(await expectedRulesets\(protection, at\)\)/);
+});

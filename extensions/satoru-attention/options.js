@@ -337,9 +337,18 @@
     queueProtectionSave();
   }
 
+  const AdultList = globalThis.SatoruAdultList || null;
+  const formatCount = (value) => Number(value).toLocaleString(language);
   for (const key of Protection.CATEGORY_KEYS) {
     const count = document.querySelector(`#category-count-${key}`);
-    if (count) count.textContent = t('domainCount', { count: ProtectionCatalog[key].length });
+    // 0.7.0: the adult category also enables the bundled OISD NSFW rulesets.
+    const total = ProtectionCatalog[key].length + (key === 'adult' && AdultList ? AdultList.domains : 0);
+    if (count) count.textContent = t('domainCount', { count: formatCount(total) });
+  }
+  const adultSource = document.querySelector('#adult-list-source');
+  if (adultSource && AdultList) {
+    const v = String(AdultList.version);
+    adultSource.textContent = t('adultListSource', { count: formatCount(AdultList.domains), version: `${v.slice(0, 4)}-${v.slice(4, 6)}-${v.slice(6, 8)}` });
   }
 
   async function render(focusPolicyId = '') {
