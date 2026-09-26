@@ -20,7 +20,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
 | R09 | owner decision: one Today hint — one action (rest, overload, mobility; teaser removed) | **published** v291 | `2e345bf` | both domains commit `2e345bf`, `satoru-v291` at 12:48 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 | R10 | follow-up: hidden content (collapsed sections, Settings groups, light theme) | **published** v292 | `41e00cb` | both domains commit `41e00cb`, `satoru-v292` at 13:10 UTC; 12/12 SHA256 (6 files × 2); login smoke 0 errors |
 | R11 | follow-up: dialogs and real content (programs, sphere names, legacy windows) | **published** v293 | `e1d4989` | both domains commit `e1d4989`, `satoru-v293` at 13:36 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
-| R13 | local session 26.09: WebKit parity (Safari click focus, Settings → App on Safari/iOS) | **candidate** v295 | — | pending |
+| R13 | local session 26.09: WebKit parity (Safari click focus, Settings → App on Safari/iOS) | **published** v295 | `b6bb1a8` | both domains commit `b6bb1a8`, `satoru-v295` at 09:02 UTC 26.09; 10/10 SHA256 (5 files × 2); login smoke WebKit+Chromium 0 page errors |
 | R12 | follow-up: sign-in, registration and first run | **published** v294 | `0d7f3f5` | both domains commit `0d7f3f5`, `satoru-v294` at 14:02 UTC; 10/10 SHA256 (5 files × 2); login smoke 0 errors |
 
 ## Environment notes for this queue
@@ -29,7 +29,7 @@ Base: v282 `c1f30ed` (published, 3094/3094 on the owner's machine).
   (`HOME=/tmp runuser -u nobody -- node --test --test-concurrency=2 scripts/*.test.js`).
   As root, two morning-outcome write-failure subtests cannot simulate a read-only
   directory and one test self-skips; as `nobody` they pass, matching the owner's Mac.
-- Only Chromium is installed; WebKit checks are recorded as not performed.
+- Cloud container: only Chromium. WebKit matrix was run locally on 26.09 (R13).
 - Settings writes go through `/api/commitments/commit` (WAL); intercept that URL,
   with service workers blocked, to test rejected writes.
 - Production exposes `/api/version` (`commit`, `shellCache`) on both domains; deploy
@@ -113,12 +113,20 @@ RU/EN/DE at 1280: 0 horizontal overflow, 0 untranslated Cyrillic in EN/DE/ES,
   against the commit blobs for app.js, design-next-v1.css, index.html, sw.js,
   styles.css on both domains; login smoke clean. QA: FIRST-RUN-V294-QA.md.
 
+- **R13 / v295** `b6bb1a8` — local session on the owner's Mac. WebKit matrix (69 runs,
+  same as Chromium) found three WebKit-only issues, fixed; full suite 3154/3154 PASS,
+  0 skipped; fast-forward `58fbe27..b6bb1a8`. Both domains deployed (~2.5 min). SHA256
+  match for app.js, design-next-v1.css, index.html, sw.js, styles.css on both domains;
+  logged-out page loads v295 in WebKit (iPhone profile) and Chromium without page errors.
+  QA: WEBKIT-PARITY-V295-QA.md. Real-device checks: owner checklist (pending).
+
 ## Queue status after R06
 
 All packages R04A → R12 are published. Owner decisions 25.09: monetisation gate —
 no change until the owner's documents arrive; the companion name «Тень» stays.
-The four filtered-out Today hints were resolved in R09 by the owner's choice. Open: WebKit and real-device
-checks for every package; real calendar import / iOS share sheet. The external plan
-(CHECKPOINT/START/NEXT) must be synced from this file by whoever has it. The next
+The four filtered-out Today hints were resolved in R09 by the owner's choice.
+26.09 local session: external plan synced; WebKit matrix done and its three WebKit-only
+issues fixed in R13 / v295. Open: real-device checks (owner checklist — VoiceOver,
+installed PWA, .ics import in Apple/Google Calendar, iOS share sheet, select height). The next
 local session starts from LOCAL-SESSION-PROMPT.md; the synthetic browser audits used
 for R04A–R12 are in `scripts/qa/` (Chromium/WebKit/Firefox via QA_BROWSER).
