@@ -41,6 +41,13 @@ other site outside those 11 opened. All categories were also unchecked by defaul
   block page and health is `active`. Options RU/EN: Adult checked, «505 613 доменов».
 - Spike before the decision: OISD 507k, HaGeZi 85k and StevenBlack 77k static sets all load.
 
+## Publication
+
+`4b34a47`, both domains `satoru-v297` at 14:43 UTC; SHA-256 match 16/16 for app.js,
+index.html, sw.js, browser-companion.html, browser-companion-landing-v1.js,
+browser-companion-privacy-v1.js, browser-companion-privacy.html and the v297 ZIP on both
+domains; logged-out page renders the sign-in fields in WebKit (iPhone) and Chromium.
+
 ## Limits
 
 Tabs already open on a listed site switch only on their next navigation. Private windows are
