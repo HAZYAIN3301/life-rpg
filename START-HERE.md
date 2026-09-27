@@ -1,5 +1,10 @@
 # START HERE — холодный старт для нового чата/LLM
 
+**Последний подтверждённый runtime: v303 `b04258c` (27.09).** Railway SUCCESS,
+оба домена: 6/6 SHA-256, suite 3166/3166. Верх DEVLOG содержит квитанцию.
+Решение по дальнейшему запуску эксперимента ожидает ответа владельца; полная
+следующая очередь — внешний CODEX-PROGRESS-20260927.md, короткий остаток — BACKLOG.
+
 **Codex 27.09, latest:** v302 `611cec0` published; v303 candidate corrects the active
 experiment hint after finding its legacy event integration disconnected. Owner choice
 pending (defer vs integrate); see top BACKLOG and ROUTES-R05-V301-QA.md follow-up.

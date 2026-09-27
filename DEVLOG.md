@@ -1,5 +1,14 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-27] Codex — v303 publication receipt
+
+Runtime `b04258c`, Railway `981d77db-6bdd-4a1a-9eee-ada6f2039df2` SUCCESS.
+Both domains app/index/sw match **6/6 SHA-256**, zero mismatches; full suite
+**3166/3166 PASS**. Plan and pending experiment choice: external
+`satoru-release-plan-20260924/CODEX-PROGRESS-20260927.md`.
+Additional settings search browser pass: language/password/import + punctuation
+in five locales opens/focuses the matching panel; unknown query shows empty help.
+
 ## [2026-09-27] Codex — truthful experiment limitation, v303 candidate
 
 Full suite **3166/3166 PASS**, syntax/diff PASS; five mobile locale checks PASS.

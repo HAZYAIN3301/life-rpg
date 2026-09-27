@@ -1,5 +1,11 @@
 # Release queue R04A → R06 — checkpoint (in-repo mirror)
 
+## Codex — v303 published, 27.09
+
+Runtime `b04258c`; Railway `981d77db-6bdd-4a1a-9eee-ada6f2039df2` SUCCESS;
+both domains app/index/sw **6/6 SHA-256**, suite **3166/3166 PASS**.
+Remaining gates and owner experiment choice are unchanged (see top BACKLOG).
+
 ## Codex — v302 receipt / v303 candidate
 
 v303 full suite **3166/3166 PASS**, syntax/diff and five mobile locale checks PASS.

@@ -1,5 +1,9 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Codex v303 published:** `b04258c`, Railway SUCCESS, 6/6 hashes; experiment
+  limitation disclosed. Owner decision below remains pending. Search language/password/
+  import in all five locales opens the matching panel; unknown query handled.
+
 - [ ] **Owner choice / Codex R05:** the legacy experiment adapter receives no new
   Secretary return decisions. Defer new launch until after first release (recommended)
   or integrate current return semantics first. v303 discloses the limitation;
