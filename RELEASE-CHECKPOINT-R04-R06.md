@@ -1,5 +1,14 @@
 # Release queue R04A → R06 — checkpoint (in-repo mirror)
 
+## Codex — web/native, 27.09: v301 candidate
+
+Full suite **3163/3163 PASS**; app/sw syntax and diff checks PASS.
+
+R05 saved-route repairs and browser receipts: ROUTES-R05-V301-QA.md. Status/export of
+the owner experiment and return to saved Board work are fixed. Proactive offer and
+feedback/review timing remain open; R06 rewards is still a separate acceptance gate.
+Publication/test receipt will be prepended after verification.
+
 The owner's plan lives outside the repository (`satoru-release-plan-20260924/`:
 START, CHECKPOINT, NEXT, video-review CRITERIA/EXECUTION). The cloud session that
 works this queue cannot read it, so this file mirrors the queue state for the next

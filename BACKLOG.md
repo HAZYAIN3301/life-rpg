@@ -1,5 +1,10 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Codex R05 / v301 candidate:** saved experiment status/exit/export; Board reload
+  no longer hides accepted/completed/custom work behind calibration. ROUTES-R05-V301-QA.md.
+- [ ] **Codex R05 remainder:** proactive offer acceptance/refusal → prepared task;
+  experiment feedback and scheduled reviews. R06 rewards, habits04 and 06–10 follow.
+
 - [x] **v296:** extension package opens in the default browser from the app shell; goal
   import no longer blocked by old quests with deleted spheres. See OWNER-BUGS-V296-QA.md.
 - [ ] **Native (satoru-ios owner):** app shell cancels `blob:` navigations — in-page

@@ -1,5 +1,10 @@
 # START HERE — холодный старт для нового чата/LLM
 
+**Codex web lane, 27.09 — v301 candidate:** R05 saved-status and Board-return repairs;
+browser acceptance and remaining scope: ROUTES-R05-V301-QA.md. Full R05 and R06 reward
+acceptance are not claimed. Latest publication receipt is in DEVLOG/RELEASE-CHECKPOINT.
+Parallel ownership remains governed by external LANES-20260927.md.
+
 **Состояние на 27.09 (прод: v300, master `5091ca8`+, расширение Satoru Attention 0.9.0).**
 - Опубликовано 26.09: v295 WebKit-паритет; v296 импорт целей (старые квесты с удалённой
   сферой больше не блокируют импорт) и ZIP в Mac-приложении; v298 скачивания из оболочки

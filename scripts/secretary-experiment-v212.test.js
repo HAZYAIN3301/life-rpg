@@ -26,6 +26,7 @@ const EXPERIMENT_FUNCTIONS = Object.freeze([
   'secretaryExperimentReviewDue',
   'secretaryExperimentReviewHTML',
   'secretaryExperimentOfferHTML',
+  'secretaryExperimentStatusHTML',
 ]);
 
 function functionSource(name) {
@@ -53,6 +54,22 @@ function cssBlocks(selector) {
   const escaped = escapeRegExp(selector);
   return [...CSS.matchAll(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`, 'g'))].map((match) => match[1]);
 }
+
+test('saved experiment status remains reachable after stop without offering another start', () => {
+  const context = { t: value => value, esc: value => String(value), secretaryExperimentAvailable: () => true,
+    lang: () => 'en', parseDate: value => new Date(`${value}T12:00:00`),
+    secretaryExperimentDay: () => 3, experiment: { status: 'active', startedOn: '2026-09-01', endsOn: '2026-09-30' } };
+  const render = () => vm.runInNewContext(`${functionSource('secretaryExperimentStatusHTML')}\nsecretaryExperimentStatusHTML(experiment)`, context);
+  assert.match(render(), /data-experiment-status="active"/);
+  assert.match(render(), /data-action="secretary-experiment-stop"/);
+  for (const status of ['stopped', 'completed']) {
+    context.experiment.status = status;
+    assert.match(render(), /data-action="secretary-experiment-export"/);
+    assert.doesNotMatch(render(), /data-action="secretary-experiment-(?:start|stop|complete)"/);
+  }
+  context.experiment.status = 'draft'; assert.equal(render(), '');
+  context.experiment.status = 'active'; context.secretaryExperimentAvailable = () => false; assert.equal(render(), '');
+});
 
 test('the personal experiment persists one explicit inclusive 30-day interval', () => {
   assert.match(APP, /const SECRETARY_EXPERIMENT_DAYS\s*=\s*30\s*;/);

@@ -1,5 +1,17 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-27] Codex — R05 saved routes, v301 candidate
+
+Validation: `node --check` app/sw, `git diff --check`, complete suite **3163/3163 PASS**.
+
+Experiment status/export survives start, stop and reload; saved Board work bypasses
+introductory calibration; task boundary uses the registry icon. Reproduced before
+fixing on synthetic localhost:52000. Browser failure/retry checks, dense Board and
+40 Chromium/WebKit localized layouts: see ROUTES-R05-V301-QA.md. No Claude-lane files
+changed. Shell and active pin consumers advanced together. Publication receipt follows.
+Remaining: proactive Secretary offer acceptance and experiment feedback/review timing;
+then R06 rewards, habits04 and scenarios06–10. This does not close the whole R05 gate.
+
 ## [2026-09-26] v300 — Satoru Attention 0.9.0: lock, motivation, store kit
 
 No early unlock (owner): 7/30/90-day lock, service-worker owned, refuses every loosening, time

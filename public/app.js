@@ -1402,6 +1402,8 @@ const I18N_EXTRA = {
   'Следующий шаг уже выбран — Тень не будет отвлекать.': { en: 'Your next step is already chosen — Shadow will not distract you.', de: 'Dein nächster Schritt steht bereits fest — der Schatten lenkt dich nicht ab.', uk: 'Наступний крок уже обрано — Тінь не відволікатиме.', es: 'Tu siguiente paso ya está elegido; la Sombra no te distraerá.' },
   'Личный эксперимент': { en: 'Personal experiment', de: 'Persönliches Experiment', uk: 'Особистий експеримент', es: 'Experimento personal' },
   '30 дней с Тенью': { en: '30 days with Shadow', de: '30 Tage mit dem Schatten', uk: '30 днів із Тінню', es: '30 días con la Sombra' },
+  'Продолжай свой день. После завершённого возврата здесь появится вопрос о том, помог ли он.': { en: 'Continue your day. After a completed return, a question about whether it helped will appear here.', de: 'Mach mit deinem Tag weiter. Nach einer abgeschlossenen Rückkehr erscheint hier eine Frage, ob sie geholfen hat.', uk: 'Продовжуй свій день. Після завершеного повернення тут з’явиться запитання, чи допомогло воно.', es: 'Continúa con tu día. Tras completar un regreso, aparecerá aquí una pregunta sobre si te ayudó.' },
+  'Наблюдения сохранены. Их можно выгрузить в файл.': { en: 'Your observations are saved. You can export them to a file.', de: 'Deine Beobachtungen sind gespeichert. Du kannst sie in eine Datei exportieren.', uk: 'Спостереження збережено. Їх можна експортувати у файл.', es: 'Tus observaciones están guardadas. Puedes exportarlas a un archivo.' },
   'Проверим, помогает ли один своевременный возврат. Без нового списка дел.': { en: 'Let us see whether one timely return helps. No new task list.', de: 'Wir prüfen, ob eine rechtzeitige Rückkehr hilft. Keine neue Aufgabenliste.', uk: 'Перевіримо, чи допомагає одне вчасне повернення. Без нового списку справ.', es: 'Veamos si un regreso a tiempo ayuda. Sin una lista nueva.' },
   'Данные: время возврата, ответы и снимок личных рамок — сон и лимиты дня. Без ссылок, страниц и просмотренного контента.': { en: 'Data: return time, your answers, and a snapshot of personal boundaries — sleep and day limits. No links, pages, or viewed content.', de: 'Daten: Rückkehrzeit, deine Antworten und ein Schnappschuss persönlicher Grenzen — Schlaf und Tageslimits. Keine Links, Seiten oder angesehenen Inhalte.', uk: 'Дані: час повернення, відповіді та знімок особистих меж — сон і ліміти дня. Без посилань, сторінок і переглянутого контенту.', es: 'Datos: hora de regreso, tus respuestas y una instantánea de límites personales — sueño y límites del día. Sin enlaces, páginas ni contenido visto.' },
   'Начать 30 дней': { en: 'Start 30 days', de: '30 Tage starten', uk: 'Почати 30 днів', es: 'Empezar 30 días' },
@@ -14381,7 +14383,7 @@ function openQuestCommitmentDialog(task, mode = 'take') {
   overlay.id = 'quest-commitment-modal'; overlay.className = 'modal-overlay';
   overlay.innerHTML = `<section class="desire-box commitment-dialog" role="dialog" aria-modal="true" aria-labelledby="quest-commitment-title">
     <button type="button" class="modal-x" data-action="commitment-close" aria-label="${esc(t('Закрыть'))}">✕</button>
-    <p class="commitment-kicker">⚔️ ${esc(t('Личная граница'))}</p>
+    <p class="commitment-kicker">${satoruIconHTML('difficulty.protected', 'button-glyph')} ${esc(t('Личная граница'))}</p>
     <h3 id="quest-commitment-title" tabindex="-1">${esc(t(revise ? 'Пересмотреть границу' : 'Обязательство по квесту'))}</h3>
     <p class="commitment-task" data-noi18n>${esc(task.title)}</p>
     <label class="commitment-win"><span>${esc(t('Что считается выполненным'))}</span><input id="quest-commitment-win" type="text" maxlength="120" value="${esc(defaultWin)}" required /></label>
@@ -20508,13 +20510,15 @@ function boardScreenHTML() {
   if (!B || !P) return `<p class="muted">${t('Доска недоступна')}</p>`;
   const today = todayStr();
 
-  if (T && !T.isCalibrated(tasteRead()) && !State._calibStopped) {
+  const st = B.sweepExpired(boardRead(), today).state;
+  const mine = B.activeOrders(st);
+  // Calibration is an introduction, never a gate in front of saved work.
+  const hasSavedWork = mine.length > 0 || st.done.length > 0 || boardCustomOrders().length > 0;
+  if (T && !T.isCalibrated(tasteRead()) && !State._calibStopped && !hasSavedWork) {
     const calib = boardCalibrationHTML();
     if (calib) return calib;
   }
 
-  const st = B.sweepExpired(boardRead(), today).state;
-  const mine = B.activeOrders(st);
   const view = B.board(P.ALL, {
     neglectedSpheres: boardNeglectedSpheres(),
     activeSpheres: (State.settings.skills || []).map((s) => s.id),
@@ -25680,6 +25684,19 @@ function secretaryExperimentHasPrimary() {
   return secretaryExperimentFeedbackDue(experiment, signal)
     || !!secretaryExperimentReviewDue(experiment);
 }
+function secretaryExperimentStatusHTML(experiment) {
+  if (!secretaryExperimentAvailable() || !experiment || experiment.status === 'draft') return '';
+  const active = experiment.status === 'active';
+  const dateLabel = value => new Intl.DateTimeFormat(lang(), { day: 'numeric', month: 'short', year: 'numeric' }).format(parseDate(value));
+  const status = active ? t('День {day} из 30').replace('{day}', secretaryExperimentDay(experiment))
+    : experiment.status === 'completed' ? t('Эксперимент завершён.') : t('Эксперимент остановлен. Наблюдения сохранены.');
+  return `<div class="secretary-experiment-offer" data-experiment-status="${esc(experiment.status)}">
+    <b>${t('30 дней с Тенью')}</b><small>${status}</small>
+    <small><time datetime="${esc(experiment.startedOn)}">${esc(dateLabel(experiment.startedOn))}</time> — <time datetime="${esc(experiment.endsOn)}">${esc(dateLabel(experiment.endsOn))}</time></small>
+    <small>${active ? t('Продолжай свой день. После завершённого возврата здесь появится вопрос о том, помог ли он.') : t('Наблюдения сохранены. Их можно выгрузить в файл.')}</small>
+    <div class="secretary-experiment-buttons">${active ? `<button type="button" class="btn ghost" data-action="secretary-experiment-stop">${t('Остановить эксперимент')}</button>` : ''}<button type="button" class="btn ghost" data-action="secretary-experiment-export">${t('Экспортировать')}</button></div>
+  </div>`;
+}
 function attentionTodayPrimaryReserved() {
   const C = attentionController();
   const activeAttention = C && window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
@@ -25792,7 +25809,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
         <button class="secretary-action" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-glyph')}<b>${t('Отдохнуть с границей')}</b></button>
         ${!closed && primary.kind !== 'evening' ? `<button class="secretary-action" data-action="evening-open">${satoruIconHTML('system.day-end', 'button-glyph')}<b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` : ''}
         ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${esc(policies[0].name)}</b></button>` : `<button class="secretary-action" data-action="attention-open-setup">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${t('Настроить границу входа')}</b></button>`}
-        ${secretaryExperimentAvailable() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open">${satoruIconHTML('system.focus', 'button-glyph')}<b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentAvailable() && experiment.status === 'active' ? `<button class="secretary-action" data-action="secretary-experiment-stop">${satoruIconHTML('media.stop', 'button-glyph')}<b>${t('Остановить эксперимент')}</b></button>` : ''}
+        ${secretaryExperimentAvailable() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open">${satoruIconHTML('system.focus', 'button-glyph')}<b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentStatusHTML(experiment)}
       </div>
     </details>
   </section>`;
@@ -34529,7 +34546,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v300';
+const PWA_CACHE_VERSION = 'satoru-v301';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
