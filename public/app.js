@@ -1402,7 +1402,7 @@ const I18N_EXTRA = {
   'Следующий шаг уже выбран — Тень не будет отвлекать.': { en: 'Your next step is already chosen — Shadow will not distract you.', de: 'Dein nächster Schritt steht bereits fest — der Schatten lenkt dich nicht ab.', uk: 'Наступний крок уже обрано — Тінь не відволікатиме.', es: 'Tu siguiente paso ya está elegido; la Sombra no te distraerá.' },
   'Личный эксперимент': { en: 'Personal experiment', de: 'Persönliches Experiment', uk: 'Особистий експеримент', es: 'Experimento personal' },
   '30 дней с Тенью': { en: '30 days with Shadow', de: '30 Tage mit dem Schatten', uk: '30 днів із Тінню', es: '30 días con la Sombra' },
-  'Продолжай свой день. После завершённого возврата здесь появится вопрос о том, помог ли он.': { en: 'Continue your day. After a completed return, a question about whether it helped will appear here.', de: 'Mach mit deinem Tag weiter. Nach einer abgeschlossenen Rückkehr erscheint hier eine Frage, ob sie geholfen hat.', uk: 'Продовжуй свій день. Після завершеного повернення тут з’явиться запитання, чи допомогло воно.', es: 'Continúa con tu día. Tras completar un regreso, aparecerá aquí una pregunta sobre si te ayudó.' },
+  'Новые возвраты пока не записываются. Сохранённые наблюдения доступны для экспорта.': { en: 'New returns are not being recorded yet. Saved observations are available to export.', de: 'Neue Rückkehrereignisse werden noch nicht erfasst. Gespeicherte Beobachtungen lassen sich exportieren.', uk: 'Нові повернення поки не записуються. Збережені спостереження доступні для експорту.', es: 'Los nuevos regresos aún no se registran. Puedes exportar las observaciones guardadas.' },
   'Наблюдения сохранены. Их можно выгрузить в файл.': { en: 'Your observations are saved. You can export them to a file.', de: 'Deine Beobachtungen sind gespeichert. Du kannst sie in eine Datei exportieren.', uk: 'Спостереження збережено. Їх можна експортувати у файл.', es: 'Tus observaciones están guardadas. Puedes exportarlas a un archivo.' },
   'Проверим, помогает ли один своевременный возврат. Без нового списка дел.': { en: 'Let us see whether one timely return helps. No new task list.', de: 'Wir prüfen, ob eine rechtzeitige Rückkehr hilft. Keine neue Aufgabenliste.', uk: 'Перевіримо, чи допомагає одне вчасне повернення. Без нового списку справ.', es: 'Veamos si un regreso a tiempo ayuda. Sin una lista nueva.' },
   'Данные: время возврата, ответы и снимок личных рамок — сон и лимиты дня. Без ссылок, страниц и просмотренного контента.': { en: 'Data: return time, your answers, and a snapshot of personal boundaries — sleep and day limits. No links, pages, or viewed content.', de: 'Daten: Rückkehrzeit, deine Antworten und ein Schnappschuss persönlicher Grenzen — Schlaf und Tageslimits. Keine Links, Seiten oder angesehenen Inhalte.', uk: 'Дані: час повернення, відповіді та знімок особистих меж — сон і ліміти дня. Без посилань, сторінок і переглянутого контенту.', es: 'Datos: hora de regreso, tus respuestas y una instantánea de límites personales — sueño y límites del día. Sin enlaces, páginas ni contenido visto.' },
@@ -25719,7 +25719,7 @@ function secretaryExperimentStatusHTML(experiment) {
   return `<div class="secretary-experiment-offer" data-experiment-status="${esc(experiment.status)}">
     <b>${t('30 дней с Тенью')}</b><small>${status}</small>
     <small><time datetime="${esc(experiment.startedOn)}">${esc(dateLabel(experiment.startedOn))}</time> — <time datetime="${esc(experiment.endsOn)}">${esc(dateLabel(experiment.endsOn))}</time></small>
-    <small>${active ? t('Продолжай свой день. После завершённого возврата здесь появится вопрос о том, помог ли он.') : t('Наблюдения сохранены. Их можно выгрузить в файл.')}</small>
+    <small>${active ? t('Новые возвраты пока не записываются. Сохранённые наблюдения доступны для экспорта.') : t('Наблюдения сохранены. Их можно выгрузить в файл.')}</small>
     <div class="secretary-experiment-buttons">${active ? `<button type="button" class="btn ghost" data-action="secretary-experiment-stop">${t('Остановить эксперимент')}</button>` : ''}<button type="button" class="btn ghost" data-action="secretary-experiment-export">${t('Экспортировать')}</button></div>
   </div>`;
 }
@@ -34567,7 +34567,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v302';
+const PWA_CACHE_VERSION = 'satoru-v303';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

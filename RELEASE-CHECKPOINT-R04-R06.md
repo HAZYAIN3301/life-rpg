@@ -1,5 +1,13 @@
 # Release queue R04A → R06 — checkpoint (in-repo mirror)
 
+## Codex — v302 receipt / v303 candidate
+
+v303 full suite **3166/3166 PASS**, syntax/diff and five mobile locale checks PASS.
+
+v302 `611cec0`: Railway `d7728c4b-6dd8-48fb-9d37-fd7d3afdfce8` SUCCESS, 6/6 hashes.
+v303 discloses disconnected experiment observation intake; owner choice defer/integrate
+pending. R05/R06 remain partially accepted. Habit pause/resume/next-day check passed.
+
 ## Codex — 27.09, v301 receipt / v302 candidate
 
 v302 full suite **3166/3166 PASS**; six feature-write browser groups PASS.

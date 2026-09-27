@@ -1,5 +1,13 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [ ] **Owner choice / Codex R05:** the legacy experiment adapter receives no new
+  Secretary return decisions. Defer new launch until after first release (recommended)
+  or integrate current return semantics first. v303 discloses the limitation;
+  neither product option was applied pending an answer.
+- [x] **Codex v302 published:** `611cec0`, Railway SUCCESS, 6/6 hashes; confirmed care.
+- [x] **Habit cycle QA:** create/check/Undo + failure/replay, pause/resume/reload and
+  browser-clock next day preserve the journal. Full five-locale/dense habit matrix remains.
+
 - [x] **Codex R06 / v302 candidate:** Pet/check-in success follows saved settings;
   concurrent/repeated daily care cannot add another point or journal entry.
 - [ ] **Codex R06 remaining:** entry-task bond atomicity/replay; complete stage and

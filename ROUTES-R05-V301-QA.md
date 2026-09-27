@@ -1,5 +1,17 @@
 # R05 — saved routes, v301
 
+## Follow-up 27.09 — experiment limitation, v303
+
+The later integration audit found that `recordSecretaryExperimentOffer` is called
+only by the old `secretary-experiment-accept/dismiss` handlers, whose controls are
+no longer rendered. Current Secretary accept handlers do not write this adapter's
+check-ins. Therefore the v301 next-step promise was too broad and is corrected:
+active status explicitly says new returns are not yet recorded. Existing status,
+stop and export remain available. Five locale variants checked at 375px.
+Owner choice pending: defer experiment launch until after first release (recommended),
+or integrate and define observation semantics for the current Secretary first.
+Neither option has been applied without the answer.
+
 Codex web lane, 27 September 2026. Base `5ad3134`, isolated worktree
 `satoru-codex-web-20260927`, localhost:52000 and synthetic `qa-data` only.
 

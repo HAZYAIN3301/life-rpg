@@ -1,5 +1,21 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-27] Codex — truthful experiment limitation, v303 candidate
+
+Full suite **3166/3166 PASS**, syntax/diff PASS; five mobile locale checks PASS.
+
+Further R05 integration audit: legacy experiment offer handlers have no rendered
+controls, current Secretary accept paths do not populate their check-ins. Corrected
+the new active-status hint to disclose that new returns are not yet recorded, on all
+five languages. Owner asked to choose defer vs integrate; no choice applied yet.
+See ROUTES-R05-V301-QA.md follow-up. Habit mark/pause/resume/reload and browser-clock
+next-day check additionally passed; old journal stays unchanged, new day is unmarked.
+
+## [2026-09-27] Codex — v302 publication receipt
+
+`611cec0`, Railway `d7728c4b-6dd8-48fb-9d37-fd7d3afdfce8` SUCCESS.
+Both domains match app/index/sw **6/6 SHA-256**; full suite **3166/3166 PASS**.
+
 ## [2026-09-27] Codex — confirmed companion care, v302 candidate
 
 Validation: full suite **3166/3166 PASS**, syntax/diff PASS. Six current browser groups

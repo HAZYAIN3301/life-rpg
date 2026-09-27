@@ -1,5 +1,9 @@
 # START HERE — холодный старт для нового чата/LLM
 
+**Codex 27.09, latest:** v302 `611cec0` published; v303 candidate corrects the active
+experiment hint after finding its legacy event integration disconnected. Owner choice
+pending (defer vs integrate); see top BACKLOG and ROUTES-R05-V301-QA.md follow-up.
+
 **Codex 27.09:** v301 `4eeb435` published and verified on both domains. Next candidate
 v302 fixes unconfirmed companion care; COMPANION-CARE-V302-QA.md lists evidence and
 remaining R06 gates. The original R05/R06 scopes remain distinct from earlier visual audits.
