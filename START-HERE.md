@@ -21,6 +21,12 @@
   `~/Projects/life-rpg-webkit-20260926` (ветка = master). Внешний план
   `~/Projects/satoru-release-plan-20260924` (CHECKPOINT/START/NEXT). Не работать в Documents.
 - LOCAL-SESSION-PROMPT.md выполнен 26.09 (кроме ответов владельца по устройствам) — не повторять.
+- **С 27.09 работают два агента параллельно — разделение обязательно:**
+  `~/Projects/satoru-release-plan-20260924/LANES-20260927.md`. Claude — расширение Satoru
+  Attention и граница браузера; Codex — web-продукт (R05, R06, 04, 06–10) и native. Номер версии
+  и публикация — по очереди (fetch → следующий свободный vNNN → при гонке rebase и новый номер).
+- Свежая квитанция прода 27.09 19:37 UTC: оба домена `6a17c55` / `satoru-v300`, SHA-256 14/14
+  (включая ZIP v300), вход в WebKit (iPhone) и Chromium без ошибок страницы.
 
 26.09: WebKit matrix done, v295 = R13 WebKit parity (WEBKIT-PARITY-V295-QA.md); real
 device checks — owner checklist, results in RELEASE-CHECKPOINT-R04-R06.md.
