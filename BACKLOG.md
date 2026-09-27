@@ -1,5 +1,11 @@
 # Gojo — BACKLOG (список ожидания)
 
+- [x] **Codex R06 / v302 candidate:** Pet/check-in success follows saved settings;
+  concurrent/repeated daily care cannot add another point or journal entry.
+- [ ] **Codex R06 remaining:** entry-task bond atomicity/replay; complete stage and
+  streak/day-boundary matrix. COMPANION-CARE-V302-QA.md. Chest lost-response replay checked.
+- [x] **Codex v301 published:** `4eeb435`, Railway SUCCESS, both domains v301, 6/6 hashes.
+
 - [x] **Codex R05 / v301 candidate:** saved experiment status/exit/export; Board reload
   no longer hides accepted/completed/custom work behind calibration. ROUTES-R05-V301-QA.md.
 - [ ] **Codex R05 remainder:** proactive offer acceptance/refusal → prepared task;

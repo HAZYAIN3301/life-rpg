@@ -1,5 +1,14 @@
 # Release queue R04A → R06 — checkpoint (in-repo mirror)
 
+## Codex — 27.09, v301 receipt / v302 candidate
+
+v302 full suite **3166/3166 PASS**; six feature-write browser groups PASS.
+
+- v301 `4eeb435`: Railway `d6ac1065-7ceb-4396-821b-ffff2909d7e9` SUCCESS, both domains
+  return commit/cache at 20:10 UTC, app/index/sw **6/6 SHA-256**. Suite 3163/3163.
+- v302 candidate: confirmed Pet and check-in, saved daily deduplication;
+  COMPANION-CARE-V302-QA.md. R06 whole-package acceptance remains open.
+
 ## Codex — web/native, 27.09: v301 candidate
 
 Full suite **3163/3163 PASS**; app/sw syntax and diff checks PASS.

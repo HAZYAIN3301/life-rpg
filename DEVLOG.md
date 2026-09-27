@@ -1,5 +1,24 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-27] Codex — confirmed companion care, v302 candidate
+
+Validation: full suite **3166/3166 PASS**, syntax/diff PASS. Six current browser groups
+from qa-feature-writes-v253 passed on synthetic data (habit create/check/Undo/replay,
+notes/calendar, Den light/reset), zero page errors. Pause/resume/next-day still open.
+
+Reproduced Pet 503: displayed bond 1, saved bond 0, button disabled. Pet/moment Pet
+and check-ins now use one awaited serialized writer with saved daily deduplication.
+Check-in drafts survive failure; reactions follow receipt. COMPANION-CARE-V302-QA.md.
+Browser checks: refused care/retry/reload; check-in text preservation; server chest
+lost response/exact retry gives one reward. Entry-task bond and full stage/streak
+matrix remain open. No Claude-lane files changed; only active shell pins advanced.
+
+## [2026-09-27] Codex — v301 publication receipt
+
+`4eeb435`, Railway `d6ac1065-7ceb-4396-821b-ffff2909d7e9` SUCCESS;
+both `/api/version` return that commit and satoru-v301 (20:10 UTC).
+`scripts/qa/hashcheck.sh 4eeb435 app.js index.html sw.js`: **6/6**, zero mismatches.
+
 ## [2026-09-27] Codex — R05 saved routes, v301 candidate
 
 Validation: `node --check` app/sw, `git diff --check`, complete suite **3163/3163 PASS**.

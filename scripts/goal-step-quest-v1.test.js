@@ -171,8 +171,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   assert.ok(moduleAt >= 0, 'index must load goal-step-quest-v1.js');
   assert.ok(appAt > moduleAt, 'app.js must run after the module it calls');
   assert.equal((SW.match(/'goal-step-quest-v1\.js'/g) || []).length, 1, 'SHELL must pin the module exactly once');
-  assert.match(SW, /const CACHE = 'satoru-v301'/, 'новый файл в SHELL обязан поднять версию кэша');
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v301'/);
+  assert.match(SW, /const CACHE = 'satoru-v302'/, 'новый файл в SHELL обязан поднять версию кэша');
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v302'/);
 });
 
 test('the goal checklist and the «Следующий шаг» card both offer the step to the day', () => {

@@ -17831,8 +17831,7 @@ function progressTrioCard() {
 const COMP_TIERS = [
   { at: 0, name: 'Искра' }, { at: 6, name: 'Дух' }, { at: 20, name: 'Страж' }, { at: 50, name: 'Хранитель' },
 ];
-function ensureCompanion() {
-  const s = State.settings;
+function ensureCompanion(s = State.settings) {
   if (!s.companion) s.companion = { name: 'Тень', born: todayStr(), bond: 0, lastSeen: todayStr(), journal: [], check: {} };
   const c = s.companion;
   if (typeof c.bond !== 'number') c.bond = 0;
@@ -17841,6 +17840,33 @@ function ensureCompanion() {
   if (!c.born) c.born = todayStr();
   if (!c.name) c.name = 'Тень';
   return c;
+}
+async function saveCompanionCare(kind, text = '') {
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch, day = todayStr();
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  if (!['pet', 'm', 'e'].includes(kind)) return false;
+  const saved = await Store.updateNow('settings', settings => {
+    const next = structuredClone(settings), c = ensureCompanion(next);
+    // The saved day marker is the idempotency key for both entry points.
+    if (kind === 'pet' ? c.pet === day : c.check[day]?.[kind]) return undefined;
+    if (kind === 'pet') { c.pet = day; c.bond += 1; }
+    else {
+      c.check[day] = Object.assign({}, c.check[day], { [kind]: true });
+      const note = String(text || '').trim().slice(0, 200);
+      if (note) c.journal = c.journal.concat({ date: day, kind, text: note }).slice(-120);
+      c.bond += 2 + Math.round((globalPerk('bond') || 0) / 6);
+    }
+    c.lastSeen = day;
+    return next;
+  }, committed => { if (!current()) return false; State.settings = committed; return true; });
+  if (!current()) return false;
+  if (!saved) {
+    const c = ensureCompanion();
+    if (!(kind === 'pet' ? c.pet === day : c.check[day]?.[kind])) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
+    return false;
+  }
+  State._compAway = 0;
+  return true;
 }
 function compTierIdx(bond) { let i = 0; COMP_TIERS.forEach((x, k) => { if (bond >= x.at) i = k; }); return i; }
 function compNextTier(bond) { return COMP_TIERS.find((x) => x.at > bond) || null; }
@@ -29043,13 +29069,10 @@ async function onSubmit(e) {
   // --- Компаньон: чек-ин (утро/вечер) ---
   if (f.id === 'comp-checkin') {
     e.preventDefault();
-    const c = ensureCompanion(), t = todayStr(), kind = f.dataset.kind === 'e' ? 'e' : 'm';
+    const kind = f.dataset.kind === 'e' ? 'e' : 'm';
     const text = (f.text.value || '').trim().slice(0, 200);
-    c.check[t] = Object.assign({}, c.check[t], { [kind]: true });
-    if (text) { c.journal.push({ date: t, kind, text }); if (c.journal.length > 120) c.journal = c.journal.slice(-120); }
-    c.bond += 2 + Math.round((globalPerk('bond') || 0) / 6); // 💜 перк древа усиливает связь за чек-ин
-    c.lastSeen = t; State._compAway = 0; State._compForm = null;
-    Store.save('settings', State.settings);
+    if (!await saveCompanionCare(kind, text)) return;
+    State._compForm = null;
     if (typeof sfx === 'function') sfx('complete');
     toast(kind === 'm' ? '🌅 Утро отмечено вместе' : '🌙 Хорошего тебе вечера 💛');
     render(); return;
@@ -31617,10 +31640,10 @@ async function onClick(e) {
   if (action === 'moment-pet') {
     // То же, что «погладить» на карточке, но из момента: закрываем его следом,
     // чтобы жест завершал встречу, а не оставлял человека в оверлее.
-    const cm = ensureCompanion();
-    if (cm.pet !== today) {
-      cm.pet = today; cm.bond += 1; cm.lastSeen = today; State._compAway = 0;
-      Store.save('settings', State.settings);
+    const alreadySaved = ensureCompanion().pet === today;
+    if (!alreadySaved) {
+      if (!await saveCompanionCare('pet')) return;
+      const cm = ensureCompanion();
       try { sfx('complete'); } catch {}
       toast('💛 ' + esc(cm.name) + ' ' + t('жмурится от тепла'));
       if (window.ShadowRig) window.ShadowRig.setTransient('happy', 1000);
@@ -31628,10 +31651,8 @@ async function onClick(e) {
     closeMoment(); render(); return;
   }
   if (action === 'comp-pet') {
+    if (!await saveCompanionCare('pet')) return;
     const c = ensureCompanion();
-    if (c.pet === today) return;
-    c.pet = today; c.bond += 1; c.lastSeen = today; State._compAway = 0;
-    Store.save('settings', State.settings);
     if (typeof sfx === 'function') sfx('complete');
     toast('💛 ' + esc(c.name) + ' жмурится от тепла');
     if (window.ShadowRig) window.ShadowRig.setTransient('happy', 1000);
@@ -34546,7 +34567,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v301';
+const PWA_CACHE_VERSION = 'satoru-v302';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

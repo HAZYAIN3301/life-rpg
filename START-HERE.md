@@ -1,5 +1,9 @@
 # START HERE — холодный старт для нового чата/LLM
 
+**Codex 27.09:** v301 `4eeb435` published and verified on both domains. Next candidate
+v302 fixes unconfirmed companion care; COMPANION-CARE-V302-QA.md lists evidence and
+remaining R06 gates. The original R05/R06 scopes remain distinct from earlier visual audits.
+
 **Codex web lane, 27.09 — v301 candidate:** R05 saved-status and Board-return repairs;
 browser acceptance and remaining scope: ROUTES-R05-V301-QA.md. Full R05 and R06 reward
 acceptance are not claimed. Latest publication receipt is in DEVLOG/RELEASE-CHECKPOINT.
