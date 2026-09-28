@@ -7,7 +7,7 @@ ok=0; bad=0
 for f in "$@"; do
   l=$(git show "$commit:public/$f" | shasum -a 256 | cut -d' ' -f1)
   for d in https://satoruapp.com https://life-rpg-production-416a.up.railway.app; do
-    r=$(curl -s --max-time 20 "$d/$f" | shasum -a 256 | cut -d' ' -f1)
+    r=$(curl -s --max-time 120 "$d/$f" | shasum -a 256 | cut -d' ' -f1)
     if [ "$l" = "$r" ]; then ok=$((ok+1)); else bad=$((bad+1)); echo "MISMATCH $d/$f"; fi
   done
 done

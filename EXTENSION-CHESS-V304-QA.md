@@ -36,4 +36,9 @@ and a motivation screen before entering. Lane: Claude (extension), LANES-2026092
   under the lock dropping the puzzle and switching the rule off are refused, a harder puzzle is
   accepted after the session; entry screen shows the line and reasons. RU and EN.
 
+**Published:** `6a8742d`, both domains `satoru-v304` at 06:35 UTC 28.09; SHA-256 16/16 (app.js,
+index.html, sw.js, browser-companion.html/-landing/-privacy files and the v304 ZIP); sign-in smoke
+in WebKit (iPhone) and Chromium without page errors. `scripts/qa/hashcheck.sh` now allows 120 s per
+download (a 5.8 MB ZIP could be cut at 20 s and read as a false mismatch).
+
 **Not verified:** the owner's Brave; real TikTok/YouTube pages (the boundary itself is unchanged).
