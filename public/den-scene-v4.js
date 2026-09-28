@@ -207,6 +207,22 @@
     },
   };
 
+  // Existing paid SVGs use the same fixed world as the room, not legacy viewport
+  // percentages. Their art is unchanged; this only places them on a real surface.
+  const PURCHASED_ITEMS = Object.fromEntries([
+    ['wall-moon', 'wall', 620, 185, 220, 220, 2, 'back-wall'],
+    ['seat-forest', 'seat', 340, 555, 260, 260, 4, 'floor-foreground-left'],
+    ['surface-alchemy', 'surface', 1120, 575, 260, 260, 4, 'floor-foreground-right'],
+    ['comfort-cat-tower', 'comfort', 150, 190, 180, 180, 4, 'fireplace-mantel'],
+    ['light-six', 'light', 1200, 430, 160, 160, 4, 'bench-seat'],
+    ['keepsake-cape', 'keepsake', 1350, 475, 185, 240, 4, 'floor-right-wall'],
+    ['floor-yin', 'floor', 476, 260, 584, 584, 1, 'floor-center'],
+  ].map(([id, slot, x, y, w, h, z, plane]) => [id, {
+    id, slot, x, y, w, h, z, plane, file: `/art/den/v2/${id}.svg`,
+    pivot: { x: 0.5, y: 1 }, transform: slot === 'floor' ? 'scaleY(.42)' : null,
+    motion: { target: 'whole', kind: 'still' },
+  }]));
+
   const ACTORS = {
     avatar: {
       id: 'avatar',
@@ -324,7 +340,7 @@
   }
 
   function item(id) {
-    return ITEMS[id] || null;
+    return ITEMS[id] || PURCHASED_ITEMS[id] || null;
   }
 
   function deepFreeze(value) {
@@ -338,6 +354,7 @@
     world: WORLD,
     regions: REGIONS,
     items: ITEMS,
+    purchasedItems: PURCHASED_ITEMS,
     actors: ACTORS,
     phases: PHASES,
     localBoundaryHours: LOCAL_BOUNDARY_HOURS,

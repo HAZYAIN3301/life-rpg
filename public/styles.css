@@ -10778,6 +10778,9 @@ html.mobile-nav-open body {
 .avatar-core-stage { min-height: 520px; overflow: hidden !important; }
 .avatar-core-stack--figure { width: min(92%, 462px); }
 .avatar-core-portrait { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
+.avatar-cosmetic-portrait { background: var(--portrait-bg, transparent); }
+.profile-portrait { position: relative; overflow: hidden; }
+.avatar-portrait-ring { position: absolute; inset: 0; z-index: 3; border: 3px solid var(--portrait-ring, transparent); border-radius: inherit; pointer-events: none; }
 .avatar-core-stack--portrait { position: absolute; left: 50%; top: -12%; width: 280%; transform: translateX(-50%); }
 .avatar-core-gender-picker { min-width: 0; margin: 14px 0 0; padding: 0; border: 0; }
 .avatar-core-gender-picker .avatar-core-control-label { padding: 0; }
@@ -15599,6 +15602,18 @@ html.calendar-task-open body {
 }
 .loot-reveal-actions,
 .economy-confirm-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sp-2); margin-top: var(--sp-3); }
+.economy-preview { margin: var(--sp-3) 0; }
+.economy-preview figcaption,
+.economy-preview-note { margin-block: var(--sp-2); color: var(--text-soft); font-size: var(--type-meta); line-height: var(--leading-prose); }
+.economy-portrait-preview { position: relative; width: 132px; height: 132px; margin-inline: auto; border-radius: 50%; background: var(--surface-3); }
+.economy-den-preview.den-scene { width: 100%; height: auto; min-height: 0; aspect-ratio: 16 / 9; border: 0; border-radius: var(--radius-sm); pointer-events: none; }
+.economy-den-preview *, .economy-den-preview *::before, .economy-den-preview *::after { animation: none !important; transition: none !important; }
+.economy-gear-preview { display: flex; align-items: center; gap: var(--sp-3); }
+.economy-gear-preview > .satoru-icon { flex: 0 0 72px; width: 72px; height: 72px; }
+.economy-gear-preview figcaption p { margin-bottom: 0; }
+.cos-grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
+.cos-tile { min-width: 0; }
+.cos-tile :is(.cos-name, .cos-rarity) { max-width: 100%; font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; text-align: center; }
 .loot-save-status,
 .economy-confirm-status { min-height: 1.5em; color: var(--text-soft); }
 .loot-save-status.is-error,

@@ -1,3 +1,11 @@
+**Codex 28.09 — G01 / v308 candidate:** видимая рамка/фон портрета, подтверждённое
+сохранение старого гардероба, предпросмотр покупки мебели/темы и world-space размещение
+семи платных предметов. 3186/3186 tests; 200 modal + 120 screen states Chrome/WebKit,
+реальные synthetic purchase/refusal/lost-response/retry/reload. Детали и границы:
+[GOLD-G01-V308-QA.md](./GOLD-G01-V308-QA.md). Новая авторская мебель — следующий приоритет
+перед сложным аватаром; цены/Pro/платежи не изменены. Deployment пока не подтверждён.
+
+
 **Codex 28.09, 09:02 UTC — v307 опубликован.** Runtime `dd3c903`, Railway
 `bdffc55b-4f21-406f-a9b1-dde5cf719c51` SUCCESS. Оба домена отдают этот commit и
 `satoru-v307`; SHA-256 пяти shell-файлов **10/10**. Вход Chromium/WebKit на двух

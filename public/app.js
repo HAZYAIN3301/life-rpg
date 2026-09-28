@@ -539,6 +539,13 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  'Предпросмотр комнаты': { en: 'Room preview', de: 'Raumvorschau', uk: 'Перегляд кімнати', es: 'Vista previa de la habitación' },
+  'После покупки предмет будет установлен в комнате.': { en: 'The item will be placed in your room after purchase.', de: 'Nach dem Kauf wird der Gegenstand im Raum aufgestellt.', uk: 'Після покупки предмет буде встановлено в кімнаті.', es: 'El objeto se colocará en tu habitación después de comprarlo.' },
+  'После покупки оформление будет применено к комнате.': { en: 'The room theme will be applied after purchase.', de: 'Nach dem Kauf wird die Raumgestaltung angewendet.', uk: 'Після покупки оформлення буде застосовано до кімнати.', es: 'El tema se aplicará a tu habitación después de comprarlo.' },
+  'Оформление портрета. После покупки выбери «Надеть».': { en: 'Portrait decoration. Choose Equip after purchase.', de: 'Porträtgestaltung. Nach dem Kauf Anlegen wählen.', uk: 'Оформлення портрета. Після покупки вибери «Одягнути».', es: 'Decoración del retrato. Elige Equipar después de comprarla.' },
+  'Игровой бонус снаряжения; одежду персонажа не меняет.': { en: 'An equipment bonus; it does not change the character’s clothes.', de: 'Ein Ausrüstungsbonus; die Kleidung der Figur bleibt unverändert.', uk: 'Ігровий бонус спорядження; одяг персонажа не змінює.', es: 'Una bonificación de equipo; no cambia la ropa del personaje.' },
+  'Запись о личной награде сохранится в истории. Реальные расходы оплачиваются отдельно.': { en: 'Your personal reward will be recorded in history. Real-world costs are paid separately.', de: 'Deine persönliche Belohnung wird im Verlauf gespeichert. Reale Kosten werden separat bezahlt.', uk: 'Запис про особисту нагороду збережеться в історії. Реальні витрати оплачуються окремо.', es: 'Tu recompensa personal quedará registrada en el historial. Los gastos reales se pagan por separado.' },
+  'Этот образ используется в примерочной. Живой Traveller в Логове пока имеет отдельный облик.': { en: 'This look is used in the wardrobe preview. The animated Traveller in the Den currently has a separate appearance.', de: 'Dieser Look wird in der Garderobenvorschau verwendet. Der animierte Traveller im Refugium hat derzeit ein separates Aussehen.', uk: 'Цей образ використовується у примірочній. Живий Traveller у Лігві поки має окремий вигляд.', es: 'Este aspecto se usa en la vista previa del vestuario. El Traveller animado de la Guarida tiene por ahora un aspecto independiente.' },
   // R12 (v294): первый запуск — строки анкеты были по-русски на всех языках.
   'ИИ сейчас не подключён — ручной путь работает полностью.': { en: 'AI is not connected right now — the manual path works fully.', de: 'KI ist gerade nicht verbunden — der manuelle Weg funktioniert vollständig.', uk: 'ШІ зараз не підключений — ручний шлях працює повністю.', es: 'La IA no está conectada ahora; el camino manual funciona por completo.' },
   'Проверяю подключение ИИ…': { en: 'Checking the AI connection…', de: 'KI-Verbindung wird geprüft…', uk: 'Перевіряю підключення ШІ…', es: 'Comprobando la conexión con la IA…' },
@@ -9011,14 +9018,33 @@ function avatarAppearance() {
   const settings = State.settings || {};
   return normalizeAvatarAppearance(settings.avatarForge || settings.avatarAppearance);
 }
-function persistAvatarAppearance(next) {
-  if (!State.settings) return;
+let avatarAppearanceAttempt = null;
+let avatarAppearanceSaving = false;
+async function persistAvatarAppearance(next, itemId = '') {
+  if (!State.settings) return false;
   const safe = normalizeAvatarAppearance(next);
-  State.settings.avatarAppearance = safe;
-  // A rollout mirror prevents an older cached app.js from destroying Forge slot
-  // strings by coercing its legacy flat `hair` flag to a boolean.
-  State.settings.avatarForge = safe;
-  autosaveSettings();
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  const key = JSON.stringify([safe, itemId]);
+  if (!avatarAppearanceAttempt || avatarAppearanceAttempt.accountId !== accountId
+    || avatarAppearanceAttempt.writeEpoch !== writeEpoch || avatarAppearanceAttempt.key !== key) {
+    const settings = structuredClone(State.settings);
+    settings.avatarAppearance = safe;
+    // Preserve the old-client mirror in the same confirmed transaction.
+    settings.avatarForge = safe;
+    if (itemId && CHARACTER_WARDROBE_V1_ITEM_IDS.has(itemId)) {
+      const seen = characterWardrobeV1Seen(), owned = characterWardrobeV1Owned();
+      seen.add(itemId);
+      settings.avatarWardrobeV1 = { schemaVersion: 1, owned: [...owned], seen: [...seen] };
+    }
+    avatarAppearanceAttempt = { key, accountId, writeEpoch, data: { settings } };
+  }
+  const attempt = avatarAppearanceAttempt;
+  const saved = await economyCommit(attempt.data);
+  if (accountId !== String(State.me?.id || '') || writeEpoch !== Store._writeEpoch) return false;
+  if (!saved) { toast(economySaveUnconfirmed(attempt.data)); return false; }
+  State.settings = attempt.data.settings;
+  if (avatarAppearanceAttempt === attempt) avatarAppearanceAttempt = null;
+  return safe;
 }
 function nextAvatarAppearance(patch) {
   const current = avatarAppearance();
@@ -9055,17 +9081,6 @@ function characterWardrobeV1Owned() {
   const source = raw && Array.isArray(raw.owned) ? raw.owned : CHARACTER_WARDROBE_V1_BASELINE_OWNED;
   return new Set(source.filter((id) => CHARACTER_WARDROBE_V1_ITEM_IDS.has(id) && !id.endsWith(':none')));
 }
-function rememberCharacterWardrobeV1Item(itemId) {
-  if (!State.settings || !CHARACTER_WARDROBE_V1_ITEM_IDS.has(itemId)) return false;
-  const seen = characterWardrobeV1Seen();
-  const owned = characterWardrobeV1Owned();
-  const current = State.settings.avatarWardrobeV1;
-  if (seen.has(itemId) && current && Array.isArray(current.seen) && Array.isArray(current.owned)) return true;
-  seen.add(itemId);
-  State.settings.avatarWardrobeV1 = { schemaVersion: 1, owned: [...owned], seen: [...seen] };
-  Store.save('settings', State.settings);
-  return true;
-}
 function characterWardrobeV1Equipped(slot, item, appearance = avatarAppearance()) {
   return Boolean(slot && item && appearance.slots[slot.runtimeKey] === item.value);
 }
@@ -9077,8 +9092,7 @@ function characterWardrobeV1RarityColor(rarityId) {
 }
 function setAvatarAppearance(patch, options = {}) {
   const next = nextAvatarAppearance(patch);
-  if (options.render === false) persistAvatarAppearance(next);
-  else queueAvatarAppearanceRender(next).catch(() => {});
+  queueAvatarAppearanceRender(next, { render: options.render !== false }).catch(() => {});
   return next;
 }
 function setAvatarVariant(variant, options = {}) {
@@ -9203,29 +9217,37 @@ function scheduleArtWarmup() {
   if (typeof requestIdleCallback === 'function') requestIdleCallback(run, { timeout: 1800 });
   else setTimeout(run, 250);
 }
-function queueAvatarAppearanceRender(next) {
+async function queueAvatarAppearanceRender(next, options = {}) {
+  if (avatarAppearanceSaving) return false;
+  avatarAppearanceSaving = true;
   const safe = normalizeAvatarAppearance(next);
   const token = ++_avatarAppearanceRenderToken;
+  const accountId = String(State.me?.id || ''), writeEpoch = Store._writeEpoch;
+  const current = () => token === _avatarAppearanceRenderToken && accountId === String(State.me?.id || '') && writeEpoch === Store._writeEpoch;
   const editors = [...document.querySelectorAll('#avatar-editor, #character-wardrobe')];
   editors.forEach((editor) => {
     editor.classList.add('is-avatar-swapping');
     editor.setAttribute('aria-busy', 'true');
   });
-  return preloadAvatarAppearance(safe).then(() => {
-    if (token !== _avatarAppearanceRenderToken) return;
-    persistAvatarAppearance(safe);
-    render();
-    return safe;
-  }).catch((error) => {
-    if (token === _avatarAppearanceRenderToken) {
+  try {
+    await preloadAvatarAppearance(safe);
+    if (!current()) return false;
+    const saved = await persistAvatarAppearance(safe, options.itemId || '');
+    if (!current() || !saved) return false;
+    if (options.render !== false) render();
+    return saved;
+  } catch (error) {
+    if (current()) toast(t('Не удалось загрузить слой аватара'));
+    throw error;
+  } finally {
+    avatarAppearanceSaving = false;
+    if (current()) {
       editors.forEach((editor) => {
         editor.classList.remove('is-avatar-swapping');
         editor.removeAttribute('aria-busy');
       });
-      toast(t('Не удалось загрузить слой аватара'));
     }
-    throw error;
-  });
+  }
 }
 
 function avatarArtHTML(options = {}) {
@@ -9238,8 +9260,10 @@ function avatarArtHTML(options = {}) {
   return `<span class="${classes}" data-avatar-preset="${esc(cfg.presetId)}" data-avatar-colorway="${esc(cfg.colors.outerwear)}" data-avatar-batch="${AVATAR_FORGE_BATCH_ID}" data-avatar-rigged="false" data-avatar-static="true" role="img" aria-label="${esc(t('Персонаж Satoru'))}"><span class="avatar-art-rig">${layers}</span></span>`;
 }
 function avatarPortraitHTML(options = {}) {
-  void options;
-  return `<span class="avatar-art-portrait avatar-core-portrait">${avatarCorePoseHTML('idle', { className: 'avatar-core-stack--portrait' })}</span>`;
+  const look = { ...equippedCosmeticsOpts(), ...options };
+  const frame = look.frame && frameById(look.frame.id);
+  const bg = typeof look.bg === 'string' && /^#[0-9a-f]{6}$/i.test(look.bg) ? look.bg : '';
+  return `<span class="avatar-art-portrait avatar-core-portrait avatar-cosmetic-portrait" data-portrait-frame="${esc(frame?.id || '')}" style="--portrait-ring:${frame ? frame.ring : 'transparent'};--portrait-bg:${bg || 'transparent'}">${avatarCorePoseHTML('idle', { className: 'avatar-core-stack--portrait' })}<span class="avatar-portrait-ring" aria-hidden="true"></span></span>`;
 }
 function avatarFigureHTML(options = {}) {
   return avatarArtHTML(Object.assign({}, options, { className: 'avatar-art-stack--figure' }));
@@ -10164,7 +10188,7 @@ async function onAvatarForgeMessage(event) {
   if (overlay?.classList.contains('is-applying')) return;
   overlay?.classList.add('is-applying');
   try {
-    await queueAvatarAppearanceRender(next);
+    if (!await queueAvatarAppearanceRender(next)) { overlay?.classList.remove('is-applying'); return; }
     closeAvatarForgeEditor();
     toast(t('Образ сохранён'));
   } catch {
@@ -14362,6 +14386,8 @@ function renderHeader(force = false) {
     streak: [streak, longestStreak()],
     tier: [e.tier, trialDaysLeft()],
     avatar: State.settings.avatarForge || State.settings.avatarAppearance || null,
+    cosmetics: State.settings.equipped || null,
+    avatarCoreGender: avatarCoreGender(),
   });
   if (!force && header && header.childElementCount && nextKey === _headerRenderKey) return;
   _headerRenderKey = nextKey;
@@ -14372,7 +14398,7 @@ function renderHeader(force = false) {
   const profileOpen = !!header.querySelector('.profile-details[open]');
   header.innerHTML = `
     <details class="profile-details"${profileOpen ? ' open' : ''}>
-    <summary><span class="profile-monogram" aria-hidden="true">${esc(Array.from(State.me?.name || 'S')[0])}</span><span class="profile-summary-text"><b>${esc(State.me?.name || 'Satoru')}</b><small>${t('Уровень')} ${oi.level} · ${goldBalance()} ${t('золота')}</small></span><span aria-hidden="true">⌄</span></summary>
+    <summary><span class="profile-monogram profile-portrait" aria-hidden="true">${avatarPortraitHTML()}</span><span class="profile-summary-text"><b>${esc(State.me?.name || 'Satoru')}</b><small>${t('Уровень')} ${oi.level} · ${goldBalance()} ${t('золота')}</small></span><span aria-hidden="true">⌄</span></summary>
     <div class="char-main">
       ${State.me ? `<div class="user-pill" title="${t('Профиль')}">
         <button class="up-av up-av-raster" data-action="go-wardrobe" title="${t('Открыть персонажа')}" aria-label="${t('Открыть персонажа')}">${avatarPortraitHTML({ motion: 'portrait' })}</button>
@@ -19263,11 +19289,11 @@ function denSceneSVG(theme, light, den) {
     <span class="den-room-colorwash" data-phase="${phase}" style="--den-room-wall:${theme.wall2};--den-room-glow:${theme.glow}"></span>
     <span class="den-practical-light den-practical-light-lantern" aria-hidden="true"></span>`;
 }
-function denObjectsHTML(den, coherentV5) {
+function denObjectsHTML(den, coherentV5, previewItemId = '') {
   return Object.entries(den.slots).map(([slot, id]) => {
     if (coherentV5 && Object.prototype.hasOwnProperty.call(DEN_V5_BAKED_STARTER_SLOTS, slot)) return '';
     const item = denItem(id);
-    if (!item || item.slot !== slot || !denOwned(id)) return '';
+    if (!item || item.slot !== slot || (!denOwned(id) && previewItemId !== id)) return '';
     const placement = window.DenSceneV4 && window.DenSceneV4.item(item.id);
     let style = '';
     let motion = item.motion;
@@ -22412,6 +22438,7 @@ function characterWardrobeV1HTML(cr, oi, arch) {
     <div class="character-wardrobe-layout">
       <div class="character-wardrobe-preview-panel">
         <figure class="character-wardrobe-preview"><div class="character-wardrobe-stage">${avatarFigureHTML({ appearance })}</div><figcaption>${t('Предпросмотр образа')}</figcaption></figure>
+        <p class="character-wardrobe-note">${t('Этот образ используется в примерочной. Живой Traveller в Логове пока имеет отдельный облик.')}</p>
         <div class="character-wardrobe-slots" role="group" aria-label="${t('Слоты экипировки')}">${slotButtons}</div>
       </div>
       <section class="character-wardrobe-drawer" id="character-wardrobe-drawer" aria-labelledby="character-wardrobe-slot-title">
@@ -22874,6 +22901,28 @@ function purchaseProgressError(data) {
   const code = !progress?.ok ? 'purchase_progress_unavailable' : progress.level < requiredLevel ? 'purchase_level_required' : '';
   return window.PurchaseFeedbackV1?.text(code, lang()) || (code ? economySaveUnconfirmed() : '');
 }
+function economyPreviewHTML(data) {
+  if (data.kind === 'cosmetic') {
+    const item = cosmeticById(data.id); if (!item) return '';
+    const look = equippedCosmeticsOpts();
+    if (cosmeticType(item.id) === 'frame') look.frame = item; else look.bg = item.fill;
+    return `<figure class="economy-preview"><div class="economy-portrait-preview">${avatarPortraitHTML(look)}</div><figcaption>${t('Оформление портрета. После покупки выбери «Надеть».')}</figcaption></figure>`;
+  }
+  if (data.kind === 'den-item' || data.kind === 'den-theme') {
+    const den = structuredClone(ensureDen());
+    if (data.kind === 'den-theme') den.theme = data.id;
+    else { const item = denItem(data.id); if (!item) return ''; den.slots[item.slot] = item.id; }
+    const theme = DEN_THEMES.find(x => x.id === den.theme) || DEN_THEMES[0];
+    const coherent = denUsesCoherentV5(den);
+    return `<figure class="economy-preview"><div class="den-scene economy-den-preview" role="img" aria-label="${esc(t('Предпросмотр комнаты'))}" data-den-theme="${theme.id}" data-den-renderer="${coherent ? 'v5' : 'v3'}" data-den-light="${den.light}" data-den-phase="${denPhaseForLight(den.light)}">${denSceneSVG(theme, den.light, den)}${denObjectsHTML(den, coherent, data.kind === 'den-item' ? data.id : '')}${denLegacyRoomFixturesHTML(coherent)}</div><figcaption>${t(data.kind === 'den-item' ? 'После покупки предмет будет установлен в комнате.' : 'После покупки оформление будет применено к комнате.')}</figcaption></figure>`;
+  }
+  if (data.kind === 'gear') {
+    const item = gearById(data.id); if (!item) return '';
+    return `<figure class="economy-preview economy-gear-preview">${gearInventoryArtHTML(item)}<figcaption><strong>${esc(gearBonusLabel(item))}</strong><p>${t('Игровой бонус снаряжения; одежду персонажа не меняет.')}</p></figcaption></figure>`;
+  }
+  if (data.kind === 'reward') return `<p class="economy-preview-note">${t('Запись о личной награде сохранится в истории. Реальные расходы оплачиваются отдельно.')}</p>`;
+  return '';
+}
 function showEconomyConfirm(kind, id, returnFocus = document.activeElement) {
   const data = economyConfirmationData(kind, id); if (!data) return null;
   const progressError = purchaseProgressError(data); if (progressError) { toast(progressError); return null; }
@@ -22891,6 +22940,7 @@ function showEconomyConfirm(kind, id, returnFocus = document.activeElement) {
     <p class="economy-confirm-kicker">${t('Осознанное действие')}</p>
     <h2 id="economy-confirm-title" tabindex="-1">${esc(data.title)}</h2>
     <p class="economy-confirm-item">${esc(data.name)}</p>
+    ${economyPreviewHTML(data)}
     <p id="economy-confirm-detail">${esc(detail)}</p>
     <p class="economy-confirm-status" role="status" aria-live="polite"></p>
     <div class="economy-confirm-actions"><button type="button" class="btn" data-action="confirm-economy-action">${esc(data.confirm)}</button><button type="button" class="btn ghost" data-action="close-economy-confirm">${t('Отмена')}</button></div>
@@ -22989,7 +23039,9 @@ async function commitEconomyConfirmation(overlay) {
   State._rewardsFocusAfterCommit = data.kind === 'reward' ? `[data-action="buy-reward"][data-id="${CSS.escape(data.id)}"]`
     : data.kind === 'gear' ? `[data-action="equip-gear"][data-id="${CSS.escape(data.id)}"]`
       : data.kind === 'cosmetic' ? `[data-action="equip-cosmetic"][data-id="${CSS.escape(data.id)}"]`
-        : data.kind === 'delete-reward' ? '.personal-reward-store input[name="name"]' : '.personal-reward-store h3';
+        : data.kind === 'den-item' ? `[data-action="den-item"][data-id="${CSS.escape(data.id)}"]`
+          : data.kind === 'den-theme' ? `[data-action="den-theme"][data-id="${CSS.escape(data.id)}"]`
+            : data.kind === 'delete-reward' ? '.personal-reward-store input[name="name"]' : '.personal-reward-store h3';
   toast(success); if (data.kind !== 'delete-reward') sfx('coin'); checkAchievements(); render();
 }
 
@@ -24415,7 +24467,7 @@ function gearBonus(skillId) {
   if (relic && skillId && skillInSphere(skillId, relic.sphere)) xpPct += relic.xpPct || 0;
   return { xpPct, hardXpPct, goldPct };
 }
-function gearBonusLabel(it) { return it.xpPct ? `+${it.xpPct}% XP` : it.hardXpPct ? `+${it.hardXpPct}% ${t('XP к сложным')}` : `+${it.goldPct}% ${t('золота')}`; }
+function gearBonusLabel(it) { return [it.xpPct ? `+${it.xpPct}% XP` : '', it.hardXpPct ? `+${it.hardXpPct}% ${t('XP к сложным')}` : '', it.goldPct ? `+${it.goldPct}% ${t('золота')}` : ''].filter(Boolean).join(' · '); }
 function gearInventoryArtHTML(it) {
   if (!it.inventoryArt) return satoruIconHTML(`gear.${it.id}`, 'gear-content-icon', it.icon);
   return `<img class="satoru-icon satoru-icon--emblem gear-content-icon" data-gear-id="${esc(it.id)}" src="${esc(it.inventoryArt)}" alt="" aria-hidden="true" decoding="async" />`;
@@ -28801,7 +28853,7 @@ function afterMainCommit() {
       if (target) { window.InterfaceCompositionV1?.reveal(target); focusPathChoiceTarget(target); target.scrollIntoView({block:'nearest', behavior:'auto'}); }
     });
   }
-  if (State._rewardsFocusAfterCommit && State.view === 'rewards') {
+  if (State._rewardsFocusAfterCommit && ['rewards', 'den'].includes(State.view)) {
     const selector = State._rewardsFocusAfterCommit;
     State._rewardsFocusAfterCommit = '';
     requestAnimationFrame(() => {
@@ -31661,11 +31713,12 @@ async function onClick(e) {
     if (!slot || !item || !AVATAR_SLOT_VALUES[slot.runtimeKey].has(item.value)) return;
     const owned = characterWardrobeV1Owned();
     if (item.value !== 'none' && !owned.has(item.id) && !characterWardrobeV1Equipped(slot, item)) return;
-    rememberCharacterWardrobeV1Item(item.id);
     State._characterWardrobeSlot = slot.id;
     State._characterFocusAfterCommit = `[data-wardrobe-item="${item.id}"]`;
     const next = nextAvatarAppearance({ slots: { [slot.runtimeKey]: item.value } });
-    queueAvatarAppearanceRender(next).then(() => toast(`${t(item.value === 'none' ? 'Снять' : 'Надето')}: ${t(item.label)}`)).catch(() => {
+    queueAvatarAppearanceRender(next, { itemId: item.id }).then((saved) => {
+      if (saved) toast(`${t(item.value === 'none' ? 'Снять' : 'Надето')}: ${t(item.label)}`);
+    }).catch(() => {
       State._characterFocusAfterCommit = '';
     });
     return;
@@ -34665,7 +34718,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v307';
+const PWA_CACHE_VERSION = 'satoru-v308';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -92,6 +92,8 @@ function harness(modes = [], locale = 'en') {
     + between('async function commitEconomyConfirmation(', '// ============================================================')
     + '\n globalThis.Store = Store;', context);
   context.Store._writeEpoch = 4; context.Store._persisted = clone(server);
+  // Visual preview has its own renderer tests; admission must remain free of writes.
+  context.economyPreviewHTML = () => '';
   const candidate = { purchases: [{ id: 'p-fixed', rewardId: 'reward-1', name: 'Tea', cost: 10, at: '2026-09-12T10:00:00.000Z' }] };
   const run = () => context.economyCommit(candidate);
   return { context, State, events, calls, queue, server, before, initialSnapshots, candidate, run, Store: context.Store };
