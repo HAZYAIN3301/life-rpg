@@ -25,4 +25,14 @@ satoruapp.com could be added to a site rule or the denylist. Lane: Claude (exten
   synthetic page that asks the bridge like the app does): satoruapp.com → READY 0.10.1 and a status
   response; Railway host → the same; evil.example → nothing.
 
+**Published:** `f67e8a3`, both domains `satoru-v305` at 07:02 UTC 28.09; SHA-256 16/16 (incl. the
+v305 ZIP); sign-in smoke in WebKit (iPhone) and Chromium without page errors.
+
+**Owner's Brave, 28.09 (remote, with his permission):** Brave had loaded the unpacked folder
+`~/Downloads/satoru-attention-chromium-v297` (0.7.0; protection on, health `active`). The verified
+v305 ZIP was extracted over that folder (same path keeps the extension ID and settings) and Brave
+was restarted, but Brave keeps the unpacked manifest until «Reload» on the extensions page — the
+bridge still answered 0.7.0 on the Railway host and nothing on satoruapp.com (as expected for
+0.7.0). Internal `brave://` pages are not reachable remotely; the owner presses «Reload» at home.
+
 **Not verified:** the real satoruapp.com page with the owner's installed extension (needs his Brave).
