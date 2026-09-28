@@ -51,3 +51,24 @@ test('pending and late care cannot apply to another account', async () => {
   assert.equal(await pending, false);
   assert.equal(f.c.State.settings.companion.bond, 20);
 });
+test('rename waits for persistence; refusal leaves the old name and retry preserves care', async () => {
+  const f = fixture();
+  f.c.State.settings.companion.name = 'Before';
+  f.c.Store.fail = true;
+  assert.equal(await f.c.saveCompanionName('After'), false);
+  assert.equal(f.c.State.settings.companion.name, 'Before');
+  f.c.Store.fail = false;
+  assert.equal(await f.c.saveCompanionName('After'), true);
+  assert.equal(f.saved().companion.name, 'After');
+  assert.equal(f.saved().companion.bond, 5);
+});
+test('a late rename receipt cannot overwrite another account', async () => {
+  const f = fixture(); let release;
+  const wait = new Promise(r => { release = r; });
+  f.c.Store.beforeApply = () => wait;
+  const pending = f.c.saveCompanionName('Alice'); await Promise.resolve();
+  f.c.State.me = { id: 'bob' }; f.c.State.settings = { companion: { name: 'Bob', bond: 20 } };
+  f.c.Store._writeEpoch++; release();
+  assert.equal(await pending, false);
+  assert.equal(f.c.State.settings.companion.name, 'Bob');
+});

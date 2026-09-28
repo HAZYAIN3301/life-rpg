@@ -7987,8 +7987,11 @@ async function syncGoalStepFromQuest(task, done) {
 }
 async function completeTask(task, desire, onDate) {
   const taskIndex = State.tasks.findIndex((item) => item.id === task.id);
-  if (taskIndex < 0) return false;
+  if (taskIndex < 0 || task.done) return false;
   const beforeTask = structuredClone(task);
+  // Entry completion changes two stores. Keep the visible task untouched until
+  // their common WAL receipt, including when the request's response is lost.
+  if (task.entry) task = structuredClone(task);
   const activeCommitmentId = questCommitment(task) ? questCommitmentId(task) : '';
   const timerSnapshot = State.timer && State.timer.taskId === task.id ? structuredClone(State.timer) : null;
   if (State.timer && State.timer.taskId === task.id) stopFocus(false, true);
@@ -8008,7 +8011,30 @@ async function completeTask(task, desire, onDate) {
   // 🔴 Персист СРАЗУ: энергия уже списана — квест обязан быть сохранён раньше любой косметики
   // (нарратор/тосты/звук). Иначе сбой в UI-слое стоит игроку выполненного квеста.
   const completionDay = dayOf(task);
-  const saved = activeCommitmentId
+  let entryBondAdded = false;
+  const saved = task.entry
+    ? await commitmentDataCommit(({ settings, tasks }) => {
+      const linkedTask = tasks.find(item => item.id === task.id);
+      if (!linkedTask || !linkedTask.entry) return null;
+      entryBondAdded = false;
+      // A conflict refresh can reveal that the first request already committed.
+      if (linkedTask.done) return { settings, tasks };
+      const awarded = linkedTask.entryBondAwarded === true;
+      Object.assign(linkedTask, { done: true, completedAt: task.completedAt,
+        desire: task.desire, xpAwarded: 0, goldAwarded: 15, entryBondAwarded: true });
+      if (!awarded) {
+        const companion = ensureCompanion(settings);
+        companion.bond += 2; companion.lastSeen = todayStr(); entryBondAdded = true;
+      }
+      if (activeCommitmentId && linkedTask.commitmentId === activeCommitmentId) {
+        const api = commitmentEngine();
+        let commitments = api.normalize(settings.commitmentsV1);
+        commitments = api.mark(commitments, activeCommitmentId, completionDay, 'win');
+        settings.commitmentsV1 = api.archive(commitments, activeCommitmentId, completionDay);
+      }
+      return { settings, tasks };
+    }, `[data-action="toggle-task"][data-id="${CSS.escape(String(task.id))}"]`)
+    : activeCommitmentId
     ? await commitmentDataCommit(({ settings, tasks }) => {
       const linkedTask = tasks.find((item) => String(item.id) === String(task.id));
       if (!linkedTask || !linkedTask.done || linkedTask.commitmentId !== activeCommitmentId) return null;
@@ -8020,13 +8046,14 @@ async function completeTask(task, desire, onDate) {
     }, `[data-action="toggle-task"][data-id="${CSS.escape(String(task.id))}"]`)
     : await Store.saveNow('tasks', State.tasks);
   if (!saved) {
-    State.tasks[taskIndex] = beforeTask;
+    if (!task.entry) State.tasks[taskIndex] = beforeTask;
     restoreFocusTimerSnapshot(timerSnapshot);
     State._tasksFocusAfterCommit = `[data-action="toggle-task"][data-id="${CSS.escape(String(task.id))}"]`;
     toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
     render();
     return false;
   }
+  if (task.entry) task = State.tasks.find(item => item.id === task.id);
   await syncGoalStepFromQuest(task, true);
   // First Value receives evidence only after the task itself (and its linked
   // goal step, when present) has crossed the durable write boundary.
@@ -8040,13 +8067,10 @@ async function completeTask(task, desire, onDate) {
       if (!guideSaved) await reconcileGuideV3AfterTaskLoad();
     }
   }
-  if (task.entry) { // 💛 связь — валюта захода; сохраняем сразу же, до косметики
-    try { const c = ensureCompanion(); c.bond += 2; c.lastSeen = todayStr(); Store.save('settings', State.settings); } catch {}
-  }
   track(task.entry ? 'entry:done' : 'complete:quest');
   const sk = skillById(task.skillId); // сфера могла быть удалена — не роняем завершение квеста
   let msg = task.entry
-    ? `🕯 +${task.goldAwarded} 🪙 · 💛 ${t('связь')} +2 — ${t(dayPick('entrydone', ENTRY_DONE_LINES))}`
+    ? `+${task.goldAwarded} ${t('Золото')}${entryBondAdded ? ` · ${t('связь')} +2` : ''} — ${t(dayPick('entrydone', ENTRY_DONE_LINES))}`
     : `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
   if (systemMode()) systemNarrate(task.entry ? 'ЗАХОД СОВЕРШЁН' : 'КВЕСТ ВЫПОЛНЕН', task.entry ? msg : `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
   if (desire === 'forced' || desire === 'hyped') toast(t('Состояние отмечено. XP, золото и энергия не меняются от самооценки.'));
@@ -17868,6 +17892,18 @@ async function saveCompanionCare(kind, text = '') {
   State._compAway = 0;
   return true;
 }
+async function saveCompanionName(name) {
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  const saved = await Store.updateNow('settings', settings => {
+    const next = structuredClone(settings);
+    ensureCompanion(next).name = String(name || '').trim().slice(0, 24) || 'Тень';
+    return next;
+  }, committed => { if (!current()) return false; State.settings = committed; return true; });
+  if (!current()) return false;
+  if (!saved) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.'));
+  return !!saved;
+}
 function compTierIdx(bond) { let i = 0; COMP_TIERS.forEach((x, k) => { if (bond >= x.at) i = k; }); return i; }
 function compNextTier(bond) { return COMP_TIERS.find((x) => x.at > bond) || null; }
 function daysBetween(a, b) { return Math.max(0, Math.round((parseDate(b) - parseDate(a)) / 86400000)); }
@@ -25434,8 +25470,13 @@ async function persistSecretaryExperiment(experimentOrUpdater, failureKey) {
   if (!saved && failureKey) toast(t(failureKey));
   return saved;
 }
+function secretaryExperimentLaunchEnabled() {
+  // Owner decision 2026-09-28: defer new runs until after the first free release.
+  // History, stop and export remain available; never erase an existing run.
+  return false;
+}
 async function startSecretaryExperiment() {
-  if (!secretaryExperimentAvailable()) return false;
+  if (!secretaryExperimentAvailable() || !secretaryExperimentLaunchEnabled()) return false;
   const startedOn = todayStr();
   const experiment = {
     version: 1,
@@ -25676,6 +25717,7 @@ function exportSecretaryExperiment() {
 }
 function secretaryExperimentOfferHTML(experiment, signal = null) {
   if (!secretaryExperimentAvailable()) return '';
+  if ((!experiment || experiment.status === 'draft') && !secretaryExperimentLaunchEnabled()) return '';
   if ((!experiment || experiment.status === 'draft') && !State._secretaryExperimentSetupOpen) return '';
   if (!experiment || experiment.status === 'draft') return `<div class="secretary-experiment-offer" data-experiment-stage="draft">
     <span class="secretary-control-kicker">${t('Личный эксперимент')}</span><b>${t('30 дней с Тенью')}</b>
@@ -25704,7 +25746,7 @@ function secretaryExperimentOfferHTML(experiment, signal = null) {
 function secretaryExperimentHasPrimary() {
   if (!secretaryExperimentAvailable()) return false;
   const experiment = secretaryExperimentState();
-  if (State._secretaryExperimentSetupOpen && experiment.status === 'draft') return true;
+  if (secretaryExperimentLaunchEnabled() && State._secretaryExperimentSetupOpen && experiment.status === 'draft') return true;
   if (experiment.status !== 'active' || dayClosed()) return false;
   const signal = secretaryExperimentLatestSignal(experiment);
   return secretaryExperimentFeedbackDue(experiment, signal)
@@ -25835,7 +25877,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
         <button class="secretary-action" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-glyph')}<b>${t('Отдохнуть с границей')}</b></button>
         ${!closed && primary.kind !== 'evening' ? `<button class="secretary-action" data-action="evening-open">${satoruIconHTML('system.day-end', 'button-glyph')}<b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` : ''}
         ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${esc(policies[0].name)}</b></button>` : `<button class="secretary-action" data-action="attention-open-setup">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${t('Настроить границу входа')}</b></button>`}
-        ${secretaryExperimentAvailable() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open">${satoruIconHTML('system.focus', 'button-glyph')}<b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentStatusHTML(experiment)}
+        ${secretaryExperimentAvailable() && secretaryExperimentLaunchEnabled() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open">${satoruIconHTML('system.focus', 'button-glyph')}<b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentStatusHTML(experiment)}
       </div>
     </details>
   </section>`;
@@ -29080,8 +29122,18 @@ async function onSubmit(e) {
   // --- Компаньон: переименование ---
   if (f.id === 'comp-rename') {
     e.preventDefault();
-    const c = ensureCompanion(); c.name = (f.name.value || '').trim().slice(0, 24) || 'Тень';
-    State._compForm = null; Store.save('settings', State.settings); toast(t('✨ Имя сохранено')); render(); return;
+    if (f.dataset.saving === 'true') return;
+    f.dataset.saving = 'true';
+    const submit = f.querySelector('[type="submit"]');
+    if (submit) submit.disabled = true;
+    try {
+      if (!await saveCompanionName(f.name.value)) return;
+      State._compForm = null; toast(emojiFree('✨ Имя сохранено')); render();
+    } finally {
+      delete f.dataset.saving;
+      if (submit) submit.disabled = false;
+    }
+    return;
   }
   // --- Квест: правка текста ---
   if (f.classList && f.classList.contains('t-edit-form')) {
@@ -29114,7 +29166,7 @@ async function onSubmit(e) {
     State._petRename = null;
     State._petRenameError = '';
     State._petsFocusAfterCommit = '#pets-title';
-    toast('✨ ' + t('Имя питомца сохранено'));
+    toast(t('Имя питомца сохранено'));
     render();
     return;
   }
@@ -31030,7 +31082,7 @@ async function onClick(e) {
   if (action === 'attention-open-entry') { openAttentionEntry(el.dataset.policyId, 'manual', el); return; }
   if (action === 'attention-open-boundary') { openAttentionBoundary(el.dataset.sessionId); return; }
   if (action === 'attention-open-return') { openAttentionReturn(el); return; }
-  if (action === 'secretary-experiment-open') { State._secretaryExperimentSetupOpen = true; render(); return; }
+  if (action === 'secretary-experiment-open') { if (!secretaryExperimentLaunchEnabled()) return; State._secretaryExperimentSetupOpen = true; render(); return; }
   if (action === 'secretary-experiment-later') { State._secretaryExperimentSetupOpen = false; render(); return; }
   if (action === 'secretary-experiment-start') {
     if (State._secretaryExperimentBusy) return;
@@ -32035,6 +32087,9 @@ async function onClick(e) {
     } else {
       const completedDay = dayOf(q), beforeTask = structuredClone(q), record = questCommitmentRecord(q);
       queueTaskCompletionFocus(id, el);
+      // Legacy completed entries already awarded bond. Undo must not mint it
+      // again on completion, and must not guess/subtract historical care.
+      if (q.entry) q.entryBondAwarded = true;
       q.done = false; q.completedAt = null; q.xpAwarded = 0; q.goldAwarded = 0; q.desire = null;
       const saved = record && commitmentEngine()
         ? await commitmentDataCommit(({ settings, tasks }) => {
@@ -33604,8 +33659,12 @@ function accountError(data, fallback = 'Ошибка') {
 }
 
 function toast(msg) {
+  // Store and the action can report the same refusal. Keep one readable receipt
+  // instead of stacking identical panels over the retry controls.
+  const host = document.getElementById('toasts');
+  if ([...host.querySelectorAll('.toast')].some(item => item.textContent === String(msg))) return;
   const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg;
-  document.getElementById('toasts').appendChild(el);
+  host.appendChild(el);
   requestAnimationFrame(() => el.classList.add('show'));
   setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2200);
 }
@@ -34567,7 +34626,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v305';
+const PWA_CACHE_VERSION = 'satoru-v306';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

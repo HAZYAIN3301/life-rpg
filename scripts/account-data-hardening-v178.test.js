@@ -91,8 +91,8 @@ test('recovery UI is accessible, retryable and does not expose personal contents
 
 test('module loads before app and remains pinned in the v181 offline shell', () => {
   const moduleAt = INDEX.indexOf('account-data-v1.js?v=20260826-launch-hardening-v178-1');
-  const appAt = INDEX.indexOf('app.js?v=20260928-bridge-v305-1');
+  const appAt = INDEX.indexOf('app.js?v=20260928-web-v306-1');
   assert.ok(moduleAt >= 0 && appAt > moduleAt);
-  assert.match(SW, /const CACHE = 'satoru-v305';/);
+  assert.match(SW, /const CACHE = 'satoru-v306';/);
   assert.match(SW, /'account-data-v1\.js'/);
 });

@@ -1,3 +1,9 @@
+**Codex 28.09 — v306 candidate:** owner approved deferring new experiment runs;
+history/stop/export preserved. Entry completion and bond now share the durable owner
+transaction; undo/replay cannot award bond again. Rename waits for persistence;
+duplicate toasts suppressed. 3175/3175 tests, 40 Chromium/WebKit form layouts.
+Details and remaining scope: WEB-RECEIPTS-V306-QA.md. Publication receipt pending.
+
 # Life-RPG — DEVLOG (журнал сборки)
 
 ## [2026-09-28] v305 — Satoru Attention 0.10.1: bridge and links on satoruapp.com (Claude lane)

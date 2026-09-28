@@ -112,7 +112,7 @@ test('the approved RU review is an exact mirror of centralized runtime copy', ()
 });
 
 test('v195 offline shell pins all Guide runtime scripts and locale copies', () => {
-  sourceMatches(SW, /const CACHE = 'satoru-v305';/);
+  sourceMatches(SW, /const CACHE = 'satoru-v306';/);
   for (const file of ['guide-v3.js', ...GUIDE_COPY_FILES, 'guide-presenter-v1.js', 'guide-surface-v1.js']) {
     assert.ok(file, 'Guide runtime file must be discoverable before checking SHELL');
     assert.ok(SW.includes(`'${file}'`) || SW.includes(`"${file}"`), `${file} must be pinned in SHELL`);
@@ -353,7 +353,7 @@ test('welcome stays safe while release spotlights the responsive How to play rou
 
 test('persisted completion and bond success effects happen only after their durable write succeeds', () => {
   sourceMatches(APP,
-    /(?:const|let)\s+saved\s*=\s*activeCommitmentId[\s\S]{0,1200}await\s+commitmentDataCommit[\s\S]{0,1200}:\s*await\s+Store\.saveNow\(['"]tasks['"][\s\S]{0,500}if\s*\(\s*!saved\s*\)[\s\S]{0,1200}type:\s*['"]task:completed['"][\s\S]{0,220}persisted:\s*true/,
+    /:\s*activeCommitmentId[\s\S]{0,1200}await\s+commitmentDataCommit[\s\S]{0,1200}:\s*await\s+Store\.saveNow\(['"]tasks['"][\s\S]{0,500}if\s*\(\s*!saved\s*\)[\s\S]{0,1200}type:\s*['"]task:completed['"][\s\S]{0,220}persisted:\s*true/,
     'task:completed(persisted:true) must follow an awaited successful task save');
   const commit = between(APP, 'async function guideV3Commit', '\nlet _guideV3SurfaceKey');
   sourceMatches(commit, /Store\.updateNow\(['"]settings['"],\s*\(current\)\s*=>[\s\S]{0,320}GuideV3\.reduce\(current\.guideV3,\s*event\)/,
@@ -561,9 +561,9 @@ test('Context pack v205 explicitly releases exact Guide copy and chapter version
   }
   const appSource = SCRIPT_SOURCES.find((item) => scriptFile(item) === 'app.js');
   assert.ok(appSource, 'app.js must load in index.html');
-  assert.match(appSource, /\?v=[^"']*bridge-v305(?:-|$)/, 'the changed app shell needs the v305 cache-busting pin');
-  sourceMatches(INDEX, /styles\.css\?v=[^"']*bridge-v305(?:-|["'])/,
-    'the current application CSS needs the v305 cache-busting pin');
+  assert.match(appSource, /\?v=[^"']*web-v306(?:-|$)/, 'the changed app shell needs the v306 cache-busting pin');
+  sourceMatches(INDEX, /styles\.css\?v=[^"']*web-v306(?:-|["'])/,
+    'the current application CSS needs the v306 cache-busting pin');
 });
 
 test('feedback remains reachable even when the localized Guide is unavailable', () => {

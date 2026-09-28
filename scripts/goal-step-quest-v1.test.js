@@ -171,8 +171,8 @@ test('the module is loaded before app.js and cached once for offline', () => {
   assert.ok(moduleAt >= 0, 'index must load goal-step-quest-v1.js');
   assert.ok(appAt > moduleAt, 'app.js must run after the module it calls');
   assert.equal((SW.match(/'goal-step-quest-v1\.js'/g) || []).length, 1, 'SHELL must pin the module exactly once');
-  assert.match(SW, /const CACHE = 'satoru-v305'/, 'новый файл в SHELL обязан поднять версию кэша');
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v305'/);
+  assert.match(SW, /const CACHE = 'satoru-v306'/, 'новый файл в SHELL обязан поднять версию кэша');
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v306'/);
 });
 
 test('the goal checklist and the «Следующий шаг» card both offer the step to the day', () => {
@@ -198,7 +198,7 @@ test('taking a step into the day goes through the module and one atomic write', 
 
 test('finishing the quest closes its step, and undo only removes its own tick', () => {
   assert.match(APP, /async function syncGoalStepFromQuest\(task, done\)/);
-  assert.match(APP, /return false;\n  \}\n  await syncGoalStepFromQuest\(task, true\);/, 'отметка шага идёт после успешного сохранения квеста');
+  assert.match(APP, /return false;\n  \}\n  if \(task.entry\) task = State.tasks.find\(item => item.id === task.id\);\n  await syncGoalStepFromQuest\(task, true\);/, 'отметка шага идёт после успешного сохранения квеста и получения сохранённого захода');
   assert.match(APP, /else await syncGoalStepFromQuest\(q, false\);/);
   const at = APP.indexOf('async function syncGoalStepFromQuest');
   const body = APP.slice(at, APP.indexOf('\n}', at));

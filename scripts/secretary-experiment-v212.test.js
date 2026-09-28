@@ -55,6 +55,17 @@ function cssBlocks(selector) {
   return [...CSS.matchAll(new RegExp(`${escaped}\\s*\\{([^}]*)\\}`, 'g'))].map((match) => match[1]);
 }
 
+test('first free release defers launch even through a stale setup or direct start call', async () => {
+  const launch = functionSource('secretaryExperimentLaunchEnabled').split('\nasync function')[0];
+  const start = `async ${functionSource('startSecretaryExperiment').split('\nasync function')[0]}`;
+  const context = { secretaryExperimentAvailable: () => true, State: { _secretaryExperimentSetupOpen: true } };
+  vm.createContext(context);
+  vm.runInContext(`${launch}\n${start}\n${functionSource('secretaryExperimentOfferHTML')}`, context);
+  // No settings writer/date helpers are provided: reaching either is an error.
+  assert.equal(await context.startSecretaryExperiment(), false);
+  assert.equal(context.secretaryExperimentOfferHTML({ status: 'draft' }), '');
+});
+
 test('saved experiment status remains reachable after stop without offering another start', () => {
   const context = { t: value => value, esc: value => String(value), secretaryExperimentAvailable: () => true,
     lang: () => 'en', parseDate: value => new Date(`${value}T12:00:00`),

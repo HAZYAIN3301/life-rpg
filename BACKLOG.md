@@ -1,3 +1,11 @@
+- [x] **Owner decision 28.09 / Codex v306 candidate:** defer new experiment runs
+  until after first free release; retain history/stop/export. This supersedes the
+  earlier pending-choice entry. Full event integration moves post-release.
+- [x] **Codex v306 candidate:** entry bond atomicity/replay and rename persistence;
+  duplicate toast suppression. WEB-RECEIPTS-V306-QA.md, publication pending.
+- [ ] **Design follow-up:** PiP typography and other reward receipts; whole-app
+  C01–C14 acceptance remains open. A passing rename layout matrix does not close it.
+
 # Gojo — BACKLOG (список ожидания)
 
 - [x] **Codex v303 published:** `b04258c`, Railway SUCCESS, 6/6 hashes; experiment

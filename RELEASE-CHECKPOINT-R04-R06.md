@@ -1,3 +1,9 @@
+**Codex 28.09 — v306 candidate:** owner approved deferring new experiment runs;
+history/stop/export preserved. Entry completion and bond now share the durable owner
+transaction; undo/replay cannot award bond again. Rename waits for persistence;
+duplicate toasts suppressed. 3175/3175 tests, 40 Chromium/WebKit form layouts.
+Details and remaining scope: WEB-RECEIPTS-V306-QA.md. Publication receipt pending.
+
 # Release queue R04A → R06 — checkpoint (in-repo mirror)
 
 ## Codex — v303 published, 27.09
