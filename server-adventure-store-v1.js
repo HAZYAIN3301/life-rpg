@@ -4,7 +4,7 @@ const fs = require('node:fs'), path = require('node:path'), crypto = require('no
 const Policy = require('./server-adventure-policy-v1.js');
 const FILE = 'party-adventures-v1.json';
 
-// Foundation only: not registered in server.js, not reachable through /api/data.
+// Private ledger: not reachable through /api/data.
 // Caller supplies authenticated context and OWN authoritative task reads after WAL recovery.
 // All dependencies must be synchronous. One Node writer; no multi-process guarantees.
 function createService({ read, write, confirm = () => {}, context, readTask }) {

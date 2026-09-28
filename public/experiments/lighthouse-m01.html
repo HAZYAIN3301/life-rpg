@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#141b29">
+<title>Маяк — игровой прототип Satoru</title>
+<link rel="stylesheet" href="/styles.css?v=310">
+<link rel="stylesheet" href="/experiments/lighthouse-m01.css?v=1">
+<script defer src="/experiments/lighthouse-m01.js?v=1"></script></head>
+<body class="lighthouse-prototype"><main class="lh-shell">
+<header class="lh-top"><a href="/">Satoru</a><span>Игровой прототип · M01</span><button type="button" id="theme">Сменить тему</button></header>
+<div class="lh-layout"><aside class="lh-world" aria-label="Карта приключения">
+<p class="lh-eyebrow">Два человека. Один огонь.</p><h1>Маяк</h1>
+<svg class="lh-map" viewBox="0 0 360 340" role="img" aria-labelledby="map-title"><title id="map-title">Схема острова: причал, берег, сад, мастерская и маяк</title>
+<path class="island" d="M45 251 64 163 116 136 129 78 183 50 253 90 277 172 316 218 268 282 184 311 85 293Z"/>
+<path class="route" d="M78 267 103 201 157 145 190 80M78 267 233 243 248 169 190 80"/>
+<path class="water" d="M24 311h54m200-211h57M15 119h63m201 189h54"/>
+<g class="tower"><path d="m169 92 9-62h26l9 62Z"/><path d="m168 30 23-18 23 18Z"/><path class="lantern" d="M179 39h24v20h-24Z"/></g>
+<g class="nodes"><circle cx="78" cy="267" r="7"/><circle cx="103" cy="201" r="7"/><circle cx="248" cy="169" r="7"/><circle cx="233" cy="243" r="7"/></g>
+<g class="labels"><text x="25" y="294">Причал</text><text x="24" y="187">Берег</text><text x="265" y="167">Сад</text><text x="190" y="270">Мастерская</text></g></svg>
+<ol id="route" class="lh-route" aria-label="Этапы"></ol>
+<p class="lh-private">Здесь только вымышленные действия. Аккаунт, задачи, золото и предметы Satoru не меняются. Две роли разыгрываются на одном устройстве.</p>
+</aside><section class="lh-panel" aria-label="Текущий шаг"><div id="play"></div>
+<p id="notice" class="lh-notice" role="status" aria-live="polite"></p>
+<footer><button type="button" id="reset">Начать прототип заново</button><span>Без таймера и потери прогресса</span></footer>
+</section></div><noscript>Для игрового прототипа нужен JavaScript. Основное приложение доступно по ссылке Satoru выше.</noscript>
+</main></body></html>

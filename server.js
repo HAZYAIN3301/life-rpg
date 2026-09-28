@@ -46,6 +46,9 @@ const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
+const AdventurePolicyV1 = require('./server-adventure-policy-v1.js');
+const AdventureStoreV1 = require('./server-adventure-store-v1.js');
+const AdventureLifecycleV1 = require('./server-adventure-lifecycle-v1.js');
 const NativeAssociationV1 = require('./public/native-association-v1.js');
 const AttentionRevisionV1 = require('./public/attention-revision-v1.js');
 const InspirationProfileV1 = require('./public/inspiration-profile-v1.js');
@@ -81,12 +84,15 @@ function fsyncDirectory(dir) {
   finally { if (fd !== undefined) fs.closeSync(fd); }
 }
 function writeJsonDurable(file, value) {
+  writeBytesDurable(file, JSON.stringify(value, null, 2));
+}
+function writeBytesDurable(file, bytes) {
   const dir = path.dirname(file); fs.mkdirSync(dir, { recursive: true });
   const tmp = `${file}.${process.pid}.${crypto.randomBytes(4).toString('hex')}.durable.tmp`;
   let fd;
   try {
     fd = fs.openSync(tmp, 'wx', 0o600);
-    fs.writeFileSync(fd, JSON.stringify(value, null, 2));
+    fs.writeFileSync(fd, bytes);
     fs.fsyncSync(fd); fs.closeSync(fd); fd = undefined;
     fs.renameSync(tmp, file); fsyncDirectory(dir);
   } catch (error) {
@@ -675,9 +681,13 @@ function adminGoldBalance(userId, ledger = loadAdminGoldLedger()) {
 // ---- Мультиплеер: пати (общее состояние). Реестр в DATA_DIR/parties.json ----
 const PARTIES_FILE = () => path.join(DATA_DIR, 'parties.json');
 function loadParties() {
+  adventureLifecycle.recover();
   let rows;
   try { rows = JSON.parse(fs.readFileSync(PARTIES_FILE(), 'utf8')); }
   catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+  return validateParties(rows);
+}
+function validateParties(rows) {
   if (!Array.isArray(rows) || rows.some((p) => {
     if (!p || !Array.isArray(p.members)) return true;
     return p.sessions !== undefined && (!Array.isArray(p.sessions) || p.sessions.some((s) => !PartySessionV1.validStored(s)));
@@ -686,6 +696,42 @@ function loadParties() {
   }
   return rows;
 }
+const adventureLifecycle = AdventureLifecycleV1.create({
+  dataDir: DATA_DIR, write: writeJsonDurable, remove: removeDurable, validateParties,
+});
+const adventureStorage = AdventureStoreV1.fileStorage(DATA_DIR);
+function readAdventureState() {
+  adventureLifecycle.recover();
+  let state = adventureStorage.read();
+  // Finish privacy cleanup if a process stopped after account registry removal.
+  // Only absent accounts are anonymized; living accounts keep replay protection.
+  if (state) {
+    const accounts = new Set(ServerUserRegistryV1.parse(fs.readFileSync(USERS_FILE(), 'utf8')).map(user => user.id));
+    const actors = new Set(state.chapters.flatMap(chapter => chapter.members.map(member => member.id)));
+    const removed = [...actors].filter(actor => !accounts.has(actor));
+    for (const actor of removed) state = AdventurePolicyV1.eraseAccount(state, actor).state;
+    if (removed.length) adventureStorage.write(state);
+  }
+  return state;
+}
+const adventures = AdventureStoreV1.createService({
+  ...adventureStorage,
+  read: readAdventureState,
+  context(actor) {
+    if (!loadUsers().some(user => user.id === actor)) throw Object.assign(new Error('not_logged_in'), { code: 'not_logged_in' });
+    const party = partyOf(actor);
+    if (!party) throw Object.assign(new Error('no_party'), { code: 'no_party' });
+    return { actor, partyId: party.id, memberIds: party.members, now: new Date().toISOString() };
+  },
+  readTask: partySessionTask,
+});
+function savePartyDeparture(parties, partyId, actors) {
+  adventureLifecycle.recover();
+  let state = adventureStorage.read();
+  if (state) for (const actor of actors) state = AdventurePolicyV1.withdraw(state, actor, partyId).state;
+  for (const party of parties) if (party.sessions) party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
+  adventureLifecycle.commit(parties, state);
+}
 function saveParties(p) {
   for (const party of p) if (party.sessions) party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
   writeJsonDurable(PARTIES_FILE(), p);
@@ -693,6 +739,8 @@ function saveParties(p) {
 // Retention is not contingent on someone opening the app. The same pruning is
 // applied on every write; this sweep also covers dormant groups (within one hour).
 function expirePartySessions() {
+  try { readAdventureState(); }
+  catch (error) { console.error('adventure privacy cleanup unavailable:', error.message); }
   try {
     const parties = loadParties(); let changed = false;
     for (const party of parties) if (party.sessions) {
@@ -766,12 +814,9 @@ function fileSnapshot(file) {
 }
 function restoreSnapshot(file, snapshot) {
   if (snapshot.exists) {
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    const tmp = `${file}.${process.pid}.restore.tmp`;
-    fs.writeFileSync(tmp, snapshot.data); fs.renameSync(tmp, file);
+    writeBytesDurable(file, snapshot.data);
   } else {
-    try { fs.unlinkSync(file); }
-    catch (error) { if (!error || error.code !== 'ENOENT') throw error; }
+    removeDurable(file);
   }
 }
 function genPartyCode(parties) { // 5-символьный код без похожих символов, уникальный
@@ -2219,6 +2264,7 @@ function clearCookieHeader(req) {
 }
 
 function deleteAccountLifecycle(uid, users) {
+  adventureLifecycle.recover();
   const partiesFile = PARTIES_FILE();
   const feedbackFile = path.join(DATA_DIR, 'feedback.json');
   const analyticsFile = path.join(DATA_DIR, 'analytics.json');
@@ -2226,7 +2272,7 @@ function deleteAccountLifecycle(uid, users) {
   const feedbackBackupDir = path.join(DATA_DIR, 'feedback-backups');
   let feedbackBackupFiles = [];
   try { feedbackBackupFiles = fs.readdirSync(feedbackBackupDir).filter((name) => /^feedback-\d{4}-\d{2}-\d{2}\.json$/.test(name)).map((name) => path.join(feedbackBackupDir, name)); } catch {}
-  const protectedFiles = [USERS_FILE(), partiesFile, feedbackFile, analyticsFile, adminGoldFile, ...feedbackBackupFiles];
+  const protectedFiles = [USERS_FILE(), partiesFile, path.join(DATA_DIR, AdventureStoreV1.FILE), feedbackFile, analyticsFile, adminGoldFile, ...feedbackBackupFiles];
   const snapshots = new Map(protectedFiles.map((file) => [file, fileSnapshot(file)]));
   const userDir = userDataDir(uid);
   const trashDir = path.join(DATA_DIR, `.account-delete-${uid}-${crypto.randomBytes(5).toString('hex')}`);
@@ -2254,6 +2300,7 @@ function deleteAccountLifecycle(uid, users) {
       writeJsonAtomic(adminGoldFile, adminGold);
     }
     saveUsers(users.filter((user) => user.id !== uid));
+    adventures.eraseAccount(uid);
   } catch (error) {
     for (const [file, snapshot] of snapshots) { try { restoreSnapshot(file, snapshot); } catch {} }
     if (movedUserDir && fs.existsSync(trashDir) && !fs.existsSync(userDir)) { try { fs.renameSync(trashDir, userDir); } catch {} }
@@ -6406,7 +6453,9 @@ const server = http.createServer(async (req, res) => {
     if (!target) return sendJson(res, 404, { error: 'profile_not_found' });
     try { recoverCommitmentJournal(target.id); }
     catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
-    const relation = accountProfileRelation(viewerId, target.id);
+    let relation;
+    try { relation = accountProfileRelation(viewerId, target.id); }
+    catch { return sendJson(res, 503, { error: 'party_storage_unavailable' }); }
     if (!AccountProfileV1.visibleTo(target.profile, relation)) return sendJson(res, 404, { error: 'profile_not_found' });
     return sendJson(res, 200, accountProfilePublicView(target));
   }
@@ -6500,6 +6549,8 @@ const server = http.createServer(async (req, res) => {
       permissions: { role: party.createdBy === me ? 'owner' : 'member', canDelete: party.createdBy === me, canLeave: true, canCheer: true },
       visibility: { profile: 'party_members', progress: 'explicit_weekly_xp_and_quest_count' } };
   }
+  // A pending membership journal must fail closed without terminating the server.
+  try {
   if (u === '/api/party' && req.method === 'GET') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
     const users = loadUsers(); const user = users.find((entry) => entry.id === me);
@@ -6507,6 +6558,45 @@ const server = http.createServer(async (req, res) => {
     const parties = loadParties(); const party = partyOf(me, parties);
     const view = partyView(party, me); if (party) saveParties(parties); // persist раз пересчитали рейд/сезон
     return sendJson(res, 200, { party: view, consent: socialConsentOf(user) });
+  }
+  if (/^\/api\/party\/adventure(?:\/(?:join|contribute|withdraw))?$/.test(u)) {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not_logged_in' });
+    const op = u.split('/')[4];
+    if ((!op && req.method !== 'GET') || (op && req.method !== 'POST'))
+      return sendJson(res, 405, { error: 'method_not_allowed' });
+    let input;
+    if (op) {
+      let crossOrigin = req.headers['sec-fetch-site'] === 'cross-site';
+      if (req.headers.origin) {
+        try { crossOrigin ||= new URL(req.headers.origin).host !== req.headers.host; }
+        catch { crossOrigin = true; }
+      }
+      if (crossOrigin) return sendJson(res, 403, { error: 'same_origin_required' });
+      if (!(req.headers['content-type'] || '').toLowerCase().startsWith('application/json'))
+        return sendJson(res, 415, { error: 'json_required' });
+      try { input = JSON.parse(await readBody(req, 1024)); }
+      catch (error) { return sendJson(res, error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { error: 'invalid_request' }); }
+      const keys = op === 'join' ? ['shareProgress'] : op === 'contribute' ? ['revision', 'taskId'] : [];
+      if (!input || typeof input !== 'object' || Array.isArray(input)
+        || Object.keys(input).sort().join('|') !== keys.sort().join('|'))
+        return sendJson(res, 400, { error: 'invalid_fields' });
+    }
+    try {
+      if (!op) return sendJson(res, 200, { chapter: adventures.view(me) });
+      if (op === 'withdraw') {
+        adventures.view(me); // Authorize a live account and current membership first.
+        const party = partyOf(me);
+        const receipt = adventures.withdraw(me, party.id);
+        return sendJson(res, 200, { ...receipt, chapter: null });
+      }
+      return sendJson(res, 200, adventures[op](me, input));
+    } catch (error) {
+      const status = ({ not_logged_in: 401, no_party: 404, not_party_member: 403, consent_required: 412,
+        invalid_contribution: 400, chapter_conflict: 409, chapter_ready: 409, task_not_saved: 409,
+        daily_limit: 409, partner_required: 409, source_already_used: 409, chapter_full: 409,
+        adventure_capacity: 409, clock_before_join: 409, clock_before_chapter: 409 })[error.code];
+      return sendJson(res, status || 503, { error: status ? error.code : 'adventure_storage_unavailable' });
+    }
   }
   if (u === '/api/party/sessions' && req.method === 'GET') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not_logged_in' });
@@ -6605,7 +6695,7 @@ const server = http.createServer(async (req, res) => {
       const idx = parties.indexOf(party);
       if (!party.members.length) { parties.splice(idx, 1); deleted = true; }
       else if (party.createdBy === me) { party.createdBy = party.members[0]; transferredTo = party.createdBy; }
-      saveParties(parties);
+      savePartyDeparture(parties, party.id, [me]);
     }
     return sendJson(res, 200, { ok: true, left: !!party, deleted, transferredTo });
   }
@@ -6617,7 +6707,7 @@ const server = http.createServer(async (req, res) => {
     if (!party) return sendJson(res, 404, { error: 'no_party' });
     if (party.createdBy !== me) return sendJson(res, 403, { error: 'owner_only' });
     if (String(b.confirmName || '') !== party.name) return sendJson(res, 400, { error: 'confirmation_mismatch' });
-    parties.splice(parties.indexOf(party), 1); saveParties(parties);
+    parties.splice(parties.indexOf(party), 1); savePartyDeparture(parties, party.id, party.members);
     return sendJson(res, 200, { ok: true, deleted: true });
   }
   if (u === '/api/party/cheer' && req.method === 'POST') {
@@ -6662,6 +6752,8 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { receipt: result.receipt, partyRewards: result.ledger, replay: result.replay });
     } catch (error) { return sendJson(res, error.code === 'not_won' ? 400 : 503, { error: error.code === 'not_won' ? 'not_won' : 'reward_storage_unavailable' }); }
   }
+
+  } catch { return sendJson(res, 503, { error: 'party_storage_unavailable' }); }
 
   // ---- Web Push: подписка + тест ----
   if (u === '/api/push/vapid' && req.method === 'GET') {
