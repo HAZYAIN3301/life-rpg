@@ -1,6 +1,6 @@
 # G01 / v308 — видимая покупка и сохранённый образ
 
-28.09.2026, Codex web lane. Runtime candidate; квитанция публикации добавляется после проверки.
+28.09.2026, Codex web lane. Опубликован и проверен: runtime 84adecd2 / v308.
 Поручение: первый этап GOLD-MEANING-PLAN-20260928.md; последнее уточнение владельца —
 мебель/обустройство раньше сложного анимированного гардероба, учитывать монетизацию.
 
@@ -77,6 +77,12 @@ G02–G08. Старые права покрыты unit cases; живые пол�
 ## Публикация
 
 Shell v308, immutable pin 20260928-gold-v308-1, включая обновлённый den-scene-v4.js.
-Дальше: FF push → Railway SUCCESS → hashes app/index/sw/styles/den-scene на обоих
-доменах → production Chromium/WebKit → открытый до релиза PWA v307 → v308.
-Точные commit/deployment/квитанции добавляются после фактического результата.
+Runtime commit: `84adecd220329c52c082ae4d1205cbf05aeee91c`, FF push master.
+Railway `0b0ea068-73cb-4405-b504-08585f294d57`: SUCCESS.
+28.09 11:22 UTC: оба домена отдают этот commit и satoru-v308; SHA-256 **10/10**.
+Production Chromium/WebKit × оба домена: экран входа готов, 0 page errors.
+Открытый до deployment клиент: satoru-v307 → satoru-v308, worker controller активен.
+До переключения домены ещё отдавали v307: преждевременные hash/browser проверки
+не прошли. После Railway SUCCESS повторены целиком и прошли; старые результаты
+не использованы как квитанция нового релиза.
+Локальные квитанции: work/g01/evidence/{hashcheck.txt,production.json,pwa-update.json}.
