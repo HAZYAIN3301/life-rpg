@@ -22585,3 +22585,37 @@ dialog.inspiration-embed.is-image-viewer button:focus-visible { outline: 2px sol
 .navgear { width:auto!important; gap:var(--sp-3); }
 .settings-group .card:focus { outline:2px solid var(--accent); outline-offset:4px; }
 @media(max-width:600px) { .settings-discovery { grid-template-columns:1fr; } .settings-discovery-actions summary { font-size:13px; padding:var(--sp-2); } }
+
+/* Senku bridge v1: facts only. Settings connection card + one quiet Today line with the day's sessions. */
+.senku-card .senku-form { display: grid; gap: var(--sp-3); margin-block-start: var(--sp-2); }
+.senku-card .senku-field { display: grid; gap: var(--sp-1); min-width: 0; }
+.senku-card .senku-field > span { font-size: var(--type-meta); line-height: var(--leading-ui); color: var(--text-soft); }
+.senku-card .senku-field input { width: 100%; min-width: 0; font-size: var(--type-control); }
+.senku-card .senku-hint, .senku-today .senku-hint { margin: 0; font-size: var(--type-meta); line-height: var(--leading-ui); max-inline-size: var(--measure-prose); }
+.senku-card .senku-status { margin: 0 0 var(--sp-2); font-size: var(--type-body); line-height: var(--leading-ui); overflow-wrap: anywhere; }
+.senku-card .senku-mask { font-variant-numeric: tabular-nums; }
+.senku-card .senku-message { margin: var(--sp-2) 0 0; font-size: var(--type-meta); line-height: var(--leading-ui); color: var(--bad); }
+.senku-card .senku-warning { margin: 0 0 var(--sp-2); padding: var(--sp-2) var(--sp-3); border-inline-start: 3px solid var(--warn); background: var(--panel2); border-radius: var(--radius-sm); font-size: var(--type-body); line-height: var(--leading-ui); }
+.senku-card .senku-confirm { margin-block-start: var(--sp-3); padding: var(--sp-3); background: var(--panel2); border: 1px solid var(--line-soft); border-radius: var(--radius-md); }
+.senku-card .senku-confirm > p { margin: 0; font-size: var(--type-body); line-height: var(--leading-ui); max-inline-size: var(--measure-prose); }
+.senku-today { padding: 0; overflow: clip; }
+.senku-today--dead, .senku-today--empty { min-height: var(--touch-min); display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); color: var(--text-soft); font-size: var(--type-body); flex-wrap: wrap; }
+details.senku-today > summary { min-width: 0; min-height: var(--touch-min); display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); padding: var(--sp-2) var(--sp-3); list-style: none; color: var(--text-soft); cursor: pointer; font-size: var(--type-body); line-height: var(--leading-ui); }
+details.senku-today > summary::-webkit-details-marker { display: none; }
+details.senku-today > summary > span { min-width: 0; overflow-wrap: anywhere; }
+details.senku-today > summary > .senku-chevron { flex: 0 0 auto; width: 1em; height: 1em; transition: transform var(--dur-fast) var(--ease-out); }
+details.senku-today[open] > summary { color: var(--text-strong); border-block-end: 1px solid var(--line-soft); }
+details.senku-today[open] > summary > .senku-chevron { transform: rotate(180deg); }
+details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -3px; }
+.senku-today-body { display: grid; gap: var(--sp-3); padding: var(--sp-3); min-width: 0; }
+.senku-sessions, .senku-decks { list-style: none; margin: 0; padding: 0; }
+.senku-sessions { display: grid; gap: var(--sp-3); }
+.senku-session > p { margin: 0 0 var(--sp-1); font-size: var(--type-body); line-height: var(--leading-ui); overflow-wrap: anywhere; }
+.senku-decks { display: grid; gap: 2px; }
+.senku-decks li { display: flex; justify-content: space-between; gap: var(--sp-2); font-size: var(--type-meta); line-height: var(--leading-ui); color: var(--text-soft); min-width: 0; }
+.senku-deck { min-width: 0; overflow-wrap: anywhere; }
+.senku-deck-cards { flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { details.senku-today > summary > .senku-chevron { transition: none; } }
+/* The next design keeps Today sections flat: the Senku line follows Habits, not a raised card. */
+:root[data-design=next] .today-work>.senku-today{background:none;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none}
+:root[data-design=next] .today-work>details.senku-today>summary,:root[data-design=next] .today-work>.senku-today>.senku-today-body,:root[data-design=next] .today-work>.senku-today--dead,:root[data-design=next] .today-work>.senku-today--empty{padding-inline:0}

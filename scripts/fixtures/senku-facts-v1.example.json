@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "source": "senku",
+  "version": 1,
+  "revision": 42,
+  "serverTime": "2026-09-28T07:45:10.512Z",
+  "nextSince": "2026-09-28T07:45:10.512Z",
+  "rides": [
+    {
+      "id": "ride1k8f2x-1",
+      "kind": "voice",
+      "deck": "transkription-x7k2",
+      "deckName": "Transkription",
+      "folder": ["Cards", "12.1"],
+      "startedAt": "2026-09-28T06:52:00.000Z",
+      "endedAt": "2026-09-28T07:13:30.000Z",
+      "finished": true,
+      "cards": 14,
+      "durationMs": 1290000,
+      "changedAt": "2026-09-28T07:14:02.117Z"
+    },
+    {
+      "id": "smuk87mma-2",
+      "kind": "visual",
+      "deck": "12-1-2-hmkm",
+      "deckName": "12.1 (2)",
+      "folder": ["Cards", "12.1"],
+      "startedAt": "2026-09-28T07:30:00.000Z",
+      "endedAt": null,
+      "finished": false,
+      "cards": 6,
+      "durationMs": null,
+      "changedAt": "2026-09-28T07:41:55.003Z"
+    }
+  ]
+}

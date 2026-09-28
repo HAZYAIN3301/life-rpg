@@ -52,6 +52,7 @@ const InspirationProfileV1 = require('./public/inspiration-profile-v1.js');
 const InspirationProfileOwnerV1 = require('./server-inspiration-profile-v1.js');
 const InspirationDiscoveryV1 = require('./server-inspiration-discovery-v1.js');
 const InspirationMediaV1 = require('./server-inspiration-media-v1.js');
+const SenkuBridgeV1 = require('./server-senku-bridge-v1.js');
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -3648,6 +3649,13 @@ async function createGithubIssue(entry) {
 // ============================================================
 const STRAVA_CLIENT_ID = process.env.STRAVA_CLIENT_ID || '';
 const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET || '';
+// Senku bridge (phase 1: facts are shown, never rewarded). The key stays in senku-bridge.json.
+// SENKU_BRIDGE_TEST_ORIGINS lets automated tests talk to a fake Senku on 127.0.0.1; production never sets it.
+const senkuBridge = SenkuBridgeV1.create({
+  userDataDir: (id) => userDataDir(id),
+  testOrigins: String(process.env.SENKU_BRIDGE_TEST_ORIGINS || '').split(',').map((item) => item.trim()).filter(Boolean),
+  log: (event, detail) => console.log('[senku]', event, JSON.stringify(detail || {})),
+});
 function stravaConfigured() { return !!(STRAVA_CLIENT_ID && STRAVA_CLIENT_SECRET); }
 function stravaFile(id) { return path.join(userDataDir(id), 'strava.json'); }
 function loadStrava(id) { try { return JSON.parse(fs.readFileSync(stravaFile(id), 'utf8')); } catch { return null; } }
@@ -6362,6 +6370,30 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 404, { error: 'not found' });
   }
 
+  // ---- Senku bridge v1: connection in Settings, facts on Today. No economy effects. ----
+  if (u.startsWith('/api/bridge/senku/')) {
+    const path0 = u.split('?')[0];
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const bridgeError = (error) => {
+      if (error instanceof SenkuBridgeV1.BridgeError) return sendJson(res, error.status, { error: error.code });
+      console.error('[senku] route failed', error && error.code ? error.code : 'error');
+      return sendJson(res, 500, { error: 'senku_bridge_failed' });
+    };
+    try {
+      if (path0 === '/api/bridge/senku/status' && req.method === 'GET') return sendJson(res, 200, senkuBridge.status(uid));
+      if (path0 === '/api/bridge/senku/connect' && req.method === 'POST') {
+        let body; try { body = JSON.parse(await readBody(req, 4096)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+        return sendJson(res, 200, await senkuBridge.connect(uid, body || {}));
+      }
+      if (path0 === '/api/bridge/senku/disconnect' && req.method === 'POST') return sendJson(res, 200, senkuBridge.disconnect(uid));
+      if (path0 === '/api/bridge/senku/day' && req.method === 'GET') {
+        const q = new URL(u, 'http://x').searchParams;
+        return sendJson(res, 200, await senkuBridge.day(uid, { from: q.get('from'), to: q.get('to'), force: q.get('refresh') === '1' }));
+      }
+    } catch (error) { return bridgeError(error); }
+    return sendJson(res, 404, { error: 'not found' });
+  }
+
   // ---- Account profile: small shareable identity, never private planning data ----
   const accountProfileMatch = u.match(/^\/api\/profile\/([^/?]+)(?:\?.*)?$/);
   if (accountProfileMatch && req.method === 'GET') {
@@ -6716,7 +6748,7 @@ const server = http.createServer(async (req, res) => {
       account: { id: user.id, name: user.name, email: user.email || null },
       data: readPortableAccountData(uid),
       serverOwned: { partyRewards: partyRewards.snapshot(uid), secretary: secretaryArchive }, // evidence, never importable authority
-      excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'pushSubscription', 'noteMedia'],
+      excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'senkuBridge', 'pushSubscription', 'noteMedia'],
     };
     const filename = `satoru-account-${new Date().toISOString().slice(0, 10)}.json`;
     res.writeHead(200, { 'Content-Type': MIME['.json'], 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store' });
@@ -6986,7 +7018,7 @@ const server = http.createServer(async (req, res) => {
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
     if (name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
-    if (name === 'inspiration-discovery' || name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
+    if (name === 'inspiration-discovery' || name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE || name === ChestRewardServiceV1.LEDGER_FILE || name === SenkuBridgeV1.FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
 

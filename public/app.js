@@ -7645,7 +7645,7 @@ const State = {
   _shelfPendingSource: null, _shelfNoteDraft: '',
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   _boardComplete: null, _boardV2Receipt: null, _boardWildcardChoice: '',
-  strava: null, _stravaSyncing: false,
+  strava: null, _stravaSyncing: false, senku: null, _senkuDay: null, _senkuDayLoading: false, _senkuConfirmOff: false, _senkuMessage: '',
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '', _partyEntryMode: '',
   socialPrivacy: null, _socialBusy: '', _socialError: '', _socialFocusAfterCommit: '',
@@ -16061,6 +16061,276 @@ async function stravaSync() {
   } catch { toast(t('Ошибка сети при синхронизации')); }
   finally { State._stravaSyncing = false; render(); }
 }
+// ============================================================
+//  Senku bridge v1 (фаза 1): факты о повторении карточек — только показ.
+//  Ни XP, ни золота, ни сундуков, ни отметок привычек: награда ждёт решения владельца.
+//  Ключ живёт только на сервере; клиент видит маску. Названия колод — только на экране человека.
+// ============================================================
+const SENKU_COPY = {
+  ru: {
+    intro: 'Покажет на «Сегодня», сколько карточек ты повторил в Senku. Только факты: XP, золото и отметки привычек отсюда не начисляются.',
+    address: 'Адрес Senku', key: 'Ключ из Senku', keyPlaceholder: 'Вставь ключ целиком',
+    keyHint: 'Ключ выдаётся в Senku: Аккаунт → Satoru → «Выдать ключ». Satoru хранит его только на своём сервере и больше нигде не показывает.',
+    connect: 'Подключить', connecting: 'Проверяю ключ…', connectedToast: 'Senku подключён', connected: 'Подключено',
+    keyWord: 'ключ', lastExchange: 'последний обмен', never: 'ещё не было',
+    retry: (time) => `Senku сейчас не отвечает — Satoru сам повторит после ${time}.`,
+    reconnectTitle: 'Ключ Senku больше не действует',
+    reconnectText: 'Его отозвали или выпустили новый. Выдай ключ в Senku заново и вставь его сюда.',
+    reconnect: 'Переподключить', refresh: 'Обновить', disconnect: 'Отключить',
+    disconnectAsk: 'Отключить Senku? Ключ и загруженные сессии удалятся из Satoru. В Senku ничего не изменится — отозвать ключ совсем можно там.',
+    disconnectYes: 'Да, отключить', cancel: 'Отмена', disconnectedToast: 'Senku отключён', loading: 'Загрузка…',
+    loadFailed: 'Не удалось загрузить состояние Senku. Проверь соединение.',
+    errors: {
+      senku_key_invalid: 'Вставь ключ целиком — он длинный и без пробелов.',
+      senku_invalid_token: 'Senku не принял ключ. Проверь, что он скопирован целиком, или выдай новый.',
+      senku_address_invalid: 'Адрес должен начинаться с https:// и не содержать пути.',
+      senku_unreachable: 'Senku сейчас не отвечает. Попробуй ещё раз через пару минут.',
+      senku_invalid_response: 'По этому адресу отвечает не Senku. Проверь адрес.',
+      other: 'Не удалось подключить Senku. Проверь соединение и попробуй ещё раз.',
+    },
+    line: (n, m, k) => `Senku: ${n} ${senkuPlural(n, ['карточка', 'карточки', 'карточек', 'карточки'])}, ${m} ${senkuPlural(m, ['минута', 'минуты', 'минут', 'минуты'])}, голосом ${k}`,
+    empty: 'Senku: сегодня повторений пока нет', dead: 'Senku: ключ больше не действует',
+    voice: 'Голосом', visual: 'Глазами', open: 'ещё идёт', untrusted: 'длительность не учтена', min: 'мин',
+    cards: (n) => `${n} ${senkuPlural(n, ['карточка', 'карточки', 'карточек', 'карточки'])}`,
+    noDeck: 'Колода без названия', factsOnly: 'Факты из Senku — без XP и наград.', updated: (time) => `обновлено в ${time}`,
+  },
+  uk: {
+    intro: 'Покаже на «Сьогодні», скільки карток ти повторив у Senku. Лише факти: XP, золото й позначки звичок звідси не нараховуються.',
+    address: 'Адреса Senku', key: 'Ключ із Senku', keyPlaceholder: 'Встав ключ повністю',
+    keyHint: 'Ключ видається в Senku: Акаунт → Satoru → «Видати ключ». Satoru зберігає його лише на своєму сервері й більше ніде не показує.',
+    connect: 'Підключити', connecting: 'Перевіряю ключ…', connectedToast: 'Senku підключено', connected: 'Підключено',
+    keyWord: 'ключ', lastExchange: 'останній обмін', never: 'ще не було',
+    retry: (time) => `Senku зараз не відповідає — Satoru сам повторить після ${time}.`,
+    reconnectTitle: 'Ключ Senku більше не діє',
+    reconnectText: 'Його відкликали або випустили новий. Видай ключ у Senku знову й встав його сюди.',
+    reconnect: 'Перепідключити', refresh: 'Оновити', disconnect: 'Відключити',
+    disconnectAsk: 'Відключити Senku? Ключ і завантажені сесії видаляться із Satoru. У Senku нічого не зміниться — відкликати ключ зовсім можна там.',
+    disconnectYes: 'Так, відключити', cancel: 'Скасувати', disconnectedToast: 'Senku відключено', loading: 'Завантаження…',
+    loadFailed: 'Не вдалося завантажити стан Senku. Перевір з’єднання.',
+    errors: {
+      senku_key_invalid: 'Встав ключ повністю — він довгий і без пробілів.',
+      senku_invalid_token: 'Senku не прийняв ключ. Перевір, що його скопійовано повністю, або видай новий.',
+      senku_address_invalid: 'Адреса має починатися з https:// і не містити шляху.',
+      senku_unreachable: 'Senku зараз не відповідає. Спробуй ще раз за кілька хвилин.',
+      senku_invalid_response: 'За цією адресою відповідає не Senku. Перевір адресу.',
+      other: 'Не вдалося підключити Senku. Перевір з’єднання й спробуй ще раз.',
+    },
+    line: (n, m, k) => `Senku: ${n} ${senkuPlural(n, ['картка', 'картки', 'карток', 'картки'])}, ${m} ${senkuPlural(m, ['хвилина', 'хвилини', 'хвилин', 'хвилини'])}, голосом ${k}`,
+    empty: 'Senku: сьогодні повторень поки немає', dead: 'Senku: ключ більше не діє',
+    voice: 'Голосом', visual: 'Очима', open: 'ще триває', untrusted: 'тривалість не враховано', min: 'хв',
+    cards: (n) => `${n} ${senkuPlural(n, ['картка', 'картки', 'карток', 'картки'])}`,
+    noDeck: 'Колода без назви', factsOnly: 'Факти із Senku — без XP і нагород.', updated: (time) => `оновлено о ${time}`,
+  },
+  en: {
+    intro: 'Shows on Today how many cards you reviewed in Senku. Facts only: no XP, gold or habit marks come from here.',
+    address: 'Senku address', key: 'Key from Senku', keyPlaceholder: 'Paste the whole key',
+    keyHint: 'Senku issues the key: Account → Satoru → “Issue key”. Satoru keeps it on its server only and never shows it again.',
+    connect: 'Connect', connecting: 'Checking the key…', connectedToast: 'Senku connected', connected: 'Connected',
+    keyWord: 'key', lastExchange: 'last exchange', never: 'not yet',
+    retry: (time) => `Senku is not answering right now — Satoru will retry after ${time}.`,
+    reconnectTitle: 'The Senku key no longer works',
+    reconnectText: 'It was revoked or replaced. Issue a key in Senku again and paste it here.',
+    reconnect: 'Reconnect', refresh: 'Refresh', disconnect: 'Disconnect',
+    disconnectAsk: 'Disconnect Senku? The key and the loaded sessions are removed from Satoru. Nothing changes in Senku — revoke the key there to end access completely.',
+    disconnectYes: 'Yes, disconnect', cancel: 'Cancel', disconnectedToast: 'Senku disconnected', loading: 'Loading…',
+    loadFailed: 'Could not load the Senku state. Check your connection.',
+    errors: {
+      senku_key_invalid: 'Paste the whole key — it is long and has no spaces.',
+      senku_invalid_token: 'Senku did not accept the key. Check that it was copied in full, or issue a new one.',
+      senku_address_invalid: 'The address must start with https:// and have no path.',
+      senku_unreachable: 'Senku is not answering right now. Try again in a couple of minutes.',
+      senku_invalid_response: 'Something other than Senku answers at this address. Check the address.',
+      other: 'Could not connect Senku. Check your connection and try again.',
+    },
+    line: (n, m, k) => `Senku: ${n} ${n === 1 ? 'card' : 'cards'}, ${m} ${m === 1 ? 'minute' : 'minutes'}, ${k} by voice`,
+    empty: 'Senku: no reviews yet today', dead: 'Senku: the key no longer works',
+    voice: 'By voice', visual: 'By eye', open: 'still running', untrusted: 'duration not counted', min: 'min',
+    cards: (n) => `${n} ${n === 1 ? 'card' : 'cards'}`,
+    noDeck: 'Untitled deck', factsOnly: 'Facts from Senku — no XP or rewards.', updated: (time) => `updated at ${time}`,
+  },
+  de: {
+    intro: 'Zeigt auf „Heute“, wie viele Karten du in Senku wiederholt hast. Nur Fakten: XP, Gold und Gewohnheits-Häkchen kommen nicht von hier.',
+    address: 'Senku-Adresse', key: 'Schlüssel aus Senku', keyPlaceholder: 'Ganzen Schlüssel einfügen',
+    keyHint: 'Senku stellt den Schlüssel aus: Konto → Satoru → „Schlüssel ausstellen“. Satoru speichert ihn nur auf seinem Server und zeigt ihn nie wieder an.',
+    connect: 'Verbinden', connecting: 'Schlüssel wird geprüft…', connectedToast: 'Senku verbunden', connected: 'Verbunden',
+    keyWord: 'Schlüssel', lastExchange: 'letzter Abgleich', never: 'noch nicht',
+    retry: (time) => `Senku antwortet gerade nicht — Satoru versucht es nach ${time} erneut.`,
+    reconnectTitle: 'Der Senku-Schlüssel gilt nicht mehr',
+    reconnectText: 'Er wurde widerrufen oder ersetzt. Stelle in Senku einen neuen aus und füge ihn hier ein.',
+    reconnect: 'Neu verbinden', refresh: 'Aktualisieren', disconnect: 'Trennen',
+    disconnectAsk: 'Senku trennen? Schlüssel und geladene Sitzungen werden aus Satoru gelöscht. In Senku ändert sich nichts — dort kannst du den Schlüssel ganz widerrufen.',
+    disconnectYes: 'Ja, trennen', cancel: 'Abbrechen', disconnectedToast: 'Senku getrennt', loading: 'Wird geladen…',
+    loadFailed: 'Der Senku-Status konnte nicht geladen werden. Prüfe die Verbindung.',
+    errors: {
+      senku_key_invalid: 'Füge den ganzen Schlüssel ein — er ist lang und ohne Leerzeichen.',
+      senku_invalid_token: 'Senku hat den Schlüssel nicht angenommen. Prüfe, ob er vollständig kopiert ist, oder stelle einen neuen aus.',
+      senku_address_invalid: 'Die Adresse muss mit https:// beginnen und darf keinen Pfad enthalten.',
+      senku_unreachable: 'Senku antwortet gerade nicht. Versuche es in ein paar Minuten erneut.',
+      senku_invalid_response: 'Unter dieser Adresse antwortet nicht Senku. Prüfe die Adresse.',
+      other: 'Senku konnte nicht verbunden werden. Prüfe die Verbindung und versuche es erneut.',
+    },
+    line: (n, m, k) => `Senku: ${n} ${n === 1 ? 'Karte' : 'Karten'}, ${m} ${m === 1 ? 'Minute' : 'Minuten'}, ${k} per Stimme`,
+    empty: 'Senku: heute noch keine Wiederholungen', dead: 'Senku: der Schlüssel gilt nicht mehr',
+    voice: 'Per Stimme', visual: 'Mit den Augen', open: 'läuft noch', untrusted: 'Dauer nicht gezählt', min: 'Min.',
+    cards: (n) => `${n} ${n === 1 ? 'Karte' : 'Karten'}`,
+    noDeck: 'Stapel ohne Namen', factsOnly: 'Fakten aus Senku — ohne XP und Belohnungen.', updated: (time) => `aktualisiert um ${time}`,
+  },
+  es: {
+    intro: 'Muestra en «Hoy» cuántas tarjetas repasaste en Senku. Solo datos: de aquí no salen XP, oro ni marcas de hábitos.',
+    address: 'Dirección de Senku', key: 'Clave de Senku', keyPlaceholder: 'Pega la clave completa',
+    keyHint: 'Senku emite la clave: Cuenta → Satoru → «Emitir clave». Satoru la guarda solo en su servidor y no vuelve a mostrarla.',
+    connect: 'Conectar', connecting: 'Comprobando la clave…', connectedToast: 'Senku conectado', connected: 'Conectado',
+    keyWord: 'clave', lastExchange: 'último intercambio', never: 'todavía no',
+    retry: (time) => `Senku no responde ahora — Satoru lo reintentará después de las ${time}.`,
+    reconnectTitle: 'La clave de Senku ya no funciona',
+    reconnectText: 'Se revocó o se emitió otra. Emite una clave nueva en Senku y pégala aquí.',
+    reconnect: 'Reconectar', refresh: 'Actualizar', disconnect: 'Desconectar',
+    disconnectAsk: '¿Desconectar Senku? La clave y las sesiones cargadas se borran de Satoru. En Senku no cambia nada: allí puedes revocar la clave del todo.',
+    disconnectYes: 'Sí, desconectar', cancel: 'Cancelar', disconnectedToast: 'Senku desconectado', loading: 'Cargando…',
+    loadFailed: 'No se pudo cargar el estado de Senku. Revisa la conexión.',
+    errors: {
+      senku_key_invalid: 'Pega la clave completa: es larga y no tiene espacios.',
+      senku_invalid_token: 'Senku no aceptó la clave. Comprueba que se copió entera o emite otra.',
+      senku_address_invalid: 'La dirección debe empezar por https:// y no llevar ruta.',
+      senku_unreachable: 'Senku no responde ahora. Vuelve a intentarlo en un par de minutos.',
+      senku_invalid_response: 'En esta dirección no responde Senku. Revisa la dirección.',
+      other: 'No se pudo conectar Senku. Revisa la conexión y vuelve a intentarlo.',
+    },
+    line: (n, m, k) => `Senku: ${n} ${n === 1 ? 'tarjeta' : 'tarjetas'}, ${m} ${m === 1 ? 'minuto' : 'minutos'}, ${k} por voz`,
+    empty: 'Senku: hoy todavía no hay repasos', dead: 'Senku: la clave ya no funciona',
+    voice: 'Por voz', visual: 'A la vista', open: 'sigue en curso', untrusted: 'duración no contada', min: 'min',
+    cards: (n) => `${n} ${n === 1 ? 'tarjeta' : 'tarjetas'}`,
+    noDeck: 'Mazo sin nombre', factsOnly: 'Datos de Senku, sin XP ni recompensas.', updated: (time) => `actualizado a las ${time}`,
+  },
+};
+const SENKU_DAY_REFRESH_MS = 3 * 60 * 1000;
+function senkuCopy() { return SENKU_COPY[lang()] || SENKU_COPY.en; }
+// Формы для ru/uk: one / few / many / other (дробные). Остальные языки склоняют сами в SENKU_COPY.
+function senkuPlural(n, forms) {
+  const kind = new Intl.PluralRules(lang() === 'uk' ? 'uk' : 'ru').select(n);
+  return forms[{ one: 0, few: 1, many: 2 }[kind] ?? 3];
+}
+function senkuLocale() { return ({ ru: 'ru-RU', en: 'en-US', de: 'de-DE', uk: 'uk-UA', es: 'es-ES' })[lang()] || 'en-US'; }
+function senkuTime(iso) { return new Date(iso).toLocaleTimeString(senkuLocale(), { hour: '2-digit', minute: '2-digit' }); }
+function senkuStamp(iso) { return new Date(iso).toLocaleString(senkuLocale(), { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+function senkuHost(url) { try { return new URL(url).host; } catch { return ''; } }
+function senkuStatusPart(data) {
+  if (!data || data.connected !== true) return { connected: false, defaultBaseUrl: (data && data.defaultBaseUrl) || 'https://senku-production.up.railway.app' };
+  const { day, ...status } = data; return status;
+}
+function ensureSenkuStatus() {
+  if (State.senku !== null) return;
+  State.senku = {};
+  fetch('/api/bridge/senku/status').then((r) => {
+    if (r.status === 401) { handleAccountSessionExpired(); throw new Error('session expired'); }
+    return r.ok ? r.json() : Promise.reject(new Error('status failed'));
+  }).then((d) => { State.senku = senkuStatusPart(d); render(); })
+    .catch(() => { State.senku = { error: true }; render(); });
+}
+// Сегодняшние границы — по местной полуночи устройства (как todayStr()), сервер часового пояса не знает.
+function senkuDayBounds() {
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const to = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  return { day: fmtDate(from), from: from.toISOString(), to: to.toISOString() };
+}
+function ensureSenkuDay({ force = false } = {}) {
+  if (State._senkuDayLoading) return;
+  if (State.senku && State.senku.connected === false) return; // без подключения Senku не спрашиваем
+  const bounds = senkuDayBounds(); const cached = State._senkuDay;
+  if (!force && cached && cached.day === bounds.day && Date.now() - cached.loadedAt < SENKU_DAY_REFRESH_MS) return;
+  State._senkuDayLoading = true;
+  const query = new URLSearchParams({ from: bounds.from, to: bounds.to }); if (force) query.set('refresh', '1');
+  fetch(`/api/bridge/senku/day?${query}`).then((r) => r.ok ? r.json() : Promise.reject(new Error('day failed')))
+    .then((d) => { State.senku = senkuStatusPart(d); State._senkuDay = { day: bounds.day, loadedAt: Date.now(), view: d.day || null }; })
+    .catch(() => { State._senkuDay = { day: bounds.day, loadedAt: Date.now(), view: cached && cached.day === bounds.day ? cached.view : null, failed: true }; })
+    .finally(() => { State._senkuDayLoading = false; if (State.view === 'today' || State.view === 'settings') render(); });
+}
+function senkuConnectFormHTML(s, c, extra = '') {
+  const baseUrl = (s && s.baseUrl) || (s && s.defaultBaseUrl) || 'https://senku-production.up.railway.app';
+  return `<form id="senku-connect" class="senku-form" novalidate>
+      <label class="senku-field"><span>${esc(c.address)}</span>
+        <input name="baseUrl" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" value="${esc(baseUrl)}" /></label>
+      <label class="senku-field"><span>${esc(c.key)}</span>
+        <input name="key" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(c.keyPlaceholder)}" /></label>
+      <p class="muted senku-hint">${esc(c.keyHint)}</p>
+      <div class="settings-actions"><button type="submit" class="btn">${esc(s && s.state === 'reconnect' ? c.reconnect : c.connect)}</button>${extra}</div>
+    </form>`;
+}
+function senkuCard() {
+  const s = State.senku; const c = senkuCopy();
+  const head = `<h3>${satoruIconHTML('media.notes', 'heading-glyph', '🗂')} Senku</h3>`;
+  const message = State._senkuMessage ? `<p class="senku-message" role="alert">${esc(State._senkuMessage)}</p>` : '';
+  if (!s || !Object.keys(s).length) return `<div class="card senku-card">${head}<p class="muted">${esc(c.loading)}</p></div>`;
+  if (s.error) return `<div class="card senku-card">${head}<p class="muted">${esc(c.loadFailed)}</p></div>`;
+  if (!s.connected) return `<div class="card senku-card">${head}<p class="muted">${esc(c.intro)}</p>${senkuConnectFormHTML(s, c)}${message}</div>`;
+  const confirmOff = State._senkuConfirmOff
+    ? `<div class="senku-confirm" role="group" aria-label="${esc(c.disconnect)}"><p>${esc(c.disconnectAsk)}</p>
+        <div class="settings-actions"><button type="button" class="btn danger" data-action="senku-disconnect-confirm">${esc(c.disconnectYes)}</button>
+        <button type="button" class="btn ghost" data-action="senku-disconnect-cancel">${esc(c.cancel)}</button></div></div>`
+    : `<div class="settings-actions">${s.state === 'reconnect' ? '' : `<button type="button" class="btn ghost" data-action="senku-refresh">${esc(c.refresh)}</button>`}
+        <button type="button" class="btn ghost danger-btn" data-action="senku-disconnect">${esc(c.disconnect)}</button></div>`;
+  if (s.state === 'reconnect') {
+    const off = State._senkuConfirmOff ? '' : `<button type="button" class="btn ghost danger-btn" data-action="senku-disconnect">${esc(c.disconnect)}</button>`;
+    return `<div class="card senku-card">${head}<p class="senku-warning"><b>${esc(c.reconnectTitle)}</b> ${esc(c.reconnectText)}</p>
+      ${senkuConnectFormHTML(s, c, off)}${message}${State._senkuConfirmOff ? confirmOff : ''}</div>`;
+  }
+  const last = s.lastExchangeAt ? senkuStamp(s.lastExchangeAt) : c.never;
+  const retry = s.lastError && s.retryAt ? `<p class="muted senku-hint">${esc(c.retry(senkuTime(s.retryAt)))}</p>` : '';
+  return `<div class="card senku-card">${head}
+    <p class="senku-status"><b>${esc(c.connected)}</b> · ${esc(senkuHost(s.baseUrl))} · ${esc(c.keyWord)} <span class="senku-mask">${esc(s.keyMask || '••••')}</span> · ${esc(c.lastExchange)}: ${esc(last)}</p>
+    <p class="muted senku-hint">${esc(c.intro)}</p>${retry}${message}${confirmOff}</div>`;
+}
+function senkuTodayHTML() {
+  const s = State.senku;
+  if (!s || s.connected !== true) return '';
+  const c = senkuCopy();
+  const head = satoruIconHTML('media.notes', 'inline-glyph', '');
+  if (s.state === 'reconnect') {
+    return `<div class="card senku-today senku-today--dead"><span>${head} ${esc(c.dead)}</span>
+      <button type="button" class="btn ghost sm" data-action="senku-open-settings">${esc(c.reconnect)}</button></div>`;
+  }
+  const view = State._senkuDay && State._senkuDay.day === todayStr() ? State._senkuDay.view : null;
+  if (!view) return '';
+  if (!view.sessions.length) return `<div class="card senku-today senku-today--empty"><span>${head} ${esc(c.empty)}</span></div>`;
+  const rows = view.sessions.map((one) => {
+    const time = one.open ? `${senkuTime(one.startedAt)} — ${c.open}` : `${senkuTime(one.startedAt)}–${senkuTime(one.endedAt)}`;
+    const length = one.open ? '' : one.durationTrusted ? ` · ${one.minutes} ${c.min}` : ` · ${c.untrusted}`;
+    const decks = one.decks.map((deck) => `<li><span class="senku-deck">${esc([...(deck.folder || []), deck.name || c.noDeck].join(' › '))}</span><span class="senku-deck-cards">${deck.cards}</span></li>`).join('');
+    return `<li class="senku-session"><p><b>${esc(time)}</b> · ${esc(one.kind === 'voice' ? c.voice : c.visual)}${esc(length)} · ${esc(c.cards(one.cards))}</p><ul class="senku-decks">${decks}</ul></li>`;
+  }).join('');
+  const updated = s.lastExchangeAt ? ` · ${c.updated(senkuTime(s.lastExchangeAt))}` : '';
+  return `<details class="card senku-today"><summary><span>${head} ${esc(c.line(view.cards, view.minutes, view.voiceCards))}</span>${satoruIconHTML('action.expand', 'senku-chevron', '')}</summary>
+    <div class="senku-today-body"><ul class="senku-sessions">${rows}</ul><p class="muted senku-hint">${esc(c.factsOnly + updated)}</p></div></details>`;
+}
+async function senkuConnect(form) {
+  const c = senkuCopy();
+  const submit = form.querySelector('[type="submit"]'); const label = submit ? submit.textContent : '';
+  if (submit) { submit.disabled = true; submit.textContent = c.connecting; }
+  State._senkuMessage = '';
+  try {
+    const r = await fetch('/api/bridge/senku/connect', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ baseUrl: form.baseUrl.value, key: form.key.value }) });
+    if (r.status === 401) { handleAccountSessionExpired(); return; }
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok || d.connected !== true) { State._senkuMessage = c.errors[d.error] || c.errors.other; render(); return; }
+    form.key.value = ''; form.dataset.persisted = 'true';
+    State.senku = senkuStatusPart(d); State._senkuDay = null; State._senkuConfirmOff = false;
+    toast(c.connectedToast); render();
+  } catch { State._senkuMessage = c.errors.other; render(); }
+  finally { if (submit && submit.isConnected) { submit.disabled = false; submit.textContent = label; } }
+}
+async function senkuDisconnect() {
+  const c = senkuCopy();
+  try {
+    const r = await fetch('/api/bridge/senku/disconnect', { method: 'POST' });
+    if (r.status === 401) { handleAccountSessionExpired(); return; }
+    if (!r.ok) throw new Error('disconnect failed');
+    State.senku = senkuStatusPart(await r.json()); State._senkuDay = null; State._senkuConfirmOff = false; State._senkuMessage = '';
+    toast(c.disconnectedToast);
+  } catch { State._senkuMessage = c.errors.other; }
+  render();
+}
 // ── Детектор развилки (DISCIPLINE-BOUNDARIES-PLAN §3–4) ───────────────────────
 // Болезнь одна — граница не определена; симптом у каждого свой. Поэтому система
 // не навязывает всем одну методику, а смотрит на данные и называет ОДИН
@@ -21436,6 +21706,7 @@ function firstValueCard() {
 
 function renderToday() {
   const today = todayStr();
+  ensureSenkuDay();
   // Display priority only: keep the stored task order/calendar and timestamps intact.
   const todays = State.tasks.filter((t) => t.date === today)
     .sort((a, b) => Number(!!a.done) - Number(!!b.done) || Number(!!b.core) - Number(!!a.core));
@@ -21747,7 +22018,7 @@ function boardTakenLineHTML() {
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div>${firstValueCard()}${todayHero}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${browserCompanionLaunchHTML()}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div>${firstValueCard()}${todayHero}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -27794,6 +28065,7 @@ function mountSettingsDiscovery() {
 function renderSettings() {
   ensureAiKeys();
   ensureStravaStatus();
+  ensureSenkuStatus();
   ensureFounderPass();
   ensureTelemetryConsent();
   ensureAiMemory();
@@ -27936,6 +28208,7 @@ function renderSettings() {
     <details class="card settings-disclosure connections-memory"><summary>${t('Контекст для разговоров')}</summary><div class="settings-disclosure-body">${profileCard()}</div></details>
     <details class="card settings-disclosure connections-ai"><summary>${t('Подключение ИИ')}</summary><div class="settings-disclosure-body">${aiKeysCard()}</div></details>
     ${stravaCard()}
+    ${senkuCard()}
     ${fileImportCard()}
     ${groupEnd()}
     ${groupStart('progression', 'Игровые правила', 'XP, золото и уровни')}
@@ -29034,7 +29307,8 @@ function commitMainView(main, staging, view) {
   // Keep the actual form (including multi-sphere state and cursor), never a second
   // persistence path. A successful submit explicitly releases this draft.
   let draftFocus = null, draftSelection = null;
-  for (const selector of ['#add-task','#add-habit-v126','#ai-keys']) {
+  if (_renderedMainView === view && view === 'today' && main.querySelector('details.senku-today[open]')) staging.querySelector('details.senku-today')?.setAttribute('open', '');
+  for (const selector of ['#add-task','#add-habit-v126','#ai-keys','#senku-connect']) {
     const oldComposer = main.querySelector(selector);
     const newComposer = staging.querySelector(selector);
     const isHabit = selector === '#add-habit-v126';
@@ -29042,7 +29316,7 @@ function commitMainView(main, staging, view) {
       && oldComposer?.elements.namedItem('existingId')?.value === newComposer?.elements.namedItem('existingId')?.value);
     const keepComposer = _renderedMainView === view && oldComposer && newComposer && sameCandidate
       && (oldComposer.elements.namedItem('title')?.value.trim() || (isHabit && oldComposer.closest('details')?.open)
-        || (selector === '#ai-keys' && [...oldComposer.querySelectorAll('input[type=password]')].some(input=>input.value)))
+        || ((selector === '#ai-keys' || selector === '#senku-connect') && [...oldComposer.querySelectorAll('input[type=password]')].some(input=>input.value)))
       && oldComposer.dataset.persisted !== 'true';
     if (!keepComposer) continue;
     if (oldComposer.contains(document.activeElement)) {
@@ -30021,6 +30295,7 @@ async function onSubmit(e) {
     }
     return;
   }
+  if (f.id === 'senku-connect') { e.preventDefault(); await senkuConnect(f); return; }
   if (f.id === 'ai-keys') {
     e.preventDefault();
     const body = {};
@@ -31973,6 +32248,11 @@ async function onClick(e) {
   if (action === 'set-lang') { State.settings.lang = el.dataset.lang; autosaveSettings(); render(); return; }
   if (action === 'strava-connect') { window.location.href = '/api/strava/connect'; return; }
   if (action === 'strava-sync') { stravaSync(); return; }
+  if (action === 'senku-refresh') { ensureSenkuDay({ force: true }); return; }
+  if (action === 'senku-disconnect') { State._senkuConfirmOff = true; State._settingsFocusAfterCommit = '[data-action="senku-disconnect-cancel"]'; render(); return; }
+  if (action === 'senku-disconnect-cancel') { State._senkuConfirmOff = false; State._settingsFocusAfterCommit = '[data-action="senku-disconnect"]'; render(); return; }
+  if (action === 'senku-disconnect-confirm') { await senkuDisconnect(); return; }
+  if (action === 'senku-open-settings') { State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit = '#senku-connect input[name="key"]'; render(); return; }
   if (action === 'strava-disconnect') {
     if (!confirm(t('Отключить Strava? Уже импортированные тренировки останутся, новые синхронизироваться не будут.'))) return;
     fetch('/api/strava/disconnect', { method: 'POST' }).then(() => { State.strava = null; toast(t('Strava отключён')); render(); }).catch(() => toast(t('Ошибка')));
@@ -34812,7 +35092,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v309';
+const PWA_CACHE_VERSION = 'satoru-v310';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
