@@ -1,6 +1,6 @@
 # G02 / v309 — мебель и цель накопления
 
-28.09.2026, Codex web lane. Кандидат; квитанция публикации ниже после deployment.
+28.09.2026, Codex web lane. Опубликован и проверен: 9a9a940e / v309.
 
 ## Было → стало
 
@@ -39,7 +39,7 @@
 - node --check app.js/gold-goal-v1.js/interface-composition-v1.js/den-scene-v4.js;
   git diff --check.
 - Полный `node --test --test-concurrency=2 scripts/*.test.js`: **3189/3189**, 0 skips,
-  50.3 s. Первый запуск выявил старые release-pin expectations и недостающий stub
+  50.2 s. Первый запуск выявил старые release-pin expectations и недостающий stub
   презентационной функции в изолированном entry-bond harness. Исправлены зависимости,
   проверки транзакций не ослаблены. Финальный выпускной запуск полностью зелёный.
 - Chromium и WebKit, настоящие synthetic accounts на 52002 / DATA_DIR=qa-data-g02:
@@ -73,4 +73,15 @@ Senku, Вдохновение и полоса Claude не изменены. Но
 ## Публикация
 
 Shell satoru-v309, pin 20260928-furniture-v309-1; добавлены pins goal/composition/scene.
-Commit/deployment/production hashes и PWA receipt добавляются по фактическому результату.
+Runtime commit `9a9a940ed351d842b6c475c5924eba77dde127f2`; FF push master.
+Railway `5ae65f18-8e30-4bfb-8576-15e44936e4a2` SUCCESS.
+28.09 13:11 UTC: оба домена отдают этот commit / satoru-v309. SHA-256 **22/22**:
+app/index/sw/styles/den-scene/interface-composition/gold-goal + все 4 WebP.
+Production Chromium/WebKit на двух доменах: экран входа готов, 0 page errors.
+Существующий клиент satoru-v308 → satoru-v309 с активным service worker.
+В production кеше проверены gold-goal и 4 WebP; после отключения сети все картинки
+декодируются с ожидаемыми размерами. Это не заявление об офлайн-покупках.
+Квитанции: work/g02/evidence/{hashcheck.txt,production.json,pwa-update.json,cache.json}.
+Первый запуск PWA-пробы остановился по navigation timeout, повтор загрузил v308 до
+публикации и подтвердил переход на v309; таймаут не выдаётся за успешную проверку.
+Собственный QA-сервер 52002 остановлен. Данные и cookies synthetic accounts не в Git.
