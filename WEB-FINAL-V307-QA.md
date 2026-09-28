@@ -1,5 +1,10 @@
 # Web acceptance — v307, 28.09.2026
 
+Published runtime: **v307 / `dd3c903`**, Railway `bdffc55b-4f21-406f-a9b1-dde5cf719c51`
+SUCCESS. Both domains confirmed 28.09 09:02 UTC; five shell files SHA-256 **10/10**.
+Chromium/WebKit production login: no page errors. Existing synthetic SW client
+updated from v306 to v307.
+
 Base: v306 / `147c030`. Codex web lane only. Senku integration is explicitly
 excluded by the owner; Attention extension and its installer remain Claude's lane.
 This document does not certify App Store readiness or physical-device behavior.
@@ -54,7 +59,7 @@ and executable browser checks: `work/final/` (not committed; no real-user data).
 | 10: mixed importer/locales | `import-habit.cjs`: sphere/level/goal/null proposal rows, invalid metric blocks Apply, source JSON retained, error labels localized, Escape; achievement receipt in RU/UK/DE/EN/ES | PASS affected paths; not a claim that every historical admin label is translated |
 | Design C01–C14 | 22 routes × dense/empty × five languages × 375 dark /1280 light = 440 states per engine; 880 total, no horizontal overflow or page errors. Focus window tested separately at 300×220, five languages/two themes. Representative screenshots inspected | PASS measured web surfaces; manual aesthetics, content rights, native exports are separate gates |
 | 11/native | Build 9 existing native QA is the baseline. No owner confirmation of failed .ics/archive/PNG export was received; no WKDownloadDelegate change made | DEVICE GATE, not a reproduced native defect |
-| 12/release | Shell/cache and active pins v307, node checks, diff check, integrated suite; deployment/hash receipt appended after publication | Await publication receipt |
+| 12/release | Shell/cache and active pins v307, node checks, diff check, integrated suite; deployment/hash receipt appended after publication | PASS web deployment; external launch gates remain |
 | 13/Family Controls | Separate native release after first free launch; chess contract owned by Claude | DEFERRED, no work claimed |
 
 ### Visual audit interpretation
