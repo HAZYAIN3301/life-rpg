@@ -2698,6 +2698,7 @@ const I18N_EXTRA = {
   'Держать': { en: 'Maintain', de: 'Halten', uk: 'Тримати', es: 'Mantener' },
   'снизить на': { en: 'lower by', de: 'senken um', uk: 'знизити на', es: 'reducir en' },
   'осталось': { en: 'remaining', de: 'verbleibend', uk: 'залишилося', es: 'restante' },
+  'перерыв': { en: 'break', de: 'Pause', uk: 'перерва', es: 'descanso' },
   'Открыть цель': { en: 'Open goal', de: 'Ziel öffnen', uk: 'Відкрити ціль', es: 'Abrir meta' },
   'Скопировать ссылку': { en: 'Copy link', de: 'Link kopieren', uk: 'Скопіювати посилання', es: 'Copiar enlace' },
   'Закрыть цель': { en: 'Close goal', de: 'Ziel schließen', uk: 'Закрити ціль', es: 'Cerrar meta' },
@@ -12202,11 +12203,39 @@ function arrangeTreeOverlaps(tree) {
 
 // ---- Достижения ----
 function achUnlocked(a) { try { return !!a.test(); } catch { return false; } }
+let achievementWrite = null;
+let achievementAttempt = null;
 function checkAchievements(silent) {
-  if (!State.achievements || State._accountDataLoadErrors.achievements) return;
-  let changed = false;
-  for (const a of ACHIEVEMENTS) if (achUnlocked(a) && !State.achievements[a.id]) { State.achievements[a.id] = new Date().toISOString(); changed = true; if (!silent) { announce('ДОСТИЖЕНИЕ РАЗБЛОКИРОВАНО', `${a.icon || '🏆'} ${a.title}${a.ttl ? ' · звание «' + a.ttl + '»' : ''}`, `🏆 Достижение: ${a.title}`); if (!systemMode()) sfx('achievement'); } }
-  if (changed) Store.save('achievements', State.achievements);
+  if (!State.achievements || State._accountDataLoadErrors.achievements) return Promise.resolve(false);
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  if (achievementWrite?.accountId === accountId && achievementWrite.epoch === epoch) return achievementWrite.promise;
+  if (!ACHIEVEMENTS.some(a => achUnlocked(a) && !State.achievements[a.id])) return Promise.resolve(false);
+  const pending = { accountId, epoch };
+  if (achievementAttempt?.accountId !== accountId || achievementAttempt.epoch !== epoch) achievementAttempt = { accountId, epoch, stamps: {} };
+  const attempt = achievementAttempt;
+  achievementWrite = pending;
+  pending.promise = (async () => {
+    let awarded = [];
+    const saved = await Store.updateNow('achievements', stored => {
+      if (!current()) return undefined;
+      awarded = ACHIEVEMENTS.filter(a => achUnlocked(a) && !stored[a.id]);
+      if (!awarded.length) return undefined;
+      const next = { ...stored }, at = new Date().toISOString();
+      // A lost acknowledgement retries the same receipt, including its date.
+      for (const a of awarded) next[a.id] = attempt.stamps[a.id] ||= at;
+      return next;
+    }, committed => { if (!current()) return false; State.achievements = committed; return true; });
+    if (!saved || !current()) return false;
+    if (!silent) for (const a of awarded) {
+      const title = t(a.title), detail = a.ttl ? `${title} · ${t(a.ttl)}` : title;
+      announce(t('Достижения'), detail, `${t('Достижения')}: ${detail}`);
+    }
+    if (!silent && !systemMode()) sfx('achievement');
+    if (State.phase === 'app') render();
+    return true;
+  })().catch(() => false).finally(() => { if (achievementWrite === pending) achievementWrite = null; });
+  return pending.promise;
 }
 
 // ============================================================
@@ -13631,8 +13660,8 @@ function focusInfo() {
 }
 function pipSub(fi) {
   const cfg = focusCfg(); let s = '';
-  if (cfg.pomodoro) { const limit = (fi.tm.phase === 'break' ? cfg.breakMin : cfg.workMin) * 60000; s = (fi.tm.phase === 'break' ? '☕ перерыв ' : '🎯 ') + fmtClock(Math.max(0, limit - fi.phaseElapsed)); }
-  if (fi.estMs > 0) s += (s ? ' · ' : '') + (fi.remaining >= 0 ? 'осталось ' + fmtClock(fi.remaining) : '⚠ +' + fmtClock(-fi.remaining));
+  if (cfg.pomodoro) { const limit = (fi.tm.phase === 'break' ? cfg.breakMin : cfg.workMin) * 60000; s = `${t(fi.tm.phase === 'break' ? 'перерыв' : 'Фокус')} ${fmtClock(Math.max(0, limit - fi.phaseElapsed))}`; }
+  if (fi.estMs > 0) s += (s ? ' · ' : '') + (fi.remaining >= 0 ? `${t('осталось')} ${fmtClock(fi.remaining)}` : `+${fmtClock(-fi.remaining)}`);
   return s;
 }
 // единый тик: дисплеи + помодоро + превышение оценки
@@ -13683,18 +13712,21 @@ function updatePill(fi) {
 function removePill() { const p = document.getElementById('focus-pill'); if (p) p.classList.remove('show'); }
 
 // --- плавающее окно поверх всех приложений (Document Picture-in-Picture) ---
-const PIP_CSS = `body{margin:0;font:13px -apple-system,'Segoe UI',Roboto,sans-serif;background:#11151f;color:#e7ebf5;overflow:hidden}body.break{background:#15241a}body.overrun{background:#2a1622}.pip{padding:9px 11px;display:flex;flex-direction:column;gap:3px;height:100%;box-sizing:border-box}.pip-task{font-size:11px;color:#99a2c0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pip-clock{font-size:28px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}.pip-sub{font-size:12px;color:#c7cee6}body.overrun .pip-sub{color:#ff9bb0}.pip-bar{height:6px;background:#222a40;border-radius:999px;overflow:hidden;margin-top:2px}.pip-bar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6c8cff,#9b7cff)}body.overrun .pip-bar>span{background:#e0526a}.pip-ctrl{display:flex;gap:8px;margin-top:auto}.pip-ctrl button{flex:1;background:#1f2640;border:1px solid #2a3250;color:#fff;border-radius:8px;padding:7px;font-size:15px;cursor:pointer}.pip-ctrl button:hover{background:#2a3250}`;
+const PIP_CSS = `body{margin:0;font:14px/1.4 sans-serif;background:var(--bg,#25262f);color:var(--text,#f2eff5);overflow-wrap:anywhere}.pip{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:100vh;box-sizing:border-box}.pip-task{font-size:14px;color:var(--muted,#c2bdcb)}.pip-clock{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}.pip-sub{font-size:12px}.pip-bar{height:4px;background:var(--line,#52505f);border-radius:4px;overflow:hidden}.pip-bar>span{display:block;height:100%;width:0;background:var(--accent,#c6afe9)}.pip-ctrl{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}.pip-ctrl button{flex:1 1 100px;min-height:44px;background:var(--panel,#2e303b);border:1px solid var(--line,#52505f);color:inherit;border-radius:8px;padding:8px;font:inherit;cursor:pointer}.pip-ctrl button:focus-visible{outline:2px solid var(--focus-ring,#c6afe9);outline-offset:2px}`;
 
 async function openFocusWidget() {
   if (!State.timer) return;
   if (!('documentPictureInPicture' in window)) { toast(t('Плавающее окно недоступно в этом браузере — показываю плашку')); return; }
   if (pipWindow) { try { pipWindow.focus(); } catch {} return; }
   try {
-    pipWindow = await documentPictureInPicture.requestWindow({ width: 232, height: 148 }); // компактнее — меньше мешает (fb)
+    pipWindow = await documentPictureInPicture.requestWindow({ width: 300, height: 220 });
     const d = pipWindow.document;
     d.title = (State.settings && State.settings.appName) || 'Satoru'; // вместо служебного текста в заголовке
     const st = d.createElement('style'); st.textContent = PIP_CSS; d.head.appendChild(st);
-    d.body.innerHTML = `<div class="pip"><div class="pip-task" id="pip-task"></div><div class="pip-clock" id="pip-clock">0:00</div><div class="pip-sub" id="pip-sub"></div><div class="pip-bar"><span id="pip-bar"></span></div><div class="pip-ctrl"><button id="pip-pause">⏸</button><button id="pip-stop">⏹</button></div></div>`;
+    document.fonts.forEach(face => d.fonts.add(face));
+    d.body.style.fontFamily = getComputedStyle(document.body).fontFamily;
+    d.documentElement.lang = lang();
+    d.body.innerHTML = `<main class="pip"><div class="pip-task" id="pip-task"></div><div class="pip-clock" id="pip-clock">0:00</div><div class="pip-sub" id="pip-sub"></div><div class="pip-bar" aria-hidden="true"><span id="pip-bar"></span></div><div class="pip-ctrl"><button id="pip-pause"></button><button id="pip-stop"></button></div></main>`;
     d.getElementById('pip-pause').addEventListener('click', () => { State.timer && State.timer.running ? pauseFocus() : resumeFocus(); });
     d.getElementById('pip-stop').addEventListener('click', () => stopFocus(true));
     pipWindow.addEventListener('pagehide', () => { pipWindow = null; if (State.timer) { startTick(); updatePill(focusInfo()); } });
@@ -13706,8 +13738,12 @@ async function openFocusWidget() {
 function updatePip(fi) {
   if (!pipWindow || pipWindow.closed || !fi) return;
   const d = pipWindow.document, set = (id, v) => { const el = d.getElementById(id); if (el) el.textContent = v; };
-  set('pip-task', fi.t ? fi.t.title : 'Фокус'); set('pip-clock', fmtClock(fi.elapsed)); set('pip-sub', pipSub(fi));
-  const pp = d.getElementById('pip-pause'); if (pp) pp.textContent = fi.tm.running ? '⏸' : '▶';
+  set('pip-task', fi.t ? fi.t.title : t('Фокус')); set('pip-clock', fmtClock(fi.elapsed)); set('pip-sub', pipSub(fi));
+  const theme = getComputedStyle(document.documentElement);
+  for (const token of ['--bg', '--panel', '--text', '--muted', '--line', '--accent', '--focus-ring']) d.documentElement.style.setProperty(token, theme.getPropertyValue(token));
+  d.documentElement.lang = lang();
+  set('pip-stop', emojiFree(t('⏹ Стоп · записать')));
+  const pp = d.getElementById('pip-pause'); if (pp) pp.textContent = emojiFree(t(fi.tm.running ? '⏸ Пауза' : '▶ Продолжить'));
   const bar = d.getElementById('pip-bar'); if (bar) bar.style.width = (fi.estMs > 0 ? Math.min(100, fi.elapsed / fi.estMs * 100) : 0) + '%';
   d.body.classList.toggle('overrun', fi.estMs > 0 && fi.elapsed >= fi.estMs);
   d.body.classList.toggle('break', fi.tm.phase === 'break');
@@ -17050,7 +17086,7 @@ function dayObsPhrase(raw) {
     return { id: raw.id, statement, question: `${statement} ${t('Так и было?')}` };
   }
   if (raw.id === 'sphere-dominant') {
-    const statement = t('Почти всё время сегодня ({pct}%) ушло в «{sphere}».').replace('{pct}', raw.pct).replace('{sphere}', raw.sphereName);
+    const statement = t('Почти всё время сегодня ({pct}%) ушло в «{sphere}».').replace('{pct}', raw.pct).replace('{sphere}', sphereNameText(raw.sphereName));
     return { id: raw.id, statement, question: `${statement} ${t('Так и было?')}` };
   }
   if (raw.id === 'quiet-day') {
@@ -17251,6 +17287,9 @@ function handleHelperKeydown(event) {
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 }
 function openHelperChat(opener = document.activeElement) {
+  // The outgoing More sheet must release focus before the next modal owns it.
+  // Its closing animation otherwise consumes Escape and can unset helper inert.
+  if (document.getElementById('mobile-nav-sheet')) closeMobileNavSheet({ restoreFocus: false, immediate: true });
   let ov = document.getElementById('helper-modal');
   if (!ov) {
     ov = document.createElement('div'); ov.id = 'helper-modal'; ov.className = 'modal-overlay'; ov._returnFocus = opener && opener.isConnected ? opener : document.querySelector('[data-action="open-helper"]');
@@ -34626,7 +34665,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v306';
+const PWA_CACHE_VERSION = 'satoru-v307';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -34842,6 +34881,9 @@ async function init() {
       return;
     }
     if (handleTreeDialogKeydown(e)) return;
+    // Escape can arrive before the helper's delayed initial focus. Its visible
+    // dialog owns the exit, including when opened from the disappearing More sheet.
+    if (e.key === 'Escape' && document.getElementById('helper-modal')) { e.preventDefault(); closeHelperChat(); return; }
     if (e.key === 'Escape' && document.getElementById('ai-modal')) { e.preventDefault(); closeAiModal(); return; }
     if (e.key === 'Escape' && document.getElementById('share-ov')) { e.preventDefault(); closeWeekShare(); return; }
     if (e.key === 'Escape') {
