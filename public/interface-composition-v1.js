@@ -138,6 +138,8 @@
         }
         const stage = region(shell, 'rewards-stage', [hero, daily]);
         shell.prepend(stage);
+        const goldGoal = q('.gold-goal');
+        if (goldGoal) shell.prepend(goldGoal);
         tabs(shell, 'rewards', [
           {id:'shop', label:'Личные награды', nodes:[store]},
           {id:'collection', label:'Коллекция', nodes:[collection, arsenal]},

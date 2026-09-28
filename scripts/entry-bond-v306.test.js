@@ -5,6 +5,7 @@ const source=app.slice(app.indexOf('async function completeTask('),app.indexOf('
 function fixture(){
 const task={id:'entry',entry:true,done:false};let queue=Promise.resolve();
 const c={State:{tasks:[task],settings:{companion:{bond:5}}},structuredClone,Date,Math,CSS:{escape:x=>x},window:{},setTimeout:()=>0,questCommitment:()=>false,charLevel:()=>1,todayStr:()=> '2026-09-28',itemXp:()=>0,dayOf:()=> '2026-09-28',syncGoalStepFromQuest:async()=>{},firstValueRecordOutcome:async()=>{},guideV3State:()=>null,guideV3RuntimeAllowed:()=>false,ensureCompanion:s=>s.companion,track:()=>{},skillById:()=>null,t:x=>x,dayPick:()=> 'Done',ENTRY_DONE_LINES:[],systemMode:()=>false,toast:()=>{},sfx:()=>{},checkAchievements:()=>{},render:()=>{},triggerAvatarReaction:()=>{},publishLeaderboard:()=>{},restoreFocusTimerSnapshot:()=>{}};
+c.goldGoalReceipt=()=>''; // Presentation leaf; gold goal behavior is tested separately.
 let disk=structuredClone(c.State);let fail=false,lost=false;
 c.commitmentDataCommit=build=>{const job=queue.then(()=>{let next=build(structuredClone(disk));if(fail||!next)return false;disk=structuredClone(next);if(lost)return false;Object.assign(c.State,structuredClone(next));return true;});queue=job;return job;};
 vm.createContext(c);vm.runInContext(source,c);

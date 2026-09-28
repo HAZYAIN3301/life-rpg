@@ -218,7 +218,7 @@
     ['keepsake-cape', 'keepsake', 1350, 475, 185, 240, 4, 'floor-right-wall'],
     ['floor-yin', 'floor', 476, 260, 584, 584, 1, 'floor-center'],
   ].map(([id, slot, x, y, w, h, z, plane]) => [id, {
-    id, slot, x, y, w, h, z, plane, file: `/art/den/v2/${id}.svg`,
+    id, slot, x, y, w, h, z, plane, file: ['seat-forest', 'surface-alchemy', 'light-six'].includes(id) ? `/art/den/v6/${id}.webp` : `/art/den/v2/${id}.svg`,
     pivot: { x: 0.5, y: 1 }, transform: slot === 'floor' ? 'scaleY(.42)' : null,
     motion: { target: 'whole', kind: 'still' },
   }]));

@@ -51,7 +51,7 @@ test('wardrobe does not save after an account changes during image loading', asy
   assert.equal(await first, false); assert.equal(h.calls.length, 0); assert.deepEqual(h.events, []);
 });
 function renderHarness() {
-  const c = vm.createContext({ window: { ShopCatalogV1: shop }, State: { settings: {} }, isPro: () => false,
+  const c = vm.createContext({ window: { ShopCatalogV1: shop, GoldGoalV1: require('../public/gold-goal-v1') }, State: { settings: {} }, isPro: () => false,
     Date, Map, structuredClone, esc: x => String(x).replaceAll('"', '&quot;'), t: x => x,
     avatarCorePoseHTML: () => '<span>Traveller</span>', frameById: id => shop.FRAMES.find(f => f.id === id),
     equippedCosmeticsOpts: () => ({ frame: shop.FRAMES[0], bg: '#23402f' }),

@@ -539,6 +539,24 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  "Цель накопления": {"en":"Savings goal","de":"Sparziel","uk":"Ціль накопичення","es":"Meta de ahorro"},
+  "До цели": {"en":"Towards","de":"Bis zum Ziel","uk":"До цілі","es":"Para la meta"},
+  "Осталось накопить": {"en":"Still to earn","de":"Noch zu verdienen","uk":"Залишилось накопичити","es":"Falta por ganar"},
+  "Золота достаточно": {"en":"Enough gold","de":"Genug Gold","uk":"Золота достатньо","es":"Oro suficiente"},
+  "Теперь в твоей комнате": {"en":"Now in your room","de":"Jetzt in deinem Raum","uk":"Тепер у твоїй кімнаті","es":"Ahora en tu habitación"},
+  "Предмет куплен. Его можно установить или заменить в Логове.": {"en":"Purchased. Place or change it in the Den.","de":"Gekauft. Im Refugium aufstellen oder austauschen.","uk":"Предмет придбано. Встанови або заміни його в Лігві.","es":"Comprado. Colócalo o cámbialo en la Guarida."},
+  "Посмотреть в комнате": {"en":"View in room","de":"Im Raum ansehen","uk":"Подивитися в кімнаті","es":"Ver en la habitación"},
+  "Примерить и купить": {"en":"Preview and buy","de":"Ansehen und kaufen","uk":"Приміряти й купити","es":"Ver y comprar"},
+  "Примерить": {"en":"Preview","de":"Vorschau","uk":"Приміряти","es":"Vista previa"},
+  "Убрать цель": {"en":"Remove goal","de":"Ziel entfernen","uk":"Прибрати ціль","es":"Quitar meta"},
+  "Цель не резервирует золото. Выбор можно изменить бесплатно.": {"en":"A goal does not reserve gold. Changing it is free.","de":"Ein Ziel reserviert kein Gold. Du kannst es kostenlos ändern.","uk":"Ціль не резервує золото. Вибір можна змінити безкоштовно.","es":"La meta no reserva oro. Puedes cambiarla gratis."},
+  "В коллекции": {"en":"In collection","de":"In der Sammlung","uk":"У колекції","es":"En tu colección"},
+  "Цель выбрана": {"en":"Goal selected","de":"Ziel gewählt","uk":"Ціль обрано","es":"Meta elegida"},
+  "Цель убрана": {"en":"Goal removed","de":"Ziel entfernt","uk":"Ціль прибрано","es":"Meta eliminada"},
+  "Копить на это": {"en":"Save for this","de":"Dafür sparen","uk":"Накопичувати на це","es":"Ahorrar para esto"},
+  "Тихий вечер": {"en":"A quiet evening","de":"Ein ruhiger Abend","uk":"Тихий вечір","es":"Una tarde tranquila"},
+  "Кресло, стол и тёплый свет для твоей комнаты. Приобретай за заработанное золото.": {"en":"An armchair, a table and warm light for your room. Buy with earned gold.","de":"Ein Sessel, ein Tisch und warmes Licht für deinen Raum. Mit verdientem Gold kaufen.","uk":"Крісло, стіл і тепле світло для твоєї кімнати. Купуй за зароблене золото.","es":"Un sillón, una mesa y luz cálida para tu habitación. Compra con el oro ganado."},
+  "Примерка не меняет комнату и не списывает золото.": {"en":"Previewing does not change your room or spend gold.","de":"Die Vorschau verändert deinen Raum nicht und kostet kein Gold.","uk":"Примірка не змінює кімнату й не списує золото.","es":"La vista previa no cambia tu habitación ni gasta oro."},
   'Предпросмотр комнаты': { en: 'Room preview', de: 'Raumvorschau', uk: 'Перегляд кімнати', es: 'Vista previa de la habitación' },
   'После покупки предмет будет установлен в комнате.': { en: 'The item will be placed in your room after purchase.', de: 'Nach dem Kauf wird der Gegenstand im Raum aufgestellt.', uk: 'Після покупки предмет буде встановлено в кімнаті.', es: 'El objeto se colocará en tu habitación después de comprarlo.' },
   'После покупки оформление будет применено к комнате.': { en: 'The room theme will be applied after purchase.', de: 'Nach dem Kauf wird die Raumgestaltung angewendet.', uk: 'Після покупки оформлення буде застосовано до кімнати.', es: 'El tema se aplicará a tu habitación después de comprarlo.' },
@@ -8080,6 +8098,7 @@ async function completeTask(task, desire, onDate) {
   let msg = task.entry
     ? `+${task.goldAwarded} ${t('Золото')}${entryBondAdded ? ` · ${t('связь')} +2` : ''} — ${t(dayPick('entrydone', ENTRY_DONE_LINES))}`
     : `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
+  msg += goldGoalReceipt();
   if (systemMode()) systemNarrate(task.entry ? 'ЗАХОД СОВЕРШЁН' : 'КВЕСТ ВЫПОЛНЕН', task.entry ? msg : `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
   if (desire === 'forced' || desire === 'hyped') toast(t('Состояние отмечено. XP, золото и энергия не меняются от самооценки.'));
   const lvlNow = charLevel();
@@ -14406,7 +14425,7 @@ function renderHeader(force = false) {
         <span class="up-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${cr.name}</span></button></div>` : ''}
       <div class="char-level">Уровень <b>${oi.level}</b></div>
       <div class="xp-bar" data-guide-target="first-level-form" title="${esc(`${t('До уровня')} ${oi.level + 1}: ${oi.into} / ${oi.need} XP`)}"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
-      <div class="gold-pill" title="Золото">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</div>
+      <button class="gold-pill" data-action="open-gold-goal" aria-label="${esc(t('Награды'))}: ${goldBalance()} ${esc(t('золота'))}">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</button>
       <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
@@ -14685,7 +14704,7 @@ async function transactHabitCompletion(h, { twoMinute = false } = {}) {
   State._habitsFocusAfterCommit = '[data-action="habit-undo"]';
   if (!wasDone) {
     track('complete:habit'); const hsk = skillById(h.skillId);
-    toast(`+${nextLog[day][h.id].xp} XP · +${nextLog[day][h.id].gold} 🪙 · ${hsk.name}`);
+    toast(`+${nextLog[day][h.id].xp} XP · +${nextLog[day][h.id].gold} 🪙 · ${hsk.name}${goldGoalReceipt()}`);
     bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
     if (window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
     triggerAvatarReaction('happy', 'Привычка ✓');
@@ -19097,10 +19116,11 @@ const DEN_V3_ITEM_FILES = {
 };
 const DEN_ITEMS = window.ShopCatalogV1.DEN_ITEMS.map((item) => {
   const v3File = DEN_V3_ITEM_FILES[item.id];
+  const furnished = window.GoldGoalV1.collection.includes(item.id);
   return {
     ...item,
-    artVersion: v3File ? 'v3' : 'v2',
-    src: v3File ? `/art/den/v3/furniture/${v3File}?v=20260730-1` : `/art/den/v2/${item.id}.svg`,
+    artVersion: furnished ? 'v6' : v3File ? 'v3' : 'v2',
+    src: furnished ? `/art/den/v6/${item.id}.webp` : v3File ? `/art/den/v3/furniture/${v3File}?v=20260730-1` : `/art/den/v2/${item.id}.svg`,
   };
 });
 const DEN_STARTER_SLOTS = {
@@ -19210,7 +19230,7 @@ function denMasterFor(den) {
     coherent: false,
     period: 'legacy',
     phase,
-    src: '/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1',
+    src: phase === 'night' ? '/art/den/v3/den-v3-runtime-1536x864.png?v=20260730-1' : '/art/den/v6/room-day.webp',
   };
 }
 function preloadDenMaster(src) {
@@ -24507,6 +24527,59 @@ function arsenalCard() {
     ${sum}${slotHtml}${relicSlot}</div></details>`;
 }
 
+function goldGoalProgress() {
+  return window.GoldGoalV1.progress(State.settings?.goldGoalV1, DEN_ITEMS, goldBalance(), charLevel(), State.settings?.den?.owned);
+}
+function goldGoalReceipt() {
+  const goal = goldGoalProgress();
+  return goal && !goal.acquired && goal.remaining > 0
+    ? ` · ${t('До цели')}: ${t(goal.item.name)} — ${goal.remaining} ${t('золота')}` : '';
+}
+function goldGoalHTML() {
+  const goal = goldGoalProgress();
+  if (!goal) return '';
+  return `<section class="card gold-goal" aria-labelledby="gold-goal-title" data-goal-item="${esc(goal.item.id)}">
+    <img src="${goal.item.src}" alt="" width="144" height="144" decoding="async">
+    <div class="gold-goal-copy"><span class="th-kicker">${t(goal.acquired ? 'Теперь в твоей комнате' : 'Цель накопления')}</span>
+      <h3 id="gold-goal-title">${esc(t(goal.item.name))}</h3>
+      ${goal.acquired ? `<p>${t('Предмет куплен. Его можно установить или заменить в Логове.')}</p>` : `<p>${t('Доступно')}: ${goal.available} / ${goal.item.cost} ${t('золота')}</p>
+      <progress max="100" value="${goal.percent}" aria-label="${esc(t('Цель накопления'))}">${goal.percent}%</progress>
+      <p>${goal.remaining ? `${t('Осталось накопить')}: ${goal.remaining} ${t('золота')}` : t('Золота достаточно')}${!goal.levelReady ? ` · ${t('Откроется на уровне')} ${goal.item.level}` : ''}</p>`}
+      <div class="gold-goal-actions"><button class="btn" data-action="furniture-preview" data-id="${goal.item.id}">${t(goal.acquired ? 'Посмотреть в комнате' : goal.ready ? 'Примерить и купить' : 'Примерить')}</button>
+      <button class="btn ghost" data-action="gold-goal-clear" data-id="${goal.item.id}">${t('Убрать цель')}</button></div>
+      <p class="muted gold-goal-note">${t('Цель не резервирует золото. Выбор можно изменить бесплатно.')}</p>
+    </div></section>`;
+}
+function furnitureCollectionHTML() {
+  const goal = goldGoalProgress();
+  const cards = window.GoldGoalV1.collection.map(id => {
+    const item = denItem(id), owned = denOwned(id);
+    return `<article class="furniture-card"><img src="${item.src}" alt="" width="220" height="180" loading="lazy" decoding="async">
+      <h4>${esc(t(item.name))}</h4><p>${owned ? t('В коллекции') : `${item.cost} ${t('золота')} · ${t('ур.')}${item.level}`}</p>
+      <button class="btn ghost" data-action="furniture-preview" data-id="${item.id}">${t('Примерить')}</button>
+      ${!owned ? `<button class="btn ghost" data-action="gold-goal-set" data-id="${item.id}" ${goal?.item.id === item.id ? 'disabled' : ''}>${t(goal?.item.id === item.id ? 'Цель выбрана' : 'Копить на это')}</button>` : ''}</article>`;
+  }).join('');
+  return `<section class="card furniture-collection" aria-labelledby="furniture-title"><h3 id="furniture-title">${t('Тихий вечер')}</h3>
+    <p class="muted">${t('Кресло, стол и тёплый свет для твоей комнаты. Приобретай за заработанное золото.')}</p>
+    <div class="furniture-grid">${cards}</div></section>`;
+}
+function showFurniturePreview(id, returnFocus) {
+  const item = window.GoldGoalV1.item(id, DEN_ITEMS);
+  if (!item || document.getElementById('furniture-preview-modal')) return;
+  const owned = denOwned(id), selected = ensureDen().slots[item.slot] === id;
+  const goal = window.GoldGoalV1.progress({ version: 1, itemId: id }, DEN_ITEMS, goldBalance(), charLevel(), ensureDen().owned);
+  const ov = document.createElement('div'); ov.id = 'furniture-preview-modal'; ov.className = 'modal-overlay';
+  ov.innerHTML = `<section class="guide-box furniture-preview-box" role="dialog" aria-modal="true" aria-labelledby="furniture-preview-title">
+    <button class="modal-x" data-action="furniture-preview-close" aria-label="${esc(t('Закрыть'))}">✕</button>
+    <h2 id="furniture-preview-title" tabindex="-1">${esc(t(item.name))}</h2>
+    ${economyPreviewHTML({kind:'den-item', id})}
+    <p>${owned ? t(selected ? 'Установлено' : 'В коллекции') : `${item.cost} ${t('золота')} · ${t('Доступно')}: ${goal.available}`}${!owned && !goal.levelReady ? ` · ${t('Откроется на уровне')} ${item.level}` : ''}</p>
+    <div class="gold-goal-actions">${owned ? `<button class="btn" data-action="furniture-open-den">${t('Открыть Логово')}</button>` : `<button class="btn" data-action="furniture-buy" data-id="${id}" ${goal.ready ? '' : 'disabled'}>${t('Купить')}</button><button class="btn ghost" data-action="gold-goal-set" data-id="${id}">${t('Копить на это')}</button>`}</div>
+    <p class="muted">${t('Примерка не меняет комнату и не списывает золото.')}</p></section>`;
+  if (owned) ov.querySelector('figcaption').textContent = t('Примерка не меняет комнату и не списывает золото.');
+  mountAccountDialog(ov, { initial: '#furniture-preview-title', returnFocus });
+  ov.querySelector('#furniture-preview-title').focus();
+}
 function renderRewards() {
   const bal = goldBalance();
   const chestReady = lootChestsAvailable();
@@ -24563,7 +24636,7 @@ function renderRewards() {
   </ul></section>`;
   return `
     <div class="rewards-shell" data-guide-target="rewards-overview">
-    ${rewardHero}
+    ${rewardHero}${goldGoalHTML()}${furnitureCollectionHTML()}
     <div class="rewards-primary-grid">${lootboxCard()}${personalStore}</div>
     ${collectionCard()}
     ${arsenalCard()}
@@ -31560,6 +31633,27 @@ async function onClick(e) {
       sfx('complete'); toast(t('Логово вернулось к стартовой обстановке'));
     }); return;
   }
+  if (action === 'open-gold-goal') { State.view = 'rewards'; render(); return; }
+  if (action === 'furniture-preview') { showFurniturePreview(id, el); return; }
+  if (action === 'furniture-preview-close') { closeAccountDialog('furniture-preview-modal'); return; }
+  if (action === 'furniture-open-den') {
+    closeAccountDialog('furniture-preview-modal', { restoreFocus: false });
+    State.view = 'den'; State._denEdit = true; render(); return;
+  }
+  if (action === 'furniture-buy') {
+    const opener = document.querySelector(`[data-action="furniture-preview"][data-id="${CSS.escape(id)}"]`);
+    closeAccountDialog('furniture-preview-modal', { restoreFocus: false });
+    showEconomyConfirm('den-item', id, opener); return;
+  }
+  if (action === 'gold-goal-set' || action === 'gold-goal-clear') {
+    const selection = action === 'gold-goal-clear' ? null : window.GoldGoalV1.select(id, DEN_ITEMS);
+    if (action === 'gold-goal-set' && (!selection || denOwned(id))) return;
+    const next = structuredClone(State.settings); next.goldGoalV1 = selection;
+    await commitEquipment({ settings: next }, el, () => {
+      closeAccountDialog('furniture-preview-modal', { restoreFocus: false });
+      State.view = 'rewards'; toast(t(selection ? 'Цель выбрана' : 'Цель убрана'));
+    }); return;
+  }
   if (action === 'den-theme') {
     const theme = DEN_THEMES.find((x) => x.id === id);
     if (!theme || !denAcquire(theme, 'theme:' + theme.id, el)) return;
@@ -34718,7 +34812,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v308';
+const PWA_CACHE_VERSION = 'satoru-v309';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
