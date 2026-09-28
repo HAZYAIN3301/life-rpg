@@ -1,3 +1,12 @@
+**Codex 28.09 — M03A, кандидат серверного фундамента multiplayer:** отдельный журнал
+главы/использованных действий, согласие, постоянная цель, replay/conflict, отзыв и
+обезличивание. 21 целевая проверка; полный suite **3224/3224**. Контракт:
+[MULTIPLAYER-FOUNDATION-M03A.md](./MULTIPLAYER-FOUNDATION-M03A.md),
+[QA](./MULTIPLAYER-FOUNDATION-M03A-QA.md). **Пока не подключено к server.js/UI**:
+следующий пакет — authenticated API + lifecycle + один доступный маршрут Маяка.
+Золото/рейды/Pro/Senku не менялись. PWA v310 сохранён: кешируемые файлы не менялись.
+Публикация ещё не подтверждена; квитанция будет во внешнем CHECKPOINT.
+
 **Codex 28.09 — G02 опубликован / v309:** runtime `9a9a940e`, Railway
 `5ae65f18-8e30-4bfb-8576-15e44936e4a2` SUCCESS. Оба домена, SHA-256 **22/22**;
 Chromium/WebKit production без page errors; существующий PWA v308→v309.

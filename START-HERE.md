@@ -1,3 +1,12 @@
+**Codex 28.09 — M03A, кандидат серверного фундамента multiplayer:** отдельный журнал
+главы/использованных действий, согласие, постоянная цель, replay/conflict, отзыв и
+обезличивание. 21 целевая проверка; полный suite **3224/3224**. Контракт:
+[MULTIPLAYER-FOUNDATION-M03A.md](./MULTIPLAYER-FOUNDATION-M03A.md),
+[QA](./MULTIPLAYER-FOUNDATION-M03A-QA.md). **Пока не подключено к server.js/UI**:
+следующий пакет — authenticated API + lifecycle + один доступный маршрут Маяка.
+Золото/рейды/Pro/Senku не менялись. PWA v310 сохранён: кешируемые файлы не менялись.
+Публикация ещё не подтверждена; квитанция будет во внешнем CHECKPOINT.
+
 **Claude 28.09 — мост Senku, фаза 1 опубликована / v310:** runtime `305f386d`; оба домена
 отдают commit `305f386d` и `satoru-v310` с 14:04 UTC; SHA-256 **8/8** (app.js, index.html, sw.js,
 styles.css × 2 домена); production без входа — Chromium и WebKit iPhone без ошибок страницы;
