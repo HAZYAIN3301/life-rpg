@@ -45,6 +45,7 @@ const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyDenV1 = require('./server-party-den-v1.js');
+const PartyProjectV1 = require('./public/party-project-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
 const AdventurePolicyV1 = require('./server-adventure-policy-v1.js');
@@ -692,6 +693,7 @@ function validateParties(rows) {
   if (!Array.isArray(rows) || rows.some((p) => {
     if (!p || !Array.isArray(p.members)) return true;
     PartyDenV1.validate(p.sharedDen);
+    PartyProjectV1.validate(p.projectWork);
     return p.sessions !== undefined && (!Array.isArray(p.sessions) || p.sessions.some((s) => !PartySessionV1.validStored(s)));
   })) {
     throw new Error('party_data_unreadable');
@@ -796,6 +798,7 @@ function removeUserFromParties(uid, parties) {
   const next = [];
   for (const source of parties || []) {
     const party = structuredClone(source);
+    party.projectWork = PartyProjectV1.forget(party.projectWork, projectHash(party.id, uid));
     party.members = (party.members || []).filter((id) => id !== uid);
     party.sharedDen = PartyDenV1.depart(party.sharedDen, [uid]);
     party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
@@ -826,6 +829,9 @@ function genPartyCode(parties) { // 5-символьный код без пох�
   const A = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let c;
   do { c = Array.from({ length: 5 }, () => A[Math.floor(Math.random() * A.length)]).join(''); } while (parties.some((p) => p.code === c));
   return c;
+}
+function projectHash(partyId, uid, taskId = '') {
+  return crypto.createHash('sha256').update(JSON.stringify([partyId, uid, taskId])).digest('hex');
 }
 const PARTY_MAX = 6;
 // Кооп-рейд: понедельник недели (для сброса), цель XP/чел, цель сезона (побед).
@@ -6544,6 +6550,7 @@ const server = http.createServer(async (req, res) => {
     });
     return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX, ws: r.ws,
       sharedDen: PartyDenV1.view(party.sharedDen, party.members),
+      projects: PartyProjectV1.view(party.projectWork),
       sessions: partySessionViews(party, me), serverNow: new Date().toISOString(),
       sessionInvitesEnabled: !(party.sessionMuted || []).includes(me),
       raid: { total: r.total, target: r.target, won: r.won,
@@ -6555,7 +6562,7 @@ const server = http.createServer(async (req, res) => {
   }
   // A pending membership journal must fail closed without terminating the server.
   try {
-  if (u === '/api/party/den') {
+  if (u === '/api/party/den' || u === '/api/party/projects') {
     const me = sessionUserId(req);
     if (!me || !loadUsers().some(user => user.id === me)) return sendJson(res, 401, { error: 'not_logged_in' });
     if (!['GET', 'POST'].includes(req.method)) return sendJson(res, 405, { error: 'method_not_allowed' });
@@ -6571,6 +6578,28 @@ const server = http.createServer(async (req, res) => {
     // Re-read after await: membership and revision must describe this operation.
     const parties = loadParties(), party = partyOf(me, parties);
     if (!party) return sendJson(res, 404, { error: 'no_party' });
+    if (u === '/api/party/projects') {
+      try {
+        recoverCommitmentJournal(me);
+        let tasks;
+        try { tasks = JSON.parse(fs.readFileSync(path.join(userDataDir(me), 'tasks.json'), 'utf8')); }
+        catch (error) { if (error.code === 'ENOENT') tasks = []; else throw error; }
+        if (!Array.isArray(tasks)) throw Error('invalid_tasks');
+        const now = new Date().toISOString(); let replay = false;
+        if (req.method === 'POST') {
+          const result = PartyProjectV1.change(party.projectWork, input, { partyId: party.id,
+            actor: projectHash(party.id, me), source: projectHash(party.id, me, input?.taskId), now,
+            task: tasks.find(task => task && task.id === input?.taskId) });
+          party.projectWork = result.state; replay = result.replay; saveParties(parties);
+        }
+        const eligible = tasks.filter(task => task && PartyProjectV1.eligible(party.projectWork, task, projectHash(party.id, me, task.id), now))
+          .slice(0, 100).map(task => ({ id: task.id, title: String(task.title || '').slice(0, 200) }));
+        return sendJson(res, 200, { partyId: party.id, projects: PartyProjectV1.view(party.projectWork), eligible, replay });
+      } catch (error) {
+        const status = ({ project_request: 400, project_consent: 412, project_conflict: 409, project_task: 409, project_partner: 409 })[error.code];
+        return sendJson(res, status || 503, { error: status ? error.code : 'project_storage' });
+      }
+    }
     try {
       let replay = false;
       if (req.method === 'POST') {
@@ -6586,7 +6615,7 @@ const server = http.createServer(async (req, res) => {
       }
       const users = loadUsers();
       const names = Object.fromEntries(party.members.map(id => [id, users.find(user => user.id === id)?.name || '—']));
-      return sendJson(res, 200, { partyId: party.id, room: PartyDenV1.view(party.sharedDen, party.members), names, replay });
+      return sendJson(res, 200, { partyId: party.id, room: PartyDenV1.view(party.sharedDen, party.members), projects: PartyProjectV1.view(party.projectWork), names, replay });
     } catch (error) {
       const status = ({ invalid_room_request: 400, invalid_room_item: 400, room_item_not_owned: 403,
         room_consent_required: 412, room_conflict: 409, room_slot_occupied: 409, room_operation_conflict: 409 })[error.code];

@@ -55,6 +55,7 @@
       return `<section class="card shared-den" aria-labelledby="shared-den-title">
         <header><div><h3 id="shared-den-title" tabindex="-1">${tr('title')}</h3><p class="muted">${tr('intro')}</p></div><button class="btn ghost" data-party-den="refresh" ${busy ? 'disabled' : ''}>${tr('refresh')}</button></header>
         ${d.scene(room)}
+        <div data-party-project-host>${d.project ? d.project() : ''}</div>
         ${rows ? `<ul class="shared-den-items">${rows}</ul>` : `<p class="muted">${tr('empty')}</p>`}
         <div class="shared-den-editor"><label for="shared-den-item">${tr('choose')}</label><div class="shared-den-controls"><select id="shared-den-item" ${busy || pending ? 'disabled' : ''}>${owned.map(x => `<option value="${x.id}" ${x.id === selected ? 'selected' : ''}>${safe(d.translate(x.name))}</option>`).join('')}</select>
         <button class="btn" data-party-den="place" ${busy || pending || blocked || same || !choice ? 'disabled' : ''}>${busy ? tr('busy') : same ? tr('placed') : tr('place')}</button></div>
@@ -85,7 +86,8 @@
         const response = await fetch('/api/party/den', { cache: 'no-store' }), data = await response.json();
         if (scope() !== captured) return;
         if (!response.ok || data.partyId !== current().p.id || !data.room) throw Error('refresh');
-        const changed = JSON.stringify(current().p.sharedDen) !== JSON.stringify(data.room) || JSON.stringify(current().p.sharedDenNames) !== JSON.stringify(data.names);
+        const changed = JSON.stringify(current().p.sharedDen) !== JSON.stringify(data.room) || JSON.stringify(current().p.sharedDenNames) !== JSON.stringify(data.names) || (data.projects?.revision || 0) > (current().p.projects?.revision || 0);
+        if (data.projects && data.projects.revision >= (current().p.projects?.revision || 0)) current().p.projects = data.projects;
         current().p.sharedDen = data.room;
         current().p.sharedDenNames = data.names;
         if (explicit) message = '';

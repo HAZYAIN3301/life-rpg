@@ -22018,7 +22018,7 @@ function boardTakenLineHTML() {
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div>${firstValueCard()}${todayHero}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -28535,15 +28535,28 @@ function partyEmptyHTML() {
 }
 let _partyDuoUI = null;
 let _partyDenUI = null;
+let _partyProjectUI = null;
+function partyRoomSceneHTML(room) {
+  const chapters = State.party?.projects?.chapters || [];
+  const hearth = chapters.find(c => c.id === 'hearth'), garden = chapters.find(c => c.id === 'garden');
+  const light = hearth?.completedAt ? 'night' : 'day';
+  const den = { theme: 'workshop', light, slots: Object.fromEntries(room.placements.map(p => [p.slot, p.itemId])) };
+  const ids = room.placements.map(p => p.itemId), plants = garden?.completedAt ? 2 : (garden?.progress || 0) >= 4 ? 1 : 0;
+  return `<div class="den-scene shared-den-scene" data-project-hearth="${hearth?.completedAt ? 'done' : (hearth?.progress || 0) >= 3 ? 'warm' : 'none'}" data-project-garden="${plants}" data-den-renderer="v3" data-den-theme="workshop" data-den-light="${light}" data-den-phase="${light}" role="img" aria-label="${esc(window.PartyDenUIV1.text('title', lang()))}">${denSceneSVG(DEN_THEMES[0], light, den)}${denObjectsHTML(den, false, '', ids)}${denLegacyRoomFixturesHTML(false)}${hearth?.completedAt ? '<img class="project-hearth-flame" src="/art/den/v4/ambient/fireplace-flame-runtime.png" alt="" aria-hidden="true">' : ''}<span class="project-hearth-glow" aria-hidden="true"></span>${Array.from({ length: plants }, (_, i) => `<img class="project-window-plant plant-${i}" src="${denItem('comfort-bonsai').src}" alt="" aria-hidden="true">`).join('')}</div>`;
+}
+function partyProjectUI() {
+  if (!_partyProjectUI) _partyProjectUI = window.PartyProjectUIV1.createUI({ state: () => State, lang, escape: esc,
+    navigate: view => { State.view = view; render(); },
+    scene: () => { const scene = document.querySelector('.shared-den-scene'); if (scene && State.party?.sharedDen) scene.outerHTML = partyRoomSceneHTML(State.party.sharedDen); },
+  });
+  return _partyProjectUI;
+}
 function partyDenUI() {
   if (!_partyDenUI) _partyDenUI = window.PartyDenUIV1.createUI({
     state: () => State, lang, escape: esc, translate: t, items: () => DEN_ITEMS, owned: denOwned,
+    project: () => partyProjectUI().body(),
     navigate: view => { if (document.getElementById('furniture-preview-modal')) closeAccountDialog('furniture-preview-modal'); State.view = view; render(); },
-    scene: room => {
-      const den = { theme: 'workshop', light: 'day', slots: Object.fromEntries(room.placements.map(p => [p.slot, p.itemId])) };
-      const ids = room.placements.map(p => p.itemId);
-      return `<div class="den-scene shared-den-scene" data-den-renderer="v3" data-den-theme="workshop" data-den-light="day" data-den-phase="day" role="img" aria-label="${esc(window.PartyDenUIV1.text('title', lang()))}">${denSceneSVG(DEN_THEMES[0], 'day', den)}${denObjectsHTML(den, false, '', ids)}${denLegacyRoomFixturesHTML(false)}</div>`;
-    },
+    scene: partyRoomSceneHTML,
   });
   return _partyDenUI;
 }
@@ -31407,6 +31420,7 @@ async function confirmGoalDelete() {
   await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; State._goalDeepLinkId = ''; closeGoalsBulkMode(); syncGoalDeepLink(''); });
 }
 async function onClick(e) {
+  if (e.target.closest('[data-project]') && await partyProjectUI().handle(e)) return;
   if (e.target.closest('[data-party-den]') && await partyDenUI().handle(e)) return;
   if (e.target.closest('[data-duo]') && await partyDuoUI()?.handle(e)) return;
   const targetTaskMenu = e.target.closest('.task-more');
@@ -35116,7 +35130,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v311';
+const PWA_CACHE_VERSION = 'satoru-v312';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

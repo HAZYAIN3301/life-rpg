@@ -114,14 +114,14 @@ try {
     const offline = await browser.newContext({ serviceWorkers: 'allow' });
     const shell = await offline.newPage(); await shell.goto(base);
     await shell.evaluate(() => navigator.serviceWorker.ready);
-    await shell.waitForFunction(async () => { const cache = await caches.open('satoru-v311'); return !!await cache.match('party-den-ui-v1.js') && !!await cache.match('party-den-v1.css'); });
+    await shell.waitForFunction(async () => { const cache = await caches.open(PWA_CACHE_VERSION); return !!await cache.match('party-den-ui-v1.js') && !!await cache.match('party-den-v1.css'); });
     await shell.reload(); await shell.waitForFunction(() => !!navigator.serviceWorker.controller);
     await offline.setOffline(true);
     if (engine === chromium) {
       await shell.reload(); await shell.waitForFunction(() => !!window.PartyDenUIV1);
       report.checks.push('chromium: full offline shell reload with shared room module');
     } else {
-      assert.ok(await shell.evaluate(async () => { const cache = await caches.open('satoru-v311'); return (await (await cache.match('party-den-ui-v1.js')).text()).includes('PartyDenUIV1') && (await (await cache.match('party-den-v1.css')).text()).includes('.shared-den'); }));
+      assert.ok(await shell.evaluate(async () => { const cache = await caches.open(PWA_CACHE_VERSION); return (await (await cache.match('party-den-ui-v1.js')).text()).includes('PartyDenUIV1') && (await (await cache.match('party-den-v1.css')).text()).includes('.shared-den'); }));
       report.checks.push('webkit: new assets stored/read in CacheStorage; offline SW delivery/navigation UNVERIFIED (automation Load failed/internal error), needs physical-device check');
     }
     await offline.close();

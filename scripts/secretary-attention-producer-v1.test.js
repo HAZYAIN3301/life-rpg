@@ -130,8 +130,8 @@ test('the vocabulary loads before the producer, and both before app.js', () => {
   for (const file of ['secretary-events-v1', 'secretary-attention-producer-v1']) {
     assert.equal((SW.match(new RegExp(`'${file}\\.js'`, 'g')) || []).length, 1, `${file} once in SHELL`);
   }
-  assert.match(SW, /const CACHE = 'satoru-v311'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v311'/);
+  assert.match(SW, /const CACHE = 'satoru-v312'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v312'/);
 });
 
 test('every closed window reports, and there is exactly one place that closes one', () => {

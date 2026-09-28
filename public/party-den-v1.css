@@ -19,6 +19,23 @@
 .today-gold-goal span { display: grid; gap: 4px; }
 .today-gold-goal small { font-size: var(--type-meta, 13px); color: var(--muted); }
 .shared-den-link { margin: 12px 0; min-height: 44px; }
+.shared-project { margin: 20px 0; padding: 16px 0; border-block: 1px solid var(--line); color: var(--text); }
+.shared-project h4 { margin: 0 0 12px; }
+.shared-project progress { display: block; width: 100%; height: 12px; accent-color: var(--accent); }
+.shared-project select { display: block; width: 100%; margin: 10px 0; min-height: 44px; appearance: none; -webkit-appearance: none; padding: 12px; font: inherit; border: 1px solid var(--muted); border-radius: 10px; background: var(--panel); color: var(--text); }
+.shared-project p { max-width: var(--measure-prose, 68ch); }
+.shared-project p:empty { display: none; }
+.project-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.project-choices article { min-width: 0; }
+.project-completed { padding-left: 20px; }
+.project-completed li { margin: 12px 0; }
+.project-hearth-glow { position: absolute; pointer-events: none; z-index: 2; left: 0; top: 40%; width: 35%; height: 45%; background: radial-gradient(ellipse, #ffbf694d, transparent 68%); opacity: 0; }
+[data-project-hearth="warm"] .project-hearth-glow { opacity: .65; }
+[data-project-hearth="done"] .project-hearth-glow { opacity: 1; }
+.project-window-plant { position: absolute; z-index: 3; width: 9%; height: 21%; object-fit: contain; top: 40%; left: 73%; }
+.project-hearth-flame { position: absolute; z-index: 4; left: 12.9%; top: 55.5%; width: 15%; height: auto; pointer-events: none; }
+.project-window-plant.plant-1 { left: 84%; transform: scaleX(-1); }
+@media (max-width: 650px) { .project-choices { grid-template-columns: 1fr; } }
 @media (max-width: 650px) {
   .shared-den > header { display: block; }
   .shared-den-controls { flex-direction: column; }
