@@ -1,0 +1,30 @@
+.shared-den { padding: clamp(16px, 3vw, 28px); color: var(--text); }
+.shared-den > header { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.shared-den h3 { margin: 0 0 8px; }
+.shared-den header p { max-width: var(--measure-compact, 55ch); }
+.shared-den .shared-den-scene { width: 100%; height: auto; min-height: 0; aspect-ratio: 16 / 9; border-radius: 16px; margin: 16px 0; pointer-events: none; }
+.shared-den-items { list-style: none; padding: 0; margin: 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; }
+.shared-den-items li { display: flex; justify-content: space-between; gap: 12px; align-items: center; min-width: 0; }
+.shared-den-items strong, .shared-den-items small { display: block; overflow-wrap: anywhere; }
+.shared-den-items small { color: var(--muted); font-size: var(--type-meta, 13px); margin-top: 4px; }
+.shared-den-editor { padding: 16px 0; border-top: 1px solid var(--line, #727272); }
+.shared-den-controls { display: flex; gap: 12px; margin-top: 8px; }
+.shared-den-controls select { flex: 1; min-width: 0; appearance: none; -webkit-appearance: none; border: 1px solid var(--muted); border-radius: 10px; padding: 10px 32px 10px 12px; font: inherit; color: var(--text); background-color: var(--panel); background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+.shared-den .btn, .shared-den select { min-height: 44px; white-space: normal; overflow-wrap: anywhere; }
+.shared-den-privacy { max-width: var(--measure-prose, 68ch); line-height: 1.5; }
+.shared-den-status:empty { display: none; }
+.shared-den footer { display: flex; gap: 12px; flex-wrap: wrap; }
+.today-gold-goal { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 10px 14px; margin: 12px 0; border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--text); }
+.today-gold-goal img { width: 56px; height: 56px; object-fit: contain; }
+.today-gold-goal span { display: grid; gap: 4px; }
+.today-gold-goal small { font-size: var(--type-meta, 13px); color: var(--muted); }
+.shared-den-link { margin: 12px 0; min-height: 44px; }
+@media (max-width: 650px) {
+  .shared-den > header { display: block; }
+  .shared-den-controls { flex-direction: column; }
+  .shared-den-items { grid-template-columns: minmax(0, 1fr); }
+  .shared-den-items li { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shared-den-scene *, .shared-den-scene *::before, .shared-den-scene *::after { animation: none !important; transition: none !important; }
+}

@@ -44,6 +44,7 @@ const ShadowPersonaV1 = require('./public/shadow-persona-v1.js');
 const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
+const PartyDenV1 = require('./server-party-den-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
 const AdventurePolicyV1 = require('./server-adventure-policy-v1.js');
@@ -690,6 +691,7 @@ function loadParties() {
 function validateParties(rows) {
   if (!Array.isArray(rows) || rows.some((p) => {
     if (!p || !Array.isArray(p.members)) return true;
+    PartyDenV1.validate(p.sharedDen);
     return p.sessions !== undefined && (!Array.isArray(p.sessions) || p.sessions.some((s) => !PartySessionV1.validStored(s)));
   })) {
     throw new Error('party_data_unreadable');
@@ -795,6 +797,7 @@ function removeUserFromParties(uid, parties) {
   for (const source of parties || []) {
     const party = structuredClone(source);
     party.members = (party.members || []).filter((id) => id !== uid);
+    party.sharedDen = PartyDenV1.depart(party.sharedDen, [uid]);
     party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
     party.sessionMuted = (party.sessionMuted || []).filter((id) => id !== uid);
     if (party.cheers) delete party.cheers[uid];
@@ -6540,6 +6543,7 @@ const server = http.createServer(async (req, res) => {
         cheers: (party.cheers && party.cheers[id]) || 0, me: id === me, owner: id === party.createdBy };
     });
     return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX, ws: r.ws,
+      sharedDen: PartyDenV1.view(party.sharedDen, party.members),
       sessions: partySessionViews(party, me), serverNow: new Date().toISOString(),
       sessionInvitesEnabled: !(party.sessionMuted || []).includes(me),
       raid: { total: r.total, target: r.target, won: r.won,
@@ -6551,6 +6555,44 @@ const server = http.createServer(async (req, res) => {
   }
   // A pending membership journal must fail closed without terminating the server.
   try {
+  if (u === '/api/party/den') {
+    const me = sessionUserId(req);
+    if (!me || !loadUsers().some(user => user.id === me)) return sendJson(res, 401, { error: 'not_logged_in' });
+    if (!['GET', 'POST'].includes(req.method)) return sendJson(res, 405, { error: 'method_not_allowed' });
+    let input;
+    if (req.method === 'POST') {
+      let crossOrigin = req.headers['sec-fetch-site'] === 'cross-site';
+      if (req.headers.origin) { try { crossOrigin ||= new URL(req.headers.origin).host !== req.headers.host; } catch { crossOrigin = true; } }
+      if (crossOrigin) return sendJson(res, 403, { error: 'same_origin_required' });
+      if (!(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) return sendJson(res, 415, { error: 'json_required' });
+      try { input = JSON.parse(await readBody(req, 2048)); }
+      catch (error) { return sendJson(res, error.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { error: 'invalid_request' }); }
+    }
+    // Re-read after await: membership and revision must describe this operation.
+    const parties = loadParties(), party = partyOf(me, parties);
+    if (!party) return sendJson(res, 404, { error: 'no_party' });
+    try {
+      let replay = false;
+      if (req.method === 'POST') {
+        recoverCommitmentJournal(me);
+        let settings;
+        try { settings = JSON.parse(fs.readFileSync(path.join(userDataDir(me), 'settings.json'), 'utf8')); }
+        catch (error) { if (error.code === 'ENOENT') settings = {}; else throw error; }
+        if (!settings || typeof settings !== 'object' || Array.isArray(settings)) throw Error('invalid settings');
+        const result = PartyDenV1.change(party.sharedDen, input, { actor: me, partyId: party.id,
+          owned: Array.isArray(settings.den?.owned) ? settings.den.owned : [], now: new Date().toISOString() });
+        party.sharedDen = result.room; replay = result.replay;
+        saveParties(parties); // Includes replay: fsync receipt before reporting success.
+      }
+      const users = loadUsers();
+      const names = Object.fromEntries(party.members.map(id => [id, users.find(user => user.id === id)?.name || '—']));
+      return sendJson(res, 200, { partyId: party.id, room: PartyDenV1.view(party.sharedDen, party.members), names, replay });
+    } catch (error) {
+      const status = ({ invalid_room_request: 400, invalid_room_item: 400, room_item_not_owned: 403,
+        room_consent_required: 412, room_conflict: 409, room_slot_occupied: 409, room_operation_conflict: 409 })[error.code];
+      return sendJson(res, status || 503, { error: status ? error.code : 'room_storage_unavailable' });
+    }
+  }
   if (u === '/api/party' && req.method === 'GET') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
     const users = loadUsers(); const user = users.find((entry) => entry.id === me);
@@ -6688,6 +6730,7 @@ const server = http.createServer(async (req, res) => {
     let transferredTo = null, deleted = false;
     if (party) {
       party.members = party.members.filter((x) => x !== me);
+      party.sharedDen = PartyDenV1.depart(party.sharedDen, [me]);
       party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
       party.sessionMuted = (party.sessionMuted || []).filter((id) => id !== me);
       if (party.cheers) delete party.cheers[me];

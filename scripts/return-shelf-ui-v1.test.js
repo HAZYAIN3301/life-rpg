@@ -467,7 +467,7 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20260928-senku-v310-1');
+  const appAt = index.indexOf('app.js?v=20260928-den-v311-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'return-shelf-v1.js']) {
@@ -487,9 +487,9 @@ test('интеграция подключает профиль и каталог
   assert.ok(index.indexOf('inspiration-media-v1.js') < index.indexOf('inspiration-supply-policy-v1.js'));
   assert.match(index, /return-shelf-ui-v1\.js\?v=20260919-inspiration-v265-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
-  assert.match(index, /styles\.css\?v=20260928-senku-v310-1/);
-  assert.match(sw, /satoru-v310/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v310'/);
+  assert.match(index, /styles\.css\?v=20260928-den-v311-1/);
+  assert.match(sw, /satoru-v311/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v311'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {
