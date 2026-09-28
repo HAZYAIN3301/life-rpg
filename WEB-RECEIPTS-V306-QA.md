@@ -45,3 +45,9 @@ observations or statuses are rewritten. Full integration is a post-release task.
 Whole-app visual acceptance; PiP typography; remaining system emoji in other reward
 receipts; R05 proactive secretary; full stage/streak matrix; remaining habits/settings/
 Inspiration/Den/import scenarios and owner device gates. Extension lane unchanged.
+
+## Publication
+
+`e8d73d1`, Railway `19cb7802-07c3-480e-b72b-db6d9896860a` SUCCESS;
+both domains confirmed v306 / e8d73d1 at 07:58 UTC, app/index/sw SHA-256 6/6.
+Chromium login smoke on both domains: visible form, zero page errors.

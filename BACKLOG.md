@@ -1,3 +1,10 @@
+**Codex 28.09 — v306 опубликован:** `e8d73d1`, Railway
+`19cb7802-07c3-480e-b72b-db6d9896860a` SUCCESS. Оба домена в 07:58 UTC
+отдают `e8d73d1` / `satoru-v306`; SHA-256 app/index/sw — 6/6.
+Вход Chromium на обоих адресах: 0 ошибок JS. 3175/3175 тестов;
+WEB-RECEIPTS-V306-QA.md описывает изменения и границы приёмки.
+Новые запуски эксперимента отложены по решению владельца; история сохранена.
+
 - [x] **Owner decision 28.09 / Codex v306 candidate:** defer new experiment runs
   until after first free release; retain history/stop/export. This supersedes the
   earlier pending-choice entry. Full event integration moves post-release.
