@@ -1,11 +1,16 @@
 'use strict';
 
-importScripts('core.js', 'protection.js', 'protection-catalog.js', 'adult-list.js', 'health.js');
+importScripts('core.js', 'protection.js', 'protection-catalog.js', 'adult-list.js', 'health.js', 'puzzle-core.js', 'puzzles.js');
 
 const Core = self.SatoruAttentionCore;
 const Protection = self.SatoruProtection;
 const ProtectionCatalog = self.SatoruProtectionCatalog;
 const Health = self.SatoruAttentionHealth;
+const PuzzleCore = self.SatoruPuzzleCore;
+const Puzzles = self.SatoruPuzzles;
+// The pending solution lives only in session storage (trusted contexts): the gate page never
+// receives the remaining moves, so a solve cannot be faked from the page.
+const PUZZLE_KEY = 'satoruPendingPuzzleV1';
 const SELF_TEST_KEY = 'satoruBoundaryTestV1';
 const STATE_KEY = 'satoruAttentionStateV1';
 const PROTECTION_KEY = 'satoruProtectionStateV1';
@@ -532,6 +537,43 @@ async function handleExtensionMessage(message, sender) {
       return { ok: true, session: result.session, targetUrl: policy && policy.homeUrl };
     });
   }
+  if (type === 'PUZZLE_NEW') {
+    return serialized(async () => {
+      const state = await loadState();
+      const options = Core.boundaryOptions(state, currentIso());
+      if (!options || !options.puzzle) return { ok: false, error: 'puzzle_unavailable' };
+      const puzzle = PuzzleCore.pick(Puzzles, options.puzzle.tier);
+      if (!puzzle) return { ok: false, error: 'puzzle_unavailable' };
+      await chrome.storage.session.set({ [PUZZLE_KEY]: { puzzle, ply: 1, sessionId: state.activeSession.id } });
+      return { ok: true, puzzle: PuzzleCore.publicStart(puzzle), everyMinutes: options.puzzle.everyMinutes };
+    });
+  }
+  if (type === 'PUZZLE_MOVE') {
+    return serialized(async () => {
+      const pending = (await chrome.storage.session.get(PUZZLE_KEY))[PUZZLE_KEY];
+      const state = await loadState();
+      if (!pending || !state.activeSession || pending.sessionId !== state.activeSession.id
+        || pending.puzzle.id !== message.id) return { ok: false, error: 'puzzle_unavailable' };
+      const verdict = PuzzleCore.checkMove(pending.puzzle, pending.ply, message.uci);
+      if (!verdict.ok) return verdict;
+      if (!verdict.correct) {
+        // One wrong move ends this puzzle; the next one is a different position.
+        await chrome.storage.session.remove(PUZZLE_KEY);
+        return { ok: true, correct: false, expected: verdict.expected };
+      }
+      if (!verdict.solved) {
+        await chrome.storage.session.set({ [PUZZLE_KEY]: { ...pending, ply: verdict.nextPly } });
+        return { ok: true, correct: true, reply: verdict.reply, solved: false };
+      }
+      await chrome.storage.session.remove(PUZZLE_KEY);
+      const result = Core.puzzleExtend(state, currentIso());
+      if (!result.ok) return result;
+      const commit = await commitWithEnforcement(state, result.state, { redirectTabs: false });
+      if (!commit.ok) return commit;
+      const policy = Core.policyById(commit.state, result.session.policyId);
+      return { ok: true, correct: true, solved: true, grantedMinutes: result.grantedMinutes, targetUrl: policy && policy.homeUrl };
+    });
+  }
   if (type === 'FINISH_SESSION') {
     return serialized(async () => {
       const state = await loadState();
@@ -572,6 +614,12 @@ async function handleExtensionMessage(message, sender) {
       if (!candidate) return { ok: false, error: 'policy_invalid' };
       if (!(await permissionFor(candidate))) return { ok: false, error: 'permission_required' };
       const state = await loadState();
+      // 0.10.0: the lock covers site boundaries too — no loosening at all while it runs.
+      const lockedProtection = await loadObservedProtection();
+      const existing = Core.policyById(state, candidate.id);
+      if (Protection.lockActive(lockedProtection) && existing && Core.policyLoosens(existing, candidate)) {
+        return { ok: false, error: 'protection_locked', remainingMs: Protection.lockRemainingMs(lockedProtection) };
+      }
       const result = Core.upsertPolicy(state, candidate, {
         replacePurposes: message.replacePurposes === true,
         deferLoosening: true,
@@ -588,6 +636,10 @@ async function handleExtensionMessage(message, sender) {
       const state = await loadState();
       const policy = Core.policyById(state, message.policyId);
       if (message.enabled === true && !(await permissionFor(policy))) return { ok: false, error: 'permission_required' };
+      const lockedProtection = await loadObservedProtection();
+      if (message.enabled !== true && policy && policy.enabled && Protection.lockActive(lockedProtection)) {
+        return { ok: false, error: 'protection_locked', remainingMs: Protection.lockRemainingMs(lockedProtection) };
+      }
       const result = Core.setPolicyEnabled(state, message.policyId, message.enabled === true, {
         deferLoosening: true,
         activatesAt: nextLocalMidnightIso(),

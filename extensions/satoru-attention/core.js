@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildCore() {
   'use strict';
 
-  const VERSION = '0.9.0';
+  const VERSION = '0.10.0';
   const STATE_VERSION = 2;
   const MINUTE = 60_000;
   const DAY = 86_400_000;
@@ -127,6 +127,16 @@
     return purpose;
   }
 
+  // 0.10.0: a chess puzzle every N minutes (owner decision 26.09). null = off.
+  const PUZZLE_TIERS = Object.freeze(['normal', 'hard', 'brutal']);
+  function cleanPuzzle(raw) {
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw) || raw.enabled === false) return null;
+    return {
+      everyMinutes: clampInt(raw.everyMinutes, 1, 30, 5),
+      tier: PUZZLE_TIERS.includes(raw.tier) ? raw.tier : 'hard',
+    };
+  }
+
   function cleanPolicy(raw) {
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
     const hostname = normalizeHostname(raw.hostname);
@@ -155,6 +165,7 @@
       cooldownMinutes: clampInt(raw.cooldownMinutes, 0, MAX_COOLDOWN_MINUTES, 0),
       purposes,
       emergency: cleanEmergency(raw.emergency),
+      puzzle: cleanPuzzle(raw.puzzle),
     };
   }
 
@@ -186,6 +197,7 @@
       extensionCount: clampInt(raw.extensionCount, 0, MAX_EXTENSIONS, 0),
       emergencyUsed: raw.emergencyUsed === true,
       emergencyAccess: raw.emergencyAccess === true,
+      puzzleCount: clampInt(raw.puzzleCount, 0, 500, 0),
       dayKey: DAY_KEY_RE.test(raw.dayKey) ? raw.dayKey : dayKey(raw.startedAt),
     };
     const topic = trim(raw.topic, 80);
@@ -452,7 +464,30 @@
       extensionMinutesAvailable: requestedExtension,
       dailyBudgetRemainingMinutes: budgetLeft,
       emergencyAvailable: session.mode === MODES.control && !session.emergencyUsed,
+      // 0.10.0: solving a puzzle opens the next N minutes, within the daily budget only.
+      puzzle: policy && policy.puzzle && remainingMs <= 0 && !session.emergencyAccess
+        && budgetLeft > 0 && session.plannedMinutes < MAX_MINUTES
+        ? { everyMinutes: Math.min(policy.puzzle.everyMinutes, budgetLeft), tier: policy.puzzle.tier } : null,
     };
+  }
+
+  function puzzleExtend(state, at) {
+    const current = normalizeState(state);
+    if (clockRolledBack(current, at)) return { ok: false, error: 'clock_rollback' };
+    const session = current.activeSession;
+    const options = boundaryOptions(current, at);
+    if (!session || !options) return { ok: false, error: 'session_missing' };
+    if (!options.puzzle) return { ok: false, error: 'puzzle_unavailable' };
+    const grantedMinutes = Math.min(options.puzzle.everyMinutes, MAX_MINUTES - session.plannedMinutes);
+    const plannedMinutes = session.plannedMinutes + grantedMinutes;
+    const next = {
+      ...session,
+      deadlineAt: nowIso(atMs(at) + grantedMinutes * MINUTE),
+      plannedMinutes,
+      maxMinutes: Math.max(session.maxMinutes, plannedMinutes),
+      puzzleCount: session.puzzleCount + 1,
+    };
+    return { ok: true, state: touchClock({ ...current, activeSession: next }, at), session: next, grantedMinutes };
   }
 
   function extendSession(state, at) {
@@ -617,6 +652,10 @@
       || next.emergency.passes > previous.emergency.passes
       || next.emergency.accessMinutes > previous.emergency.accessMinutes
       || next.emergency.delaySeconds < previous.emergency.delaySeconds) return true;
+    // Dropping the puzzle, spacing it out or making it easier lets more scrolling through.
+    const tierRank = { normal: 0, hard: 1, brutal: 2 };
+    if (previous.puzzle && (!next.puzzle || next.puzzle.everyMinutes > previous.puzzle.everyMinutes
+      || tierRank[next.puzzle.tier] < tierRank[previous.puzzle.tier])) return true;
     const strength = { trust: 0, adaptive: 1, control: 2 };
     const nextRules = new Map(next.purposes.map((rule) => [rule.purpose, rule]));
     for (const rule of previous.purposes) {
@@ -754,6 +793,9 @@
 
   return Object.freeze({
     VERSION,
+    PUZZLE_TIERS,
+    cleanPuzzle,
+    puzzleExtend,
     STATE_VERSION,
     MINUTE,
     DAY,

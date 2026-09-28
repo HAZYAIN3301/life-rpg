@@ -186,6 +186,16 @@
           <p class="fine" data-i18n="scenarioLead">These choices appear at the gate. A disabled scenario cannot be invented during an impulse.</p>
           <div id="scenario-list" class="scenario-list"></div>
         </fieldset>
+        <fieldset class="field puzzle-settings">
+          <legend data-i18n="policyPuzzle">Chess puzzle</legend>
+          <label class="switch-row"><input id="puzzle-enabled" type="checkbox"><span><b data-i18n="policyPuzzleEnable">Solve a puzzle to keep going</b><small data-i18n="policyPuzzleLead">When the time is up, a chess puzzle opens the next minutes — within the daily limit.</small></span></label>
+          <div class="row">
+            <label class="field"><span data-i18n="policyPuzzleEvery">Every, minutes</span><input id="puzzle-every" type="number" inputmode="numeric" min="1" max="30" value="5"></label>
+            <label class="field"><span data-i18n="policyPuzzleTier">Difficulty</span>
+              <select id="puzzle-tier"><option value="normal" data-i18n="puzzleTier_normal">Normal</option><option value="hard" selected data-i18n="puzzleTier_hard">Hard</option><option value="brutal" data-i18n="puzzleTier_brutal">Brutal</option></select>
+            </label>
+          </div>
+        </fieldset>
         <details id="policy-advanced" class="advanced-card">
           <summary data-i18n="dailyProtection">Daily protection</summary>
           <div class="row section compact-section">

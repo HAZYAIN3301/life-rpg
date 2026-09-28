@@ -103,6 +103,18 @@ until they navigate; private windows are covered only when Brave/Chrome allows t
 there; a newer list arrives with a new extension version (rebuild with
 `scripts/build-browser-adult-ruleset-v299.mjs`).
 
+### Chess puzzle and motivation (0.10.0)
+
+A site rule can require a chess puzzle every N minutes (1–30, default 5; difficulty normal /
+hard / brutal): when the chosen window ends, the boundary screen offers «Solve a puzzle — N
+more min». The service worker picks a puzzle from the bundled Lichess set (CC0, `puzzles.js`,
+2 400 positions), keeps the solution in `chrome.storage.session` and checks one move at a time;
+one wrong move ends the puzzle and shows the right move. A solve opens at most the daily budget
+left. Removing, spacing out or easing the puzzle is loosening (next day; refused while the
+protection lock runs). The entry screen shows Shadow's line and the person's reasons first.
+New TikTok/YouTube/Instagram rules start with the puzzle on; saved rules keep their choice.
+Shared data/rules for native: `PUZZLES-CONTRACT.md`.
+
 ## Behavior
 
 - A configured site is redirected to `gate.html` until a purpose and bounded duration are

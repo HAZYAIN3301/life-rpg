@@ -36,7 +36,9 @@ NSFW, HaGeZi NSFW, StevenBlack and Satoru's own additions), Reddit stays usable 
 communities and profiles Reddit itself marks 18+ are closed, and a **lock** keeps protection
 on for 7, 30 or 90 days: while locked it can only get stricter, and there is no early unlock.
 The block page counts today's attempts (a number only), answers in a lively voice and shows
-the reasons the person wrote down in advance.
+the reasons the person wrote down in advance. Since 0.10.0 a feed site can require a chess
+puzzle every few minutes (bundled Lichess puzzles, offline): one solved puzzle opens the next
+minutes, within the daily limit.
 
 Rules, active sessions and the last 100 minimal outcomes remain in `chrome.storage.local`.
 The extension does not collect browsing history, page titles, watched items, cookies or the
@@ -76,7 +78,9 @@ Satoru Attention заменяет бесконечную ленту на зар�
 открытым, а сообщества и профили, которые сам Reddit помечает как 18+, закрываются. **Замок**
 держит защиту включённой 7, 30 или 90 дней: пока он действует, её можно только усилить,
 досрочно не снимается. Страница блокировки считает попытки за день (только число), отвечает
-живым голосом и показывает причины, которые человек записал заранее.
+живым голосом и показывает причины, которые человек записал заранее. С 0.10.0 сайт-лента
+может требовать шахматную задачу каждые несколько минут (встроенные задачи Lichess, офлайн):
+решённая задача открывает следующие минуты в пределах дневного лимита.
 
 Правила, активная сессия и последние 100 минимальных исходов остаются в локальном хранилище
 браузера. Расширение не собирает историю, названия страниц, просмотренные материалы, cookie

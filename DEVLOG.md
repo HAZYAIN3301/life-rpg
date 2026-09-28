@@ -1,5 +1,12 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-28] v304 — Satoru Attention 0.10.0: chess puzzle and motivation (Claude lane)
+
+Doomscroll rules can require a chess puzzle every N minutes (Lichess CC0, 2 400 positions, three
+tiers); the service worker keeps the solution and checks one move at a time; a solve opens N
+minutes within the daily budget. Motivation (Shadow's line + own reasons) on the entry screen.
+The protection lock now also refuses loosening site rules. EXTENSION-CHESS-V304-QA.md. Pins v304.
+
 ## [2026-09-27] Codex — v303 publication receipt
 
 Runtime `b04258c`, Railway `981d77db-6bdd-4a1a-9eee-ada6f2039df2` SUCCESS.

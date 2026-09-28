@@ -48,3 +48,10 @@ SOFTWARE.
   Satoru's own hosts or whole general platforms such as reddit.com, tumblr.com or itch.io).
 - Rebuild: `node scripts/build-browser-adult-ruleset-v299.mjs <oisd> <hagezi> <stevenblack>` in
   the web repository.
+
+## Lichess puzzle database (chess puzzles, since 0.10.0)
+
+- File: `puzzles.js` (2 400 puzzles selected from a sample; selection and SHA-256 inside).
+- Source: https://database.lichess.org/#puzzles — Lichess, released under Creative Commons CC0 1.0
+  (public domain dedication). Attribution is not required and is given here with thanks.
+- Rebuild: `node scripts/build-browser-puzzles-v1.mjs <csv>` in the web repository.

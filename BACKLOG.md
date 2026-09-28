@@ -35,8 +35,10 @@
   lock profile template. EXTENSION-LOCK-V300-QA.md.
 - [ ] **Owner:** submit 0.9.0 to the Chrome Web Store (store-kit-v300/SUBMISSION.md); send the
   item ID → switch the site to the store link and fill the lock profile.
-- [ ] **Extension 0.10.0:** chess puzzle every N minutes on doomscroll sites (Lichess CC0
-  puzzles), motivation screen before entering; later Inspiration images on the block page.
+- [x] **v304 / 0.10.0:** chess puzzle every N minutes, motivation before entering; lock also
+  covers site rules. EXTENSION-CHESS-V304-QA.md.
+- [ ] **Extension later:** Inspiration images/edits on the block and entry screens (needs a sync
+  through the Satoru bridge); owner device checks of 0.9/0.10 in Brave.
 - [ ] **Native session:** Family Controls per plan task 13.
 - [ ] **Unverified in real use (27.09):** Mac TestFlight app downloads the extension ZIP via the
   system browser after v298 (owner: press ⟳ first); Reddit guard on live reddit.com (verified

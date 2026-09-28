@@ -37,6 +37,10 @@
         <h1 id="start-title" tabindex="-1" data-i18n="gateTitle">Name the reason before entering</h1>
         <p class="lead"><span id="site-name"></span> · <span data-i18n="gateLead">A short, explicit window replaces an open-ended feed.</span></p>
         <p id="quota-status" class="quota-status"></p>
+        <aside id="gate-motivation" class="gate-motivation" aria-labelledby="gate-motivation-line">
+          <p id="gate-motivation-line" class="gate-motivation-line"></p>
+          <ul id="gate-reasons" hidden></ul>
+        </aside>
         <form id="start-form" class="stack" novalidate>
           <fieldset class="field">
             <legend data-i18n="choosePurpose">Why are you opening it?</legend>
@@ -98,6 +102,16 @@
         </div>
         <button id="extend-session" class="warn section" hidden data-i18n="extendOnce">Extend once</button>
 
+        <section id="puzzle-panel" class="puzzle-panel section" hidden aria-labelledby="puzzle-title">
+          <h2 id="puzzle-title" data-i18n="puzzleTitle">Solve a puzzle to continue</h2>
+          <p id="puzzle-lead" class="muted"></p>
+          <button id="puzzle-start" class="primary" type="button"></button>
+          <div id="puzzle-board" class="puzzle-board" role="group" hidden></div>
+          <div id="puzzle-promotion" class="puzzle-promotion" role="group" hidden></div>
+          <p id="puzzle-status" class="status" role="status" aria-live="polite"></p>
+          <p class="fine" data-i18n="puzzleSource">Puzzles: Lichess puzzle database, CC0.</p>
+        </section>
+
         <div class="actions section">
           <button id="satoru-return" class="quiet" data-i18n="openSatoruReturn">Open Satoru return</button>
           <button id="boundary-settings" class="quiet" data-i18n="settings">Settings</button>
@@ -123,6 +137,7 @@
     </article>
   </main>
   <script src="i18n.js"></script>
+  <script src="puzzle-core.js"></script>
   <script src="gate.js"></script>
   <script src="boundary-test-receipt.js"></script>
 </body>

@@ -42,6 +42,110 @@
 
   I18n.localizeDocument(language);
 
+  // ---- 0.10.0 motivation before entering: Shadow's line and the person's own reasons ----
+  function renderMotivation() {
+    document.querySelector('#gate-motivation-line').textContent = t(`blockTip${1 + Math.floor(Math.random() * 4)}`);
+    chrome.storage.local.get('satoruMotivationV1').then((stored) => {
+      const reasons = Array.isArray(stored.satoruMotivationV1?.reasons) ? stored.satoruMotivationV1.reasons.slice(0, 5) : [];
+      const list = document.querySelector('#gate-reasons');
+      list.replaceChildren(...reasons.map((reason) => { const li = document.createElement('li'); li.textContent = String(reason).slice(0, 120); return li; }));
+      list.hidden = !reasons.length;
+    }).catch(() => undefined);
+  }
+
+  // ---- 0.10.0 chess puzzle at the boundary. The worker keeps the solution; the page only
+  // shows positions and sends one move at a time. ----
+  const PuzzleCore = globalThis.SatoruPuzzleCore;
+  const GLYPH = { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' };
+  const puzzlePanel = document.querySelector('#puzzle-panel');
+  const puzzleBoard = document.querySelector('#puzzle-board');
+  const puzzleStart = document.querySelector('#puzzle-start');
+  const puzzleLead = document.querySelector('#puzzle-lead');
+  const puzzleStatus = document.querySelector('#puzzle-status');
+  const puzzlePromotion = document.querySelector('#puzzle-promotion');
+  let puzzle = null; let position = null; let selectedSquare = ''; let lastMove = ''; let puzzleBusy = false;
+
+  function squareName(rank, file) { return `${'abcdefgh'[file]}${8 - rank}`; }
+  function pieceLabel(piece) {
+    return piece ? `${t(PuzzleCore.colorOf(piece) === 'w' ? 'puzzleWhitePiece' : 'puzzleBlackPiece')} ${t(`piece_${piece.toLowerCase()}`)}` : t('puzzleEmpty');
+  }
+  function renderBoard() {
+    puzzleBoard.replaceChildren();
+    const white = puzzle.player === 'w';
+    for (let row = 0; row < 8; row += 1) {
+      for (let col = 0; col < 8; col += 1) {
+        const rank = white ? row : 7 - row; const file = white ? col : 7 - col;
+        const name = squareName(rank, file); const piece = position.board[rank][file];
+        const cell = document.createElement('button');
+        cell.type = 'button'; cell.dataset.square = name;
+        cell.className = `sq ${(rank + file) % 2 ? 'dark' : 'light'}${selectedSquare === name ? ' selected' : ''}${lastMove.includes(name) ? ' last' : ''}`;
+        cell.setAttribute('aria-label', `${name}, ${pieceLabel(piece)}`);
+        cell.setAttribute('aria-pressed', selectedSquare === name ? 'true' : 'false');
+        // Coordinates on the edge squares, so «c3–d5» can be found by eye.
+        if (row === 7) { const coord = document.createElement('span'); coord.className = 'coord coord-file'; coord.textContent = name[0]; coord.setAttribute('aria-hidden', 'true'); cell.append(coord); }
+        if (col === 0) { const coord = document.createElement('span'); coord.className = 'coord coord-rank'; coord.textContent = name[1]; coord.setAttribute('aria-hidden', 'true'); cell.append(coord); }
+        if (piece) { const glyph = document.createElement('span'); glyph.className = `piece ${PuzzleCore.colorOf(piece) === 'w' ? 'piece-w' : 'piece-b'}`; glyph.textContent = GLYPH[piece.toLowerCase()]; glyph.setAttribute('aria-hidden', 'true'); cell.append(glyph); }
+        puzzleBoard.append(cell);
+      }
+    }
+  }
+  function pieceAt(name) { return position.board[8 - Number(name[1])]['abcdefgh'.indexOf(name[0])]; }
+  function applyShown(uci) { position = PuzzleCore.applyMove(position, uci); lastMove = uci.slice(0, 4); }
+
+  async function newPuzzle() {
+    puzzleBusy = true; puzzleStatus.textContent = ''; puzzleStatus.className = 'status'; puzzlePromotion.hidden = true;
+    const result = await send({ type: 'PUZZLE_NEW' });
+    puzzleBusy = false;
+    if (!result || !result.ok) { puzzleStatus.textContent = errorText(result && result.error); puzzleStatus.className = 'status error'; return; }
+    puzzle = result.puzzle; selectedSquare = '';
+    position = PuzzleCore.parseFen(puzzle.fen); applyShown(puzzle.opening);
+    puzzleLead.textContent = t('puzzleLead', { rating: puzzle.rating, color: t(puzzle.player === 'w' ? 'puzzleWhite' : 'puzzleBlack'), moves: puzzle.playerMoves });
+    puzzleBoard.hidden = false; puzzleStart.hidden = true;
+    renderBoard();
+    puzzleBoard.querySelector('button')?.focus();
+  }
+
+  async function playMove(uci) {
+    puzzleBusy = true; puzzlePromotion.hidden = true;
+    const result = await send({ type: 'PUZZLE_MOVE', id: puzzle.id, uci });
+    if (!result || !result.ok) { puzzleBusy = false; puzzleStatus.textContent = errorText(result && result.error); puzzleStatus.className = 'status error'; return; }
+    selectedSquare = '';
+    if (!result.correct) {
+      applyShown(result.expected); renderBoard();
+      puzzleStatus.textContent = t('puzzleWrong', { move: `${result.expected.slice(0, 2)}–${result.expected.slice(2, 4)}${result.expected[4] ? `=${result.expected[4].toUpperCase()}` : ''}` }); puzzleStatus.className = 'status error';
+      puzzleStart.textContent = t('puzzleAnother'); puzzleStart.hidden = false; puzzleBusy = false; puzzleStart.focus();
+      return;
+    }
+    applyShown(uci); renderBoard();
+    if (result.solved) {
+      puzzleStatus.textContent = t('puzzleSolved', { minutes: result.grantedMinutes }); puzzleStatus.className = 'status success';
+      setTimeout(() => location.assign(result.targetUrl), 1200);
+      return;
+    }
+    puzzleStatus.textContent = t('puzzleGood'); puzzleStatus.className = 'status';
+    setTimeout(() => { applyShown(result.reply); renderBoard(); puzzleBusy = false; }, 450);
+  }
+
+  puzzleBoard.addEventListener('click', (event) => {
+    const cell = event.target.closest('button[data-square]');
+    if (!cell || puzzleBusy || !puzzle) return;
+    const name = cell.dataset.square; const piece = pieceAt(name);
+    if (piece && PuzzleCore.colorOf(piece) === puzzle.player) { selectedSquare = selectedSquare === name ? '' : name; renderBoard(); puzzleBoard.querySelector(`[data-square="${name}"]`)?.focus(); return; }
+    if (!selectedSquare) return;
+    const from = selectedSquare; const moving = pieceAt(from);
+    if (moving.toLowerCase() === 'p' && (name[1] === '8' || name[1] === '1')) {
+      puzzlePromotion.replaceChildren(...['q', 'r', 'b', 'n'].map((kind) => {
+        const button = document.createElement('button'); button.type = 'button';
+        button.textContent = GLYPH[kind]; button.setAttribute('aria-label', `${t('puzzlePromote')} ${t(`piece_${kind}`)}`);
+        button.addEventListener('click', () => playMove(`${from}${name}${kind}`)); return button;
+      }));
+      puzzlePromotion.hidden = false; puzzlePromotion.querySelector('button').focus();
+      return;
+    }
+    playMove(`${from}${name}`);
+  });
+  puzzleStart.addEventListener('click', () => { if (!puzzleBusy) newPuzzle(); });
+
   function show(name) {
     Object.entries(sections).forEach(([key, element]) => { element.hidden = key !== name; });
     if (!['active', 'boundary'].includes(name)) {
@@ -161,6 +265,7 @@
     });
     chooseRule(context.policy.purposes[0]);
     document.querySelector('#start-form button[type="submit"]').disabled = !!(quota && !quota.canStart);
+    renderMotivation();
   }
 
   function startActiveTimer() {
@@ -226,6 +331,14 @@
     document.querySelector('[data-outcome="unfinished"]').hidden = rest;
     document.querySelector('[data-outcome="rested"]').hidden = !rest;
     document.querySelector('#extend-session').hidden = !context.boundary.canExtend;
+    const puzzleOption = context.boundary.puzzle;
+    puzzlePanel.hidden = !puzzleOption || context.clockRollback;
+    if (puzzleOption) {
+      puzzle = null; position = null; puzzleBoard.hidden = true; puzzlePromotion.hidden = true; puzzleStart.hidden = false;
+      puzzleStart.textContent = t('puzzleStart', { minutes: puzzleOption.everyMinutes });
+      puzzleLead.textContent = t('puzzleLeadIdle', { minutes: puzzleOption.everyMinutes });
+      puzzleStatus.textContent = ''; puzzleStatus.className = 'status';
+    }
     boundaryStatus.textContent = context.clockRollback ? t('error_clock_rollback') : '';
     boundaryStatus.className = `status${context.clockRollback ? ' error' : ''}`;
     emergencySection.hidden = context.activeSession.mode !== 'control' || context.clockRollback;

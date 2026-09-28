@@ -119,7 +119,7 @@ test('bundled rulesets (0.7.0+): manifest, rule shape, allowlist precedence and 
   const fs = require('node:fs');
   const path = require('node:path');
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'manifest.json'), 'utf8'));
-  assert.ok(['0.8.0', '0.9.0'].includes(manifest.version), manifest.version);
+  assert.ok(['0.8.0', '0.9.0', '0.10.0'].includes(manifest.version), manifest.version);
   assert.deepEqual(manifest.declarative_net_request.rule_resources, [
     { id: 'adult_redirect', enabled: false, path: 'rules/adult-redirect.json' },
     { id: 'adult_block', enabled: false, path: 'rules/adult-block.json' },
@@ -159,7 +159,7 @@ test('bundled rulesets (0.7.0+): manifest, rule shape, allowlist precedence and 
   }
   assert.ok(manifest.web_accessible_resources.some((entry) => entry.resources.includes('block.html')));
   const worker = fs.readFileSync(path.join(__dirname, 'service-worker.js'), 'utf8');
-  assert.match(worker, /importScripts\('core\.js', 'protection\.js', 'protection-catalog\.js', 'adult-list\.js', 'health\.js'\);/);
+  assert.match(worker, /importScripts\('core\.js', 'protection\.js', 'protection-catalog\.js', 'adult-list\.js', 'health\.js'[^)]*\);/);
   assert.match(worker, /chrome\.declarativeNetRequest\.updateEnabledRulesets\(\{\s*enableRulesetIds: wanted, disableRulesetIds:/);
   assert.match(worker, /getEnabledRulesets\(\)\)\.slice\(\)\.sort\(\);[\s\S]*JSON\.stringify\(rulesets\) === JSON\.stringify\(await expectedRulesets\(protection, at\)\)/);
 });
@@ -236,4 +236,81 @@ test('0.9.0 service worker owns the lock and refuses loosening while locked', ()
       assert.notEqual(I18n.translate(lang, key), key, `${lang}.${key}`);
     }
   }
+});
+
+test('0.10.0 puzzles: every bundled puzzle replays, tiers and ratings hold, only exact moves solve', () => {
+  const PuzzleCore = require('./puzzle-core.js');
+  const Puzzles = require('./puzzles.js');
+  assert.equal(Puzzles.license, 'CC0-1.0');
+  const ranges = { normal: [1500, 1799], hard: [1800, 2099], brutal: [2100, 2499] };
+  for (const tier of PuzzleCore.TIERS) {
+    assert.equal(Puzzles.puzzles[tier].length, 800, tier);
+    for (const [id, fen, moves, rating] of Puzzles.puzzles[tier]) {
+      assert.ok(rating >= ranges[tier][0] && rating <= ranges[tier][1], `${id} ${rating}`);
+      const list = moves.split(' ');
+      assert.ok(list.length >= 4 && list.length <= 8 && list.length % 2 === 0, id);
+      let position = PuzzleCore.parseFen(fen);
+      for (const move of list) {
+        const from = move.slice(0, 2);
+        const piece = position.board[8 - Number(from[1])]['abcdefgh'.indexOf(from[0])];
+        assert.equal(PuzzleCore.colorOf(piece), position.side, `${id} ${move}`);
+        position = PuzzleCore.applyMove(position, move);
+      }
+    }
+  }
+  // Special moves on a hand-made position: castling moves the rook, en passant removes the pawn, promotion.
+  let p = PuzzleCore.parseFen('r3k2r/1P6/8/3pP3/8/8/8/R3K2R w KQkq d6 0 1');
+  p = PuzzleCore.applyMove(p, 'e1g1'); assert.equal(p.board[7][5], 'R'); assert.equal(p.board[7][7], '');
+  p = PuzzleCore.applyMove(p, 'e8c8'); assert.equal(p.board[0][3], 'r'); assert.equal(p.board[0][0], '');
+  let ep = PuzzleCore.applyMove(PuzzleCore.parseFen('4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1'), 'e5d6');
+  assert.equal(ep.board[3][3], ''); assert.equal(ep.board[2][3], 'P');
+  const promo = PuzzleCore.applyMove(PuzzleCore.parseFen('4k3/1P6/8/8/8/8/8/4K3 w - - 0 1'), 'b7b8n');
+  assert.equal(promo.board[0][1], 'N');
+  // The page learns the start, never the remaining solution.
+  const puzzle = { id: 'x', fen: '4k3/8/8/8/8/8/4P3/4K3 b - - 0 1', moves: ['e8d8', 'e2e4', 'd8c8', 'e4e5'], rating: 1900 };
+  const pub = PuzzleCore.publicStart(puzzle);
+  assert.equal(pub.player, 'w'); assert.equal(pub.playerMoves, 2); assert.equal(JSON.stringify(pub).includes('e2e4'), false);
+  assert.deepEqual(PuzzleCore.checkMove(puzzle, 1, 'e2e3'), { ok: true, correct: false, expected: 'e2e4' });
+  assert.deepEqual(PuzzleCore.checkMove(puzzle, 1, 'e2e4'), { ok: true, correct: true, reply: 'd8c8', nextPly: 3, solved: false });
+  assert.deepEqual(PuzzleCore.checkMove(puzzle, 3, 'e4e5'), { ok: true, correct: true, reply: null, nextPly: null, solved: true });
+  assert.equal(PuzzleCore.checkMove(puzzle, 2, 'd8c8').ok, false, 'the player never moves on even plies');
+  const queenPromo = { ...puzzle, moves: ['e8d8', 'e7e8q'] };
+  assert.equal(PuzzleCore.checkMove(queenPromo, 1, 'e7e8').correct, true);
+  assert.equal(PuzzleCore.checkMove({ ...puzzle, moves: ['e8d8', 'e7e8n'] }, 1, 'e7e8').correct, false);
+});
+
+test('0.10.0 puzzle boundary: opens N minutes within the daily budget; weakening it is loosening', () => {
+  const Core = require('./core.js');
+  const at = '2026-09-28T10:00:00.000Z';
+  const policy = Core.cleanPolicy({ id: 'tiktok', label: 'TikTok', hostname: 'www.tiktok.com', appKey: 'tiktok', dailyBudgetMinutes: 12,
+    purposes: [{ purpose: 'watch', defaultMinutes: 5, mode: 'control' }], puzzle: { everyMinutes: 5, tier: 'hard' } });
+  assert.deepEqual(policy.puzzle, { everyMinutes: 5, tier: 'hard' });
+  assert.equal(Core.cleanPolicy({ ...policy, puzzle: { enabled: false } }).puzzle, null);
+  let state = Core.normalizeState({ ...Core.emptyState(), policies: [policy] });
+  const started = Core.startSession(state, { id: 'session_1', policyId: 'tiktok', purpose: 'watch', minutes: 5, dayKey: '2026-09-28', expectedOutcome: 'Synthetic outcome' }, at);
+  assert.ok(started.ok, JSON.stringify(started));
+  state = started.state;
+  assert.equal(Core.boundaryOptions(state, '2026-09-28T10:03:00.000Z').puzzle, null, 'not before the window ends');
+  assert.equal(Core.puzzleExtend(state, '2026-09-28T10:03:00.000Z').error, 'puzzle_unavailable');
+  const later = '2026-09-28T10:06:00.000Z';
+  assert.deepEqual(Core.boundaryOptions(state, later).puzzle, { everyMinutes: 5, tier: 'hard' });
+  const first = Core.puzzleExtend(state, later);
+  assert.equal(first.ok, true); assert.equal(first.grantedMinutes, 5); assert.equal(first.session.puzzleCount, 1);
+  assert.equal(first.session.deadlineAt, '2026-09-28T10:11:00.000Z');
+  // Budget 12: 5 + 5 used, only 2 left for the next puzzle, then nothing.
+  const second = Core.puzzleExtend(first.state, '2026-09-28T10:12:00.000Z');
+  assert.equal(second.grantedMinutes, 2);
+  assert.equal(Core.boundaryOptions(second.state, '2026-09-28T10:15:00.000Z').puzzle, null, 'daily budget spent');
+  // Removing, spacing out or easing the puzzle loosens the rule; making it harder does not.
+  for (const puzzle of [null, { everyMinutes: 10, tier: 'hard' }, { everyMinutes: 5, tier: 'normal' }]) {
+    assert.equal(Core.policyLoosens(policy, Core.cleanPolicy({ ...policy, puzzle })), true, JSON.stringify(puzzle));
+  }
+  assert.equal(Core.policyLoosens(policy, Core.cleanPolicy({ ...policy, puzzle: { everyMinutes: 3, tier: 'brutal' } })), false);
+  const fs = require('node:fs'); const path = require('node:path');
+  const worker = fs.readFileSync(path.join(__dirname, 'service-worker.js'), 'utf8');
+  assert.match(worker, /importScripts\([^)]*'puzzle-core\.js', 'puzzles\.js'\);/);
+  assert.match(worker, /chrome\.storage\.session\.set\(\{ \[PUZZLE_KEY\]: \{ puzzle, ply: 1, sessionId: state\.activeSession\.id \} \}\);\s*return \{ ok: true, puzzle: PuzzleCore\.publicStart\(puzzle\)/);
+  assert.match(worker, /Protection\.lockActive\(lockedProtection\) && existing && Core\.policyLoosens\(existing, candidate\)/);
+  const gate = fs.readFileSync(path.join(__dirname, 'gate.js'), 'utf8');
+  assert.doesNotMatch(gate, /puzzle\.moves|storage\.session/, 'the gate never sees the solution');
 });

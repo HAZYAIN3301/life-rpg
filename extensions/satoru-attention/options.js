@@ -17,9 +17,9 @@
     unsure: { minutes: 5, mode: 'trust', outcomeKey: 'outcomeUnsure' },
   });
   const presets = Object.freeze({
-    tiktok: { label: 'TikTok', hostname: 'www.tiktok.com', appKey: 'tiktok', purposes: ['publish', 'create', 'research', 'watch'], dailyBudgetMinutes: 50, maxSessionsPerDay: 3, cooldownMinutes: 10 },
-    youtube: { label: 'YouTube', hostname: 'www.youtube.com', appKey: 'youtube', purposes: ['publish', 'research', 'watch'], dailyBudgetMinutes: 60, maxSessionsPerDay: 3, cooldownMinutes: 10 },
-    instagram: { label: 'Instagram', hostname: 'www.instagram.com', appKey: 'instagram', purposes: ['publish', 'create', 'reply'], dailyBudgetMinutes: 35, maxSessionsPerDay: 3, cooldownMinutes: 10 },
+    tiktok: { label: 'TikTok', hostname: 'www.tiktok.com', appKey: 'tiktok', purposes: ['publish', 'create', 'research', 'watch'], dailyBudgetMinutes: 50, maxSessionsPerDay: 3, cooldownMinutes: 10, puzzle: { everyMinutes: 5, tier: 'hard' } },
+    youtube: { label: 'YouTube', hostname: 'www.youtube.com', appKey: 'youtube', purposes: ['publish', 'research', 'watch'], dailyBudgetMinutes: 60, maxSessionsPerDay: 3, cooldownMinutes: 10, puzzle: { everyMinutes: 5, tier: 'hard' } },
+    instagram: { label: 'Instagram', hostname: 'www.instagram.com', appKey: 'instagram', purposes: ['publish', 'create', 'reply'], dailyBudgetMinutes: 35, maxSessionsPerDay: 3, cooldownMinutes: 10, puzzle: { everyMinutes: 5, tier: 'hard' } },
     reddit: { label: 'Reddit', hostname: 'www.reddit.com', appKey: 'reddit', purposes: ['research', 'reply'], dailyBudgetMinutes: 30, maxSessionsPerDay: 3, cooldownMinutes: 10 },
     custom: { label: '', hostname: '', appKey: 'web', purposes: ['research', 'watch'], dailyBudgetMinutes: 30, maxSessionsPerDay: 3, cooldownMinutes: 10 },
   });
@@ -123,6 +123,7 @@
     protectionStatus.className = `status${kind ? ` ${kind}` : ''}`;
   }
   function errorText(code) {
+    if (code === 'protection_locked') return `${t('lockRefusedGeneric')} ${t(`lockTaunt${1 + Math.floor(Math.random() * 4)}`)}`;
     const key = `error_${code}`;
     const translated = t(key);
     return translated === key ? t('saveFailed') : translated;
@@ -231,6 +232,11 @@
     dailyBudgetInput.value = String(policy?.dailyBudgetMinutes || preset.dailyBudgetMinutes);
     dailySessionsInput.value = String(policy?.maxSessionsPerDay || preset.maxSessionsPerDay);
     cooldownInput.value = String(policy?.cooldownMinutes ?? preset.cooldownMinutes);
+    // 0.10.0: an existing rule keeps its own puzzle setting; a new one starts from the preset.
+    const puzzle = policy ? policy.puzzle : preset.puzzle || null;
+    document.querySelector('#puzzle-enabled').checked = !!puzzle;
+    document.querySelector('#puzzle-every').value = String(puzzle?.everyMinutes || 5);
+    document.querySelector('#puzzle-tier').value = puzzle?.tier || 'hard';
     buildScenarios(policy, preset);
   }
 
@@ -647,6 +653,9 @@
         dailyBudgetMinutes, maxSessionsPerDay, cooldownMinutes, purposes,
         emergency: existing?.emergency || { passes: Core.EMERGENCY_PASSES, perDays: Core.EMERGENCY_WINDOW_DAYS,
           delaySeconds: Core.EMERGENCY_DELAY_SECONDS, accessMinutes: Core.EMERGENCY_MINUTES },
+        puzzle: document.querySelector('#puzzle-enabled').checked
+          ? { everyMinutes: Number(document.querySelector('#puzzle-every').value) || 5, tier: document.querySelector('#puzzle-tier').value }
+          : null,
       };
       const result = await send({ type: 'SAVE_POLICY', policy, replacePurposes: true });
       if (!result || result.ok !== true) {
