@@ -1,5 +1,12 @@
 # Life-RPG — DEVLOG (журнал сборки)
 
+## [2026-09-28] v305 — Satoru Attention 0.10.1: bridge and links on satoruapp.com (Claude lane)
+
+The extension knew only the Railway host, so on satoruapp.com Satoru never saw an installed
+extension. Both addresses are now exact permanent hosts for the read-only bridge; links go to
+satoruapp.com; satoruapp.com is reserved. Store kit v305 is the one to submit.
+EXTENSION-BRIDGE-V305-QA.md. Pins v305.
+
 ## [2026-09-28] v304 — Satoru Attention 0.10.0: chess puzzle and motivation (Claude lane)
 
 Doomscroll rules can require a chess puzzle every N minutes (Lichess CC0, 2 400 positions, three

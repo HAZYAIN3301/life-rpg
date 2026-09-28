@@ -11,7 +11,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildCore() {
   'use strict';
 
-  const VERSION = '0.10.0';
+  const VERSION = '0.10.1';
   const STATE_VERSION = 2;
   const MINUTE = 60_000;
   const DAY = 86_400_000;
@@ -27,7 +27,9 @@
   const EMERGENCY_WINDOW_DAYS = 7;
   const EMERGENCY_PASSES = 1;
   const CLOCK_ROLLBACK_TOLERANCE_MS = 120_000;
-  const SATORU_ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
+  // 0.10.1: satoruapp.com is the primary address; the Railway host serves the same app.
+  const SATORU_ORIGIN = 'https://satoruapp.com';
+  const SATORU_ORIGINS = Object.freeze(['https://satoruapp.com', 'https://life-rpg-production-416a.up.railway.app']);
 
   const MODES = Object.freeze({ trust: 'trust', adaptive: 'adaptive', control: 'control' });
   const PURPOSES = Object.freeze({
@@ -42,7 +44,7 @@
   const WORK_PURPOSES = Object.freeze(['publish', 'create', 'reply', 'research', 'watch']);
   const OUTCOMES = Object.freeze(['done', 'unfinished', 'rested', 'escaped', 'unknown']);
   const APP_KEYS = Object.freeze(['tiktok', 'youtube', 'instagram', 'x', 'reddit', 'web']);
-  const RESERVED_HOSTS = Object.freeze(['life-rpg-production-416a.up.railway.app']);
+  const RESERVED_HOSTS = Object.freeze(['satoruapp.com', 'www.satoruapp.com', 'life-rpg-production-416a.up.railway.app']);
 
   const own = (obj, key) => Object.prototype.hasOwnProperty.call(obj || {}, key);
   const isIso = (value) => typeof value === 'string' && !Number.isNaN(Date.parse(value));
@@ -812,6 +814,7 @@
     EMERGENCY_PASSES,
     CLOCK_ROLLBACK_TOLERANCE_MS,
     SATORU_ORIGIN,
+    SATORU_ORIGINS,
     MODES,
     PURPOSES,
     WORK_PURPOSES,

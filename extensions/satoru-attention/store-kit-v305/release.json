@@ -1,0 +1,163 @@
+{
+  "release": "v305",
+  "extensionVersion": "0.10.1",
+  "target": "Chrome and Brave desktop",
+  "published": false,
+  "outputs": [
+    {
+      "path": "public/downloads/satoru-attention-chromium-v305.zip",
+      "bytes": 5807119,
+      "sha256": "a797f1b9d7f91330588772570b0053851ff620ed1300a40f78ff65c5a6f75419"
+    }
+  ],
+  "runtime": [
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "sha256": "e75cd59b56a3f9cb67789efe4ef379dab5e8487c74513a7a409546e1beb1c80e"
+    },
+    {
+      "path": "_locales/de/messages.json",
+      "sha256": "6b0da1b9304e721a28e1d9effae87fa861ac86ca58fa9879c400821331b0e4bc"
+    },
+    {
+      "path": "_locales/en/messages.json",
+      "sha256": "a3f8ab148f6d9d2219c46a00b45316199b91467bc6a82ae306d8ab3d4e2ddb61"
+    },
+    {
+      "path": "_locales/es/messages.json",
+      "sha256": "a51f106f8230cff0d9cdf28f2f1e34dc948026ddc0657337db6be9bf375c2d74"
+    },
+    {
+      "path": "_locales/ru/messages.json",
+      "sha256": "2a7899efcb8c27b360c8ab012aafcb823b635f25d3fd4ee837cd89755d2b3f88"
+    },
+    {
+      "path": "_locales/uk/messages.json",
+      "sha256": "235be7bdd6353062e94161c971bc9f63ed8caf9acd03bcc6736c3e133eef6d7d"
+    },
+    {
+      "path": "adult-list.js",
+      "sha256": "7fa930beb5dcd6b84aa14551c7d2a6b8ac1a0b1ac0a43bee30b92e5d2b1063e7"
+    },
+    {
+      "path": "block.html",
+      "sha256": "42c6ddc7db560f60cedb9f0b9052c27472a0270b1d137ed564f16d7bee9f026a"
+    },
+    {
+      "path": "block.js",
+      "sha256": "c297f1aeef9329882adeda6ba53c3561db317b2a3c74316112ea40823a719302"
+    },
+    {
+      "path": "boundary-test-receipt.js",
+      "sha256": "61f79e4bdaafe991bf75839068567a6e35f6d57740dcb75e0565c89c3a295f9f"
+    },
+    {
+      "path": "bridge.js",
+      "sha256": "5f7dff437658956f92a63c7e3cf21f704090fbb875c09cc3f7104773372dd2d2"
+    },
+    {
+      "path": "core.js",
+      "sha256": "360739a888e15c431d685ff787bc6e85e1258cfe6ab6948fbae307f0cccb595c"
+    },
+    {
+      "path": "gate.html",
+      "sha256": "18e4f34b738a4b24a0b5c9b0985291d338a53faa3c2c72cac92582f22b816eb0"
+    },
+    {
+      "path": "gate.js",
+      "sha256": "27573549b43ce1f5566bb35d9403571e11e3d015c35595acd45256bf54454906"
+    },
+    {
+      "path": "health-ui.js",
+      "sha256": "5e31c1eb429d777cf0d8933402685d3da9cf276bcc5e10a35a279efeadaefe6f"
+    },
+    {
+      "path": "health.js",
+      "sha256": "4092dce51bb49eb284173ebf2e1a533036857da8dd172b12507840631b376c29"
+    },
+    {
+      "path": "i18n.js",
+      "sha256": "cf4c724edeef78ce4c69831b53eea9156ab752bc352e0e3b786d66a627ffe250"
+    },
+    {
+      "path": "icon-192.png",
+      "sha256": "b652539f04dce6b98bf8ef3d47609fedf2e4c63b19b9f042339ee0b8e76825d8"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "3fc919e0cf518ab45be4d75b22deeed810d809fbe88829c22720b6daf7abe8a0"
+    },
+    {
+      "path": "options.html",
+      "sha256": "fc7ab54880270c54b316e265e6c3908d85ea9c98145a7d7ae0cea19df17ba122"
+    },
+    {
+      "path": "options.js",
+      "sha256": "2b8e0a2a782e4874a331711abc0955fcc3aac6868f51650c0aac941ba34ed1c7"
+    },
+    {
+      "path": "popup.html",
+      "sha256": "f5b7c17562720fd8e45a75c97ab97491608d2004c8725def5457ab5e3f825a47"
+    },
+    {
+      "path": "popup.js",
+      "sha256": "23cb3ab4373eac0c3377fce129f2a0c659de460b0ab9c3788a7b1b0ef29d98f2"
+    },
+    {
+      "path": "protection-catalog.js",
+      "sha256": "62a63bc284d5657cb41246a4bbd5197e53dbe2b1bab3af65191653114e30726a"
+    },
+    {
+      "path": "protection.js",
+      "sha256": "d7512b5f162765c600fe9a37e12475ff9ca4f58454f02c532898965b5131eef0"
+    },
+    {
+      "path": "puzzle-core.js",
+      "sha256": "14b43151aa6a0b27cfbd6c93fff46cf5f296e4fed2582b1cea6ad49c7de6806c"
+    },
+    {
+      "path": "puzzles.js",
+      "sha256": "7fb7dda70e93b3c7ba66c15250156debd805092de67ed74909ee91478b217210"
+    },
+    {
+      "path": "reddit-guard.css",
+      "sha256": "3fb52d02f20817a68f51bdd8c934ef5f6036bf07f85547fefcd220cf47ada84d"
+    },
+    {
+      "path": "reddit-guard.js",
+      "sha256": "7548f9444dbd6800209d3e942409aaf60166caf9796aef14b03f2f8a28126c1b"
+    },
+    {
+      "path": "rules/LICENSE-GPL-3.0.txt",
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "rules/LICENSE-MIT-StevenBlack.txt",
+      "sha256": "8e52717212b5051232dd31fb2247310bd91d5295eaab380dbea6454d0268443b"
+    },
+    {
+      "path": "rules/adult-block.json",
+      "sha256": "6758284c5587f821a3b417118531cfcb9522f2265fb0fcf2c9faf7f6c78513b5"
+    },
+    {
+      "path": "rules/adult-extra.txt",
+      "sha256": "acc8374b570bea0ba970157d28d055133e2658bf8247a1ed171900da04a4829f"
+    },
+    {
+      "path": "rules/adult-redirect.json",
+      "sha256": "3efacff05f77e03cada54039a2f6f7a5b46d5d9cb3652558f0e825806c60a45f"
+    },
+    {
+      "path": "service-worker.js",
+      "sha256": "d8ec7e726d2dad64c7b292c3e0b1b4ffaba015ebbe020a136c29adcb57ea3c6f"
+    },
+    {
+      "path": "site-guard.js",
+      "sha256": "f8afeeeb0d8ff86f1d5258511a07cb1d1e7a2f0c39faf97f1f3a4d6da511cbe1"
+    },
+    {
+      "path": "styles.css",
+      "sha256": "a8d73dfc14f0bfcba88fa6ce31d80545f3f9a3c558fb59101ff8ee88f9961211"
+    }
+  ]
+}

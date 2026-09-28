@@ -19,7 +19,7 @@
   const DAY_MS = 24 * 60 * 60 * 1000;
   const MAX_LIST_ITEMS = 500;
   const CATEGORY_KEYS = Object.freeze(['social', 'video', 'gaming', 'dating', 'gambling', 'adult', 'piracy']);
-  const RESERVED_DOMAINS = Object.freeze(['life-rpg-production-416a.up.railway.app']);
+  const RESERVED_DOMAINS = Object.freeze(['satoruapp.com', 'www.satoruapp.com', 'life-rpg-production-416a.up.railway.app']);
   const RESOURCE_TYPES = Object.freeze([
     'csp_report', 'font', 'image', 'media', 'object', 'other', 'ping', 'script',
     'stylesheet', 'sub_frame', 'webbundle', 'websocket', 'xmlhttprequest',

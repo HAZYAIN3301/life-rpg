@@ -159,10 +159,10 @@ test('new disclosures and hierarchy changes use semantic sound and finite motion
 });
 
 test('v210 Browser Protection shell advances coherently without repinning unchanged questionnaire code', () => {
-  assert.match(SW, /const CACHE = 'satoru-v304'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v304'/);
+  assert.match(SW, /const CACHE = 'satoru-v305'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v305'/);
   assert.match(INDEX, /return-shelf-ui-v1\.js\?v=20260919-inspiration-v265-1/);
-  assert.match(INDEX, /styles\.css\?v=20260928-chess-v304-1/);
+  assert.match(INDEX, /styles\.css\?v=20260928-bridge-v305-1/);
   assert.match(INDEX, /questionnaire-v1\.js\?v=20260830-browser-companion-v206-1/);
-  assert.match(INDEX, /app\.js\?v=20260928-chess-v304-1/);
+  assert.match(INDEX, /app\.js\?v=20260928-bridge-v305-1/);
 });

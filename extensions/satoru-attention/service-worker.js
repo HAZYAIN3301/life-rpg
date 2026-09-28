@@ -38,7 +38,7 @@ function extensionSender(sender) {
 }
 function bridgeSender(sender) {
   return !!(sender && typeof sender.url === 'string'
-    && (sender.url === Core.SATORU_ORIGIN || sender.url.startsWith(`${Core.SATORU_ORIGIN}/`)));
+    && Core.SATORU_ORIGINS.some((origin) => sender.url === origin || sender.url.startsWith(`${origin}/`)));
 }
 
 async function loadState() {

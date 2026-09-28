@@ -1,12 +1,14 @@
 (function bridgeSatoruAttention() {
   'use strict';
 
-  const ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
+  // 0.10.1: both addresses of Satoru (satoruapp.com and the Railway host).
+  const ORIGINS = ['https://satoruapp.com', 'https://life-rpg-production-416a.up.railway.app'];
+  const ORIGIN = location.origin;
   const SOURCE_APP = 'satoru-app';
   const SOURCE_EXTENSION = 'satoru-attention-extension';
   const version = chrome.runtime.getManifest().version;
 
-  if (location.origin !== ORIGIN) return;
+  if (!ORIGINS.includes(ORIGIN)) return;
 
   function validRequestId(value) {
     return typeof value === 'string' && value.length > 0 && value.length <= 64 && /^[a-z0-9._:-]+$/i.test(value);

@@ -26,13 +26,14 @@ const catalog = read('protection-catalog.js');
 
 test('Manifest V3 uses minimal permanent permissions and an exact production bridge host', () => {
   assert.equal(manifest.manifest_version, 3);
-  assert.deepEqual(manifest.host_permissions, ['https://life-rpg-production-416a.up.railway.app/*']);
+  // 0.10.1: exactly the two addresses of Satoru — satoruapp.com and the Railway host.
+  assert.deepEqual(manifest.host_permissions, ['https://satoruapp.com/*', 'https://life-rpg-production-416a.up.railway.app/*']);
   assert.deepEqual(manifest.optional_host_permissions, ['http://*/*', 'https://*/*']);
   for (const forbidden of ['tabs', 'history', 'cookies', 'identity', 'nativeMessaging', 'downloads', 'clipboardRead', 'clipboardWrite']) {
     assert.equal(manifest.permissions.includes(forbidden), false, forbidden);
   }
   assert.equal('externally_connectable' in manifest, false);
-  assert.deepEqual(manifest.content_scripts[0].matches, ['https://life-rpg-production-416a.up.railway.app/*']);
+  assert.deepEqual(manifest.content_scripts[0].matches, ['https://satoruapp.com/*', 'https://life-rpg-production-416a.up.railway.app/*']);
   assert.equal(manifest.content_scripts.length, 1);
   assert.equal(manifest.permissions.includes('webNavigation'), false);
 });
@@ -86,7 +87,8 @@ test('active tabs have three enforcement layers and no durable attempted URL', (
 });
 
 test('bridge schema is exact-origin, read-only and bounded', () => {
-  assert.match(bridge, /const ORIGIN = 'https:\/\/life-rpg-production-416a\.up\.railway\.app'/);
+  assert.match(bridge, /const ORIGINS = \['https:\/\/satoruapp\.com', 'https:\/\/life-rpg-production-416a\.up\.railway\.app'\];/);
+  assert.match(bridge, /if \(!ORIGINS\.includes\(ORIGIN\)\) return;/);
   assert.match(bridge, /event\.source !== window \|\| event\.origin !== ORIGIN/);
   assert.match(bridge, /SATORU_ATTENTION_EXTENSION_READY/);
   assert.match(bridge, /SATORU_ATTENTION_STATUS_REQUEST/);

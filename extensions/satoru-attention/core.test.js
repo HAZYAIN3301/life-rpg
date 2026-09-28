@@ -55,7 +55,7 @@ test('host validation is narrow and keeps Satoru itself un-blockable', () => {
   assert.equal(Core.normalizeHostname('https://www.youtube.com/watch?v=x'), 'www.youtube.com');
   for (const bad of [
     '', 'localhost', '127.0.0.1', 'com', 'https://user:pass@example.com',
-    'chrome://extensions', 'life-rpg-production-416a.up.railway.app', '*.example.com',
+    'chrome://extensions', 'life-rpg-production-416a.up.railway.app', 'satoruapp.com', 'www.satoruapp.com', '*.example.com',
   ]) assert.equal(Core.normalizeHostname(bad), null, bad);
   assert.deepEqual(Core.hostPatterns('example.com'), ['https://example.com/*', 'http://example.com/*']);
 });
@@ -306,7 +306,7 @@ test('strict Satoru links only accept known actions and app identifiers', () => 
   assert.equal(Core.satoruDeepLink('gate', 'profile-x'), null);
   assert.equal(
     Core.satoruDeepLink('return', 'youtube'),
-    'https://life-rpg-production-416a.up.railway.app/?do=return&app=youtube&source=extension',
+    'https://satoruapp.com/?do=return&app=youtube&source=extension',
   );
 });
 

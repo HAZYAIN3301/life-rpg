@@ -38,7 +38,7 @@ test('Secondary Character panels keep a single disclosed panel and current offli
   assert.match(app, /State\._characterSecondaryOpen = id;/);
   assert.match(app, /character-secondary-panel > summary/);
   assert.match(css, /character-secondary-panel > summary \{ display: flex; min-height: 54px;/);
-  assert.match(sw, /const CACHE = 'satoru-v304'/);
+  assert.match(sw, /const CACHE = 'satoru-v305'/);
 });
 
 test('Profile and body failure copy has every supported locale', () => {

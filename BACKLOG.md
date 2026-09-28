@@ -33,7 +33,8 @@
 - [x] **v299:** merged adult list + Reddit NSFW guard (extension 0.8.0). EXTENSION-REDDIT-V299-QA.md.
 - [x] **v300 / 0.9.0:** lock (no early unlock), block-page motivation, store kit, Brave/Chrome
   lock profile template. EXTENSION-LOCK-V300-QA.md.
-- [ ] **Owner:** submit 0.9.0 to the Chrome Web Store (store-kit-v300/SUBMISSION.md); send the
+- [x] **v305 / 0.10.1:** bridge and links on satoruapp.com. EXTENSION-BRIDGE-V305-QA.md.
+- [ ] **Owner:** submit 0.10.1 to the Chrome Web Store (store-kit-v305/SUBMISSION.md); send the
   item ID → switch the site to the store link and fill the lock profile.
 - [x] **v304 / 0.10.0:** chess puzzle every N minutes, motivation before entering; lock also
   covers site rules. EXTENSION-CHESS-V304-QA.md.

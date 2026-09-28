@@ -43,6 +43,9 @@ Parallel ownership remains governed by external LANES-20260927.md.
   `~/Projects/satoru-release-plan-20260924/LANES-20260927.md`. Claude — расширение Satoru
   Attention и граница браузера; Codex — web-продукт (R05, R06, 04, 06–10) и native. Номер версии
   и публикация — по очереди (fetch → следующий свободный vNNN → при гонке rebase и новый номер).
+- 28.09 (Claude): v305 = расширение 0.10.1 — мост и ссылки работают на satoruapp.com (раньше
+  только Railway, поэтому Satoru «не видел» установленное расширение); в магазин отправлять
+  `store-kit-v305` (EXTENSION-BRIDGE-V305-QA.md).
 - 28.09 (Claude): v304 = расширение 0.10.0 — шахматная задача каждые N минут на сайтах-лентах и
   мотивация перед входом (EXTENSION-CHESS-V304-QA.md); общий формат задач для native —
   `extensions/satoru-attention/PUZZLES-CONTRACT.md`.

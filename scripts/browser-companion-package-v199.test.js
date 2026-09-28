@@ -10,13 +10,15 @@ const EXT = path.join(ROOT, 'extensions', 'satoru-attention');
 const read = (name) => fs.readFileSync(path.join(EXT, name), 'utf8');
 const manifest = JSON.parse(read('manifest.json'));
 
-test('installable MV3 package has only the permanent Satoru origin', () => {
+test('installable MV3 package has only the permanent Satoru origins', () => {
   assert.equal(manifest.manifest_version, 3);
-  assert.deepEqual(manifest.host_permissions, ['https://life-rpg-production-416a.up.railway.app/*']);
+  // 0.10.1: exactly Satoru's two addresses (satoruapp.com and its Railway host), nothing broader.
+  const satoru = ['https://satoruapp.com/*', 'https://life-rpg-production-416a.up.railway.app/*'];
+  assert.deepEqual(manifest.host_permissions, satoru);
   assert.ok(!manifest.permissions.includes('webNavigation'));
   assert.ok(!manifest.permissions.includes('tabs'), 'tabs must not be a declared global permission');
   assert.ok(!manifest.host_permissions.includes('<all_urls>'));
-  assert.deepEqual(manifest.content_scripts[0].matches, ['https://life-rpg-production-416a.up.railway.app/*']);
+  assert.deepEqual(manifest.content_scripts[0].matches, satoru);
   assert.equal(manifest.content_scripts[0].all_frames, false);
 });
 
@@ -31,7 +33,7 @@ test('every manifest file exists and both v215 compatibility ZIPs are real artif
     assert.ok(messages.extensionName?.message);
     assert.ok(messages.extensionDescription?.message);
   }
-  assert.equal(manifest.version, '0.10.0');
+  assert.equal(manifest.version, '0.10.1');
   for (const name of ['satoru-attention-v215.zip', 'satoru-attention-store-v215.zip']) {
     const zip = path.join(ROOT, 'public', 'downloads', name);
     assert.ok(fs.existsSync(zip), `${name}: install artifact must not ship as a 404`);

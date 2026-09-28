@@ -1,8 +1,6 @@
-> **Устарело 28.09:** отправлять нужно 0.10.1 — `../store-kit-v305/SUBMISSION.md`.
+# Satoru Attention 0.10.1 — публикация в Chrome Web Store и «железный» замок браузера
 
-# Satoru Attention 0.9.0 — публикация в Chrome Web Store и «железный» замок браузера
-
-Подготовлено 26.09.2026. **Не отправлено, не подписано, не опубликовано.** Отправка в магазин,
+Подготовлено 26.09.2026, обновлено 28.09 для 0.10.1 (шахматная задача; мост и ссылки работают на satoruapp.com — добавлен постоянный доступ к satoruapp.com). **Не отправлено, не подписано, не опубликовано.** Отправка в магазин,
 оплата регистрации и установка системного профиля — действия владельца.
 
 Почему расширения до сих пор нет в магазине: комплект для 0.6.0 был готов 12.09, но его никто
@@ -11,15 +9,15 @@
 
 ## Что лежит здесь
 
-- Пакет для загрузки: `public/downloads/satoru-attention-chromium-v300.zip` (5,7 МБ), хэши —
-  `release.json`. Тот же файл скачивается с satoruapp.com.
+- Пакет для загрузки: `public/downloads/satoru-attention-chromium-v305.zip` (5,8 МБ), хэши —
+  `release.json` в этой папке. Тот же файл скачивается с satoruapp.com.
 - Тексты карточки (RU/EN), обоснование разрешений, ответы о приватности: `../STORE-LISTING.md`.
-- Скриншоты 1280×800 (синтетические данные): `chrome-protection-*.png`, `chrome-lock-*.png`,
-  `chrome-block-*.png` (ru и en).
+- Скриншоты 1280×800 (синтетические данные): `../store-kit-v300/chrome-protection-*.png`,
+  `chrome-lock-*.png`, `chrome-block-*.png` (ru и en).
 - Иконка 128×128 и плитка 440×280 прежние: `../store-kit-v260/store-icon-128.png`,
   `../store-kit-v260/small-promo-440x280.png`.
 - Политика приватности (опубликована): https://satoruapp.com/browser-companion-privacy.html
-- Профиль «замок браузера»: `satoru-browser-lock.mobileconfig.template`.
+- Профиль «замок браузера»: `../store-kit-v300/satoru-browser-lock.mobileconfig.template`.
 
 ## Шаг 1. Аккаунт разработчика (один раз, ~10 минут)
 
@@ -29,7 +27,7 @@
 
 ## Шаг 2. Новый элемент (~20 минут)
 
-1. «New item» → загрузи `satoru-attention-chromium-v300.zip`.
+1. «New item» → загрузи `satoru-attention-chromium-v305.zip`.
 2. **Store listing:** название `Satoru Attention`; краткое и полное описание — из
    `STORE-LISTING.md` (EN как основной язык, RU добавить как второй); категория
    «Productivity»; иконка и плитка из `store-kit-v260`; скриншоты из этой папки.

@@ -109,7 +109,8 @@ Satoru Attention заменяет бесконечную ленту на зар�
   service worker enables them only while Browser Protection and the Adult category are on.
 - `alarms`: wakes the extension at a chosen deadline and retries local reconciliation after
   a browser API failure.
-- Permanent host access is limited to the Satoru production origin. Exact-site Attention
+- Permanent host access is limited to Satoru's two production addresses: https://satoruapp.com
+  and its Railway host (same app) — for the read-only status bridge and Satoru links. Exact-site Attention
   requests one hostname at a time. Browser Protection separately requests optional all-site
   access only after its master switch is enabled.
 
