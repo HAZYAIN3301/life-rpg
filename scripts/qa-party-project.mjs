@@ -52,10 +52,20 @@ try {
       if (!await Store.updateNow('tasks', current => [...current, ...tasks], s => { State.tasks = s; return true; })) throw Error('fixture save');
     }, index);
     async function contribution(page, index, i, lose = false) {
-      const id = `step-${index}-${i}`;
-      await page.evaluate(async id => { await completeTask(State.tasks.find(t => t.id === id), null, todayStr()); }, id);
+      let id = `step-${index}-${i}`, kind = 'task';
+      if (i === 1) {
+        kind = 'habit';
+        id = await page.evaluate(async () => {
+          const h = { id: 'project-habit', title: 'PRIVATE_habit', days: [0,1,2,3,4,5,6], estimateMin: 10, difficulty: 'normal', skillId: State.settings.skills[0]?.id || '' };
+          const habits = [...State.habits, h];
+          if (!await habitDataCommit({ habits }, () => { State.habits = habits; })) throw Error('habit fixture save');
+          await transactHabitCompletion(h, { twoMinute: true });
+          if (!State.habitlog[habitDayKey()]?.[h.id]) throw Error('habit completion unconfirmed');
+          return JSON.stringify([habitDayKey(), h.id]);
+        });
+      } else await page.evaluate(async id => { await completeTask(State.tasks.find(t => t.id === id), null, todayStr()); }, id);
       await page.evaluate(() => partyProjectUI().refresh(true));
-      await page.locator('#project-task').selectOption(id);
+      await page.locator('#project-task').selectOption(JSON.stringify([kind, id]));
       const before = await page.evaluate(() => goldBalance());
       const current = await page.evaluate(() => { const c = State.party.projects.chapters.find(c => !c.completedAt); return { id: c.id, progress: c.progress }; });
       if (lose) await page.route('**/api/party/projects', async route => { await route.fetch(); await route.abort(); }, { times: 1 });
@@ -121,7 +131,7 @@ try {
     assert.equal(await b.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     await b.locator('[data-project="refresh"]').focus(); await b.keyboard.press(engine === webkit ? 'Alt+Tab' : 'Tab');
     assert.ok(await b.evaluate(() => document.activeElement.matches('button,select')));
-    report.checks.push(engine.name() + ': 2 projects, 14 real task completions, response-loss replay, no extra gold, two accounts, progressive scene, reload, privacy, text200 and keyboard');
+    report.checks.push(engine.name() + ': 2 projects, 12 real task completions + 2 habit completions, response-loss replay, no extra gold, two accounts, progressive scene, reload, privacy, text200 and keyboard');
     await browser.close();
   }
   assert.deepEqual(report.errors, []); report.complete = true;

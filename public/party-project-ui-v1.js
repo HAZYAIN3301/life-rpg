@@ -1,6 +1,8 @@
 (function(root) {
   'use strict';
   const copy = {
+    habit: ['Привычка', 'Habit', 'Gewohnheit', 'Звичка', 'Hábito'],
+    sources: ['Можно внести дело или отметку привычки, сохранённые после начала проекта. Каждая отметка привычки засчитывается один раз за день. Дополнительной награды нет.', 'Contribute a task or habit check-in saved after the project started. Each habit counts once per day. No extra reward.', 'Bringe eine nach Projektbeginn gespeicherte Aufgabe oder Gewohnheit ein. Jede Gewohnheit zählt einmal pro Tag. Keine zusätzliche Belohnung.', 'Додай справу або відмітку звички, збережені після початку проєкту. Кожна звичка зараховується один раз на день. Додаткової нагороди немає.', 'Aporta una tarea o hábito guardado después del inicio. Cada hábito cuenta una vez al día. Sin recompensa adicional.'],
     title: ['Наш проект', 'Our project', 'Unser Projekt', 'Наш проєкт', 'Nuestro proyecto'],
     hearth: ['Вечерний очаг', 'Evening hearth', 'Abend am Kamin', 'Вечірнє вогнище', 'Hogar al anochecer'],
     garden: ['Зелёное окно', 'Green window', 'Grünes Fenster', 'Зелене вікно', 'Ventana verde'],
@@ -47,7 +49,8 @@
       const choices = root.PartyProjectV1.catalog.filter(c => !projects.chapters.some(x => x.id === c.id));
       return `<div class="shared-project" aria-labelledby="shared-project-title"><h4 id="shared-project-title" tabindex="-1">${t('title')}</h4>
         ${active ? `<strong>${t(active.id)}</strong><p>${t(active.id + 'Desc')}</p><progress max="${active.target}" value="${active.progress}" aria-label="${e(t('progress'))}"></progress><p>${active.progress} / ${active.target}</p>
-          ${eligible?.length ? `<label for="project-task">${t('task')}</label><select id="project-task" ${busy || pending ? 'disabled' : ''}>${eligible.map(task => `<option value="${e(task.id)}">${e(task.title)}</option>`).join('')}</select><button class="btn" data-project="contribute" data-id="${active.id}" ${busy || pending ? 'disabled' : ''}>${t('contribute')}</button><p class="muted">${t('private')}</p>` : `<p class="muted">${t('empty')}</p><button class="btn" data-project="today">${t('today')}</button>`}
+          ${eligible?.length ? `<label for="project-task">${t('task')}</label><select id="project-task" ${busy || pending ? 'disabled' : ''}>${eligible.map(task => `<option value="${e(JSON.stringify([task.kind || 'task', task.id]))}">${task.kind === 'habit' ? t('habit') + ' · ' : ''}${e(task.title)}</option>`).join('')}</select><button class="btn" data-project="contribute" data-id="${active.id}" ${busy || pending ? 'disabled' : ''}>${t('contribute')}</button><p class="muted">${t('private')}</p>` : `<p class="muted">${t('empty')}</p><button class="btn" data-project="today">${t('today')}</button>`}
+          <p class="muted">${t('sources')}</p>
           <p class="muted">${t('rules')}</p>` : choices.length ? `<p>${t('choose')}</p><div class="project-choices">${choices.map(c => `<article><strong>${t(c.id)}</strong><p>${t(c.id + 'Desc')}</p><p>${t('progress')}: 0 / ${c.target}</p><button class="btn ghost" data-project="start" data-id="${c.id}" ${busy || pending ? 'disabled' : ''}>${t('start')}</button></article>`).join('')}</div><p class="muted">${t('rules')}</p>` : ''}
         ${completed.length ? `<ul class="project-completed">${completed.map(c => `<li><strong>${t(c.id)}</strong> · ${t('done')}</li>`).join('')}</ul>` : ''}
         <p role="status" aria-live="polite">${e(message)}</p><div class="gold-goal-actions">${pending && !busy ? `<button class="btn" data-project="retry">${t('retry')}</button>` : ''}<button class="btn ghost" data-project="refresh" ${busy ? 'disabled' : ''}>${t('refresh')}</button></div></div>`;
@@ -99,8 +102,9 @@
       else if (action === 'retry' && pending) await save(pending);
       else if (['start', 'contribute'].includes(action) && !pending) {
         const p = d.state().party;
+        const [sourceType, taskId] = action === 'start' ? ['task', null] : JSON.parse(document.getElementById('project-task').value);
         await save({ action, partyId: p.id, projectId: b.dataset.id, revision: p.projects.revision,
-          share: true, taskId: action === 'start' ? null : document.getElementById('project-task')?.value, operationId: crypto.randomUUID() });
+          share: true, sourceType, taskId, operationId: crypto.randomUUID() });
       }
       return true;
     }

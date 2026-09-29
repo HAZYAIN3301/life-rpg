@@ -46,6 +46,7 @@ const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyDenV1 = require('./server-party-den-v1.js');
 const PartyProjectV1 = require('./public/party-project-v1.js');
+const PartyProjectSourcesV1 = require('./server-party-project-sources-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
 const AdventurePolicyV1 = require('./server-adventure-policy-v1.js');
@@ -830,8 +831,8 @@ function genPartyCode(parties) { // 5-символьный код без пох�
   do { c = Array.from({ length: 5 }, () => A[Math.floor(Math.random() * A.length)]).join(''); } while (parties.some((p) => p.code === c));
   return c;
 }
-function projectHash(partyId, uid, taskId = '') {
-  return crypto.createHash('sha256').update(JSON.stringify([partyId, uid, taskId])).digest('hex');
+function projectHash(partyId, uid, taskId = '', kind = 'task') {
+  return crypto.createHash('sha256').update(JSON.stringify(kind === 'task' ? [partyId, uid, taskId] : [partyId, uid, kind, taskId])).digest('hex');
 }
 const PARTY_MAX = 6;
 // Кооп-рейд: понедельник недели (для сброса), цель XP/чел, цель сезона (побед).
@@ -6581,19 +6582,16 @@ const server = http.createServer(async (req, res) => {
     if (u === '/api/party/projects') {
       try {
         recoverCommitmentJournal(me);
-        let tasks;
-        try { tasks = JSON.parse(fs.readFileSync(path.join(userDataDir(me), 'tasks.json'), 'utf8')); }
-        catch (error) { if (error.code === 'ENOENT') tasks = []; else throw error; }
-        if (!Array.isArray(tasks)) throw Error('invalid_tasks');
+        const tasks = PartyProjectSourcesV1.load(userDataDir(me), (id, kind) => projectHash(party.id, me, id, kind));
         const now = new Date().toISOString(); let replay = false;
         if (req.method === 'POST') {
           const result = PartyProjectV1.change(party.projectWork, input, { partyId: party.id,
-            actor: projectHash(party.id, me), source: projectHash(party.id, me, input?.taskId), now,
-            task: tasks.find(task => task && task.id === input?.taskId) });
+            actor: projectHash(party.id, me), source: projectHash(party.id, me, input?.taskId, input?.sourceType || 'task'), now,
+            task: tasks.find(task => task.id === input?.taskId && task.kind === (input?.sourceType || 'task')) });
           party.projectWork = result.state; replay = result.replay; saveParties(parties);
         }
-        const eligible = tasks.filter(task => task && PartyProjectV1.eligible(party.projectWork, task, projectHash(party.id, me, task.id), now))
-          .slice(0, 100).map(task => ({ id: task.id, title: String(task.title || '').slice(0, 200) }));
+        const eligible = tasks.filter(task => PartyProjectV1.eligible(party.projectWork, task, task.source, now))
+          .slice(0, 100).map(task => ({ id: task.id, kind: task.kind, title: String(task.title || '').slice(0, 200) }));
         return sendJson(res, 200, { partyId: party.id, projects: PartyProjectV1.view(party.projectWork), eligible, replay });
       } catch (error) {
         const status = ({ project_request: 400, project_consent: 412, project_conflict: 409, project_task: 409, project_partner: 409 })[error.code];
