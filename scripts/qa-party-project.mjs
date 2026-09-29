@@ -11,6 +11,18 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 const out = path.join(root, 'work/m05/evidence'), data = await mkdtemp(path.join(tmpdir(), 'satoru-den-ui-'));
 const base = 'http://127.0.0.1:52008';
 const server = spawn(process.execPath, ['server.js'], { cwd: root, env: { ...process.env, DATA_DIR: data, PORT: '52008', HOST: '127.0.0.1', PUSH_SCHED: 'off' }, stdio: 'ignore' });
+function contrastProbe(el) {
+        const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+        const rgba = value => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = value; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data]; };
+        const lum = values => values.slice(0, 3).map(v => { v /= 255; return v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }).reduce((s, v, i) => s + v * [.2126, .7152, .0722][i], 0);
+        return [...el.querySelectorAll('h3,p,label,strong,small,button:not(:disabled),select')].filter(e => e.textContent.trim()).map(e => {
+          const bg = [255, 255, 255], ancestors = []; let parent = e;
+          while (parent) { ancestors.unshift(parent); parent = parent.parentElement; }
+          for (const ancestor of ancestors) { const c = rgba(getComputedStyle(ancestor).backgroundColor); for (let i = 0; i < 3; i++) bg[i] = c[i] * c[3] / 255 + bg[i] * (1 - c[3] / 255); }
+          const foreground = rgba(getComputedStyle(e).color); for (let i = 0; i < 3; i++) foreground[i] = foreground[i] * foreground[3] / 255 + bg[i] * (1 - foreground[3] / 255);
+          return { ratio: (Math.max(lum(foreground), lum(bg)) + .05) / (Math.min(lum(foreground), lum(bg)) + .05), text: e.textContent.slice(0, 90), fg: getComputedStyle(e).color, bg };
+        }).sort((a,b) => a.ratio - b.ratio)[0];
+}
 const browsers = [], report = { checks: [], states: 0, errors: [], complete: false };
 await mkdir(out, { recursive: true });
 const nav = async (page, view) => { await page.evaluate(view => { State.view = view; render(); }, view); await page.waitForFunction(view => _renderedMainView === view && !document.querySelector('#main').classList.contains('is-view-pending'), view); };
@@ -63,6 +75,22 @@ try {
           if (!State.habitlog[habitDayKey()]?.[h.id]) throw Error('habit completion unconfirmed');
           return JSON.stringify([habitDayKey(), h.id]);
         });
+      } else if (i === 2) {
+        kind = 'focus';
+        await page.route('**/api/focus/sessions', async route => { await route.fetch(); await route.abort(); }, { times: 1 });
+        await page.evaluate(id => {
+          startFocus(id);
+          State.timer.startedAt = Date.now() - 65000;
+          State.timer.focusStartedAt = new Date(State.timer.startedAt).toISOString();
+          const set=Storage.prototype.setItem;
+          Storage.prototype.setItem=function(key,value){if(key.startsWith('satoru.focus.pending.'))throw Error('quota fixture');return set.call(this,key,value);};
+          try { stopFocus(true); } finally { Storage.prototype.setItem=set; }
+          if (!State.timer || State.timer.running) throw Error('failed local queue must keep a paused retryable timer');
+          stopFocus(true);
+        }, id);
+        await page.waitForFunction(() => focusSessionSync().count() === 1);
+        await page.reload(); await page.waitForFunction(() => State.phase === 'app' && focusSessionSync().count() === 0);
+        await page.evaluate(() => refreshPartyAuthority()); await nav(page, 'party');
       } else await page.evaluate(async id => { await completeTask(State.tasks.find(t => t.id === id), null, todayStr()); }, id);
       await page.evaluate(() => partyProjectUI().refresh(true));
       await page.locator('#project-task').selectOption(JSON.stringify([kind, id]));
@@ -107,18 +135,7 @@ try {
         const metrics = await b.locator('.shared-project').evaluate(el => ({ overflow: document.documentElement.scrollWidth > innerWidth + 1,
           small: [...el.querySelectorAll('button,select')].filter(e => e.getBoundingClientRect().height < 42).map(e => e.textContent) }));
         assert.equal(metrics.overflow, false, JSON.stringify({ locale, theme, phase, width })); assert.deepEqual(metrics.small, []);
-      const contrast = await b.locator('.shared-den').evaluate(el => {
-        const ctx = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
-        const rgba = value => { ctx.clearRect(0, 0, 1, 1); ctx.fillStyle = value; ctx.fillRect(0, 0, 1, 1); return [...ctx.getImageData(0, 0, 1, 1).data]; };
-        const lum = values => values.slice(0, 3).map(v => { v /= 255; return v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4; }).reduce((s, v, i) => s + v * [.2126, .7152, .0722][i], 0);
-        return [...el.querySelectorAll('h3,p,label,strong,small,button:not(:disabled),select')].filter(e => e.textContent.trim()).map(e => {
-          const bg = [255, 255, 255], ancestors = []; let parent = e;
-          while (parent) { ancestors.unshift(parent); parent = parent.parentElement; }
-          for (const ancestor of ancestors) { const c = rgba(getComputedStyle(ancestor).backgroundColor); for (let i = 0; i < 3; i++) bg[i] = c[i] * c[3] / 255 + bg[i] * (1 - c[3] / 255); }
-          const foreground = rgba(getComputedStyle(e).color); for (let i = 0; i < 3; i++) foreground[i] = foreground[i] * foreground[3] / 255 + bg[i] * (1 - foreground[3] / 255);
-          return { ratio: (Math.max(lum(foreground), lum(bg)) + .05) / (Math.min(lum(foreground), lum(bg)) + .05), text: e.textContent.slice(0, 90), fg: getComputedStyle(e).color, bg };
-        }).sort((a,b) => a.ratio - b.ratio)[0];
-      });
+      const contrast = await b.locator('.shared-den').evaluate(contrastProbe);
       if (contrast.ratio < 4.5) await b.locator('.shared-den').screenshot({ path: path.join(out, 'contrast-failure.png') });
       assert.ok(contrast.ratio >= 4.5, JSON.stringify({ theme, locale, contrast })); report.contrastMinimum = Math.min(report.contrastMinimum || 100, contrast.ratio);
       report.states++;
@@ -131,7 +148,44 @@ try {
     assert.equal(await b.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     await b.locator('[data-project="refresh"]').focus(); await b.keyboard.press(engine === webkit ? 'Alt+Tab' : 'Tab');
     assert.ok(await b.evaluate(() => document.activeElement.matches('button,select')));
-    report.checks.push(engine.name() + ': 2 projects, 12 real task completions + 2 habit completions, response-loss replay, no extra gold, two accounts, progressive scene, reload, privacy, text200 and keyboard');
+    await b.evaluate(async () => {
+      const rewards=[...State.rewards,{id:'life-reward',name:'Прогулка без телефона',cost:1,iconId:'reward.walk'}];
+      if (!await economyCommit({rewards})) throw Error('reward fixture'); State.rewards=rewards;
+    });
+    await nav(b,'rewards'); await b.locator('[data-action="buy-reward"][data-id="life-reward"]').click();
+    await b.locator('[data-action="confirm-economy-action"]').click();
+    await b.waitForFunction(()=>State.purchases.some(p=>p.rewardId==='life-reward'));
+    const purchaseSnapshot=await b.evaluate(()=>JSON.stringify(State.purchases)), gold=await b.evaluate(()=>goldBalance());
+    const reward=b.locator('.reward-life-item').filter({hasText:'Прогулка без телефона'});
+    await b.route('**/api/economy/commit',async route=>{await route.fetch();await route.abort();},{times:1});
+    await reward.locator('[data-reward-life="planned"]').click();
+    await b.getByText('Сохранение не подтверждено. Повтори то же действие или обнови страницу.',{exact:true}).waitFor();
+    await reward.locator('[data-reward-life="planned"]').click();
+    await b.waitForFunction(()=>Object.values(State.settings.rewardLifeV1||{}).some(r=>r.status==='planned'));
+    await nav(b,'today'); await b.locator('[data-reward-life="open"]').click();
+    await reward.locator('[data-reward-life="used"]').click();
+    await b.waitForFunction(()=>Object.values(State.settings.rewardLifeV1||{}).some(r=>r.status==='used'));
+    await b.reload(); await b.waitForFunction(()=>State.phase==='app'); await nav(b,'rewards');
+    assert.ok((await reward.innerText()).includes('Использовано'));
+    assert.equal(await b.evaluate(()=>goldBalance()),gold); assert.equal(await b.evaluate(()=>JSON.stringify(State.purchases)),purchaseSnapshot);
+    for (const locale of ['ru','en','de','uk','es']) for (const theme of ['light','dark']) for (const width of [375,1280]) for (const status of ['received','planned','used','deferred']) {
+      await b.setViewportSize({width,height:900});
+      await b.evaluate(({locale,theme,status})=>{State.settings.lang=locale;State.settings.theme=theme; const id=State.purchases.find(p=>p.rewardId==='life-reward').id; State.settings.rewardLifeV1[id]={status,date:status==='planned'?todayStr():null,updatedAt:new Date().toISOString()};render();},{locale,theme,status});
+      await b.waitForFunction(()=>!document.querySelector('#main').classList.contains('is-view-pending'));
+      await b.evaluate(async()=>{getComputedStyle(document.querySelector('.reward-life')).color;await Promise.all(document.getAnimations().filter(a=>Number.isFinite(a.effect?.getTiming().iterations)).map(a=>a.finished.catch(()=>{})));});
+      assert.equal(await b.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
+      assert.deepEqual(await b.locator('.reward-life').evaluate(el=>[...el.querySelectorAll('button,input')].filter(e=>e.getBoundingClientRect().height<42).map(e=>e.tagName)),[]);
+      const contrast=await b.locator('.reward-life').evaluate(contrastProbe); assert.ok(contrast.ratio>=4.5,JSON.stringify({locale,theme,status,contrast}));
+      report.contrastMinimum=Math.min(report.contrastMinimum,contrast.ratio); report.states++;
+    }
+    await b.setViewportSize({width:375,height:812});
+    await b.evaluate(()=>{State.settings.lang='ru'; const id=State.purchases.find(p=>p.rewardId==='life-reward').id;State.settings.rewardLifeV1[id]={status:'received',date:null,updatedAt:new Date().toISOString()};render();});
+    await b.locator('.reward-life input').focus(); await b.keyboard.press(engine===webkit?'Alt+Tab':'Tab');
+    assert.ok(await b.evaluate(()=>document.querySelector('.reward-life').contains(document.activeElement)));
+    await b.evaluate(()=>{for(const e of document.querySelectorAll('.reward-life h3,.reward-life h4,.reward-life p,.reward-life button,.reward-life label'))e.style.fontSize=parseFloat(getComputedStyle(e).fontSize)*2+'px';});
+    assert.equal(await b.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
+    await b.locator('.reward-life').screenshot({path:path.join(out,`${engine.name()}-reward-life.png`)});
+    report.checks.push(engine.name() + ': 2 projects, 10 task + 2 habit + 2 focus completions, focus lost-response/reload, reward purchase/plan/lost-response/retry/Today/use/reload, no extra gold, two accounts, privacy and keyboard');
     await browser.close();
   }
   assert.deepEqual(report.errors, []); report.complete = true;

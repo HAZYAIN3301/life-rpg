@@ -22619,3 +22619,11 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 /* The next design keeps Today sections flat: the Senku line follows Habits, not a raised card. */
 :root[data-design=next] .today-work>.senku-today{background:none;border:0;border-top:1px solid var(--line);border-radius:0;box-shadow:none}
 :root[data-design=next] .today-work>details.senku-today>summary,:root[data-design=next] .today-work>.senku-today>.senku-today-body,:root[data-design=next] .today-work>.senku-today--dead,:root[data-design=next] .today-work>.senku-today--empty{padding-inline:0}
+:root .reward-life-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px}
+:root .reward-life{color:var(--text)}
+:root .reward-life-item{border:1px solid var(--line);border-radius:14px;padding:16px;min-width:0;overflow-wrap:anywhere}
+:root .reward-life-item h4{margin:0 0 8px}
+:root .reward-life-item label{display:grid;gap:6px;margin:12px 0}
+:root .reward-life-item input{min-height:44px;max-width:100%;min-width:0}
+:root .reward-life-actions{display:flex;flex-wrap:wrap;gap:8px}
+:root .reward-life button{min-height:44px}

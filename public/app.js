@@ -13094,7 +13094,28 @@ async function reloadHabitData(focusSelector = '#habits-title') {
 // ============================================================
 let tickId = null, pipWindow = null, audioCtx = null;
 
-function loadTimer() { try { return JSON.parse(localStorage.getItem('liferpg_timer') || 'null'); } catch { return null; } }
+function loadTimer() { try { const tm = JSON.parse(localStorage.getItem('liferpg_timer') || 'null'); return tm?.ownerId && tm.ownerId !== State.me?.id ? null : tm; } catch { return null; } }
+let _focusSessionSync;
+function focusSessionSync() {
+  if (!_focusSessionSync) _focusSessionSync = window.FocusSessionSyncV1.create({
+    account: () => State.me?.id || '', storage: localStorage,
+    request: row => fetch('/api/focus/sessions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accountId: State.me?.id, session: row }) }),
+    changed: () => { for (const host of document.querySelectorAll('[data-focus-sync-host]')) host.innerHTML = focusSyncNotice(); },
+  });
+  return _focusSessionSync;
+}
+function focusSyncNotice() {
+  if (!focusSessionSync().count()) return '';
+  const words = {
+    ru: ['Результат таймера ещё не сохранён на сервере. Вклад в проект станет доступен после сохранения.', 'Повторить сохранение'],
+    en: ['Timer result is not saved to the server yet. Project contribution becomes available after saving.', 'Retry save'],
+    de: ['Das Timer-Ergebnis ist noch nicht gespeichert. Danach ist der Projektbeitrag verfügbar.', 'Speichern wiederholen'],
+    uk: ['Результат таймера ще не збережено на сервері. Внесок у проєкт стане доступним після збереження.', 'Повторити збереження'],
+    es: ['El resultado del temporizador aún no está guardado. Después podrás aportarlo al proyecto.', 'Reintentar guardado'],
+  }[lang()] || ['Timer result not saved yet.', 'Retry save'];
+  return `<div class="habit-receipt" role="status"><span>${esc(words[0])}</span><button class="btn ghost" data-action="focus-sync-retry">${esc(words[1])}</button></div>`;
+}
+window.addEventListener('online', () => { if (State.me) void focusSessionSync().flush(); });
 function persistTimer() { if (State.timer) localStorage.setItem('liferpg_timer', JSON.stringify(State.timer)); else localStorage.removeItem('liferpg_timer'); }
 function timerElapsedMs() { const tm = State.timer; if (!tm) return 0; return tm.accumulatedMs + (tm.running ? Date.now() - tm.startedAt : 0); }
 // Банкуем накопленные минуты В ЗАДАЧУ (на сервер) — прогресс не теряется при паузе/крэше/смене устройства.
@@ -13717,7 +13738,7 @@ function focusTick() {
   if (cfg.pomodoro) {
     const limit = (fi.tm.phase === 'break' ? cfg.breakMin : cfg.workMin) * 60000;
     if (fi.phaseElapsed >= limit) {
-      if (fi.tm.phase === 'break') { fi.tm.phase = 'work'; bell(true); notify('Перерыв окончен', 'Возвращаемся к фокусу 🎯'); }
+      if (fi.tm.phase === 'break') { fi.tm.breakMs = (fi.tm.breakMs || 0) + fi.phaseElapsed; fi.tm.phase = 'work'; bell(true); notify('Перерыв окончен', 'Возвращаемся к фокусу 🎯'); }
       else { fi.tm.phase = 'break'; bell(true); notify('Время на перерыв ☕', `Поработал ${cfg.workMin} мин — отдохни ${cfg.breakMin}`); }
       fi.tm.phaseStartElapsed = fi.elapsed; persistTimer();
     }
@@ -13810,8 +13831,8 @@ function openFocusDurationPicker(taskId) {
   mountAccountDialog(ov, { initial: `[data-min="${cur}"]`, returnFocus: document.activeElement });
 }
 function startFocus(taskId) {
-  if (State.timer) { if (State.timer.taskId === taskId) { if (!State.timer.running) resumeFocus(); return; } stopFocus(true, true); }
-  State.timer = { taskId, startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false, bankedMin: 0 };
+  if (State.timer) { if (State.timer.taskId === taskId) { if (!State.timer.running) resumeFocus(); return; } stopFocus(true, true); if (State.timer) return; }
+  State.timer = { taskId, ownerId: State.me?.id, focusId: crypto.randomUUID(), focusStartedAt: new Date().toISOString(), startedAt: Date.now(), accumulatedMs: 0, running: true, phase: 'work', phaseStartElapsed: 0, overrunNotified: false, bankedMin: 0 };
   persistTimer(); ensureAudio();
   openFocusWidget(); startTick(); render(); triggerAvatarReaction('focus', 'Фокус');
 }
@@ -13820,6 +13841,14 @@ function resumeFocus() { const tm = State.timer; if (!tm || tm.running) return; 
 function stopFocus(log = true, skipRender = false) {
   const tm = State.timer; if (!tm) return;
   const t = questById(tm.taskId);
+  if (log && t && tm.focusId && tm.ownerId === State.me?.id) {
+    const row = window.FocusSessionSyncV1.snapshot(tm, Date.now());
+    if (row && !focusSessionSync().enqueue(row)) {
+      if (tm.running) { tm.accumulatedMs += Date.now() - tm.startedAt; tm.running = false; }
+      try { persistTimer(); } catch {}
+      toast(window.PartyProjectUIV1.text('error', lang())); if (!skipRender) render(); return;
+    }
+  }
   if (log) { const added = bankTimerProgress(); if (added > 0 && t) toast(`⏱ ${fmtDur(t.actualMin)} → «${t.title}»`); }
   State.timer = null; persistTimer(); stopTick(); closeFocusWidget(); removePill();
   if (!skipRender) render();
@@ -22018,7 +22047,7 @@ function boardTakenLineHTML() {
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}<div data-focus-sync-host>${focusSyncNotice()}</div>${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${rewardLifeUI().today()}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -24860,6 +24889,15 @@ function showFurniturePreview(id, returnFocus) {
   mountAccountDialog(ov, { initial: '#furniture-preview-title', returnFocus });
   ov.querySelector('#furniture-preview-title').focus();
 }
+let _rewardLifeUI;
+function rewardLifeUI() {
+  if (!_rewardLifeUI) _rewardLifeUI = window.RewardLifeV1.create({ state: () => State, lang, escape: esc, today: todayStr,
+    identity: () => `${State.me?.id || ''}:${Store._writeEpoch}`, commit: economyCommit,
+    open: () => { State.view = 'rewards'; State._rewardsFocusAfterCommit = '.reward-life'; render(); },
+    render: () => { State._rewardsFocusAfterCommit = '.reward-life'; render(); },
+  });
+  return _rewardLifeUI;
+}
 function renderRewards() {
   const bal = goldBalance();
   const chestReady = lootChestsAvailable();
@@ -24916,7 +24954,7 @@ function renderRewards() {
   </ul></section>`;
   return `
     <div class="rewards-shell" data-guide-target="rewards-overview">
-    ${rewardHero}${goldGoalHTML()}${furnitureCollectionHTML()}
+    ${rewardHero}${rewardLifeUI().body()}${goldGoalHTML()}${furnitureCollectionHTML()}
     <div class="rewards-primary-grid">${lootboxCard()}${personalStore}</div>
     ${collectionCard()}
     ${arsenalCard()}
@@ -28545,7 +28583,7 @@ function partyRoomSceneHTML(room) {
   return `<div class="den-scene shared-den-scene" data-project-hearth="${hearth?.completedAt ? 'done' : (hearth?.progress || 0) >= 3 ? 'warm' : 'none'}" data-project-garden="${plants}" data-den-renderer="v3" data-den-theme="workshop" data-den-light="${light}" data-den-phase="${light}" role="img" aria-label="${esc(window.PartyDenUIV1.text('title', lang()))}">${denSceneSVG(DEN_THEMES[0], light, den)}${denObjectsHTML(den, false, '', ids)}${denLegacyRoomFixturesHTML(false)}${hearth?.completedAt ? '<img class="project-hearth-flame" src="/art/den/v4/ambient/fireplace-flame-runtime.png" alt="" aria-hidden="true">' : ''}<span class="project-hearth-glow" aria-hidden="true"></span>${Array.from({ length: plants }, (_, i) => `<img class="project-window-plant plant-${i}" src="${denItem('comfort-bonsai').src}" alt="" aria-hidden="true">`).join('')}</div>`;
 }
 function partyProjectUI() {
-  if (!_partyProjectUI) _partyProjectUI = window.PartyProjectUIV1.createUI({ state: () => State, lang, escape: esc,
+  if (!_partyProjectUI) _partyProjectUI = window.PartyProjectUIV1.createUI({ state: () => State, lang, escape: esc, notice: focusSyncNotice,
     navigate: view => { State.view = view; render(); },
     scene: () => { const scene = document.querySelector('.shared-den-scene'); if (scene && State.party?.sharedDen) scene.outerHTML = partyRoomSceneHTML(State.party.sharedDen); },
   });
@@ -31420,6 +31458,8 @@ async function confirmGoalDelete() {
   await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; State._goalDeepLinkId = ''; closeGoalsBulkMode(); syncGoalDeepLink(''); });
 }
 async function onClick(e) {
+  if (e.target.closest('[data-reward-life]') && await rewardLifeUI().handle(e)) return;
+  if (e.target.closest('[data-action="focus-sync-retry"]')) { await focusSessionSync().flush(); return; }
   if (e.target.closest('[data-project]') && await partyProjectUI().handle(e)) return;
   if (e.target.closest('[data-party-den]') && await partyDenUI().handle(e)) return;
   if (e.target.closest('[data-duo]') && await partyDuoUI()?.handle(e)) return;
@@ -34410,6 +34450,7 @@ async function initApp() {
   State.treeSkill = State.settings.skills[0] && State.settings.skills[0].id;
   State.weekStart = weekStart(todayStr());
   State.timer = loadTimer();
+  void focusSessionSync().flush();
   if (State.timer) { State.timer.phase = State.timer.phase || 'work'; if (State.timer.phaseStartElapsed === undefined) State.timer.phaseStartElapsed = 0; updatePill(focusInfo()); if (State.timer.running) startTick(); }
   checkAchievements(true);
   // Вход по ссылке. Разбор, закрытый словарь и очистка адреса произошли в
@@ -35130,7 +35171,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v313';
+const PWA_CACHE_VERSION = 'satoru-v314';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

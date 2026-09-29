@@ -47,6 +47,7 @@ const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyDenV1 = require('./server-party-den-v1.js');
 const PartyProjectV1 = require('./public/party-project-v1.js');
 const PartyProjectSourcesV1 = require('./server-party-project-sources-v1.js');
+const FocusSessionsV1 = require('./server-focus-sessions-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
 const PartyRewardServiceV1 = require('./server-party-rewards-v1.js');
 const AdventurePolicyV1 = require('./server-adventure-policy-v1.js');
@@ -832,7 +833,7 @@ function genPartyCode(parties) { // 5-символьный код без пох�
   return c;
 }
 function projectHash(partyId, uid, taskId = '', kind = 'task') {
-  return crypto.createHash('sha256').update(JSON.stringify(kind === 'task' ? [partyId, uid, taskId] : [partyId, uid, kind, taskId])).digest('hex');
+  return crypto.createHash('sha256').update(JSON.stringify(kind === 'task' || kind === 'focus' ? [partyId, uid, taskId] : [partyId, uid, kind, taskId])).digest('hex');
 }
 const PARTY_MAX = 6;
 // Кооп-рейд: понедельник недели (для сброса), цель XP/чел, цель сезона (побед).
@@ -7172,6 +7173,28 @@ const server = http.createServer(async (req, res) => {
     } catch { return sendJson(res, 500, { error: 'board_community_mark_failed' }); }
   }
 
+  if (u === '/api/focus/sessions' && req.method === 'POST') {
+    const me = sessionUserId(req);
+    if (!me || !loadUsers().some(user => user.id === me)) return sendJson(res, 401, { error: 'not_logged_in' });
+    let crossOrigin = req.headers['sec-fetch-site'] === 'cross-site';
+    if (req.headers.origin) { try { crossOrigin ||= new URL(req.headers.origin).host !== req.headers.host; } catch { crossOrigin = true; } }
+    if (crossOrigin) return sendJson(res, 403, { error: 'same_origin_required' });
+    if (!(req.headers['content-type'] || '').toLowerCase().startsWith('application/json')) return sendJson(res, 415, { error: 'json_required' });
+    let input;
+    try { input = JSON.parse(await readBody(req, 2048)); }
+    catch (e) { return sendJson(res, e.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { error: 'focus_request' }); }
+    if (sessionUserId(req) !== me || !loadUsers().some(user => user.id === me)) return sendJson(res, 401, { error: 'not_logged_in' });
+    if (!input || Object.keys(input).sort().join('|') !== 'accountId|session') return sendJson(res, 400, { error: 'focus_request' });
+    if (input.accountId !== me) return sendJson(res, 403, { error: 'focus_account' });
+    try {
+      recoverCommitmentJournal(me);
+      const dir = userDataDir(me), tasks = JSON.parse(fs.readFileSync(path.join(dir, 'tasks.json'), 'utf8'));
+      return sendJson(res, 200, FocusSessionsV1.save(dir, input.session, tasks, writeJsonDurable));
+    } catch (e) {
+      const status = ({ focus_request: 400, focus_conflict: 409, focus_task: 409, focus_capacity: 409 })[e.code];
+      return sendJson(res, status || 503, { error: status ? e.code : 'focus_storage', ...(e.code === 'focus_conflict' ? { receipt: e.receipt } : {}) });
+    }
+  }
   // ---- Per-user data API ----
   const m = u.match(/^\/api\/data\/([^/?]+)/);
   if (m) {
@@ -7179,7 +7202,7 @@ const server = http.createServer(async (req, res) => {
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
-    if (name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
+    if (name === FocusSessionsV1.FILE || name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
     if (name === 'inspiration-discovery' || name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE || name === ChestRewardServiceV1.LEDGER_FILE || name === SenkuBridgeV1.FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
     const file = path.join(dir, name + '.json');
@@ -7334,7 +7357,7 @@ const server = http.createServer(async (req, res) => {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
       let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
       const name = safeName(String(b.name || '')); if (!name) return sendJson(res, 400, { error: 'bad name' });
-      if (name === 'inspiration-discovery' || name === 'secretary' || name.startsWith('secretary-') || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
+      if (name === FocusSessionsV1.FILE || name === 'inspiration-discovery' || name === 'secretary' || name.startsWith('secretary-') || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
       const dir = userDataDir(am[1]);
       const bfile = path.join(backupDir(dir, name), String(b.stamp || '') + '.json');
       if (!bfile.startsWith(DATA_DIR) || !fs.existsSync(bfile)) return sendJson(res, 404, { error: 'backup not found' });

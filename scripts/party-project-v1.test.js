@@ -33,7 +33,7 @@ test('projects: real saved sources, two participants, no reuse across projects, 
 test('projects HTTP: authority, write failure, restart replay, privacy and lifecycle', { timeout: 60000 }, async t => {
   const root = path.resolve(__dirname, '..'), dir = fs.mkdtempSync(path.join(os.tmpdir(), 'satoru-project-'));
   const base = 'http://127.0.0.1:52003', partiesFile = path.join(dir, 'parties.json'), fault = path.join(dir, 'fault'), preload = path.join(dir, 'preload.cjs');
-  fs.writeFileSync(preload, `const fs=require('node:fs'), rename=fs.renameSync;fs.renameSync=function(a,b){let mode;try{mode=fs.readFileSync(${JSON.stringify(fault)},'utf8')}catch{};if(b===${JSON.stringify(partiesFile)}&&mode==='before')throw Error('fault');const v=rename.apply(this,arguments);if(b===${JSON.stringify(partiesFile)}&&mode==='crash'){fs.unlinkSync(${JSON.stringify(fault)});process.exit(89)}return v;};`);
+  fs.writeFileSync(preload, `const fs=require('node:fs'), rename=fs.renameSync;fs.renameSync=function(a,b){let mode;try{mode=fs.readFileSync(${JSON.stringify(fault)},'utf8')}catch{};if((b===${JSON.stringify(partiesFile)}||b.endsWith('/focus-sessions.json'))&&mode==='before')throw Error('fault');const v=rename.apply(this,arguments);if((b===${JSON.stringify(partiesFile)}||b.endsWith('/focus-sessions.json'))&&mode==='crash'){fs.unlinkSync(${JSON.stringify(fault)});process.exit(89)}return v;};`);
   let child;
   async function launch() {
     child = spawn(process.execPath, ['--require', preload, 'server.js'], { cwd: root, env: { ...process.env, DATA_DIR: dir, PORT: '52003', HOST: '127.0.0.1', PUSH_SCHED: 'off' }, stdio: 'ignore' });
@@ -75,6 +75,21 @@ test('projects HTTP: authority, write failure, restart replay, privacy and lifec
   assert.equal(fs.readFileSync(file(a), 'utf8'), initial); assert.equal(fs.existsSync(path.join(path.dirname(file(a)), 'purchases.json')), false);
   const rev = response.data.projects.revision;
   await project(b, { ...start, operationId: 'start-garden', projectId: 'garden', revision: rev });
+  const focusTask = JSON.parse(fs.readFileSync(file(a), 'utf8')); focusTask[6].done = false; fs.writeFileSync(file(a), JSON.stringify(focusTask));
+  const focus = { id: 'focus-session-qa', taskId: 'a6', startedAt: new Date(Date.now() - 65000).toISOString(), endedAt: new Date().toISOString(), activeMs: 65000 };
+  assert.equal((await api('/api/focus/sessions', null, {accountId:a.data.id,session:focus})).status, 401);
+  assert.equal((await api('/api/focus/sessions', b, {accountId:b.data.id,session:focus})).status, 409);
+  assert.equal((await api('/api/focus/sessions', b, {accountId:a.data.id,session:focus})).status, 403);
+  assert.equal((await api('/api/focus/sessions', a, {accountId:a.data.id,session:focus}, { Origin: 'https://outside.test' })).status, 403);
+  assert.equal((await api('/api/data/focus-sessions', a, {})).status, 403);
+  fs.writeFileSync(fault, 'before'); assert.equal((await api('/api/focus/sessions', a, {accountId:a.data.id,session:focus})).status, 503); fs.unlinkSync(fault);
+  assert.equal((await project(a)).data.eligible.some(x => x.kind === 'focus'), false);
+  fs.writeFileSync(fault, 'crash'); await assert.rejects(api('/api/focus/sessions', a, {accountId:a.data.id,session:focus})); await stop(); await launch();
+  assert.equal((await api('/api/focus/sessions', a, {accountId:a.data.id,session:focus})).data.replay, true);
+  assert.equal((await project(a)).data.eligible.find(x => x.kind === 'focus').id, 'a6');
+  assert.equal((await project(a, { ...await input(a, 'a6', 'garden'), sourceType: 'focus' })).status, 200);
+  focusTask[6].done = true; focusTask[6].completedAt = new Date().toISOString(); fs.writeFileSync(file(a), JSON.stringify(focusTask));
+  assert.equal((await project(a, { ...await input(a, 'a6', 'garden'), operationId: 'complete-after-focus' })).status, 409);
   const habitFile = path.join(path.dirname(file(a)), 'habitlog.json');
   const habitId = 'private-habit', day = new Date().toISOString().slice(0, 10), habitKey = JSON.stringify([day, habitId]);
   fs.writeFileSync(path.join(path.dirname(file(a)), 'habits.json'), JSON.stringify([{ id: habitId, title: 'PRIVATE_habit' }]));

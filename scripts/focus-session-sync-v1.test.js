@@ -1,0 +1,43 @@
+'use strict';
+const test = require('node:test'), assert = require('node:assert/strict');
+const fs = require('node:fs'), os = require('node:os'), path = require('node:path');
+const Server = require('../server-focus-sessions-v1');
+const Client = require('../public/focus-session-sync-v1');
+const row = { id: 'session-one', taskId: 'task-one', startedAt: '2026-09-29T12:00:00Z', endedAt: '2026-09-29T12:02:00Z', activeMs: 120000 };
+test('focus snapshot excludes paused time and completed/current breaks', () => {
+  const tm = { focusId: row.id, taskId: row.taskId, focusStartedAt: row.startedAt, startedAt: 1000000, accumulatedMs: 180000, breakMs: 60000, phase: 'work', running: false };
+  assert.equal(Client.snapshot(tm, 1100000).activeMs, 120000);
+  assert.equal(Client.snapshot({ ...tm, phase: 'break', phaseStartElapsed: 150000 }, 1100000).activeMs, 90000);
+  assert.equal(Client.snapshot({ ...tm, accumulatedMs: 60000 }, 1100000), null);
+});
+test('focus server: durable replay, conflict, invalid times, missing task and corrupted storage', t => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'satoru-focus-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const tasks = [{ id: row.taskId }], now = Date.parse(row.endedAt), write = (p, d) => fs.writeFileSync(p, JSON.stringify(d));
+  assert.throws(() => Server.save(dir, row, tasks, () => { throw Error('write failed'); }, now));
+  assert.equal(Server.load(dir).sessions.length, 0);
+  assert.throws(() => Server.save(dir, row, [], write, now), { code: 'focus_task' });
+  assert.throws(() => Server.save(dir, { ...row, activeMs: 120001 }, tasks, write, now), { code: 'focus_request' });
+  assert.throws(() => Server.save(dir, row, tasks, write, now - 1), { code: 'focus_request' });
+  assert.throws(() => Server.save(dir, row, tasks, (p,d) => { write(p,d); throw Error('response lost'); }, now));
+  assert.equal(Server.save(dir, row, [], write, now).replay, true);
+  assert.throws(() => Server.save(dir, { ...row, activeMs: 60000 }, tasks, write, now), { code: 'focus_conflict' });
+  assert.equal(Server.load(dir).sessions.length, 1);
+  fs.writeFileSync(path.join(dir, Server.FILE + '.json'), '{'); assert.throws(() => Server.load(dir));
+});
+test('focus client: response loss, reload, exact replay and account fence', async () => {
+  const values = new Map(), storage = { getItem: k => values.get(k), setItem: (k,v) => values.set(k,v) };
+  let user = 'a', requests = [], fail = true;
+  const options = { account: () => user, storage, changed() {}, request: async r => { requests.push(r); if (fail) throw Error('offline'); return { ok: true, json: async () => ({ receipt: r }) }; } };
+  let client = Client.create(options); assert.equal(client.enqueue(row), true);
+  await new Promise(r => setImmediate(r)); assert.equal(client.count(), 1);
+  user = 'b'; await client.flush(); assert.equal(client.count(), 0); assert.equal(requests.length, 1);
+  user = 'a'; fail = false; client = Client.create(options); await client.flush();
+  assert.deepEqual(requests[0], requests[1]); assert.equal(client.count(), 0);
+  let release; const pending = new Promise(r => { release = r; });
+  client = Client.create({ ...options, request: async r => { await pending; return { ok: true, json: async () => ({ receipt: r }) }; } });
+  client.enqueue(row); user = 'b'; release(); await new Promise(r => setImmediate(r));
+  user = 'a'; assert.equal(client.count(), 1, 'late receipt cannot clear another account queue');
+  const duplicate = Client.create({ ...options, request: async () => ({ ok:false,status:409,json:async()=>({error:'focus_conflict',receipt:{...row,activeMs:60000}}) }) });
+  await duplicate.flush(); assert.equal(duplicate.count(),0,'another tab already stopped this same timer');
+  assert.equal(Client.create({ ...options, storage: { getItem() { throw Error('blocked'); } } }).enqueue(row), false);
+});

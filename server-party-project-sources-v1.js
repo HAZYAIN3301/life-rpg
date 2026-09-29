@@ -1,5 +1,6 @@
 'use strict';
 const fs = require('node:fs'), path = require('node:path');
+const Focus = require('./server-focus-sessions-v1.js');
 // Read only after the account journal has recovered. Missing files are empty;
 // malformed files must not turn into a successful empty contribution list.
 function read(dir, name, fallback, valid) {
@@ -25,6 +26,13 @@ function load(dir, hash) {
       rows.push({ id: key, kind: 'habit', title: habit.title, done: true, completedAt: entry.at,
         source: hash(key, 'habit') });
     }
+  }
+  const seen = new Set();
+  for (const s of Focus.load(dir).sessions.slice().reverse()) {
+    const task = tasks.find(t => t?.id === s.taskId);
+    if (!task || task.done || seen.has(s.taskId)) continue;
+    seen.add(s.taskId);
+    rows.push({ id: s.taskId, kind: 'focus', title: task.title, done: true, completedAt: s.endedAt, source: hash(s.taskId) });
   }
   return rows;
 }

@@ -41,7 +41,7 @@
   }
   function change(raw, input, ctx) {
     if (!record(input) || !['action|operationId|partyId|projectId|revision|share|taskId', 'action|operationId|partyId|projectId|revision|share|sourceType|taskId'].includes(Object.keys(input).sort().join('|'))
-      || (input.sourceType !== undefined && !['task', 'habit'].includes(input.sourceType))
+      || (input.sourceType !== undefined && !['task', 'habit', 'focus'].includes(input.sourceType))
       || !['start', 'contribute'].includes(input.action) || typeof input.operationId !== 'string' || !/^[a-zA-Z0-9_-]{8,80}$/.test(input.operationId)
       || !Number.isSafeInteger(input.revision) || input.revision < 0 || !catalog.some(x => x.id === input.projectId)
       || (input.action === 'start' ? input.taskId !== null : typeof input.taskId !== 'string' || !input.taskId || input.taskId.length > 200)) fail('project_request');
