@@ -16526,13 +16526,13 @@ async function senkuImportRewards({ force = false } = {}) {
     const fallback = senkuDefaultSkillId();
     if (!fallback || !current()) return;
     const sphereFor = (deck) => (deck.deck && assigned[deck.deck]) || fallback;
-    let made = []; let keys = [];
+    let made = []; let claims = [];
     const saved = await Store.updateNow('tasks', (tasks) => {
       const list = Array.isArray(tasks) ? tasks : [];
       const existing = new Set(list.map((task) => task && task.senkuKey).filter(Boolean));
       const planned = window.SenkuRewardsV1.plan(data.sittings, { sphereFor, existingKeys: existing, newId: uid,
         dateOf: (iso) => fmtDate(new Date(iso)), nowIso: new Date().toISOString() });
-      keys = planned.keys;
+      claims = planned.claims;
       made = planned.drafts.map((draft) => {
         const task = Object.assign({}, draft, { title: senkuQuestTitle(draft), iconId: 'media.notes' });
         task.xpAwarded = Math.max(1, itemXp(task)); task.goldAwarded = itemGold(task);
@@ -16540,10 +16540,10 @@ async function senkuImportRewards({ force = false } = {}) {
       });
       return made.length ? list.concat(made) : undefined;
     }, (committed) => { if (!current()) return false; State.tasks = committed; return true; });
-    if (!current() || (made.length && !saved) || !keys.length) return;
+    if (!current() || (made.length && !saved) || !claims.length) return;
     // Награда уже на диске: только теперь сессии отмечаются на сервере. Если отметка не дойдёт,
     // следующий заход найдёт квест по senkuKey и отметит без второй награды.
-    await fetch('/api/bridge/senku/claim', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ keys }) }).catch(() => {});
+    await fetch('/api/bridge/senku/claim', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ claims }) }).catch(() => {});
     if (made.length) {
       checkAchievements(); publishLeaderboard();
       const xp = made.reduce((sum, task) => sum + task.xpAwarded, 0), gold = made.reduce((sum, task) => sum + task.goldAwarded, 0);
@@ -35405,7 +35405,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v315';
+const PWA_CACHE_VERSION = 'satoru-v316';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

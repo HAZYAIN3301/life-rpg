@@ -10,7 +10,10 @@
  * Pure module: data in, data out. No DOM, State, fetch or XP formula here — the app computes
  * the reward with its ordinary itemXp/itemGold and saves through its ordinary task write.
  * One sitting is keyed by kind + start (`voice|2026-09-28T06:52:00.000Z`); every quest made from
- * it carries that key, so a repeated import never creates a second reward.
+ * it carries that key, so a repeated import never creates a second reward. A session closed by
+ * Senku's 30-minute timeout can reopen and grow: the server then offers only the difference, and
+ * its quests carry `key#1`, `key#2` … Time per deck comes from Senku's `deckMs` when every deck
+ * of the sitting has it (records from before 01.10 do not): then by the share of cards.
  */
 (function exposeSenkuRewards(root, factory) {
   const api = factory();
@@ -21,6 +24,7 @@
 
   const VERSION = '1.0.0';
   const KEY = /^(voice|visual)\|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
+  const CLAIM_KEY = /^(voice|visual)\|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z(#\d{1,4})?$/;
   const MAX_AI_DECKS = 40;
 
   function norm(value) {
@@ -54,44 +58,51 @@
     return best ? best.id : null;
   }
 
-  // One sitting → one part per sphere. Minutes follow the share of cards (at least one minute),
-  // so a mixed oral-exam run gives Spanish and Biology each their own honest piece.
+  // One sitting → one part per sphere, at least one minute each, so a mixed oral-exam run gives
+  // Spanish and Biology each their own honest piece: Senku's time per deck when every deck has it,
+  // otherwise the sitting's minutes by the share of cards.
   function splitSitting(sitting, sphereFor) {
+    const decks = sitting.decks || [];
+    const timed = decks.length > 0 && decks.every((deck) => Number.isInteger(deck.ms));
     const parts = new Map();
-    for (const deck of sitting.decks || []) {
+    for (const deck of decks) {
       const skillId = sphereFor(deck);
       if (!skillId) continue;
-      const part = parts.get(skillId) || { skillId, cards: 0, names: [] };
+      const part = parts.get(skillId) || { skillId, cards: 0, ms: 0, names: [] };
       part.cards += deck.cards;
+      if (timed) part.ms += deck.ms;
       if (deck.name && !part.names.includes(deck.name)) part.names.push(deck.name);
       parts.set(skillId, part);
     }
     const total = [...parts.values()].reduce((sum, part) => sum + part.cards, 0);
     return [...parts.values()].sort((a, b) => b.cards - a.cards).map((part) => Object.assign(part, {
-      minutes: Math.max(1, Math.round((Number(sitting.minutes) || 0) * part.cards / Math.max(1, total))),
+      minutes: Math.max(1, timed ? Math.round(part.ms / 60000) : Math.round((Number(sitting.minutes) || 0) * part.cards / Math.max(1, total))),
     }));
   }
 
-  // Sittings → quest drafts (without title and reward, which the app adds) + keys to claim.
+  // Sittings → quest drafts (without title and reward, which the app adds) + claims to send.
   // A sitting already present in the tasks (`existingKeys`) is only claimed again.
   function plan(sittings, options) {
     const { sphereFor, existingKeys, newId, dateOf, nowIso } = options;
-    const drafts = []; const keys = [];
+    const drafts = []; const claims = [];
     for (const sitting of sittings || []) {
       if (!sitting || !KEY.test(sitting.key) || sitting.open || !sitting.endedAt) continue;
-      keys.push(sitting.key);
-      if (existingKeys && existingKeys.has(sitting.key)) continue;
+      const claimKey = typeof sitting.claimKey === 'string' ? sitting.claimKey : sitting.key;
+      const seq = Number.isInteger(sitting.seq) ? sitting.seq : 0;
+      if (!CLAIM_KEY.test(claimKey) || !claimKey.startsWith(sitting.key)) continue;
+      claims.push({ key: sitting.key, seq, totals: sitting.totals || null });
+      if (existingKeys && existingKeys.has(claimKey)) continue;
       for (const part of splitSitting(sitting, sphereFor)) {
         drafts.push({
           id: newId(), skillId: part.skillId, skillIds: [part.skillId],
           estimateMin: part.minutes, actualMin: part.minutes, difficulty: 'normal',
           date: dateOf(sitting.startedAt), done: true, completedAt: sitting.endedAt, startTime: null,
-          createdAt: nowIso, source: 'senku', senkuKey: sitting.key, senkuKind: sitting.kind,
+          createdAt: nowIso, source: 'senku', senkuKey: claimKey, senkuKind: sitting.kind,
           senkuCards: part.cards, senkuDecks: part.names.slice(0, 6),
         });
       }
     }
-    return { drafts, keys };
+    return { drafts, claims };
   }
 
   // The AI only ever sees deck/folder names when the person allowed it (settings switch).
@@ -119,5 +130,5 @@
     return out;
   }
 
-  return Object.freeze({ VERSION, KEY, MAX_AI_DECKS, norm, guessByName, splitSitting, plan, aiRequest, parseAi });
+  return Object.freeze({ VERSION, KEY, CLAIM_KEY, MAX_AI_DECKS, norm, guessByName, splitSitting, plan, aiRequest, parseAi });
 });

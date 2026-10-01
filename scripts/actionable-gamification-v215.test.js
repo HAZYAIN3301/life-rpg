@@ -114,10 +114,10 @@ test('v215 integrity modules remain ordered while the app shell advances to v248
   assert.ok(integrity >= 0, 'index.html does not load gamification-integrity-v1.js');
   assert.ok(commitment < app, 'commitment-v1.js must load before app.js');
   assert.ok(integrity < app, 'gamification-integrity-v1.js must load before app.js');
-  assert.match(SW, /const CACHE = ['"]satoru-v315['"]/, 'service-worker cache must be bumped to satoru-v315');
+  assert.match(SW, /const CACHE = ['"]satoru-v316['"]/, 'service-worker cache must be bumped to satoru-v316');
   assert.match(SW, /['"]commitment-v1\.js['"]/, 'commitment-v1.js is missing from the offline shell');
   assert.match(SW, /['"]gamification-integrity-v1\.js['"]/, 'gamification-integrity-v1.js is missing from the offline shell');
-  assert.match(APP, /const PWA_CACHE_VERSION = ['"]satoru-v315['"]/, 'app and service worker disagree on the v248 cache');
+  assert.match(APP, /const PWA_CACHE_VERSION = ['"]satoru-v316['"]/, 'app and service worker disagree on the v248 cache');
   for (const file of ['commitment-v1.js', 'gamification-integrity-v1.js']) {
     assert.match(
       scriptTag(file),
@@ -125,8 +125,8 @@ test('v215 integrity modules remain ordered while the app shell advances to v248
       `${file} query does not identify the v215 release`
     );
   }
-  assert.match(scriptTag('app.js'), /[?&](?:v|build)=[^"']*v315(?:[-_.][^"']*)?["']/i,
-    'app.js query does not identify the v315 release');
+  assert.match(scriptTag('app.js'), /[?&](?:v|build)=[^"']*v316(?:[-_.][^"']*)?["']/i,
+    'app.js query does not identify the v316 release');
 });
 
 test('live product copy no longer promises Hype or resource-loss discipline', () => {

@@ -1,3 +1,12 @@
+## Claude 01.10 — Senku: новые поля контракта / v316 candidate
+
+Агент Senku добавил `rideId`, `deckMs`, `state`, `endedBy` (закрытие по таймауту 30 мин) и
+страницы `limit`/`more` (`version` = 1). Satoru читает их как необязательные (старые записи
+годны), забирает историю страницами, минуты колоды берёт из `deckMs`, а продолженную после
+таймаута сессию дополняет квестом только на разницу. 3257/3257 tests; Chromium/WebKit на
+синтетике. [SENKU-REWARDS-V315.md](./SENKU-REWARDS-V315.md#v316--дополнения-контракта-senku-0110).
+Deployment ещё не подтверждён.
+
 **Claude 01.10 — Senku фаза 2 опубликована / v315:** runtime `c55e06e9`; оба домена отдают
 commit `c55e06e9` и `satoru-v315` с 10:56 UTC; SHA-256 **10/10** (app.js, index.html, sw.js,
 styles.css, senku-rewards-v1.js × 2 домена); production без входа — Chromium и WebKit iPhone без

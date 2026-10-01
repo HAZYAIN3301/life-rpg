@@ -6455,7 +6455,7 @@ const server = http.createServer(async (req, res) => {
       }
       if (path0 === '/api/bridge/senku/claim' && req.method === 'POST') {
         let body; try { body = JSON.parse(await readBody(req, 64 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
-        return sendJson(res, 200, senkuBridge.claim(uid, body && body.keys));
+        return sendJson(res, 200, senkuBridge.claim(uid, body || {}));
       }
       if (path0 === '/api/bridge/senku/decks' && req.method === 'GET') return sendJson(res, 200, senkuBridge.decks(uid));
       if (path0 === '/api/bridge/senku/day' && req.method === 'GET') {

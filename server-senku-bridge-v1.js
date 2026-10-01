@@ -32,6 +32,9 @@ const MAX_STORED_RIDES = 6000;
 const MAX_TRUSTED_DURATION_MS = 6 * 60 * 60 * 1000; // contract: longer than 6 h — do not trust duration
 const MAX_DAY_SPAN_MS = 48 * 60 * 60 * 1000;
 const MAX_PENDING = 300;
+const PAGE_LIMIT = 1000;      // contract: ?limit= (default 1000, up to 5000); `more` asks for the next page
+const MAX_PAGES = 10;         // per request; the rest follows on the next sync, which is due at once
+const STATES = new Set(['open', 'stopped', 'finished']);
 const SITTING_KEY = /^(voice|visual)\|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/;
@@ -146,12 +149,23 @@ function normalizeRide(raw) {
   if (typeof raw.finished !== 'boolean') return null;
   if (raw.durationMs !== null && !(Number.isInteger(raw.durationMs) && raw.durationMs >= 0)) return null;
   if (raw.folder !== undefined && !Array.isArray(raw.folder)) return null;
+  // Additive fields of 01.10 are optional: records sent before them stay valid without them.
+  if (raw.rideId !== undefined && raw.rideId !== null && !(typeof raw.rideId === 'string' && RIDE_ID.test(raw.rideId))) return null;
+  if (raw.state !== undefined && !STATES.has(raw.state)) return null;
+  if (raw.state !== undefined && (raw.state === 'open') !== (endedAt === null)) return null;
+  if (raw.endedBy !== undefined && raw.endedBy !== null && raw.endedBy !== 'device' && raw.endedBy !== 'timeout') return null;
+  if (raw.deckMs !== undefined && raw.deckMs !== null && !(Number.isInteger(raw.deckMs) && raw.deckMs >= 0)) return null;
+  const durationMs = endedAt ? Math.max(0, Date.parse(endedAt) - Date.parse(startedAt)) : null;
   return {
-    id: raw.id, kind: raw.kind,
+    id: raw.id, rideId: typeof raw.rideId === 'string' ? raw.rideId : null, kind: raw.kind,
     deck: cleanText(raw.deck, 128), deckName: cleanText(raw.deckName, 160),
     folder: (raw.folder || []).slice(0, 12).map((name) => cleanText(name, 120)).filter(Boolean),
-    startedAt, endedAt, finished: raw.finished, cards: raw.cards,
-    durationMs: endedAt ? Math.max(0, Date.parse(endedAt) - Date.parse(startedAt)) : null,
+    startedAt, endedAt, finished: raw.state ? raw.state === 'finished' : raw.finished,
+    state: raw.state || (endedAt ? (raw.finished ? 'finished' : 'stopped') : 'open'),
+    endedBy: endedAt ? (raw.endedBy === 'timeout' ? 'timeout' : raw.endedBy === 'device' ? 'device' : null) : null,
+    cards: raw.cards, durationMs,
+    // Time of this deck inside the run; never more than the run itself.
+    deckMs: endedAt && Number.isInteger(raw.deckMs) ? Math.min(raw.deckMs, durationMs) : null,
     changedAt,
   };
 }
@@ -163,7 +177,7 @@ function parseFacts(body) {
   if (!nextSince || json.rides.length > MAX_RIDES_PER_RESPONSE) return { ok: false };
   const rides = []; let skipped = 0;
   for (const raw of json.rides) { const ride = normalizeRide(raw); if (ride) rides.push(ride); else skipped += 1; }
-  return { ok: true, rides, skipped, nextSince, revision: Number.isInteger(json.revision) ? json.revision : null };
+  return { ok: true, rides, skipped, nextSince, more: json.more === true, revision: Number.isInteger(json.revision) ? json.revision : null };
 }
 
 // ---- Sittings: one group per sitting; minutes are the union of time, not a sum of records ----
@@ -178,12 +192,14 @@ function groupSittings(rides) {
   for (const ride of rides) {
     if (ride.cards <= 0) continue; // cards = 0 is not a session
     const key = sittingKey(ride);
-    const group = groups.get(key) || { key, kind: ride.kind, startedAt: ride.startedAt, endedAt: ride.endedAt, open: false, finished: true, cards: 0, decks: [] };
+    const group = groups.get(key) || { key, kind: ride.kind, rideId: ride.rideId || null, startedAt: ride.startedAt, endedAt: ride.endedAt, open: false, finished: true, timeout: false, cards: 0, decks: [] };
     if (!ride.endedAt) group.open = true;
+    if (ride.endedBy === 'timeout') group.timeout = true;
     else if (group.endedAt && Date.parse(ride.endedAt) > Date.parse(group.endedAt)) group.endedAt = ride.endedAt;
     group.finished = group.finished && ride.finished;
     group.cards += ride.cards;
-    group.decks.push({ deck: ride.deck, name: ride.deckName, folder: ride.folder, cards: ride.cards });
+    group.decks.push({ id: ride.id, deck: ride.deck, name: ride.deckName, folder: ride.folder, cards: ride.cards,
+      ms: Number.isInteger(ride.deckMs) ? ride.deckMs : null });
     groups.set(key, group);
   }
   return [...groups.values()].map((group) => {
@@ -191,7 +207,8 @@ function groupSittings(rides) {
     const spanMs = endedAt ? Date.parse(endedAt) - Date.parse(group.startedAt) : null;
     const durationTrusted = spanMs !== null && spanMs <= MAX_TRUSTED_DURATION_MS;
     return {
-      key: group.key, kind: group.kind, startedAt: group.startedAt, endedAt, open: group.open, finished: !group.open && group.finished,
+      key: group.key, kind: group.kind, rideId: group.rideId, startedAt: group.startedAt, endedAt, open: group.open,
+      finished: !group.open && group.finished, endedBy: group.open ? null : group.timeout ? 'timeout' : 'device',
       cards: group.cards, minutes: durationTrusted ? Math.round(spanMs / 60000) : null, durationTrusted,
       decks: group.decks.sort((a, b) => b.cards - a.cards),
     };
@@ -204,13 +221,55 @@ function rewardable(sitting, rewardsFromMs) {
   return !sitting.open && sitting.durationTrusted && Date.parse(sitting.startedAt) >= rewardsFromMs;
 }
 
+// A claim remembers what was rewarded: { at, seq, minutes, decks: { recordId: { cards, ms } } }.
+// A session closed by the 30-minute timeout can reopen and grow; then only the difference is
+// pending (seq 1, 2 …), so work after a pause is rewarded once and nothing twice. Claims written
+// by v315 are plain timestamps: treated as final, they never yield a difference.
+function normalizeClaim(value) {
+  if (typeof value === 'string') return { at: value, seq: 1, minutes: null, decks: null };
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  return { at: value.at, seq: Number.isInteger(value.seq) ? value.seq : 1, minutes: Number.isFinite(value.minutes) ? value.minutes : null,
+    decks: value.decks && typeof value.decks === 'object' && !Array.isArray(value.decks) ? value.decks : null };
+}
+
+function totalsOf(sitting) {
+  return Object.fromEntries(sitting.decks.map((deck) => [deck.id, { cards: deck.cards, ms: deck.ms }]));
+}
+
+// What of this sitting still awaits a reward: the whole sitting, a difference, or nothing.
+function rewardDue(sitting, claimValue) {
+  const claim = claimValue === undefined ? null : normalizeClaim(claimValue);
+  if (!claim) {
+    return { seq: 0, claimKey: sitting.key, cards: sitting.cards, minutes: sitting.minutes, decks: sitting.decks, totals: totalsOf(sitting) };
+  }
+  if (!claim.decks) return null;
+  const decks = [];
+  for (const deck of sitting.decks) {
+    const before = claim.decks[deck.id] || { cards: 0, ms: 0 };
+    const cards = deck.cards - (Number(before.cards) || 0);
+    if (cards <= 0) continue;
+    const ms = Number.isInteger(deck.ms) && Number.isInteger(before.ms) ? Math.max(0, deck.ms - before.ms)
+      : Number.isInteger(deck.ms) && !before.ms ? deck.ms : null;
+    decks.push(Object.assign({}, deck, { cards, ms }));
+  }
+  if (!decks.length) return null;
+  const minutes = Math.max(0, (sitting.minutes || 0) - (claim.minutes || 0));
+  return { seq: claim.seq, claimKey: `${sitting.key}#${claim.seq}`, cards: decks.reduce((sum, deck) => sum + deck.cards, 0),
+    minutes, decks, totals: totalsOf(sitting) };
+}
+
 function dayView(rides, fromMs, toMs, options = {}) {
   const claimed = options.claimed || {};
   const rewardsFromMs = Number.isFinite(options.rewardsFromMs) ? options.rewardsFromMs : Infinity;
   const sessions = groupSittings(rides).filter((one) => {
     const start = Date.parse(one.startedAt);
     return start >= fromMs && start < toMs;
-  }).map((one) => Object.assign(one, { rewardable: rewardable(one, rewardsFromMs), claimed: Object.hasOwn(claimed, one.key) }));
+  }).map((one) => {
+    const ok = rewardable(one, rewardsFromMs);
+    const claim = Object.hasOwn(claimed, one.key) ? claimed[one.key] : undefined;
+    // "claimed" = nothing is waiting any more; a reopened session that grew is pending again.
+    return Object.assign(one, { rewardable: ok, claimed: claim !== undefined && !(ok && rewardDue(one, claim)) });
+  });
   const intervals = sessions.filter((one) => one.durationTrusted)
     .map((one) => [Date.parse(one.startedAt), Date.parse(one.endedAt)]).sort((a, b) => a[0] - b[0]);
   let covered = 0; let cursorStart = null; let cursorEnd = null;
@@ -228,7 +287,14 @@ function dayView(rides, fromMs, toMs, options = {}) {
 }
 
 function pendingSittings(rides, rewardsFromMs, claimed) {
-  return groupSittings(rides).filter((one) => rewardable(one, rewardsFromMs) && !Object.hasOwn(claimed || {}, one.key)).slice(0, MAX_PENDING);
+  const out = [];
+  for (const sitting of groupSittings(rides)) {
+    if (!rewardable(sitting, rewardsFromMs)) continue;
+    const due = rewardDue(sitting, Object.hasOwn(claimed || {}, sitting.key) ? claimed[sitting.key] : undefined);
+    if (due) out.push(Object.assign({}, sitting, due));
+    if (out.length >= MAX_PENDING) break;
+  }
+  return out;
 }
 
 function deckList(rides) {
@@ -308,6 +374,7 @@ function create(options = {}) {
   async function fetchFacts(baseUrl, key, since) {
     const url = new URL('/api/bridge/facts', baseUrl);
     if (since) url.searchParams.set('since', since);
+    url.searchParams.set('limit', String(PAGE_LIMIT));
     const response = await request(url.href, {
       headers: { Authorization: `Bearer ${key}`, Accept: 'application/json', 'User-Agent': 'Satoru-Senku-Bridge/1' },
       timeoutMs: FETCH_TIMEOUT_MS, maxBytes: MAX_BODY_BYTES, testOrigins,
@@ -357,9 +424,12 @@ function create(options = {}) {
     };
     state.rides = merge(state, result.facts.rides);
     state.connection.nextSince = result.facts.nextSince; // same atomic write as the rides: the cursor never outruns them
+    state.connection.more = result.facts.more;
     save(uid, state);
-    log('connect', { rides: result.facts.rides.length, skipped: result.facts.skipped });
-    return publicStatus(state);
+    log('connect', { rides: result.facts.rides.length, skipped: result.facts.skipped, more: result.facts.more });
+    // A long history arrives in pages; the rest follows right away (or on the next sync).
+    if (result.facts.more) await runSync(uid, { pages: MAX_PAGES - 1 });
+    return publicStatus(load(uid) || state);
   }
 
   function disconnect(uid) {
@@ -367,42 +437,47 @@ function create(options = {}) {
     return { connected: false, defaultBaseUrl: DEFAULT_BASE_URL };
   }
 
-  async function runSync(uid) {
-    const state = load(uid);
-    if (!state || state.connection.status === 'reconnect' || !state.connection.key) return;
-    const c = state.connection;
-    const attemptAt = new Date(now()).toISOString();
-    const result = await fetchFacts(c.baseUrl, c.key, c.nextSince);
-    // The person may have disconnected or reconnected while we waited: never resurrect old state.
-    const current = load(uid);
-    if (!current || current.connection.id !== c.id) return;
-    const cc = current.connection;
-    cc.lastAttemptAt = attemptAt;
-    if (result.kind === 'ok') {
-      current.rides = merge(current, result.facts.rides);
-      current.claimed = pruneClaimed(current.claimed);
-      Object.assign(cc, { nextSince: result.facts.nextSince, lastExchangeAt: new Date(now()).toISOString(), lastError: null,
-        failures: 0, backoffUntil: null, revision: result.facts.revision });
-      save(uid, current);
-      if (result.facts.skipped) log('skipped', { skipped: result.facts.skipped });
+  async function runSync(uid, { pages = MAX_PAGES } = {}) {
+    for (let page = 0; page < pages; page += 1) {
+      const state = load(uid);
+      if (!state || state.connection.status === 'reconnect' || !state.connection.key) return;
+      const c = state.connection;
+      const attemptAt = new Date(now()).toISOString();
+      const result = await fetchFacts(c.baseUrl, c.key, c.nextSince);
+      // The person may have disconnected or reconnected while we waited: never resurrect old state.
+      const current = load(uid);
+      if (!current || current.connection.id !== c.id) return;
+      const cc = current.connection;
+      cc.lastAttemptAt = attemptAt;
+      if (result.kind === 'ok') {
+        current.rides = merge(current, result.facts.rides);
+        current.claimed = pruneClaimed(current.claimed);
+        Object.assign(cc, { nextSince: result.facts.nextSince, more: result.facts.more, lastExchangeAt: new Date(now()).toISOString(), lastError: null,
+          failures: 0, backoffUntil: null, revision: result.facts.revision });
+        save(uid, current); // each page is written with its cursor before the next one is asked for
+        if (result.facts.skipped) log('skipped', { skipped: result.facts.skipped });
+        if (!result.facts.more) return;
+        continue;
+      }
+      if (result.kind === 'invalid_token') {
+        // Revoked or reissued in Senku: stop polling, drop the dead key, ask to reconnect.
+        Object.assign(cc, { status: 'reconnect', key: null, lastError: 'invalid_token', backoffUntil: null });
+        save(uid, current); log('invalid_token', {});
+        return;
+      }
+      const failures = (Number(cc.failures) || 0) + 1;
+      const pause = Math.min(BACKOFF_BASE_MS * 2 ** (failures - 1), BACKOFF_MAX_MS);
+      Object.assign(cc, { failures, lastError: result.kind, backoffUntil: new Date(now() + pause).toISOString() }); // nextSince stays
+      save(uid, current); log('retry_later', { reason: result.kind, failures });
       return;
     }
-    if (result.kind === 'invalid_token') {
-      // Revoked or reissued in Senku: stop polling, drop the dead key, ask to reconnect.
-      Object.assign(cc, { status: 'reconnect', key: null, lastError: 'invalid_token', backoffUntil: null });
-      save(uid, current); log('invalid_token', {});
-      return;
-    }
-    const failures = (Number(cc.failures) || 0) + 1;
-    const pause = Math.min(BACKOFF_BASE_MS * 2 ** (failures - 1), BACKOFF_MAX_MS);
-    Object.assign(cc, { failures, lastError: result.kind, backoffUntil: new Date(now() + pause).toISOString() }); // nextSince stays
-    save(uid, current); log('retry_later', { reason: result.kind, failures });
   }
 
   function due(state, force) {
     if (!state || state.connection.status === 'reconnect' || !state.connection.key) return false;
     const c = state.connection; const t = now();
     if (c.backoffUntil) return Date.parse(c.backoffUntil) <= t; // the growing pause decides, not the button
+    if (c.more) return true; // an unfinished page run continues at once
     const last = Date.parse(c.lastAttemptAt || c.lastExchangeAt || 0) || 0;
     return t - last >= (force ? MANUAL_SYNC_INTERVAL_MS : SYNC_INTERVAL_MS);
   }
@@ -439,10 +514,15 @@ function create(options = {}) {
     return Object.assign(publicStatus(state), { sittings: pendingSittings(Object.values(state.rides), rewardsFrom(state), state.claimed) });
   }
 
-  // Marks sittings as rewarded. Only existing, rewardable sittings are recorded; repeating a
-  // claim is harmless. Written atomically with the rides so a disconnect wipes both together.
-  function claim(uid, keys) {
-    if (!Array.isArray(keys) || !keys.length || keys.length > MAX_PENDING || !keys.every((key) => typeof key === 'string' && SITTING_KEY.test(key))) {
+  // Marks what was rewarded. Body: { claims: [{ key, seq, totals }] } (v316) or { keys } (v315
+  // clients: the sitting is final at its current totals). Unknown or not rewardable sittings and
+  // stale sequence numbers are skipped, never fatal; repeating a claim is harmless.
+  function claim(uid, body) {
+    const list = Array.isArray(body && body.claims) ? body.claims
+      : Array.isArray(body && body.keys) ? body.keys.map((key) => ({ key, seq: null, totals: null })) : null;
+    if (!list || !list.length || list.length > MAX_PENDING || !list.every((item) => item && typeof item.key === 'string' && SITTING_KEY.test(item.key)
+      && (item.seq === null || (Number.isInteger(item.seq) && item.seq >= 0 && item.seq <= 1000))
+      && (item.totals === null || item.totals === undefined || (typeof item.totals === 'object' && !Array.isArray(item.totals) && Object.keys(item.totals).length <= 200)))) {
       throw new BridgeError('senku_claim_invalid');
     }
     const state = load(uid);
@@ -450,12 +530,23 @@ function create(options = {}) {
     const known = new Map(groupSittings(Object.values(state.rides)).map((one) => [one.key, one]));
     const stamp = new Date(now()).toISOString();
     let added = 0; let ignored = 0;
-    for (const key of new Set(keys)) {
-      const sitting = known.get(key);
-      // A sitting that is gone (pruned, other connection) or not rewardable is skipped, never fatal:
-      // one stale key must not make the client retry the whole batch forever.
+    for (const item of list) {
+      const sitting = known.get(item.key);
       if (!sitting || !rewardable(sitting, rewardsFrom(state))) { ignored += 1; continue; }
-      if (!Object.hasOwn(state.claimed, key)) { state.claimed[key] = stamp; added += 1; }
+      const before = Object.hasOwn(state.claimed, item.key) ? normalizeClaim(state.claimed[item.key]) : null;
+      const expected = before ? before.seq : 0;
+      if (item.seq !== null && item.seq !== expected) { ignored += 1; continue; } // already claimed by this or another device
+      if (before && !before.decks) { ignored += 1; continue; }
+      // Remember the totals the client rewarded (never more than exists now) so a later growth is the only new part.
+      const decks = Object.assign({}, before ? before.decks : {});
+      for (const deck of sitting.decks) {
+        const sent = item.totals && item.totals[deck.id];
+        const cards = sent && Number.isInteger(sent.cards) ? Math.min(sent.cards, deck.cards) : deck.cards;
+        const ms = sent && Number.isInteger(sent.ms) ? Math.min(sent.ms, deck.ms ?? sent.ms) : deck.ms;
+        decks[deck.id] = { cards: Math.max(cards, (decks[deck.id] && decks[deck.id].cards) || 0), ms };
+      }
+      state.claimed[item.key] = { at: stamp, seq: expected + 1, minutes: sitting.minutes, decks };
+      added += 1;
     }
     if (added) { state.claimed = pruneClaimed(state.claimed); save(uid, state); }
     return { ok: true, claimed: added, ignored };
@@ -472,6 +563,6 @@ function create(options = {}) {
 
 module.exports = {
   FILE, DEFAULT_BASE_URL, SYNC_INTERVAL_MS, MANUAL_SYNC_INTERVAL_MS, MAX_TRUSTED_DURATION_MS,
-  BridgeError, create, normalizeBaseUrl, parseFacts, normalizeRide, dayView, groupSittings, pendingSittings, deckList, sittingKey,
+  BridgeError, create, normalizeBaseUrl, parseFacts, normalizeRide, dayView, groupSittings, pendingSittings, deckList, sittingKey, rewardDue,
   maskKey, privateAddress, safeLookup, defaultRequest,
 };

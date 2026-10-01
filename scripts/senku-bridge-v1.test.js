@@ -23,6 +23,9 @@ const Bridge = require('../server-senku-bridge-v1.js');
 const FIXTURE = path.join(__dirname, 'fixtures', 'senku-facts-v1.example.json');
 const SENKU_EXAMPLE = path.join(os.homedir(), 'Projects', 'senku', 'bridge', 'facts-v1.example.json');
 const fixture = () => JSON.parse(fs.readFileSync(FIXTURE, 'utf8'));
+// Образец до 01.10 (без rideId/deckMs/state/endedBy): такие записи у людей уже сохранены, и
+// Senku не пересылает их ради новых полей — Satoru обязан понимать оба вида.
+const legacy = () => JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures', 'senku-facts-v1-20260928.example.json'), 'utf8'));
 const DAY = { from: '2026-09-28T00:00:00.000Z', to: '2026-09-29T00:00:00.000Z' };
 const MIN = 60 * 1000;
 
@@ -41,7 +44,7 @@ async function startFakeSenku() {
   const state = { key: fakeKey(), mode: 'ok', rides: [], serverTime: '2026-09-28T09:00:00.000Z', revision: 1, requests: [] };
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://fake');
-    state.requests.push({ path: url.pathname, since: url.searchParams.get('since'), auth: req.headers.authorization || '' });
+    state.requests.push({ path: url.pathname, since: url.searchParams.get('since'), limit: url.searchParams.get('limit'), auth: req.headers.authorization || '' });
     const json = (status, body) => { res.writeHead(status, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(body)); };
     if (url.pathname !== '/api/bridge/facts') return json(404, { error: 'not_found' });
     if (state.mode === 'network') { req.socket.destroy(); return; }
@@ -49,8 +52,13 @@ async function startFakeSenku() {
     if (state.mode === 'corrupt') return json(500, { ok: false, error: 'server_snapshot_corrupt' });
     if (state.mode === 'garbage') return json(200, { ok: true, source: 'other', version: 2, rides: [] });
     const since = Date.parse(url.searchParams.get('since') || '');
-    const rides = state.rides.filter((one) => Number.isNaN(since) || Date.parse(one.changedAt) >= since);
-    return json(200, { ok: true, source: 'senku', version: 1, revision: state.revision, serverTime: state.serverTime, nextSince: state.serverTime, rides });
+    const all = state.rides.filter((one) => Number.isNaN(since) || Date.parse(one.changedAt) >= since)
+      .sort((a, b) => Date.parse(a.changedAt) - Date.parse(b.changedAt));
+    // Страницы как в Senku 01.10: записи по changedAt, `more` и продолжение с nextSince.
+    const rides = state.pageSize ? all.slice(0, state.pageSize) : all;
+    const more = rides.length < all.length;
+    const nextSince = more ? new Date(Date.parse(rides[rides.length - 1].changedAt) + 1).toISOString() : state.serverTime;
+    return json(200, { ok: true, source: 'senku', version: 1, revision: state.revision, serverTime: state.serverTime, nextSince, more, rides });
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   state.origin = `http://127.0.0.1:${server.address().port}`;
@@ -71,21 +79,45 @@ function moduleWith(senku, clock) {
 
 // ---------------------------------------------------------------- образец и правила дня
 
-test('образец Senku читается целиком и совпадает с оригиналом в репозитории Senku', (t) => {
+test('образец Senku (01.10) читается целиком и совпадает с оригиналом в репозитории Senku', (t) => {
   const facts = Bridge.parseFacts(JSON.stringify(fixture()));
   assert.equal(facts.ok, true);
   assert.equal(facts.skipped, 0);
-  assert.equal(facts.nextSince, '2026-09-28T07:45:10.512Z');
-  assert.deepEqual(facts.rides.map((one) => [one.id, one.kind, one.cards, one.durationMs, one.endedAt]), [
-    ['ride1k8f2x-1', 'voice', 14, 1290000, '2026-09-28T07:13:30.000Z'],
-    ['smuk87mma-2', 'visual', 6, null, null],
+  assert.equal(facts.more, false);
+  assert.equal(facts.nextSince, '2026-09-28T08:12:40.251Z');
+  assert.deepEqual(facts.rides.map((one) => [one.id, one.rideId, one.kind, one.state, one.endedBy, one.cards, one.durationMs, one.deckMs]), [
+    ['ride1k8f2x-1', 'ride1k8f2x', 'voice', 'finished', 'device', 14, 1290000, 780000],
+    ['ride1k8f2x-2', 'ride1k8f2x', 'voice', 'finished', 'device', 9, 1290000, 510000],
+    ['smuk87mma-2', 'smuk87mma', 'visual', 'stopped', 'timeout', 6, 672000, 300000],
   ]);
+  const old = Bridge.parseFacts(JSON.stringify(legacy()));
+  assert.deepEqual(old.rides.map((one) => [one.rideId, one.state, one.endedBy, one.deckMs]), [[null, 'finished', null, null], [null, 'open', null, null]],
+    'старые записи без новых полей остаются годными');
   if (!fs.existsSync(SENKU_EXAMPLE)) return t.skip('репозитория Senku на этой машине нет — сверка пропущена');
   assert.deepEqual(fixture(), JSON.parse(fs.readFileSync(SENKU_EXAMPLE, 'utf8')), 'образец в Satoru отстал от контракта Senku');
 });
 
-test('день по образцу: N карточек, M минут, голосом K; открытая сессия без минут', () => {
+test('день по новому образцу: прогон из двух колод — одна сессия, закрытая по таймауту — законченная', () => {
   const view = Bridge.dayView(Bridge.parseFacts(JSON.stringify(fixture())).rides, Date.parse(DAY.from), Date.parse(DAY.to));
+  assert.deepEqual([view.cards, view.voiceCards, view.minutes, view.sessions.length], [29, 23, 33, 2]);
+  assert.deepEqual(view.sessions.map((one) => [one.kind, one.open, one.endedBy, one.minutes, one.decks.map((d) => [d.id, d.cards, d.ms])]), [
+    ['voice', false, 'device', 22, [['ride1k8f2x-1', 14, 780000], ['ride1k8f2x-2', 9, 510000]]],
+    ['visual', false, 'timeout', 11, [['smuk87mma-2', 6, 300000]]],
+  ]);
+});
+
+test('новые поля строгие: чужое состояние, расхождение state и endedAt, кривое время колоды — запись пропускается', () => {
+  const base = fixture().rides[0];
+  for (const bad of [{ state: 'paused' }, { state: 'open' }, { endedBy: 'cron' }, { deckMs: -5 }, { deckMs: 1.5 }, { rideId: '../x' }]) {
+    assert.equal(Bridge.normalizeRide(Object.assign({}, base, bad)), null, JSON.stringify(bad));
+  }
+  assert.equal(Bridge.normalizeRide(Object.assign({}, base, { deckMs: 99999999 })).deckMs, 1290000, 'время колоды не больше прогона');
+  const open = Bridge.normalizeRide(Object.assign({}, base, { state: 'open', endedAt: null, durationMs: null, deckMs: null, endedBy: null, finished: false }));
+  assert.deepEqual([open.state, open.endedBy, open.deckMs], ['open', null, null]);
+});
+
+test('день по старому образцу: N карточек, M минут, голосом K; открытая сессия без минут', () => {
+  const view = Bridge.dayView(Bridge.parseFacts(JSON.stringify(legacy())).rides, Date.parse(DAY.from), Date.parse(DAY.to));
   assert.equal(view.cards, 20);
   assert.equal(view.voiceCards, 14);
   assert.equal(view.minutes, 22); // 21,5 минуты поездки; глазами ещё не закрыто — минут не даёт
@@ -123,7 +155,7 @@ test('контракт строгий к конверту и мягкий к о�
   assert.equal(Bridge.parseFacts('not json').ok, false);
   assert.equal(Bridge.parseFacts(JSON.stringify({ ok: true, source: 'senku', version: 2, nextSince: DAY.from, rides: [] })).ok, false);
   assert.equal(Bridge.parseFacts(JSON.stringify({ ok: true, source: 'senku', version: 1, nextSince: 'вчера', rides: [] })).ok, false);
-  const body = fixture(); body.rides.push({ id: 'bad', kind: 'telepathy' }, ride({ id: 'x-1', cards: -1 }), ride({ id: 'x-2', endedAt: '2026-09-28T07:00:00.000Z' }));
+  const body = legacy(); body.rides.push({ id: 'bad', kind: 'telepathy' }, ride({ id: 'x-1', cards: -1 }), ride({ id: 'x-2', endedAt: '2026-09-28T07:00:00.000Z' }));
   const facts = Bridge.parseFacts(JSON.stringify(body));
   assert.equal(facts.ok, true);
   assert.equal(facts.rides.length, 2);
@@ -161,7 +193,7 @@ test('DNS: имя, которое ведёт во внутреннюю сеть,
 test('подключение: первый запрос без since, ключ только в серверном файле, курсор после записи', async () => {
   const senku = await startFakeSenku();
   try {
-    senku.rides = fixture().rides;
+    senku.rides = legacy().rides;
     const clock = { t: Date.parse('2026-09-28T09:00:00.000Z') };
     const { bridge, file, stored, logs } = moduleWith(senku, clock);
     await assert.rejects(bridge.connect('u1', { baseUrl: senku.origin, key: 'short' }), (error) => error.code === 'senku_key_invalid');
@@ -189,7 +221,7 @@ test('подключение: первый запрос без since, ключ �
 test('опрос: курсор nextSince, сложение по id, поздняя сессия, частота не чаще раза в 3 минуты', async () => {
   const senku = await startFakeSenku();
   try {
-    senku.rides = fixture().rides;
+    senku.rides = legacy().rides;
     const clock = { t: Date.parse('2026-09-28T09:00:00.000Z') };
     const { bridge, stored } = moduleWith(senku, clock);
     await bridge.connect('u1', { baseUrl: senku.origin, key: senku.key });
@@ -204,8 +236,8 @@ test('опрос: курсор nextSince, сложение по id, поздня
     // Сессия глазами закрылась; поездка вчерашнего дня доехала только сейчас; первая пришла повторно.
     senku.serverTime = '2026-09-28T09:10:00.000Z';
     senku.rides = [
-      Object.assign(fixture().rides[1], { endedAt: '2026-09-28T07:50:00.000Z', finished: true, cards: 9, durationMs: 20 * MIN, changedAt: '2026-09-28T09:06:00.000Z' }),
-      Object.assign(fixture().rides[0], { changedAt: '2026-09-28T09:06:00.000Z' }),
+      Object.assign(legacy().rides[1], { endedAt: '2026-09-28T07:50:00.000Z', finished: true, cards: 9, durationMs: 20 * MIN, changedAt: '2026-09-28T09:06:00.000Z' }),
+      Object.assign(legacy().rides[0], { changedAt: '2026-09-28T09:06:00.000Z' }),
       ride({ id: 'ride-late-1', startedAt: '2026-09-27T18:00:00.000Z', endedAt: '2026-09-27T18:30:00.000Z', cards: 7, changedAt: '2026-09-28T09:07:00.000Z' }),
     ];
     clock.t += 3 * 60 * 1000; const view = await bridge.day('u1', DAY);
@@ -223,7 +255,7 @@ test('опрос: курсор nextSince, сложение по id, поздня
 test('сбои: 500 и обрыв сети — пауза растёт, курсор стоит; 401 — стоп и «переподключи»', async () => {
   const senku = await startFakeSenku();
   try {
-    senku.rides = fixture().rides;
+    senku.rides = legacy().rides;
     const clock = { t: Date.parse('2026-09-28T09:00:00.000Z') };
     const { bridge, stored, logs } = moduleWith(senku, clock);
     await bridge.connect('u1', { baseUrl: senku.origin, key: senku.key });
@@ -274,7 +306,7 @@ test('сбои: 500 и обрыв сети — пауза растёт, курс
 test('отключение: ключ и факты удаляются, идущий опрос их не воскрешает; переподключение начинает с нуля', async () => {
   const senku = await startFakeSenku();
   try {
-    senku.rides = fixture().rides;
+    senku.rides = legacy().rides;
     const clock = { t: Date.parse('2026-09-28T09:00:00.000Z') };
     const { bridge, file } = moduleWith(senku, clock);
     await bridge.connect('u1', { baseUrl: senku.origin, key: senku.key });
@@ -290,6 +322,62 @@ test('отключение: ключ и факты удаляются, идущ�
     await bridge.connect('u1', { baseUrl: senku.origin, key: senku.key });
     assert.equal(senku.requests.at(-1).since, null, 'новое подключение забирает историю заново');
     assert.equal((await bridge.day('u1', DAY)).day.cards, 20, 'без задвоения после переподключения');
+  } finally { await senku.close(); }
+});
+
+test('страницы: длинная история забирается страницами с курсором после каждой, лимит указан', async () => {
+  const senku = await startFakeSenku();
+  try {
+    senku.pageSize = 2;
+    senku.rides = Array.from({ length: 5 }, (_, i) => ride({ id: `p-${i}`, startedAt: `2026-09-2${i}T08:00:00.000Z`,
+      endedAt: `2026-09-2${i}T08:10:00.000Z`, changedAt: `2026-09-2${i}T08:11:00.000Z` }));
+    const clock = { t: Date.parse('2026-09-28T09:00:00.000Z') };
+    const { bridge, stored } = moduleWith(senku, clock);
+    await bridge.connect('u1', { baseUrl: senku.origin, key: senku.key });
+    assert.deepEqual(senku.requests.map((r) => [r.since, r.limit]), [
+      [null, '1000'], ['2026-09-21T08:11:00.001Z', '1000'], ['2026-09-23T08:11:00.001Z', '1000'],
+    ]);
+    assert.equal(Object.keys(stored('u1').rides).length, 5);
+    assert.equal(stored('u1').connection.more, false);
+    assert.equal(stored('u1').connection.nextSince, senku.serverTime);
+  } finally { await senku.close(); }
+});
+
+test('таймаут и продолжение: сначала награда за сделанное, после продолжения — только разница', async () => {
+  const senku = await startFakeSenku();
+  try {
+    const clock = { t: Date.parse('2026-10-01T09:00:00.000Z') };
+    senku.serverTime = '2026-10-01T09:00:00.000Z';
+    const { bridge, stored } = moduleWith(senku, clock);
+    await bridge.connect('u1', { baseUrl: senku.origin, key: senku.key });
+    const visual = (over) => Object.assign({ id: 's-run-1', rideId: 's-run', kind: 'visual', deck: 'es', deckName: 'Descubrimiento', folder: [],
+      startedAt: '2026-10-01T10:00:00.000Z', finished: false, state: 'stopped', endedBy: 'timeout' }, over);
+    // Закрыта сервером Senku по таймауту: 10 карточек за 10 минут.
+    senku.serverTime = '2026-10-01T11:00:00.000Z';
+    senku.rides = [visual({ endedAt: '2026-10-01T10:10:00.000Z', cards: 10, durationMs: 600000, deckMs: 600000, changedAt: '2026-10-01T10:41:00.000Z' })];
+    clock.t = Date.parse('2026-10-01T11:00:00.000Z');
+    let pending = (await bridge.pending('u1')).sittings;
+    assert.deepEqual(pending.map((p) => [p.claimKey, p.seq, p.cards, p.decks[0].ms]), [['visual|2026-10-01T10:00:00.000Z', 0, 10, 600000]]);
+    assert.deepEqual(bridge.claim('u1', { claims: [{ key: pending[0].key, seq: 0, totals: pending[0].totals }] }), { ok: true, claimed: 1, ignored: 0 });
+    // Человек вернулся: сессия снова открыта — ничего не ждёт.
+    senku.serverTime = '2026-10-01T12:00:00.000Z';
+    senku.rides = [visual({ endedAt: null, state: 'open', endedBy: null, cards: 14, durationMs: null, deckMs: null, changedAt: '2026-10-01T11:50:00.000Z' })];
+    clock.t = Date.parse('2026-10-01T12:00:00.000Z');
+    assert.equal((await bridge.pending('u1')).sittings.length, 0);
+    // Закрыл: 25 карточек за 40 минут — ждёт только разница 15 карточек и 30 минут.
+    senku.serverTime = '2026-10-01T13:00:00.000Z';
+    senku.rides = [visual({ endedAt: '2026-10-01T10:40:00.000Z', state: 'finished', finished: true, endedBy: 'device', cards: 25, durationMs: 2400000, deckMs: 2400000, changedAt: '2026-10-01T12:30:00.000Z' })];
+    clock.t = Date.parse('2026-10-01T13:00:00.000Z');
+    pending = (await bridge.pending('u1')).sittings;
+    assert.deepEqual(pending.map((p) => [p.claimKey, p.seq, p.cards, p.minutes, p.decks[0].ms]), [['visual|2026-10-01T10:00:00.000Z#1', 1, 15, 30, 1800000]]);
+    const day = await bridge.day('u1', { from: '2026-10-01T00:00:00.000Z', to: '2026-10-02T00:00:00.000Z' });
+    assert.equal(day.day.sessions[0].claimed, false, 'выросшая сессия снова ждёт награды');
+    assert.deepEqual(bridge.claim('u1', { claims: [{ key: pending[0].key, seq: 0, totals: pending[0].totals }] }), { ok: true, claimed: 0, ignored: 1 }, 'устаревший номер не засчитывается');
+    assert.deepEqual(bridge.claim('u1', { claims: [{ key: pending[0].key, seq: 1, totals: pending[0].totals }] }), { ok: true, claimed: 1, ignored: 0 });
+    assert.equal((await bridge.pending('u1')).sittings.length, 0);
+    assert.deepEqual(stored('u1').claimed[pending[0].key].decks, { 's-run-1': { cards: 25, ms: 2400000 } });
+    // Отметка v315 (просто время) окончательна: разницы из неё не бывает.
+    assert.equal(Bridge.rewardDue({ key: pending[0].key, cards: 40, minutes: 50, decks: [{ id: 's-run-1', cards: 40, ms: 3000000 }] }, '2026-10-01T13:00:00.000Z'), null);
   } finally { await senku.close(); }
 });
 
@@ -348,7 +436,7 @@ test('сервер Satoru: подключение, «Сегодня», ключ 
   const senku = await startFakeSenku();
   const satoru = await startSatoru({ SENKU_BRIDGE_TEST_ORIGINS: senku.origin });
   try {
-    senku.rides = fixture().rides;
+    senku.rides = legacy().rides;
     const anon = client(satoru.base);
     assert.equal((await anon('/api/bridge/senku/status')).status, 401);
     const c = client(satoru.base);
@@ -465,10 +553,10 @@ test('фаза 2: ожидают награды только законченн�
     const one = pending.sittings[0];
     assert.deepEqual([one.key, one.cards, one.minutes, one.decks.map((d) => d.deck)], ['voice|2026-10-01T10:00:00.000Z', 15, 30, ['deck-2', 'deck-1']]);
 
-    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', [])), (error) => error.code === 'senku_claim_invalid');
-    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', ['../etc'])), (error) => error.code === 'senku_claim_invalid');
-    assert.deepEqual(bridge.claim('u1', [one.key, 'visual|2026-10-01T11:00:00.000Z', 'voice|2026-01-01T00:00:00.000Z']), { ok: true, claimed: 1, ignored: 2 });
-    assert.deepEqual(bridge.claim('u1', [one.key]), { ok: true, claimed: 0, ignored: 0 }, 'повторная отметка безвредна');
+    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', { keys: [] })), (error) => error.code === 'senku_claim_invalid');
+    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', { keys: ['../etc'] })), (error) => error.code === 'senku_claim_invalid');
+    assert.deepEqual(bridge.claim('u1', { keys: [one.key, 'visual|2026-10-01T11:00:00.000Z', 'voice|2026-01-01T00:00:00.000Z'] }), { ok: true, claimed: 1, ignored: 2 });
+    assert.deepEqual(bridge.claim('u1', { claims: [{ key: one.key, seq: 0, totals: one.totals }] }), { ok: true, claimed: 0, ignored: 1 }, 'повторная отметка безвредна');
     assert.equal((await bridge.pending('u1')).sittings.length, 0);
     clock.t += 3 * MIN; await bridge.syncIfDue('u1');
     assert.ok(Object.hasOwn(stored('u1').claimed, one.key), 'отметка переживает опрос Senku');
@@ -476,6 +564,6 @@ test('фаза 2: ожидают награды только законченн�
     assert.equal(after.day.sessions.find((s) => s.key === one.key).claimed, true);
     assert.deepEqual(bridge.decks('u1').decks.map((d) => d.deck).sort(), ['deck-1', 'deck-2', 'deck-a']);
     bridge.disconnect('u1');
-    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', [one.key])), (error) => error.code === 'senku_not_connected');
+    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', { keys: [one.key] })), (error) => error.code === 'senku_not_connected');
   } finally { await senku.close(); }
 });

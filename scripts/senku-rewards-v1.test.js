@@ -47,7 +47,7 @@ test('план: каждая законченная сессия — выпол�
   const already = sitting({ key: 'voice|2026-10-01T07:00:00.000Z', kind: 'voice', startedAt: '2026-10-01T07:00:00.000Z', endedAt: '2026-10-01T07:30:00.000Z' });
   const bad = sitting({ key: 'telepathy|now' });
   const result = R.plan([done, open, already, bad], base({ existingKeys: new Set([already.key]) }));
-  assert.deepEqual(result.keys, [done.key, already.key], 'уже созданный квест только отмечается заново');
+  assert.deepEqual(result.claims.map((c) => [c.key, c.seq]), [[done.key, 0], [already.key, 0]], 'уже созданный квест только отмечается заново');
   assert.equal(result.drafts.length, 1);
   const task = result.drafts[0];
   assert.deepEqual([task.skillId, task.estimateMin, task.actualMin, task.done, task.date, task.completedAt, task.source, task.senkuKey, task.senkuCards, task.difficulty],
@@ -66,4 +66,28 @@ test('ИИ видит только колоды и сферы; ответ при
   assert.deepEqual(R.parseAi('не JSON', ['d-es'], ['s-spanish']), {});
   const many = Array.from({ length: 60 }, (_, i) => ({ deck: `d${i}`, name: `Deck ${i}` }));
   assert.equal(R.aiRequest(many, spheres).prompt.split('\n').filter((line) => line.startsWith('{"deck"')).length, R.MAX_AI_DECKS);
+});
+
+test('время колоды из Senku (deckMs) важнее доли карточек; без него у любой колоды — по доле', () => {
+  const timed = R.splitSitting(sitting({ cards: 23, minutes: 22, decks: [
+    { id: 'r-1', deck: 'd-es', name: 'Transkription', cards: 14, ms: 780000 },
+    { id: 'r-2', deck: 'd-bio', name: 'Translation', cards: 9, ms: 510000 },
+  ] }), base().sphereFor);
+  assert.deepEqual(timed.map((p) => [p.skillId, p.minutes]), [['s-spanish', 13], ['s-bio', 9]]);
+  const mixed = R.splitSitting(sitting({ cards: 23, minutes: 22, decks: [
+    { id: 'r-1', deck: 'd-es', cards: 14, ms: 780000 }, { id: 'r-2', deck: 'd-bio', cards: 9, ms: null },
+  ] }), base().sphereFor);
+  assert.deepEqual(mixed.map((p) => p.minutes), [13, 9], 'если у одной колоды нет времени — делим по карточкам');
+});
+
+test('разница после продолжения: свой ключ квеста, отметка с номером и итогами', () => {
+  const grown = sitting({ claimKey: 'visual|2026-10-01T10:22:00.000Z#1', seq: 1, cards: 15, minutes: 30,
+    totals: { 's-1': { cards: 25, ms: 2400000 } }, decks: [{ id: 's-1', deck: 'd-es', name: 'Descubrimiento', cards: 15, ms: 1800000 }] });
+  const result = R.plan([grown], base({ existingKeys: new Set(['visual|2026-10-01T10:22:00.000Z']) }));
+  assert.equal(result.drafts.length, 1, 'первая награда за ту же сессию не мешает награде за разницу');
+  assert.deepEqual([result.drafts[0].senkuKey, result.drafts[0].estimateMin, result.drafts[0].senkuCards], ['visual|2026-10-01T10:22:00.000Z#1', 30, 15]);
+  assert.deepEqual(result.claims, [{ key: 'visual|2026-10-01T10:22:00.000Z', seq: 1, totals: { 's-1': { cards: 25, ms: 2400000 } } }]);
+  const again = R.plan([grown], base({ existingKeys: new Set(['visual|2026-10-01T10:22:00.000Z#1']) }));
+  assert.equal(again.drafts.length, 0);
+  assert.equal(R.plan([sitting({ claimKey: 'voice|2026-01-01T00:00:00.000Z#1' })], base()).claims.length, 0, 'чужой ключ разницы отбрасывается');
 });
