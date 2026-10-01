@@ -7645,7 +7645,7 @@ const State = {
   _shelfPendingSource: null, _shelfNoteDraft: '',
   boardMedia: null, _boardMediaLoadError: '', _boardMediaBusy: false, _boardBusy: false, _boardError: '', _boardFocusAfterCommit: '',
   _boardComplete: null, _boardV2Receipt: null, _boardWildcardChoice: '',
-  strava: null, _stravaSyncing: false, senku: null, _senkuDay: null, _senkuDayLoading: false, _senkuConfirmOff: false, _senkuMessage: '',
+  strava: null, _stravaSyncing: false, senku: null, _senkuDay: null, _senkuDayLoading: false, _senkuConfirmOff: false, _senkuMessage: '', _senkuDecks: null, _senkuRewardBusy: false, _senkuRewardCheckedAt: 0,
   chatLog: [], _chatBusy: false,
   leaderboard: null, _lbLoading: false, _lbError: '', party: null, _partyLoading: false, _partyError: '', _partyEntryMode: '',
   socialPrivacy: null, _socialBusy: '', _socialError: '', _socialFocusAfterCommit: '',
@@ -16097,7 +16097,7 @@ async function stravaSync() {
 // ============================================================
 const SENKU_COPY = {
   ru: {
-    intro: 'Покажет на «Сегодня», сколько карточек ты повторил в Senku. Только факты: XP, золото и отметки привычек отсюда не начисляются.',
+    intro: 'Покажет на «Сегодня», сколько карточек ты повторил в Senku, и превратит каждую законченную сессию в выполненный квест с XP и золотом в сфере колоды.',
     address: 'Адрес Senku', key: 'Ключ из Senku', keyPlaceholder: 'Вставь ключ целиком',
     keyHint: 'Ключ выдаётся в Senku: Аккаунт → Satoru → «Выдать ключ». Satoru хранит его только на своём сервере и больше нигде не показывает.',
     connect: 'Подключить', connecting: 'Проверяю ключ…', connectedToast: 'Senku подключён', connected: 'Подключено',
@@ -16106,7 +16106,7 @@ const SENKU_COPY = {
     reconnectTitle: 'Ключ Senku больше не действует',
     reconnectText: 'Его отозвали или выпустили новый. Выдай ключ в Senku заново и вставь его сюда.',
     reconnect: 'Переподключить', refresh: 'Обновить', disconnect: 'Отключить',
-    disconnectAsk: 'Отключить Senku? Ключ и загруженные сессии удалятся из Satoru. В Senku ничего не изменится — отозвать ключ совсем можно там.',
+    disconnectAsk: 'Отключить Senku? Ключ и загруженные сессии удалятся из Satoru, уже засчитанные квесты останутся. В Senku ничего не изменится — отозвать ключ совсем можно там.',
     disconnectYes: 'Да, отключить', cancel: 'Отмена', disconnectedToast: 'Senku отключён', loading: 'Загрузка…',
     loadFailed: 'Не удалось загрузить состояние Senku. Проверь соединение.',
     errors: {
@@ -16121,10 +16121,22 @@ const SENKU_COPY = {
     empty: 'Senku: сегодня повторений пока нет', dead: 'Senku: ключ больше не действует',
     voice: 'Голосом', visual: 'Глазами', open: 'ещё идёт', untrusted: 'длительность не учтена', min: 'мин',
     cards: (n) => `${n} ${senkuPlural(n, ['карточка', 'карточки', 'карточек', 'карточки'])}`,
-    noDeck: 'Колода без названия', factsOnly: 'Факты из Senku — без XP и наград.', updated: (time) => `обновлено в ${time}`,
+    noDeck: 'Колода без названия', updated: (time) => `обновлено в ${time}`,
+    rewardsOn: (since) => `Награды: каждая законченная сессия${since ? ` с ${since}` : ''} — выполненный квест с обычной наградой. Сессии до подключения не засчитываются.`,
+    aiToggle: 'Подбирать сферу новой колоды с помощью ИИ',
+    aiNote: 'Название колоды и папок увидит ИИ-сервис (твой ключ или Pro). Без этого сфера подбирается по названиям и истории квестов.',
+    aiUnavailable: 'ИИ сейчас недоступен: добавь ключ в карточке ИИ выше или оформи Pro. Пока сфера подбирается по названиям.',
+    defaultSphere: 'Сфера, если колода не распознана', decksTitle: (n) => `Колоды и сферы (${n})`,
+    decksNote: 'Новый выбор действует для следующих сессий. Сферу уже засчитанного квеста можно поменять в самом квесте.',
+    sphereFor: (label) => `Сфера для колоды ${label}`,
+    by: { ai: 'ИИ', name: 'по названию', history: 'по истории квестов', manual: 'вручную', default: 'по умолчанию' },
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${senkuPlural(count, ['квест', 'квеста', 'квестов', 'квеста'])}`,
+    rewarded: 'квест засчитан', waiting: 'награда в пути', beforeConnect: 'до подключения — без награды',
+    factsNote: 'Законченные сессии после подключения становятся выполненными квестами.',
+    setupTitle: 'Senku теперь даёт награды', setupText: 'Каждая законченная сессия после подключения станет выполненным квестом с XP и золотом в сфере колоды. Как подбирать сферу колоды?', setupAi: 'С помощью ИИ', setupNames: 'Только по названиям',
   },
   uk: {
-    intro: 'Покаже на «Сьогодні», скільки карток ти повторив у Senku. Лише факти: XP, золото й позначки звичок звідси не нараховуються.',
+    intro: 'Покаже на «Сьогодні», скільки карток ти повторив у Senku, і перетворить кожну завершену сесію на виконаний квест з XP і золотом у сфері колоди.',
     address: 'Адреса Senku', key: 'Ключ із Senku', keyPlaceholder: 'Встав ключ повністю',
     keyHint: 'Ключ видається в Senku: Акаунт → Satoru → «Видати ключ». Satoru зберігає його лише на своєму сервері й більше ніде не показує.',
     connect: 'Підключити', connecting: 'Перевіряю ключ…', connectedToast: 'Senku підключено', connected: 'Підключено',
@@ -16133,7 +16145,7 @@ const SENKU_COPY = {
     reconnectTitle: 'Ключ Senku більше не діє',
     reconnectText: 'Його відкликали або випустили новий. Видай ключ у Senku знову й встав його сюди.',
     reconnect: 'Перепідключити', refresh: 'Оновити', disconnect: 'Відключити',
-    disconnectAsk: 'Відключити Senku? Ключ і завантажені сесії видаляться із Satoru. У Senku нічого не зміниться — відкликати ключ зовсім можна там.',
+    disconnectAsk: 'Відключити Senku? Ключ і завантажені сесії видаляться із Satoru, уже зараховані квести залишаться. У Senku нічого не зміниться — відкликати ключ зовсім можна там.',
     disconnectYes: 'Так, відключити', cancel: 'Скасувати', disconnectedToast: 'Senku відключено', loading: 'Завантаження…',
     loadFailed: 'Не вдалося завантажити стан Senku. Перевір з’єднання.',
     errors: {
@@ -16148,10 +16160,22 @@ const SENKU_COPY = {
     empty: 'Senku: сьогодні повторень поки немає', dead: 'Senku: ключ більше не діє',
     voice: 'Голосом', visual: 'Очима', open: 'ще триває', untrusted: 'тривалість не враховано', min: 'хв',
     cards: (n) => `${n} ${senkuPlural(n, ['картка', 'картки', 'карток', 'картки'])}`,
-    noDeck: 'Колода без назви', factsOnly: 'Факти із Senku — без XP і нагород.', updated: (time) => `оновлено о ${time}`,
+    noDeck: 'Колода без назви', updated: (time) => `оновлено о ${time}`,
+    rewardsOn: (since) => `Нагороди: кожна завершена сесія${since ? ` з ${since}` : ''} — виконаний квест зі звичайною нагородою. Сесії до підключення не зараховуються.`,
+    aiToggle: 'Добирати сферу нової колоди за допомогою ШІ',
+    aiNote: 'Назву колоди й тек побачить ШІ-сервіс (твій ключ або Pro). Без цього сфера добирається за назвами та історією квестів.',
+    aiUnavailable: 'ШІ зараз недоступний: додай ключ у картці ШІ вище або оформи Pro. Поки сфера добирається за назвами.',
+    defaultSphere: 'Сфера, якщо колоду не розпізнано', decksTitle: (n) => `Колоди та сфери (${n})`,
+    decksNote: 'Новий вибір діє для наступних сесій. Сферу вже зарахованого квесту можна змінити в самому квесті.',
+    sphereFor: (label) => `Сфера для колоди ${label}`,
+    by: { ai: 'ШІ', name: 'за назвою', history: 'за історією квестів', manual: 'вручну', default: 'за замовчуванням' },
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${senkuPlural(count, ['квест', 'квести', 'квестів', 'квесту'])}`,
+    rewarded: 'квест зараховано', waiting: 'нагорода в дорозі', beforeConnect: 'до підключення — без нагороди',
+    factsNote: 'Завершені сесії після підключення стають виконаними квестами.',
+    setupTitle: 'Senku тепер дає нагороди', setupText: 'Кожна завершена сесія після підключення стане виконаним квестом з XP і золотом у сфері колоди. Як добирати сферу колоди?', setupAi: 'За допомогою ШІ', setupNames: 'Лише за назвами',
   },
   en: {
-    intro: 'Shows on Today how many cards you reviewed in Senku. Facts only: no XP, gold or habit marks come from here.',
+    intro: "Shows on Today how many cards you reviewed in Senku and turns every finished session into a completed quest with XP and gold in the deck's area.",
     address: 'Senku address', key: 'Key from Senku', keyPlaceholder: 'Paste the whole key',
     keyHint: 'Senku issues the key: Account → Satoru → “Issue key”. Satoru keeps it on its server only and never shows it again.',
     connect: 'Connect', connecting: 'Checking the key…', connectedToast: 'Senku connected', connected: 'Connected',
@@ -16160,7 +16184,7 @@ const SENKU_COPY = {
     reconnectTitle: 'The Senku key no longer works',
     reconnectText: 'It was revoked or replaced. Issue a key in Senku again and paste it here.',
     reconnect: 'Reconnect', refresh: 'Refresh', disconnect: 'Disconnect',
-    disconnectAsk: 'Disconnect Senku? The key and the loaded sessions are removed from Satoru. Nothing changes in Senku — revoke the key there to end access completely.',
+    disconnectAsk: 'Disconnect Senku? The key and the loaded sessions are removed from Satoru; quests already counted stay. Nothing changes in Senku — revoke the key there to end access completely.',
     disconnectYes: 'Yes, disconnect', cancel: 'Cancel', disconnectedToast: 'Senku disconnected', loading: 'Loading…',
     loadFailed: 'Could not load the Senku state. Check your connection.',
     errors: {
@@ -16175,10 +16199,22 @@ const SENKU_COPY = {
     empty: 'Senku: no reviews yet today', dead: 'Senku: the key no longer works',
     voice: 'By voice', visual: 'By eye', open: 'still running', untrusted: 'duration not counted', min: 'min',
     cards: (n) => `${n} ${n === 1 ? 'card' : 'cards'}`,
-    noDeck: 'Untitled deck', factsOnly: 'Facts from Senku — no XP or rewards.', updated: (time) => `updated at ${time}`,
+    noDeck: 'Untitled deck', updated: (time) => `updated at ${time}`,
+    rewardsOn: (since) => `Rewards: every finished session${since ? ` since ${since}` : ''} becomes a completed quest with the usual reward. Sessions before connecting do not count.`,
+    aiToggle: 'Pick the area of a new deck with AI',
+    aiNote: 'The AI service will see deck and folder names (your key or Pro). Without it the area is picked from names and your quest history.',
+    aiUnavailable: 'AI is not available right now: add a key in the AI card above or get Pro. Until then the area is picked from names.',
+    defaultSphere: 'Area when a deck is not recognised', decksTitle: (n) => `Decks and areas (${n})`,
+    decksNote: 'A new choice applies to the next sessions. Change the area of an already rewarded quest in the quest itself.',
+    sphereFor: (label) => `Area for deck ${label}`,
+    by: { ai: 'AI', name: 'by name', history: 'by quest history', manual: 'manual', default: 'default' },
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${count === 1 ? 'quest' : 'quests'}`,
+    rewarded: 'quest counted', waiting: 'reward on its way', beforeConnect: 'before connecting — no reward',
+    factsNote: 'Finished sessions after connecting become completed quests.',
+    setupTitle: 'Senku now earns rewards', setupText: 'Every finished session after connecting becomes a completed quest with XP and gold in the deck’s area. How should the area of a deck be picked?', setupAi: 'With AI', setupNames: 'By names only',
   },
   de: {
-    intro: 'Zeigt auf „Heute“, wie viele Karten du in Senku wiederholt hast. Nur Fakten: XP, Gold und Gewohnheits-Häkchen kommen nicht von hier.',
+    intro: 'Zeigt auf „Heute“, wie viele Karten du in Senku wiederholt hast, und macht aus jeder beendeten Sitzung eine erledigte Quest mit XP und Gold im Bereich des Stapels.',
     address: 'Senku-Adresse', key: 'Schlüssel aus Senku', keyPlaceholder: 'Ganzen Schlüssel einfügen',
     keyHint: 'Senku stellt den Schlüssel aus: Konto → Satoru → „Schlüssel ausstellen“. Satoru speichert ihn nur auf seinem Server und zeigt ihn nie wieder an.',
     connect: 'Verbinden', connecting: 'Schlüssel wird geprüft…', connectedToast: 'Senku verbunden', connected: 'Verbunden',
@@ -16187,7 +16223,7 @@ const SENKU_COPY = {
     reconnectTitle: 'Der Senku-Schlüssel gilt nicht mehr',
     reconnectText: 'Er wurde widerrufen oder ersetzt. Stelle in Senku einen neuen aus und füge ihn hier ein.',
     reconnect: 'Neu verbinden', refresh: 'Aktualisieren', disconnect: 'Trennen',
-    disconnectAsk: 'Senku trennen? Schlüssel und geladene Sitzungen werden aus Satoru gelöscht. In Senku ändert sich nichts — dort kannst du den Schlüssel ganz widerrufen.',
+    disconnectAsk: 'Senku trennen? Schlüssel und geladene Sitzungen werden aus Satoru gelöscht, schon gezählte Quests bleiben. In Senku ändert sich nichts — dort kannst du den Schlüssel ganz widerrufen.',
     disconnectYes: 'Ja, trennen', cancel: 'Abbrechen', disconnectedToast: 'Senku getrennt', loading: 'Wird geladen…',
     loadFailed: 'Der Senku-Status konnte nicht geladen werden. Prüfe die Verbindung.',
     errors: {
@@ -16202,10 +16238,22 @@ const SENKU_COPY = {
     empty: 'Senku: heute noch keine Wiederholungen', dead: 'Senku: der Schlüssel gilt nicht mehr',
     voice: 'Per Stimme', visual: 'Mit den Augen', open: 'läuft noch', untrusted: 'Dauer nicht gezählt', min: 'Min.',
     cards: (n) => `${n} ${n === 1 ? 'Karte' : 'Karten'}`,
-    noDeck: 'Stapel ohne Namen', factsOnly: 'Fakten aus Senku — ohne XP und Belohnungen.', updated: (time) => `aktualisiert um ${time}`,
+    noDeck: 'Stapel ohne Namen', updated: (time) => `aktualisiert um ${time}`,
+    rewardsOn: (since) => `Belohnungen: Jede beendete Sitzung${since ? ` seit ${since}` : ''} wird eine erledigte Quest mit der üblichen Belohnung. Sitzungen vor dem Verbinden zählen nicht.`,
+    aiToggle: 'Bereich eines neuen Stapels per KI wählen',
+    aiNote: 'Der KI-Dienst sieht Stapel- und Ordnernamen (dein Schlüssel oder Pro). Ohne KI wird der Bereich nach Namen und deinem Quest-Verlauf gewählt.',
+    aiUnavailable: 'KI ist gerade nicht verfügbar: Füge oben in der KI-Karte einen Schlüssel hinzu oder hol dir Pro. Bis dahin wird nach Namen gewählt.',
+    defaultSphere: 'Bereich, wenn ein Stapel nicht erkannt wird', decksTitle: (n) => `Stapel und Bereiche (${n})`,
+    decksNote: 'Eine neue Wahl gilt für die nächsten Sitzungen. Den Bereich einer schon belohnten Quest änderst du in der Quest selbst.',
+    sphereFor: (label) => `Bereich für Stapel ${label}`,
+    by: { ai: 'KI', name: 'nach Name', history: 'nach Quest-Verlauf', manual: 'manuell', default: 'Standard' },
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${count === 1 ? 'Quest' : 'Quests'}`,
+    rewarded: 'Quest gezählt', waiting: 'Belohnung unterwegs', beforeConnect: 'vor dem Verbinden — ohne Belohnung',
+    factsNote: 'Beendete Sitzungen nach dem Verbinden werden zu erledigten Quests.',
+    setupTitle: 'Senku bringt jetzt Belohnungen', setupText: 'Jede beendete Sitzung nach dem Verbinden wird eine erledigte Quest mit XP und Gold im Bereich des Stapels. Wie soll der Bereich eines Stapels gewählt werden?', setupAi: 'Mit KI', setupNames: 'Nur nach Namen',
   },
   es: {
-    intro: 'Muestra en «Hoy» cuántas tarjetas repasaste en Senku. Solo datos: de aquí no salen XP, oro ni marcas de hábitos.',
+    intro: 'Muestra en «Hoy» cuántas tarjetas repasaste en Senku y convierte cada sesión terminada en una misión completada con XP y oro en el área del mazo.',
     address: 'Dirección de Senku', key: 'Clave de Senku', keyPlaceholder: 'Pega la clave completa',
     keyHint: 'Senku emite la clave: Cuenta → Satoru → «Emitir clave». Satoru la guarda solo en su servidor y no vuelve a mostrarla.',
     connect: 'Conectar', connecting: 'Comprobando la clave…', connectedToast: 'Senku conectado', connected: 'Conectado',
@@ -16214,7 +16262,7 @@ const SENKU_COPY = {
     reconnectTitle: 'La clave de Senku ya no funciona',
     reconnectText: 'Se revocó o se emitió otra. Emite una clave nueva en Senku y pégala aquí.',
     reconnect: 'Reconectar', refresh: 'Actualizar', disconnect: 'Desconectar',
-    disconnectAsk: '¿Desconectar Senku? La clave y las sesiones cargadas se borran de Satoru. En Senku no cambia nada: allí puedes revocar la clave del todo.',
+    disconnectAsk: '¿Desconectar Senku? La clave y las sesiones cargadas se borran de Satoru; las misiones ya contadas se quedan. En Senku no cambia nada: allí puedes revocar la clave del todo.',
     disconnectYes: 'Sí, desconectar', cancel: 'Cancelar', disconnectedToast: 'Senku desconectado', loading: 'Cargando…',
     loadFailed: 'No se pudo cargar el estado de Senku. Revisa la conexión.',
     errors: {
@@ -16229,7 +16277,19 @@ const SENKU_COPY = {
     empty: 'Senku: hoy todavía no hay repasos', dead: 'Senku: la clave ya no funciona',
     voice: 'Por voz', visual: 'A la vista', open: 'sigue en curso', untrusted: 'duración no contada', min: 'min',
     cards: (n) => `${n} ${n === 1 ? 'tarjeta' : 'tarjetas'}`,
-    noDeck: 'Mazo sin nombre', factsOnly: 'Datos de Senku, sin XP ni recompensas.', updated: (time) => `actualizado a las ${time}`,
+    noDeck: 'Mazo sin nombre', updated: (time) => `actualizado a las ${time}`,
+    rewardsOn: (since) => `Recompensas: cada sesión terminada${since ? ` desde el ${since}` : ''} se convierte en una misión completada con la recompensa habitual. Las sesiones anteriores a la conexión no cuentan.`,
+    aiToggle: 'Elegir el área de un mazo nuevo con IA',
+    aiNote: 'El servicio de IA verá los nombres de mazos y carpetas (tu clave o Pro). Sin IA, el área se elige por los nombres y tu historial de misiones.',
+    aiUnavailable: 'La IA no está disponible ahora: añade una clave en la tarjeta de IA de arriba o hazte Pro. Mientras tanto se elige por los nombres.',
+    defaultSphere: 'Área si no se reconoce el mazo', decksTitle: (n) => `Mazos y áreas (${n})`,
+    decksNote: 'Una nueva elección se aplica a las próximas sesiones. El área de una misión ya recompensada se cambia en la propia misión.',
+    sphereFor: (label) => `Área del mazo ${label}`,
+    by: { ai: 'IA', name: 'por nombre', history: 'por historial', manual: 'manual', default: 'por defecto' },
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${count === 1 ? 'misión' : 'misiones'}`,
+    rewarded: 'misión contada', waiting: 'recompensa en camino', beforeConnect: 'antes de conectar: sin recompensa',
+    factsNote: 'Las sesiones terminadas después de conectar se convierten en misiones completadas.',
+    setupTitle: 'Senku ya da recompensas', setupText: 'Cada sesión terminada después de conectar se convierte en una misión completada con XP y oro en el área del mazo. ¿Cómo elegir el área de un mazo?', setupAi: 'Con IA', setupNames: 'Solo por nombres',
   },
 };
 const SENKU_DAY_REFRESH_MS = 3 * 60 * 1000;
@@ -16271,7 +16331,7 @@ function ensureSenkuDay({ force = false } = {}) {
   State._senkuDayLoading = true;
   const query = new URLSearchParams({ from: bounds.from, to: bounds.to }); if (force) query.set('refresh', '1');
   fetch(`/api/bridge/senku/day?${query}`).then((r) => r.ok ? r.json() : Promise.reject(new Error('day failed')))
-    .then((d) => { State.senku = senkuStatusPart(d); State._senkuDay = { day: bounds.day, loadedAt: Date.now(), view: d.day || null }; })
+    .then((d) => { State.senku = senkuStatusPart(d); State._senkuDay = { day: bounds.day, loadedAt: Date.now(), view: d.day || null }; senkuImportRewards(); })
     .catch(() => { State._senkuDay = { day: bounds.day, loadedAt: Date.now(), view: cached && cached.day === bounds.day ? cached.view : null, failed: true }; })
     .finally(() => { State._senkuDayLoading = false; if (State.view === 'today' || State.view === 'settings') render(); });
 }
@@ -16308,7 +16368,7 @@ function senkuCard() {
   const retry = s.lastError && s.retryAt ? `<p class="muted senku-hint">${esc(c.retry(senkuTime(s.retryAt)))}</p>` : '';
   return `<div class="card senku-card">${head}
     <p class="senku-status"><b>${esc(c.connected)}</b> · ${esc(senkuHost(s.baseUrl))} · ${esc(c.keyWord)} <span class="senku-mask">${esc(s.keyMask || '••••')}</span> · ${esc(c.lastExchange)}: ${esc(last)}</p>
-    <p class="muted senku-hint">${esc(c.intro)}</p>${retry}${message}${confirmOff}</div>`;
+    <p class="muted senku-hint">${esc(c.intro)}</p>${retry}${senkuRewardsSettingsHTML(s, c)}${message}${confirmOff}</div>`;
 }
 function senkuTodayHTML() {
   const s = State.senku;
@@ -16320,17 +16380,25 @@ function senkuTodayHTML() {
       <button type="button" class="btn ghost sm" data-action="senku-open-settings">${esc(c.reconnect)}</button></div>`;
   }
   const view = State._senkuDay && State._senkuDay.day === todayStr() ? State._senkuDay.view : null;
-  if (!view) return '';
-  if (!view.sessions.length) return `<div class="card senku-today senku-today--empty"><span>${head} ${esc(c.empty)}</span></div>`;
+  const setup = senkuSettings().setup === true ? '' : `<section class="card senku-setup" aria-labelledby="senku-setup-title">
+      <h3 id="senku-setup-title">${head} ${esc(c.setupTitle)}</h3><p>${esc(c.setupText)}</p>
+      <div class="settings-actions"><button type="button" class="btn" data-action="senku-setup-ai">${esc(c.setupAi)}</button>
+        <button type="button" class="btn ghost" data-action="senku-setup-names">${esc(c.setupNames)}</button></div>
+      <p class="muted senku-hint">${esc(c.aiNote)}</p>
+      <label class="senku-field"><span>${esc(c.defaultSphere)}</span><select data-action="senku-default-sphere">${senkuSphereList().map((sphere) =>
+        `<option value="${esc(sphere.id)}" ${sphere.id === senkuDefaultSkillId() ? 'selected' : ''}>${esc(sphere.path.join(' › '))}</option>`).join('')}</select></label></section>`;
+  if (!view) return setup;
+  if (!view.sessions.length) return `${setup}<div class="card senku-today senku-today--empty"><span>${head} ${esc(c.empty)}</span></div>`;
   const rows = view.sessions.map((one) => {
     const time = one.open ? `${senkuTime(one.startedAt)} — ${c.open}` : `${senkuTime(one.startedAt)}–${senkuTime(one.endedAt)}`;
     const length = one.open ? '' : one.durationTrusted ? ` · ${one.minutes} ${c.min}` : ` · ${c.untrusted}`;
     const decks = one.decks.map((deck) => `<li><span class="senku-deck">${esc([...(deck.folder || []), deck.name || c.noDeck].join(' › '))}</span><span class="senku-deck-cards">${deck.cards}</span></li>`).join('');
-    return `<li class="senku-session"><p><b>${esc(time)}</b> · ${esc(one.kind === 'voice' ? c.voice : c.visual)}${esc(length)} · ${esc(c.cards(one.cards))}</p><ul class="senku-decks">${decks}</ul></li>`;
+    const reward = one.claimed ? c.rewarded : one.rewardable ? c.waiting : !one.open && one.durationTrusted && s.rewardsFrom && Date.parse(one.startedAt) < Date.parse(s.rewardsFrom) ? c.beforeConnect : '';
+    return `<li class="senku-session"><p><b>${esc(time)}</b> · ${esc(one.kind === 'voice' ? c.voice : c.visual)}${esc(length)} · ${esc(c.cards(one.cards))}${reward ? ` · <span class="senku-reward${one.claimed ? ' is-done' : ''}">${esc(reward)}</span>` : ''}</p><ul class="senku-decks">${decks}</ul></li>`;
   }).join('');
   const updated = s.lastExchangeAt ? ` · ${c.updated(senkuTime(s.lastExchangeAt))}` : '';
-  return `<details class="card senku-today"><summary><span>${head} ${esc(c.line(view.cards, view.minutes, view.voiceCards))}</span>${satoruIconHTML('action.expand', 'senku-chevron', '')}</summary>
-    <div class="senku-today-body"><ul class="senku-sessions">${rows}</ul><p class="muted senku-hint">${esc(c.factsOnly + updated)}</p></div></details>`;
+  return `${setup}<details class="card senku-today"><summary><span>${head} ${esc(c.line(view.cards, view.minutes, view.voiceCards))}</span>${satoruIconHTML('action.expand', 'senku-chevron', '')}</summary>
+    <div class="senku-today-body"><ul class="senku-sessions">${rows}</ul><p class="muted senku-hint">${esc(c.factsNote + updated)}</p></div></details>`;
 }
 async function senkuConnect(form) {
   const c = senkuCopy();
@@ -16344,7 +16412,7 @@ async function senkuConnect(form) {
     const d = await r.json().catch(() => ({}));
     if (!r.ok || d.connected !== true) { State._senkuMessage = c.errors[d.error] || c.errors.other; render(); return; }
     form.key.value = ''; form.dataset.persisted = 'true';
-    State.senku = senkuStatusPart(d); State._senkuDay = null; State._senkuConfirmOff = false;
+    State.senku = senkuStatusPart(d); State._senkuDay = null; State._senkuConfirmOff = false; State._senkuDecks = null; State._senkuRewardCheckedAt = 0;
     toast(c.connectedToast); render();
   } catch { State._senkuMessage = c.errors.other; render(); }
   finally { if (submit && submit.isConnected) { submit.disabled = false; submit.textContent = label; } }
@@ -16355,10 +16423,167 @@ async function senkuDisconnect() {
     const r = await fetch('/api/bridge/senku/disconnect', { method: 'POST' });
     if (r.status === 401) { handleAccountSessionExpired(); return; }
     if (!r.ok) throw new Error('disconnect failed');
-    State.senku = senkuStatusPart(await r.json()); State._senkuDay = null; State._senkuConfirmOff = false; State._senkuMessage = '';
+    State.senku = senkuStatusPart(await r.json()); State._senkuDay = null; State._senkuConfirmOff = false; State._senkuMessage = ''; State._senkuDecks = null;
     toast(c.disconnectedToast);
   } catch { State._senkuMessage = c.errors.other; }
   render();
+}
+// ---- Senku фаза 2 (решение владельца 01.10): законченная сессия после подключения → выполненный
+// квест с обычной наградой в сфере колоды. XP и золото считает itemXp/itemGold, запись — обычная
+// запись квестов; сервер только помнит, какие сессии уже вознаграждены (claim).
+function senkuSettings() {
+  const s = State.settings && State.settings.senku;
+  return s && typeof s === 'object' && !Array.isArray(s) ? s : {};
+}
+function senkuSphereList() {
+  return pickerVisibleSkills().map((skill) => ({ id: String(skill.id), name: skill.name, path: skillLabel(skill.id).split(' › ') }));
+}
+function senkuSphereIds() { return new Set(pickerVisibleSkills().map((skill) => String(skill.id))); }
+function senkuDefaultSkillId() {
+  const visible = pickerVisibleSkills(); const ids = senkuSphereIds();
+  const chosen = senkuSettings().defaultSkillId;
+  if (chosen && ids.has(chosen)) return chosen;
+  const study = /уч[её]б|study|learn|язык|language|школ|универ|lern|studi|estudi|навчан|освіт|educ|bildung/i;
+  const found = visible.find((skill) => study.test(skill.name)) || leafSkills().find((skill) => ids.has(String(skill.id))) || visible[0];
+  return found ? String(found.id) : '';
+}
+function senkuMappedSkill(deckId) {
+  const row = deckId && senkuSettings().decks && senkuSettings().decks[deckId];
+  return row && senkuSphereIds().has(row.skillId) ? row.skillId : '';
+}
+async function senkuSaveSettings(change) {
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  return Store.updateNow('settings', (settings) => {
+    const next = structuredClone(settings);
+    const senku = next.senku && typeof next.senku === 'object' && !Array.isArray(next.senku) ? next.senku : {};
+    next.senku = change(Object.assign({ decks: {} }, senku, { decks: Object.assign({}, senku.decks) }));
+    return next;
+  }, (committed) => { if (!current()) return false; State.settings = committed; return true; });
+}
+// Сфера для каждой колоды: запомненный выбор → ИИ (только с согласия) → названия/история → по умолчанию.
+// Запоминаются только найденные соответствия: «по умолчанию» не фиксируется, чтобы ИИ или
+// ручной выбор позже могли его заменить для следующих сессий.
+async function senkuAssignSpheres(decks) {
+  const spheres = senkuSphereList(); const assigned = {}; const fresh = [];
+  for (const deck of decks) {
+    const mapped = senkuMappedSkill(deck.deck);
+    if (mapped) assigned[deck.deck] = mapped; else if (deck.deck) fresh.push(deck);
+  }
+  if (!fresh.length || !spheres.length) return assigned;
+  const found = {};
+  if (senkuSettings().aiSpheres === true) {
+    await ensureAiKeys();
+    if (canUseAi()) {
+      const ask = window.SenkuRewardsV1.aiRequest(fresh, spheres);
+      const out = await aiSurfaceRun('senku', async (signal) => {
+        const response = await fetch('/api/ai/analyze', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ provider: aiProvider(), system: ask.system, prompt: ask.prompt }) });
+        return { ok: response.ok, data: response.ok ? await response.json() : null };
+      });
+      // Таймаут, отмена или сбой ИИ не мешают награде: колода уйдёт по названию или в сферу по умолчанию.
+      if (out.status === 'done' && out.value && out.value.ok) {
+        const map = window.SenkuRewardsV1.parseAi(out.value.data && out.value.data.text, fresh.map((deck) => deck.deck), spheres.map((sphere) => sphere.id));
+        for (const [deckId, skillId] of Object.entries(map)) found[deckId] = { skillId, by: 'ai' };
+      }
+    }
+  }
+  for (const deck of fresh) {
+    if (found[deck.deck]) continue;
+    const byName = window.SenkuRewardsV1.guessByName(deck, spheres);
+    if (byName) { found[deck.deck] = { skillId: byName, by: 'name' }; continue; }
+    const history = deck.name ? guessCategoryFromHistory(deck.name) : null;
+    if (history && senkuSphereIds().has(String(history.skillId))) found[deck.deck] = { skillId: String(history.skillId), by: 'history' };
+  }
+  if (Object.keys(found).length) {
+    await senkuSaveSettings((senku) => { for (const [deckId, row] of Object.entries(found)) if (!senku.decks[deckId]) senku.decks[deckId] = row; return senku; });
+  }
+  for (const [deckId, row] of Object.entries(found)) assigned[deckId] = row.skillId;
+  return assigned;
+}
+function senkuQuestTitle(draft) {
+  const c = senkuCopy(); const names = draft.senkuDecks || [];
+  const shown = names.length ? names.slice(0, 2).join(', ') + (names.length > 2 ? ` +${names.length - 2}` : '') : c.noDeck;
+  return `Senku: ${shown} — ${c.cards(draft.senkuCards)}`.slice(0, 160);
+}
+async function senkuImportRewards({ force = false } = {}) {
+  const s = State.senku;
+  if (State._senkuRewardBusy || State._tasksLoadError || !window.SenkuRewardsV1 || !s || s.connected !== true || s.state === 'reconnect') return;
+  // Первое начисление — только после разового выбора, как подбирать сферу (это и согласие на ИИ):
+  // иначе накопленные с подключения сессии ушли бы в сферу по умолчанию раньше, чем человек решил.
+  if (senkuSettings().setup !== true) return;
+  if (!force && Date.now() - (State._senkuRewardCheckedAt || 0) < SENKU_DAY_REFRESH_MS) return;
+  State._senkuRewardBusy = true; State._senkuRewardCheckedAt = Date.now();
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  try {
+    const response = await fetch('/api/bridge/senku/pending');
+    if (!response.ok) return;
+    const data = await response.json();
+    if (!current() || data.connected !== true || !Array.isArray(data.sittings) || !data.sittings.length) return;
+    const decks = [...new Map(data.sittings.flatMap((one) => one.decks || []).filter((deck) => deck.deck).map((deck) => [deck.deck, deck])).values()];
+    const assigned = await senkuAssignSpheres(decks);
+    const fallback = senkuDefaultSkillId();
+    if (!fallback || !current()) return;
+    const sphereFor = (deck) => (deck.deck && assigned[deck.deck]) || fallback;
+    let made = []; let keys = [];
+    const saved = await Store.updateNow('tasks', (tasks) => {
+      const list = Array.isArray(tasks) ? tasks : [];
+      const existing = new Set(list.map((task) => task && task.senkuKey).filter(Boolean));
+      const planned = window.SenkuRewardsV1.plan(data.sittings, { sphereFor, existingKeys: existing, newId: uid,
+        dateOf: (iso) => fmtDate(new Date(iso)), nowIso: new Date().toISOString() });
+      keys = planned.keys;
+      made = planned.drafts.map((draft) => {
+        const task = Object.assign({}, draft, { title: senkuQuestTitle(draft), iconId: 'media.notes' });
+        task.xpAwarded = Math.max(1, itemXp(task)); task.goldAwarded = itemGold(task);
+        return task;
+      });
+      return made.length ? list.concat(made) : undefined;
+    }, (committed) => { if (!current()) return false; State.tasks = committed; return true; });
+    if (!current() || (made.length && !saved) || !keys.length) return;
+    // Награда уже на диске: только теперь сессии отмечаются на сервере. Если отметка не дойдёт,
+    // следующий заход найдёт квест по senkuKey и отметит без второй награды.
+    await fetch('/api/bridge/senku/claim', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ keys }) }).catch(() => {});
+    if (made.length) {
+      checkAchievements(); publishLeaderboard();
+      const xp = made.reduce((sum, task) => sum + task.xpAwarded, 0), gold = made.reduce((sum, task) => sum + task.goldAwarded, 0);
+      toast(senkuCopy().rewardToast(made.length, xp, gold));
+      State._senkuDay = null;
+    }
+  } catch {}
+  finally { State._senkuRewardBusy = false; if (current() && (State.view === 'today' || State.view === 'settings')) render(); }
+}
+function ensureSenkuDecks() {
+  if (State._senkuDecks !== null || !State.senku || State.senku.connected !== true) return;
+  State._senkuDecks = [];
+  fetch('/api/bridge/senku/decks').then((r) => r.ok ? r.json() : Promise.reject(new Error('decks')))
+    .then((d) => { State._senkuDecks = Array.isArray(d.decks) ? d.decks : []; render(); })
+    .catch(() => { State._senkuDecks = []; });
+}
+function senkuRewardsSettingsHTML(s, c) {
+  ensureSenkuDecks();
+  const spheres = senkuSphereList(); const fallback = senkuDefaultSkillId(); const opts = (selected) => spheres.map((sphere) =>
+    `<option value="${esc(sphere.id)}" ${sphere.id === selected ? 'selected' : ''}>${esc(sphere.path.join(' › '))}</option>`).join('');
+  const since = s.rewardsFrom ? new Date(s.rewardsFrom).toLocaleDateString(senkuLocale(), { day: '2-digit', month: '2-digit' }) : '';
+  const decks = State._senkuDecks || [];
+  const rows = decks.map((deck) => {
+    const row = senkuSettings().decks && senkuSettings().decks[deck.deck];
+    const mapped = senkuMappedSkill(deck.deck);
+    const by = mapped ? c.by[row.by] || c.by.manual : c.by.default;
+    const label = [...(deck.folder || []), deck.name || c.noDeck].join(' › ');
+    return `<li class="senku-deck-row"><label><span class="senku-deck-name">${esc(label)}</span>
+      <select data-action="senku-deck-sphere" data-deck="${esc(deck.deck)}" aria-label="${esc(c.sphereFor(label))}">${opts(mapped || fallback)}</select></label>
+      <span class="senku-deck-by">${esc(by)}</span></li>`;
+  }).join('');
+  return `<div class="senku-rewards">
+    <p class="senku-hint">${esc(c.rewardsOn(since))}</p>
+    <label class="senku-check"><input type="checkbox" data-action="senku-ai-spheres" ${senkuSettings().aiSpheres === true ? 'checked' : ''} />
+      <span>${esc(c.aiToggle)}</span></label>
+    <p class="muted senku-hint">${esc(senkuSettings().aiSpheres === true && State.aiKeys && !canUseAi() ? c.aiUnavailable : c.aiNote)}</p>
+    <label class="senku-field"><span>${esc(c.defaultSphere)}</span><select data-action="senku-default-sphere">${opts(fallback)}</select></label>
+    ${decks.length ? `<details class="senku-decks-box"><summary>${esc(c.decksTitle(decks.length))}</summary>
+      <p class="muted senku-hint">${esc(c.decksNote)}</p><ul class="senku-deck-list">${rows}</ul></details>` : ''}
+  </div>`;
 }
 // ── Детектор развилки (DISCIPLINE-BOUNDARIES-PLAN §3–4) ───────────────────────
 // Болезнь одна — граница не определена; симптом у каждого свой. Поэтому система
@@ -16544,7 +16769,7 @@ function openAiModal(title, bodyHtml, loading) {
 // а поздний ответ мог заполнить уже другую форму или попасть к следующему аккаунту.
 // Теперь у поверхности не больше одного запроса. Новый запрос, закрытие окна, выход
 // из аккаунта или «Отменить запрос» прерывают прежний, и его ответ не показывается.
-const AI_SURFACE_TIMEOUT_MS = Object.freeze({ cat: 20000, stuck: 30000, dayrec: 90000, episode: 90000, propose: 120000, treemap: 90000, profile: 90000, onboard: 90000, moment: 8000, nudgeVoice: 20000 });
+const AI_SURFACE_TIMEOUT_MS = Object.freeze({ cat: 20000, senku: 30000, stuck: 30000, dayrec: 90000, episode: 90000, propose: 120000, treemap: 90000, profile: 90000, onboard: 90000, moment: 8000, nudgeVoice: 20000 });
 const AI_SURFACE_UI = Object.freeze({
   dayrec: { modal: 'dayrec-modal', result: 'dayrec-result', run: 'dayrec-run' },
   episode: { modal: 'ep-modal', result: 'ep-result', run: 'ep-run' },
@@ -32327,6 +32552,12 @@ async function onClick(e) {
   if (action === 'strava-connect') { window.location.href = '/api/strava/connect'; return; }
   if (action === 'strava-sync') { stravaSync(); return; }
   if (action === 'senku-refresh') { ensureSenkuDay({ force: true }); return; }
+  if (action === 'senku-setup-ai' || action === 'senku-setup-names') {
+    const ai = action === 'senku-setup-ai'; el.disabled = true;
+    const saved = await senkuSaveSettings((senku) => Object.assign(senku, { setup: true, aiSpheres: ai, defaultSkillId: senku.defaultSkillId || senkuDefaultSkillId() }));
+    if (!saved) { el.disabled = false; toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); return; }
+    render(); senkuImportRewards({ force: true }); return;
+  }
   if (action === 'senku-disconnect') { State._senkuConfirmOff = true; State._settingsFocusAfterCommit = '[data-action="senku-disconnect-cancel"]'; render(); return; }
   if (action === 'senku-disconnect-cancel') { State._senkuConfirmOff = false; State._settingsFocusAfterCommit = '[data-action="senku-disconnect"]'; render(); return; }
   if (action === 'senku-disconnect-confirm') { await senkuDisconnect(); return; }
@@ -34718,6 +34949,9 @@ function onChange(e) {
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; autosaveSettings(); toast(`🤖 ${t('ИИ по умолчанию')}: ${aiProviderLabel(el.value)}`); return; }
   if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; autosaveSettings(); return; }
+  if (a === 'senku-ai-spheres') { const on = !!el.checked; senkuSaveSettings((senku) => Object.assign(senku, { aiSpheres: on, setup: true })).then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); }); return; }
+  if (a === 'senku-default-sphere') { const value = el.value; senkuSaveSettings((senku) => Object.assign(senku, { defaultSkillId: value })).then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); }); return; }
+  if (a === 'senku-deck-sphere') { const deck = el.dataset.deck, value = el.value; if (!deck) return; senkuSaveSettings((senku) => { senku.decks[deck] = { skillId: value, by: 'manual' }; senku.setup = true; return senku; }).then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); }); return; }
   if (a === 'habit-atomic') { updateHabitAtomic(el.dataset.id, el.dataset.field, el.value); return; }
   if (a === 'save-identity') { State.settings.identityGoal = el.value.slice(0, 200); autosaveSettings(); return; }
   if (a === 'toggle-cat') {
@@ -35171,7 +35405,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v314';
+const PWA_CACHE_VERSION = 'satoru-v315';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

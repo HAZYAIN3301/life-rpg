@@ -22627,3 +22627,23 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 :root .reward-life-item input{min-height:44px;max-width:100%;min-width:0}
 :root .reward-life-actions{display:flex;flex-wrap:wrap;gap:8px}
 :root .reward-life button{min-height:44px}
+/* Senku phase 2: rewards settings (sphere per deck, AI consent) and the reward state of a sitting. */
+.senku-card .senku-rewards { display: grid; gap: var(--sp-2); margin-block: var(--sp-3) var(--sp-2); padding-block-start: var(--sp-3); border-block-start: 1px solid var(--line-soft); }
+.senku-card .senku-check { display: flex; align-items: flex-start; gap: var(--sp-2); min-height: var(--touch-min); font-size: var(--type-body); line-height: var(--leading-ui); cursor: pointer; }
+.senku-card .senku-check input { flex: 0 0 auto; width: 20px; height: 20px; margin-block-start: 2px; }
+.senku-card .senku-field select, .senku-card .senku-deck-row select { width: 100%; min-width: 0; min-height: var(--touch-min); font-size: var(--type-control); }
+.senku-card .senku-decks-box > summary { min-height: var(--touch-min); display: flex; align-items: center; cursor: pointer; font-size: var(--type-body); }
+.senku-card .senku-deck-list { list-style: none; margin: var(--sp-2) 0 0; padding: 0; display: grid; gap: var(--sp-3); }
+.senku-card .senku-deck-row > label { display: grid; gap: var(--sp-1); min-width: 0; }
+.senku-card .senku-deck-name { font-size: var(--type-meta); line-height: var(--leading-ui); color: var(--text-soft); overflow-wrap: anywhere; }
+.senku-card .senku-deck-by { display: block; margin-block-start: 2px; font-size: var(--type-meta); color: var(--text-soft); }
+.senku-today .senku-reward { color: var(--text-soft); }
+.senku-today .senku-reward.is-done { color: var(--good); font-weight: 600; }
+/* One-time Senku rewards choice on Today: shown until the person picks how decks find their area. */
+.senku-setup { display: grid; gap: var(--sp-2); }
+.senku-setup h3 { display: flex; align-items: center; gap: var(--sp-1); margin: 0; font-size: var(--type-heading); line-height: var(--leading-ui); }
+.senku-setup > p { margin: 0; font-size: var(--type-body); line-height: var(--leading-prose); max-inline-size: var(--measure-prose); }
+.senku-setup .senku-hint { font-size: var(--type-meta); line-height: var(--leading-ui); }
+.senku-setup .senku-field { display: grid; gap: var(--sp-1); min-width: 0; }
+.senku-setup .senku-field > span { font-size: var(--type-meta); color: var(--text-soft); }
+.senku-setup .senku-field select { width: 100%; min-width: 0; min-height: var(--touch-min); font-size: var(--type-control); }

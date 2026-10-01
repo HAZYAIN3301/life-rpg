@@ -389,6 +389,16 @@ test('сервер Satoru: подключение, «Сегодня», ключ 
     assert.equal(r.text.includes('Transkription'), false, 'названия колод не уезжают в экспорт');
     assert.ok(r.data.excludedSecrets.includes('senkuBridge'));
 
+    r = await c('/api/bridge/senku/pending');
+    assert.equal(r.status, 200, r.text);
+    assert.deepEqual(r.data.sittings, [], 'образец старше подключения — награды не ждёт');
+    assert.equal(r.text.includes(senku.key), false);
+    r = await c('/api/bridge/senku/claim', { method: 'POST', body: { keys: 'всё' } });
+    assert.deepEqual([r.status, r.data.error], [400, 'senku_claim_invalid']);
+    r = await c('/api/bridge/senku/decks');
+    assert.deepEqual(r.data.decks.map((d) => d.name).sort(), ['12.1 (2)', 'Transkription']);
+    assert.equal((await anon('/api/bridge/senku/pending')).status, 401);
+
     const file = path.join(satoru.dataDir, 'users', uid, 'senku-bridge.json');
     assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).connection.key, senku.key);
     r = await c('/api/bridge/senku/disconnect', { method: 'POST' });
@@ -403,17 +413,69 @@ test('сервер Satoru: подключение, «Сегодня», ключ 
   }
 });
 
-test('клиент: только показ — без localStorage, без экономики, привычек, ИИ и аналитики', () => {
+test('клиент: награда только обычным путём квестов, ИИ — только с согласия, без localStorage и аналитики', () => {
   const app = fs.readFileSync(path.join(ROOT, 'public', 'app.js'), 'utf8');
   const start = app.indexOf('//  Senku bridge v1 (фаза 1)');
   const end = app.indexOf('// ── Детектор развилки');
   assert.ok(start > 0 && end > start, 'блок Senku в app.js не найден');
   const block = app.slice(start, end);
-  for (const banned of [/localStorage|sessionStorage|indexedDB/, /\/api\/(?:data|ai|analytics)\b/, /\btrack\(/,
-    /State\.(?:settings|tasks|habits|days|goals|rewards)\b/, /xpEvents|itemXp|grantXp|awardXp|addGold|commit[A-Z]\w*\(/]) {
+  for (const banned of [/localStorage|sessionStorage|indexedDB/, /\/api\/(?:data|analytics)\b/, /\btrack\(/,
+    /State\.(?:habits|habitlog|days|goals|rewards|purchases)\b/, /grantXp|awardXp|addGold|xpAwarded\s*[+=]\s*\d/]) {
     assert.doesNotMatch(block, banned, `блок Senku не должен трогать ${banned}`);
   }
+  // Награда считается обычной формулой и пишется обычной записью квестов; отметка — только после неё.
+  assert.match(block, /task\.xpAwarded = Math\.max\(1, itemXp\(task\)\); task\.goldAwarded = itemGold\(task\);/);
+  const write = block.indexOf("Store.updateNow('tasks'"); const claim = block.indexOf("fetch('/api/bridge/senku/claim'");
+  assert.ok(write > 0 && claim > write, 'сессии отмечаются на сервере только после записи квестов');
+  // Названия колод уходят ИИ только при включённом согласии.
+  const ai = block.indexOf("fetch('/api/ai/analyze'"); const consent = block.lastIndexOf('aiSpheres === true', ai);
+  assert.ok(ai > 0 && consent > 0 && ai - consent < 400, 'вызов ИИ стоит сразу под проверкой согласия');
+  assert.equal(block.match(/\/api\/ai\//g).length, 1, 'ИИ вызывается в одном месте');
+  assert.match(block, /if \(senkuSettings\(\)\.setup !== true\) return;/, 'первое начисление — только после разового выбора человека');
+  assert.match(block, /aiSurfaceRun\('senku'/, 'ИИ идёт через общий механизм отмены и таймаута');
   assert.match(block, /fetch\('\/api\/bridge\/senku\/connect'/);
   assert.match(block, /form\.key\.value = ''/, 'ключ стирается из поля после подключения');
   for (const lang of ['ru', 'uk', 'en', 'de', 'es']) assert.match(block, new RegExp(`\\n  ${lang}: \\{`), `нет текстов ${lang}`);
+});
+
+test('фаза 2: ожидают награды только законченные сессии после подключения; отметка одна и переживает опрос', async () => {
+  const senku = await startFakeSenku();
+  try {
+    const clock = { t: Date.parse('2026-10-01T09:00:00.000Z') };
+    senku.serverTime = '2026-10-01T09:00:00.000Z';
+    senku.rides = [ride({ id: 'old-1', startedAt: '2026-10-01T06:00:00.000Z', endedAt: '2026-10-01T06:20:00.000Z', changedAt: '2026-10-01T06:21:00.000Z' })];
+    const { bridge, stored } = moduleWith(senku, clock);
+    await bridge.connect('u1', { baseUrl: senku.origin, key: senku.key });
+    assert.equal((await bridge.pending('u1')).sittings.length, 0, 'история до подключения не награждается');
+    const view = await bridge.day('u1', { from: '2026-10-01T00:00:00.000Z', to: '2026-10-02T00:00:00.000Z' });
+    assert.deepEqual([view.day.sessions[0].rewardable, view.day.sessions[0].claimed], [false, false]);
+
+    senku.serverTime = '2026-10-01T12:00:00.000Z';
+    senku.rides = [
+      ...[1, 2].map((i) => ride({ id: `ride-n-${i}`, kind: 'voice', deck: `deck-${i}`, deckName: `Deck ${i}`, cards: 5 * i,
+        startedAt: '2026-10-01T10:00:00.000Z', endedAt: '2026-10-01T10:30:00.000Z', changedAt: '2026-10-01T10:31:00.000Z' })),
+      ride({ id: 's-open-1', kind: 'visual', startedAt: '2026-10-01T11:00:00.000Z', endedAt: null, finished: false, durationMs: null, changedAt: '2026-10-01T11:01:00.000Z' }),
+      ride({ id: 's-long-1', kind: 'visual', startedAt: '2026-10-01T09:10:00.000Z', endedAt: '2026-10-01T16:10:00.000Z', durationMs: 7 * 60 * MIN, changedAt: '2026-10-01T11:02:00.000Z' }),
+      ride({ id: 's-zero-1', kind: 'visual', cards: 0, startedAt: '2026-10-01T11:30:00.000Z', endedAt: '2026-10-01T11:31:00.000Z', changedAt: '2026-10-01T11:32:00.000Z' }),
+    ];
+    clock.t += 3 * 60 * MIN;
+    const pending = await bridge.pending('u1');
+    assert.equal(pending.rewardsFrom, '2026-10-01T09:00:00.000Z');
+    assert.equal(pending.sittings.length, 1, 'открытая, слишком длинная и пустая сессии не ждут награды');
+    const one = pending.sittings[0];
+    assert.deepEqual([one.key, one.cards, one.minutes, one.decks.map((d) => d.deck)], ['voice|2026-10-01T10:00:00.000Z', 15, 30, ['deck-2', 'deck-1']]);
+
+    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', [])), (error) => error.code === 'senku_claim_invalid');
+    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', ['../etc'])), (error) => error.code === 'senku_claim_invalid');
+    assert.deepEqual(bridge.claim('u1', [one.key, 'visual|2026-10-01T11:00:00.000Z', 'voice|2026-01-01T00:00:00.000Z']), { ok: true, claimed: 1, ignored: 2 });
+    assert.deepEqual(bridge.claim('u1', [one.key]), { ok: true, claimed: 0, ignored: 0 }, 'повторная отметка безвредна');
+    assert.equal((await bridge.pending('u1')).sittings.length, 0);
+    clock.t += 3 * MIN; await bridge.syncIfDue('u1');
+    assert.ok(Object.hasOwn(stored('u1').claimed, one.key), 'отметка переживает опрос Senku');
+    const after = await bridge.day('u1', { from: '2026-10-01T00:00:00.000Z', to: '2026-10-02T00:00:00.000Z' });
+    assert.equal(after.day.sessions.find((s) => s.key === one.key).claimed, true);
+    assert.deepEqual(bridge.decks('u1').decks.map((d) => d.deck).sort(), ['deck-1', 'deck-2', 'deck-a']);
+    bridge.disconnect('u1');
+    await assert.rejects(Promise.resolve().then(() => bridge.claim('u1', [one.key])), (error) => error.code === 'senku_not_connected');
+  } finally { await senku.close(); }
 });

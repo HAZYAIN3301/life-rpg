@@ -1,8 +1,11 @@
 'use strict';
 
-// Senku bridge v1, phase 1: Satoru pulls card-review facts from Senku and only shows them.
-// No XP, currency, chests or habit marks come from here — rewards wait for the owner (phase 2).
-// Contract: ~/Projects/senku/bridge/SATORU-BRIDGE.md (GET /api/bridge/facts, Bearer key).
+// Senku bridge v1: Satoru pulls card-review facts from Senku (GET /api/bridge/facts, Bearer key).
+// Phase 1 shows them; phase 2 (owner 01.10) turns every closed sitting after the connection into
+// a completed quest with the ordinary reward. The server never mints XP or gold itself: it only
+// lists sittings that still await a reward and remembers which ones were claimed, so a sitting is
+// rewarded once even across devices, reloads and a deleted quest.
+// Contract: ~/Projects/senku/bridge/SATORU-BRIDGE.md.
 //
 // The key is a secret: it lives only in data/users/<id>/senku-bridge.json, which the generic
 // /api/data route refuses, the account export skips and no response or log line contains.
@@ -28,6 +31,8 @@ const KEEP_DAYS = 120;
 const MAX_STORED_RIDES = 6000;
 const MAX_TRUSTED_DURATION_MS = 6 * 60 * 60 * 1000; // contract: longer than 6 h — do not trust duration
 const MAX_DAY_SPAN_MS = 48 * 60 * 60 * 1000;
+const MAX_PENDING = 300;
+const SITTING_KEY = /^(voice|visual)\|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}:\d{2})$/;
 const RIDE_ID = /^[A-Za-z0-9_.:-]{1,128}$/;
@@ -161,34 +166,51 @@ function parseFacts(body) {
   return { ok: true, rides, skipped, nextSince, revision: Number.isInteger(json.revision) ? json.revision : null };
 }
 
-// ---- Day view: one group per sitting; minutes are the union of time, not a sum of records ----
+// ---- Sittings: one group per sitting; minutes are the union of time, not a sum of records ----
 // A ride through a folder of three decks arrives as three records with the same start and end,
 // so each record's durationMs is the whole ride. Summing them would triple the minutes.
+// A sitting is keyed by kind + start: `voice|2026-09-28T06:52:00.000Z`.
 
-function dayView(rides, fromMs, toMs) {
+function sittingKey(ride) { return `${ride.kind}|${ride.startedAt}`; }
+
+function groupSittings(rides) {
   const groups = new Map();
   for (const ride of rides) {
-    const start = Date.parse(ride.startedAt);
-    if (!(start >= fromMs && start < toMs) || ride.cards <= 0) continue; // cards = 0 is not a session
-    const key = `${ride.kind}|${ride.startedAt}`;
-    const group = groups.get(key) || { kind: ride.kind, startedAt: ride.startedAt, endedAt: ride.endedAt, open: false, finished: true, cards: 0, decks: [] };
+    if (ride.cards <= 0) continue; // cards = 0 is not a session
+    const key = sittingKey(ride);
+    const group = groups.get(key) || { key, kind: ride.kind, startedAt: ride.startedAt, endedAt: ride.endedAt, open: false, finished: true, cards: 0, decks: [] };
     if (!ride.endedAt) group.open = true;
     else if (group.endedAt && Date.parse(ride.endedAt) > Date.parse(group.endedAt)) group.endedAt = ride.endedAt;
     group.finished = group.finished && ride.finished;
     group.cards += ride.cards;
-    group.decks.push({ name: ride.deckName, folder: ride.folder, cards: ride.cards });
+    group.decks.push({ deck: ride.deck, name: ride.deckName, folder: ride.folder, cards: ride.cards });
     groups.set(key, group);
   }
-  const sessions = [...groups.values()].map((group) => {
+  return [...groups.values()].map((group) => {
     const endedAt = group.open ? null : group.endedAt;
     const spanMs = endedAt ? Date.parse(endedAt) - Date.parse(group.startedAt) : null;
     const durationTrusted = spanMs !== null && spanMs <= MAX_TRUSTED_DURATION_MS;
     return {
-      kind: group.kind, startedAt: group.startedAt, endedAt, open: group.open, finished: !group.open && group.finished,
+      key: group.key, kind: group.kind, startedAt: group.startedAt, endedAt, open: group.open, finished: !group.open && group.finished,
       cards: group.cards, minutes: durationTrusted ? Math.round(spanMs / 60000) : null, durationTrusted,
       decks: group.decks.sort((a, b) => b.cards - a.cards),
     };
   }).sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
+}
+
+// Rewardable: closed, trusted duration, started at or after the connection (history before the
+// connection is display-only — owner 01.10). Open sittings wait until Senku closes them.
+function rewardable(sitting, rewardsFromMs) {
+  return !sitting.open && sitting.durationTrusted && Date.parse(sitting.startedAt) >= rewardsFromMs;
+}
+
+function dayView(rides, fromMs, toMs, options = {}) {
+  const claimed = options.claimed || {};
+  const rewardsFromMs = Number.isFinite(options.rewardsFromMs) ? options.rewardsFromMs : Infinity;
+  const sessions = groupSittings(rides).filter((one) => {
+    const start = Date.parse(one.startedAt);
+    return start >= fromMs && start < toMs;
+  }).map((one) => Object.assign(one, { rewardable: rewardable(one, rewardsFromMs), claimed: Object.hasOwn(claimed, one.key) }));
   const intervals = sessions.filter((one) => one.durationTrusted)
     .map((one) => [Date.parse(one.startedAt), Date.parse(one.endedAt)]).sort((a, b) => a[0] - b[0]);
   let covered = 0; let cursorStart = null; let cursorEnd = null;
@@ -203,6 +225,22 @@ function dayView(rides, fromMs, toMs) {
     voiceCards: sessions.filter((one) => one.kind === 'voice').reduce((sum, one) => sum + one.cards, 0),
     sessions,
   };
+}
+
+function pendingSittings(rides, rewardsFromMs, claimed) {
+  return groupSittings(rides).filter((one) => rewardable(one, rewardsFromMs) && !Object.hasOwn(claimed || {}, one.key)).slice(0, MAX_PENDING);
+}
+
+function deckList(rides) {
+  const decks = new Map();
+  for (const ride of rides) {
+    if (!ride.deck || ride.cards <= 0) continue;
+    const known = decks.get(ride.deck);
+    if (!known || Date.parse(ride.startedAt) > Date.parse(known.lastAt)) {
+      decks.set(ride.deck, { deck: ride.deck, name: ride.deckName, folder: ride.folder, lastAt: ride.startedAt, cards: (known ? known.cards : 0) + ride.cards });
+    } else known.cards += ride.cards;
+  }
+  return [...decks.values()].sort((a, b) => Date.parse(b.lastAt) - Date.parse(a.lastAt));
 }
 
 function maskKey(key) {
@@ -226,6 +264,7 @@ function create(options = {}) {
     const value = JSON.parse(raw);
     if (!value || value.version !== 1 || !value.connection || typeof value.connection.id !== 'string') throw new Error('senku_bridge_file_invalid');
     if (!value.rides || typeof value.rides !== 'object') value.rides = {};
+    if (!value.claimed || typeof value.claimed !== 'object' || Array.isArray(value.claimed)) value.claimed = {};
     return value;
   }
 
@@ -259,6 +298,13 @@ function create(options = {}) {
     return prune(next);
   }
 
+  function pruneClaimed(claimed) {
+    const floor = now() - KEEP_DAYS * 86400000;
+    return Object.fromEntries(Object.entries(claimed || {}).filter(([key]) => Date.parse(key.split('|')[1]) >= floor));
+  }
+
+  const rewardsFrom = (state) => Date.parse(state.connection.connectedAt);
+
   async function fetchFacts(baseUrl, key, since) {
     const url = new URL('/api/bridge/facts', baseUrl);
     if (since) url.searchParams.set('since', since);
@@ -283,7 +329,7 @@ function create(options = {}) {
       connected: true, defaultBaseUrl: DEFAULT_BASE_URL,
       state: c.status === 'reconnect' ? 'reconnect' : 'ok',
       baseUrl: c.baseUrl, keyMask: c.keyMask || '••••',
-      connectedAt: c.connectedAt, lastExchangeAt: c.lastExchangeAt || null,
+      connectedAt: c.connectedAt, rewardsFrom: c.connectedAt, lastExchangeAt: c.lastExchangeAt || null,
       lastError: c.lastError || null, retryAt: c.backoffUntil || null,
     };
   }
@@ -307,6 +353,7 @@ function create(options = {}) {
         nextSince: null, failures: 0, backoffUntil: null, revision: result.facts.revision,
       },
       rides: {},
+      claimed: {},
     };
     state.rides = merge(state, result.facts.rides);
     state.connection.nextSince = result.facts.nextSince; // same atomic write as the rides: the cursor never outruns them
@@ -333,6 +380,7 @@ function create(options = {}) {
     cc.lastAttemptAt = attemptAt;
     if (result.kind === 'ok') {
       current.rides = merge(current, result.facts.rides);
+      current.claimed = pruneClaimed(current.claimed);
       Object.assign(cc, { nextSince: result.facts.nextSince, lastExchangeAt: new Date(now()).toISOString(), lastError: null,
         failures: 0, backoffUntil: null, revision: result.facts.revision });
       save(uid, current);
@@ -377,13 +425,53 @@ function create(options = {}) {
     await syncIfDue(uid, { force });
     const state = load(uid);
     if (!state) return { connected: false, defaultBaseUrl: DEFAULT_BASE_URL };
-    return Object.assign(publicStatus(state), { day: dayView(Object.values(state.rides), fromMs, toMs) });
+    return Object.assign(publicStatus(state), {
+      day: dayView(Object.values(state.rides), fromMs, toMs, { claimed: state.claimed, rewardsFromMs: rewardsFrom(state) }),
+    });
   }
 
-  return { FILE, DEFAULT_BASE_URL, status, connect, disconnect, day, syncIfDue };
+  // Sittings that still await their one reward (oldest first). The client turns them into
+  // completed quests through its ordinary durable task write, then claims them here.
+  async function pending(uid, { force = false } = {}) {
+    await syncIfDue(uid, { force });
+    const state = load(uid);
+    if (!state) return { connected: false, defaultBaseUrl: DEFAULT_BASE_URL };
+    return Object.assign(publicStatus(state), { sittings: pendingSittings(Object.values(state.rides), rewardsFrom(state), state.claimed) });
+  }
+
+  // Marks sittings as rewarded. Only existing, rewardable sittings are recorded; repeating a
+  // claim is harmless. Written atomically with the rides so a disconnect wipes both together.
+  function claim(uid, keys) {
+    if (!Array.isArray(keys) || !keys.length || keys.length > MAX_PENDING || !keys.every((key) => typeof key === 'string' && SITTING_KEY.test(key))) {
+      throw new BridgeError('senku_claim_invalid');
+    }
+    const state = load(uid);
+    if (!state) throw new BridgeError('senku_not_connected', 409);
+    const known = new Map(groupSittings(Object.values(state.rides)).map((one) => [one.key, one]));
+    const stamp = new Date(now()).toISOString();
+    let added = 0; let ignored = 0;
+    for (const key of new Set(keys)) {
+      const sitting = known.get(key);
+      // A sitting that is gone (pruned, other connection) or not rewardable is skipped, never fatal:
+      // one stale key must not make the client retry the whole batch forever.
+      if (!sitting || !rewardable(sitting, rewardsFrom(state))) { ignored += 1; continue; }
+      if (!Object.hasOwn(state.claimed, key)) { state.claimed[key] = stamp; added += 1; }
+    }
+    if (added) { state.claimed = pruneClaimed(state.claimed); save(uid, state); }
+    return { ok: true, claimed: added, ignored };
+  }
+
+  function decks(uid) {
+    const state = load(uid);
+    if (!state) return { connected: false, defaultBaseUrl: DEFAULT_BASE_URL };
+    return Object.assign(publicStatus(state), { decks: deckList(Object.values(state.rides)) });
+  }
+
+  return { FILE, DEFAULT_BASE_URL, status, connect, disconnect, day, pending, claim, decks, syncIfDue };
 }
 
 module.exports = {
   FILE, DEFAULT_BASE_URL, SYNC_INTERVAL_MS, MANUAL_SYNC_INTERVAL_MS, MAX_TRUSTED_DURATION_MS,
-  BridgeError, create, normalizeBaseUrl, parseFacts, normalizeRide, dayView, maskKey, privateAddress, safeLookup, defaultRequest,
+  BridgeError, create, normalizeBaseUrl, parseFacts, normalizeRide, dayView, groupSittings, pendingSittings, deckList, sittingKey,
+  maskKey, privateAddress, safeLookup, defaultRequest,
 };

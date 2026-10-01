@@ -6432,7 +6432,8 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 404, { error: 'not found' });
   }
 
-  // ---- Senku bridge v1: connection in Settings, facts on Today. No economy effects. ----
+  // ---- Senku bridge v1: connection in Settings, facts on Today; the client rewards pending sittings
+  // through its ordinary quest write and claims them here (one reward per sitting). ----
   if (u.startsWith('/api/bridge/senku/')) {
     const path0 = u.split('?')[0];
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
@@ -6448,6 +6449,15 @@ const server = http.createServer(async (req, res) => {
         return sendJson(res, 200, await senkuBridge.connect(uid, body || {}));
       }
       if (path0 === '/api/bridge/senku/disconnect' && req.method === 'POST') return sendJson(res, 200, senkuBridge.disconnect(uid));
+      if (path0 === '/api/bridge/senku/pending' && req.method === 'GET') {
+        const q = new URL(u, 'http://x').searchParams;
+        return sendJson(res, 200, await senkuBridge.pending(uid, { force: q.get('refresh') === '1' }));
+      }
+      if (path0 === '/api/bridge/senku/claim' && req.method === 'POST') {
+        let body; try { body = JSON.parse(await readBody(req, 64 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+        return sendJson(res, 200, senkuBridge.claim(uid, body && body.keys));
+      }
+      if (path0 === '/api/bridge/senku/decks' && req.method === 'GET') return sendJson(res, 200, senkuBridge.decks(uid));
       if (path0 === '/api/bridge/senku/day' && req.method === 'GET') {
         const q = new URL(u, 'http://x').searchParams;
         return sendJson(res, 200, await senkuBridge.day(uid, { from: q.get('from'), to: q.get('to'), force: q.get('refresh') === '1' }));
