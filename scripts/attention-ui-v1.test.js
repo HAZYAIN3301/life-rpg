@@ -104,9 +104,9 @@ test('recovery is a compact bounded rest launcher, not another daily tracker', (
   assert.match(html, /name="minutes" value="40" checked/);
   for (const mode of ['none', 'bounded', 'open']) assert.match(html, new RegExp(`name="deviceMode" value="${mode}"`));
   assert.match(html, /name="deviceMode" value="bounded" checked/);
-  assert.match(html, /не ежедневный трекер/);
-  assert.match(html, /PWA покажет границу, пока Satoru открыт/);
-  assert.match(html, /поставь системный таймер/);
+  // Owner 01.10: one short honest line instead of two paragraphs — the boundary lives while the app is open.
+  assert.match(html, /Работает, пока Satoru открыт\./);
+  assert.doesNotMatch(html, /PWA покажет границу|не ежедневный трекер/);
   assert.match(html, /type="submit"[^>]*data-action="start-recovery-session"/);
   assert.match(html, /data-action="close-attention-dialog">Отмена/);
 });
@@ -125,7 +125,7 @@ test('evening setup configures time and reminder without asking for permission',
   assert.match(html, /name="targetTime" value="22:30"/);
   assert.match(html, /type="checkbox" name="dailyReminder" checked/);
   assert.match(html, /Подсказка появится в Satoru/);
-  assert.match(html, /при включённых уведомлениях браузера/);
+  assert.doesNotMatch(html, /браузер/, 'owner 01.10: no browser wording inside the phone app');
   assert.doesNotMatch(html, /requestPermission/);
   assert.doesNotMatch(html, /requestPermission/);
   assert.match(html, /type="submit"[^>]*data-action="start-evening-session"/);
@@ -139,7 +139,7 @@ test('active evening landing has exactly three steps and no progress tracker', (
   assert.match(html, /Вернуть базовый порядок/);
   assert.match(html, /Поставить будильник и убрать устройства/);
   assert.equal((html.match(/<li>/g) || []).length, 3);
-  assert.match(html, /не означает, что ты уже лёг спать или восстановился/);
+  assert.doesNotMatch(html, /не означает, что ты уже лёг спать/, 'owner 01.10: no footnote under the three steps');
   assert.match(html, /data-action="finish-evening-landing">Вечер завершён/);
   assert.match(html, /data-action="close-attention-dialog">Закрыть/);
   assert.doesNotMatch(html, /type="checkbox"|data-step-complete|progress/);

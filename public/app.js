@@ -539,6 +539,11 @@ const I18N_ES = {
 };
 // Спільна таблиця нових рядків: ru → { en, de, uk, es }. Зливається у словники нижче.
 const I18N_EXTRA = {
+  // Phone pass 01.10 (owner video): new short labels.
+  'Работает, пока Satoru открыт.': { en: 'Works while Satoru is open.', de: 'Funktioniert, solange Satoru geöffnet ist.', uk: 'Працює, поки Satoru відкритий.', es: 'Funciona mientras Satoru está abierto.' },
+  'Подсказка появится в Satoru.': { en: 'The reminder appears in Satoru.', de: 'Die Erinnerung erscheint in Satoru.', uk: 'Підказка з’явиться в Satoru.', es: 'El aviso aparecerá en Satoru.' },
+  'Выбери время.': { en: 'Choose a time.', de: 'Wähle eine Uhrzeit.', uk: 'Обери час.', es: 'Elige una hora.' },
+  'Больше не показывать': { en: 'Don\'t show again', de: 'Nicht mehr anzeigen', uk: 'Більше не показувати', es: 'No volver a mostrar' },
   "Цель накопления": {"en":"Savings goal","de":"Sparziel","uk":"Ціль накопичення","es":"Meta de ahorro"},
   "До цели": {"en":"Towards","de":"Bis zum Ziel","uk":"До цілі","es":"Para la meta"},
   "Осталось накопить": {"en":"Still to earn","de":"Noch zu verdienen","uk":"Залишилось накопичити","es":"Falta por ganar"},
@@ -7875,7 +7880,7 @@ function sphereFieldHTML(selectedId, options = {}) {
   return `<details class="add-field add-field-skill sphere-field sphere-field-multi${fieldClass}" data-background-name="${esc(backgroundName)}">
     <summary class="sphere-trigger"><span class="add-field-label">${esc(t(options.label || 'Сферы'))}</span><span class="sphere-trigger-value">${sphereFieldSummaryHTML(main, background)}</span></summary>
     <div class="sphere-panel">
-      <div class="sphere-panel-head"><div><strong>${esc(t('Сферы'))}</strong><small>${esc(t('Основные — прямой результат. Фон — сопутствующий вклад.'))}</small></div><button type="button" class="sphere-panel-done" data-action="sphere-picker-done">${esc(t('Готово'))}</button></div>
+      <div class="sphere-panel-head"><div><strong>${esc(t('Сферы'))}</strong></div><button type="button" class="sphere-panel-done" data-action="sphere-picker-done">${esc(t('Готово'))}</button></div>
       <label class="sr-only" for="sphere-search-${esc(fallback)}">${esc(t('Искать сферу'))}</label>
       <input type="text" id="sphere-search-${esc(fallback)}" class="sphere-search-input" placeholder="${esc(t('Искать сферу…'))}" autocomplete="off" />
       <div class="sphere-selection">${sphereSelectedHTML(main, background)}</div>
@@ -8256,6 +8261,8 @@ function mountLegacyDialog(ov, { labelledBy, closeAction, reopen = false, focus 
   const heading = ov.querySelector(`#${labelledBy}`); if (heading) heading.tabIndex = -1;
   ov.querySelectorAll('.modal-x').forEach((x) => { x.type = 'button'; x.setAttribute('aria-label', t('Закрыть')); x.innerHTML = satoruIconHTML('action.close', 'inline-glyph', '✕'); });
   if (!reopen) _legacyDialogReturn = { id: ov.id, selector: openerSelector(document.activeElement) };
+  // A repaint must not replay the entrance fade: for one frame the page showed through ("screamer").
+  else ov.classList.add('is-refresh');
   ov.addEventListener('keydown', (event) => {
     if (event.key !== 'Escape') return;
     event.preventDefault(); event.stopPropagation();
@@ -8275,8 +8282,11 @@ function closeLegacyDialog(id) {
 }
 function reopenLegacyDialog(id, open) {
   const focus = openerSelector(document.activeElement);
-  document.getElementById(id)?.remove();
+  const old = document.getElementById(id), scroll = old?.firstElementChild?.scrollTop || 0;
+  old?.remove();
   open({ reopen: true, focus });
+  // A choice inside the window repaints it: keep the place instead of jumping to the top.
+  const fresh = document.getElementById(id); if (fresh?.firstElementChild) fresh.firstElementChild.scrollTop = scroll;
 }
 function openCategoryPicker(taskId, { reopen = false, focus = '' } = {}) {
   if (document.getElementById('cat-pop')) return;
@@ -12735,19 +12745,15 @@ function openEntryRitual({ reopen = false, focus = '' } = {}) {
   // Подпись обязана быть честной про опыт: заход в любимое его не платит намеренно
   // (overjustification), а заход в РЕАЛЬНОЕ дело платит как обычно — это же настоящая работа,
   // просто начатая с нелепо малого куска. Обещать «без опыта» на настоящем деле было бы враньём.
-  const lead = selTask
-    ? t('Не надо делать его целиком. Надо только войти — десять минут, и ты уже вправе остановиться. Дело настоящее, так что опыт за него платится как обычно.')
-    : t('Десять минут в любимое дело — не ради галочек, а чтобы вечер стал твоим. Опыта не будет: только связь с Тенью и золото. Так задумано.');
   const ov = document.createElement('div'); ov.id = 'entry-modal'; ov.className = 'modal-overlay';
   ov.innerHTML = `<div class="ai-box entry-box"><button class="modal-x" data-action="entry-close">✕</button>
     <h2 id="entry-title">${satoruIconHTML('system.focus', 'heading-glyph', '🕯')} ${t('Заход')}</h2>
-    <p class="muted" style="font-size:13px;margin:0 0 10px">${lead}</p>
     ${stuck.length ? `<p class="muted entry-group-label">${t('Что не двигается')}</p>
     <div class="ob-group-chips" style="margin-bottom:8px">${taskChips}</div>` : ''}
     ${spheres.length ? `<p class="muted entry-group-label">${t('Или просто в любимое')}</p>
     <div class="ob-group-chips" style="margin-bottom:10px">${sphereChips}</div>` : ''}
-    <div class="sg-row en-step"><b>🕯 ${t('Самый маленький вход')}</b><span>${esc(t(step))}</span></div>
-    <div class="sg-row"><b>🍬 ${t('Обставь его')}</b><span>${esc(t(bundle))}</span></div>
+    <div class="sg-row en-step"><b>${t('Самый маленький вход')}</b><span>${esc(t(step))}</span></div>
+    <div class="sg-row"><b>${t('Обставь его')}</b><span>${esc(t(bundle))}</span></div>
     <div class="propose-actions">
       <button class="btn" data-action="entry-accept">${satoruIconHTML('media.play', 'button-glyph', '🕯')} ${t('Захожу — 10 минут')}</button>
       <button class="btn ghost sm" data-action="entry-reroll" title="${t('Другой вариант входа')}" aria-label="${t('Другой вариант входа')}">${satoruIconHTML('action.refresh', 'button-glyph', '↻')}</button>
@@ -14458,7 +14464,6 @@ function renderHeader(force = false) {
       <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
-      <a class="design-compare-link" href="/compare.html" target="_blank" rel="noopener">${t('Прежний интерфейс')} ↗</a>
     </div></details>`;
 }
 
@@ -14522,11 +14527,10 @@ function openQuestCommitmentDialog(task, mode = 'take') {
     <p class="commitment-task" data-noi18n>${esc(task.title)}</p>
     <label class="commitment-win"><span>${esc(t('Что считается выполненным'))}</span><input id="quest-commitment-win" type="text" maxlength="120" value="${esc(defaultWin)}" required /></label>
     <label class="commitment-time"><span>${esc(t('Закончить до'))}</span><input id="quest-commitment-time" type="time" value="${esc(commitmentTimeOf(current))}" required /></label>
-    <p class="muted">${esc(t('Это заранее выбранная граница, не ставка. Её можно пересмотреть или снять бесплатно; XP и золото не меняются.'))}</p>
-    <p class="muted">${esc(window.SecretaryNextMovesUIV1?.copy('secretary.v2.commitment.hint', lang()) || '')}</p>
     <button type="button" class="btn" data-action="commitment-confirm" data-id="${esc(task.id)}" data-mode="${revise ? 'revise' : 'take'}">${esc(t(revise ? 'Сохранить новую границу' : 'Взять обязательство'))}</button>
   </section>`;
-  mountAccountDialog(overlay, { initial: '#quest-commitment-win', returnFocus });
+  // A focused text field opens the iPhone keyboard and pushes the window up: start on the heading.
+  mountAccountDialog(overlay, { initial: window.matchMedia?.('(pointer: coarse)').matches ? '#quest-commitment-title' : '#quest-commitment-win', returnFocus });
 }
 // Какой цели служит этот квест. Связь `task.goalId` была всегда, но на «Сегодня»
 // жила только внутри меню «•••»: слово «цель» на экране дня не появлялось ни разу.
@@ -14581,10 +14585,6 @@ function questRow(q, links) {
       ${linkedGoal ? `<a class="task-menu-goal" href="${esc(goalDeepLinkHref(linkedGoal.id))}" data-action="goto-goal" data-id="${linkedGoal.id}">${satoruIconHTML('nav.today', 'task-action-icon')} ${t('Открыть связанную цель')}: <span data-noi18n>${esc(linkedGoal.title)}</span></a>` : ''}
       ${!q.done ? `<button data-action="focus-task" data-id="${q.id}" aria-label="${t(active ? 'Открыть активный фокус' : 'Начать фокус')}: ${esc(fullTitle)}">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')} ${t(active ? 'Открыть фокус' : 'Начать фокус')}</button>` : ''}
       ${q.date === todayStr() ? `<button data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}">${satoruIconHTML('system.focus', 'task-action-icon')} ${esc(coreLabel)}</button>` : ''}
-      ${!q.done && q.createdAt && fmtDate(new Date(q.createdAt)) === todayStr() ? `<div class="task-menu-diff">
-        <p class="task-menu-diff-label muted">${esc(t('Сложность — можно поменять сегодня'))}</p>
-        <div class="task-diff-row" role="group" aria-label="${esc(t('Сложность'))}">${['easy', 'normal', 'hard'].map((d) => `<button type="button" class="task-diff-btn${q.difficulty === d ? ' is-active' : ''}" data-action="edit-difficulty" data-id="${q.id}" data-difficulty="${d}" aria-pressed="${q.difficulty === d ? 'true' : 'false'}" title="${esc(DIFF[d] || '')}">${difficultyIconHTML(d)}</button>`).join('')}</div>
-      </div>` : ''}
       ${commitmentMenu}
       <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
     </div></details>`;
@@ -14816,6 +14816,9 @@ function calModeToggle(mode) {
   return `<div class="cal-modes" role="group" aria-label="${esc(t('Режим календаря'))}">${option('day', 'День')}${option('week', 'Неделя')}${option('month', 'Месяц')}</div>`;
 }
 function calRemindBtn() {
+  // Web notifications do not exist inside the iPhone/Mac app shell: a button that can only answer
+  // "the browser does not support notifications" is noise there.
+  if (!('Notification' in window)) return '';
   const on = State.settings && State.settings.remind;
   return `<button type="button" class="btn ghost sm cal-remind ${on ? 'on' : ''}" data-action="cal-remind-toggle" aria-pressed="${on ? 'true' : 'false'}" aria-label="${esc(t('Напоминания о квестах со временем'))}" title="${esc(t('Напоминания о квестах со временем'))}">${satoruIconHTML(on ? 'status.bell' : 'status.bell-muted', 'cal-tool-icon', on ? '🔔' : '🔕')} <span class="cal-tool-copy">${esc(t('Напоминания'))}</span></button>`;
 }
@@ -15175,10 +15178,10 @@ async function loadCalSubscribeBody(overlay, { focusAfter = false } = {}) {
     body.innerHTML = `
       <div class="cal-sub-link"><label for="cal-sub-url">${esc(t('Ссылка для подписки'))}</label><div class="cal-sub-link-row"><input id="cal-sub-url" readonly value="${esc(base)}"/><button type="button" class="btn ghost cal-sub-copy" data-action="copy-cal-url" data-url="${esc(base)}">${esc(t('Копировать'))}</button></div></div>
       <a class="btn cal-sub-open" href="${esc(webcal)}">${satoruIconHTML('system.calendar', 'button-glyph', '📲')} ${esc(t('Открыть в Календаре'))}</a>
-      <section class="cal-sub-help" aria-labelledby="cal-sub-help-title"><h3 id="cal-sub-help-title">${esc(t('Как подключить календарь'))}</h3>
+      <details class="cal-sub-help"><summary id="cal-sub-help-title">${esc(t('Как подключить календарь'))}</summary>
         <p>${esc(t('Apple Календарь: добавь подписной календарь и вставь ссылку.'))}</p>
         <p>${esc(t('Google Календарь: открой «Другие календари» → «Добавить по URL» и вставь ссылку.'))}</p>
-      </section>`;
+      </details>`;
     if (focusAfter) requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-sub-url')));
     return true;
   } catch {
@@ -15253,7 +15256,7 @@ function goalDeadlinesOn(index, date) {
 // ломает и клавиатуру, и разметку. Поэтому день только помечается, а сама цель
 // открывается из шапки выбранного дня: пометка → день → цель.
 function goalDeadlineMarkHTML(rows) {
-  return rows.length ? `<span class="cal-goal-mark" aria-hidden="true">\u{1F3AF}${rows.length > 1 ? rows.length : ''}</span>` : '';
+  return rows.length ? `<span class="cal-goal-mark" aria-hidden="true"><i></i>${rows.length > 1 ? rows.length : ''}</span>` : '';
 }
 function goalDeadlineLabelPart(rows) {
   return rows.length ? ` \u00b7 ${t('Дедлайн цели')}: ${rows.map((row) => row.title).join(', ')}` : '';
@@ -16091,13 +16094,13 @@ async function stravaSync() {
   finally { State._stravaSyncing = false; render(); }
 }
 // ============================================================
-//  Senku bridge v1 (фаза 1): факты о повторении карточек — только показ.
-//  Ни XP, ни золота, ни сундуков, ни отметок привычек: награда ждёт решения владельца.
-//  Ключ живёт только на сервере; клиент видит маску. Названия колод — только на экране человека.
+//  Senku bridge v1 (фаза 1): факты о повторении карточек. Фаза 2 (владелец 01.10): законченная
+//  сессия — выполненный квест в сфере колоды или отметка привычки «Senku», всегда обычной записью.
+//  Ключ живёт только на сервере; клиент видит маску. Названия колод — только на экране человека и ИИ по согласию.
 // ============================================================
 const SENKU_COPY = {
   ru: {
-    intro: 'Покажет на «Сегодня», сколько карточек ты повторил в Senku, и превратит каждую законченную сессию в выполненный квест с XP и золотом в сфере колоды.',
+    intro: 'Повторение карточек в Senku засчитывается в Satoru.',
     address: 'Адрес Senku', key: 'Ключ из Senku', keyPlaceholder: 'Вставь ключ целиком',
     keyHint: 'Ключ выдаётся в Senku: Аккаунт → Satoru → «Выдать ключ». Satoru хранит его только на своём сервере и больше нигде не показывает.',
     connect: 'Подключить', connecting: 'Проверяю ключ…', connectedToast: 'Senku подключён', connected: 'Подключено',
@@ -16122,21 +16125,22 @@ const SENKU_COPY = {
     voice: 'Голосом', visual: 'Глазами', open: 'ещё идёт', untrusted: 'длительность не учтена', min: 'мин',
     cards: (n) => `${n} ${senkuPlural(n, ['карточка', 'карточки', 'карточек', 'карточки'])}`,
     noDeck: 'Колода без названия', updated: (time) => `обновлено в ${time}`,
-    rewardsOn: (since) => `Награды: каждая законченная сессия${since ? ` с ${since}` : ''} — выполненный квест с обычной наградой. Сессии до подключения не засчитываются.`,
+    rewardsOn: (since) => `Засчитываются сессии${since ? ` с ${since}` : ''}.`,
     aiToggle: 'Подбирать сферу новой колоды с помощью ИИ',
-    aiNote: 'Название колоды и папок увидит ИИ-сервис (твой ключ или Pro). Без этого сфера подбирается по названиям и истории квестов.',
+    aiNote: 'ИИ-сервис увидит названия колод и папок.',
     aiUnavailable: 'ИИ сейчас недоступен: добавь ключ в карточке ИИ выше или оформи Pro. Пока сфера подбирается по названиям.',
     defaultSphere: 'Сфера, если колода не распознана', decksTitle: (n) => `Колоды и сферы (${n})`,
-    decksNote: 'Новый выбор действует для следующих сессий. Сферу уже засчитанного квеста можно поменять в самом квесте.',
+    decksNote: 'Действует для следующих сессий.',
     sphereFor: (label) => `Сфера для колоды ${label}`,
     by: { ai: 'ИИ', name: 'по названию', history: 'по истории квестов', manual: 'вручную', default: 'по умолчанию' },
-    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${senkuPlural(count, ['квест', 'квеста', 'квестов', 'квеста'])}`,
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} золота — ${count} ${senkuPlural(count, ['квест', 'квеста', 'квестов', 'квеста'])}`,
     rewarded: 'квест засчитан', waiting: 'награда в пути', beforeConnect: 'до подключения — без награды',
     factsNote: 'Законченные сессии после подключения становятся выполненными квестами.',
-    setupTitle: 'Senku теперь даёт награды', setupText: 'Каждая законченная сессия после подключения станет выполненным квестом с XP и золотом в сфере колоды. Как подбирать сферу колоды?', setupAi: 'С помощью ИИ', setupNames: 'Только по названиям',
+    setupTitle: 'Senku теперь даёт награды', setupText: 'Как засчитывать повторение карточек?', setupAi: 'Квестами — сферу подберёт ИИ', setupNames: 'Квестами — по названиям колод', setupHabit: 'Привычкой «Senku»',
+    modeTitle: 'Как засчитывать', modeQuests: 'Квестами по сферам колод', modeHabit: 'Привычкой «Senku»', habitNote: 'В день с законченной сессией привычка отмечается сама.', habitMissing: 'Привычка Senku удалена — выбери, как засчитывать, ещё раз.', habitToast: (xp, gold) => `Senku: привычка отмечена · +${xp} XP · +${gold} золота`,
   },
   uk: {
-    intro: 'Покаже на «Сьогодні», скільки карток ти повторив у Senku, і перетворить кожну завершену сесію на виконаний квест з XP і золотом у сфері колоди.',
+    intro: 'Повторення карток у Senku зараховується в Satoru.',
     address: 'Адреса Senku', key: 'Ключ із Senku', keyPlaceholder: 'Встав ключ повністю',
     keyHint: 'Ключ видається в Senku: Акаунт → Satoru → «Видати ключ». Satoru зберігає його лише на своєму сервері й більше ніде не показує.',
     connect: 'Підключити', connecting: 'Перевіряю ключ…', connectedToast: 'Senku підключено', connected: 'Підключено',
@@ -16161,21 +16165,22 @@ const SENKU_COPY = {
     voice: 'Голосом', visual: 'Очима', open: 'ще триває', untrusted: 'тривалість не враховано', min: 'хв',
     cards: (n) => `${n} ${senkuPlural(n, ['картка', 'картки', 'карток', 'картки'])}`,
     noDeck: 'Колода без назви', updated: (time) => `оновлено о ${time}`,
-    rewardsOn: (since) => `Нагороди: кожна завершена сесія${since ? ` з ${since}` : ''} — виконаний квест зі звичайною нагородою. Сесії до підключення не зараховуються.`,
+    rewardsOn: (since) => `Зараховуються сесії${since ? ` з ${since}` : ''}.`,
     aiToggle: 'Добирати сферу нової колоди за допомогою ШІ',
-    aiNote: 'Назву колоди й тек побачить ШІ-сервіс (твій ключ або Pro). Без цього сфера добирається за назвами та історією квестів.',
+    aiNote: 'ШІ-сервіс побачить назви колод і тек.',
     aiUnavailable: 'ШІ зараз недоступний: додай ключ у картці ШІ вище або оформи Pro. Поки сфера добирається за назвами.',
     defaultSphere: 'Сфера, якщо колоду не розпізнано', decksTitle: (n) => `Колоди та сфери (${n})`,
-    decksNote: 'Новий вибір діє для наступних сесій. Сферу вже зарахованого квесту можна змінити в самому квесті.',
+    decksNote: 'Діє для наступних сесій.',
     sphereFor: (label) => `Сфера для колоди ${label}`,
     by: { ai: 'ШІ', name: 'за назвою', history: 'за історією квестів', manual: 'вручну', default: 'за замовчуванням' },
-    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${senkuPlural(count, ['квест', 'квести', 'квестів', 'квесту'])}`,
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} золота — ${count} ${senkuPlural(count, ['квест', 'квести', 'квестів', 'квесту'])}`,
     rewarded: 'квест зараховано', waiting: 'нагорода в дорозі', beforeConnect: 'до підключення — без нагороди',
     factsNote: 'Завершені сесії після підключення стають виконаними квестами.',
-    setupTitle: 'Senku тепер дає нагороди', setupText: 'Кожна завершена сесія після підключення стане виконаним квестом з XP і золотом у сфері колоди. Як добирати сферу колоди?', setupAi: 'За допомогою ШІ', setupNames: 'Лише за назвами',
+    setupTitle: 'Senku тепер дає нагороди', setupText: 'Як зараховувати повторення карток?', setupAi: 'Квестами — сферу добере ШІ', setupNames: 'Квестами — за назвами колод', setupHabit: 'Звичкою «Senku»',
+    modeTitle: 'Як зараховувати', modeQuests: 'Квестами за сферами колод', modeHabit: 'Звичкою «Senku»', habitNote: 'У день із завершеною сесією звичка позначається сама.', habitMissing: 'Звичку Senku видалено — обери, як зараховувати, ще раз.', habitToast: (xp, gold) => `Senku: звичку позначено · +${xp} XP · +${gold} золота`,
   },
   en: {
-    intro: "Shows on Today how many cards you reviewed in Senku and turns every finished session into a completed quest with XP and gold in the deck's area.",
+    intro: 'Card reviews in Senku count in Satoru.',
     address: 'Senku address', key: 'Key from Senku', keyPlaceholder: 'Paste the whole key',
     keyHint: 'Senku issues the key: Account → Satoru → “Issue key”. Satoru keeps it on its server only and never shows it again.',
     connect: 'Connect', connecting: 'Checking the key…', connectedToast: 'Senku connected', connected: 'Connected',
@@ -16200,21 +16205,22 @@ const SENKU_COPY = {
     voice: 'By voice', visual: 'By eye', open: 'still running', untrusted: 'duration not counted', min: 'min',
     cards: (n) => `${n} ${n === 1 ? 'card' : 'cards'}`,
     noDeck: 'Untitled deck', updated: (time) => `updated at ${time}`,
-    rewardsOn: (since) => `Rewards: every finished session${since ? ` since ${since}` : ''} becomes a completed quest with the usual reward. Sessions before connecting do not count.`,
+    rewardsOn: (since) => `Sessions${since ? ` since ${since}` : ''} count.`,
     aiToggle: 'Pick the area of a new deck with AI',
-    aiNote: 'The AI service will see deck and folder names (your key or Pro). Without it the area is picked from names and your quest history.',
+    aiNote: 'The AI service will see deck and folder names.',
     aiUnavailable: 'AI is not available right now: add a key in the AI card above or get Pro. Until then the area is picked from names.',
     defaultSphere: 'Area when a deck is not recognised', decksTitle: (n) => `Decks and areas (${n})`,
-    decksNote: 'A new choice applies to the next sessions. Change the area of an already rewarded quest in the quest itself.',
+    decksNote: 'Applies to the next sessions.',
     sphereFor: (label) => `Area for deck ${label}`,
     by: { ai: 'AI', name: 'by name', history: 'by quest history', manual: 'manual', default: 'default' },
-    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${count === 1 ? 'quest' : 'quests'}`,
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} gold — ${count} ${count === 1 ? 'quest' : 'quests'}`,
     rewarded: 'quest counted', waiting: 'reward on its way', beforeConnect: 'before connecting — no reward',
     factsNote: 'Finished sessions after connecting become completed quests.',
-    setupTitle: 'Senku now earns rewards', setupText: 'Every finished session after connecting becomes a completed quest with XP and gold in the deck’s area. How should the area of a deck be picked?', setupAi: 'With AI', setupNames: 'By names only',
+    setupTitle: 'Senku now earns rewards', setupText: 'How should card reviews count?', setupAi: 'As quests — AI picks the area', setupNames: 'As quests — by deck names', setupHabit: 'As the “Senku” habit',
+    modeTitle: 'How reviews count', modeQuests: 'Quests in the deck’s area', modeHabit: 'The “Senku” habit', habitNote: 'On a day with a finished session the habit is marked by itself.', habitMissing: 'The Senku habit was deleted — choose how reviews count again.', habitToast: (xp, gold) => `Senku: habit marked · +${xp} XP · +${gold} gold`,
   },
   de: {
-    intro: 'Zeigt auf „Heute“, wie viele Karten du in Senku wiederholt hast, und macht aus jeder beendeten Sitzung eine erledigte Quest mit XP und Gold im Bereich des Stapels.',
+    intro: 'Kartenwiederholungen in Senku zählen in Satoru.',
     address: 'Senku-Adresse', key: 'Schlüssel aus Senku', keyPlaceholder: 'Ganzen Schlüssel einfügen',
     keyHint: 'Senku stellt den Schlüssel aus: Konto → Satoru → „Schlüssel ausstellen“. Satoru speichert ihn nur auf seinem Server und zeigt ihn nie wieder an.',
     connect: 'Verbinden', connecting: 'Schlüssel wird geprüft…', connectedToast: 'Senku verbunden', connected: 'Verbunden',
@@ -16239,21 +16245,22 @@ const SENKU_COPY = {
     voice: 'Per Stimme', visual: 'Mit den Augen', open: 'läuft noch', untrusted: 'Dauer nicht gezählt', min: 'Min.',
     cards: (n) => `${n} ${n === 1 ? 'Karte' : 'Karten'}`,
     noDeck: 'Stapel ohne Namen', updated: (time) => `aktualisiert um ${time}`,
-    rewardsOn: (since) => `Belohnungen: Jede beendete Sitzung${since ? ` seit ${since}` : ''} wird eine erledigte Quest mit der üblichen Belohnung. Sitzungen vor dem Verbinden zählen nicht.`,
+    rewardsOn: (since) => `Es zählen Sitzungen${since ? ` seit ${since}` : ''}.`,
     aiToggle: 'Bereich eines neuen Stapels per KI wählen',
-    aiNote: 'Der KI-Dienst sieht Stapel- und Ordnernamen (dein Schlüssel oder Pro). Ohne KI wird der Bereich nach Namen und deinem Quest-Verlauf gewählt.',
+    aiNote: 'Der KI-Dienst sieht Stapel- und Ordnernamen.',
     aiUnavailable: 'KI ist gerade nicht verfügbar: Füge oben in der KI-Karte einen Schlüssel hinzu oder hol dir Pro. Bis dahin wird nach Namen gewählt.',
     defaultSphere: 'Bereich, wenn ein Stapel nicht erkannt wird', decksTitle: (n) => `Stapel und Bereiche (${n})`,
-    decksNote: 'Eine neue Wahl gilt für die nächsten Sitzungen. Den Bereich einer schon belohnten Quest änderst du in der Quest selbst.',
+    decksNote: 'Gilt für die nächsten Sitzungen.',
     sphereFor: (label) => `Bereich für Stapel ${label}`,
     by: { ai: 'KI', name: 'nach Name', history: 'nach Quest-Verlauf', manual: 'manuell', default: 'Standard' },
-    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${count === 1 ? 'Quest' : 'Quests'}`,
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} Gold — ${count} ${count === 1 ? 'Quest' : 'Quests'}`,
     rewarded: 'Quest gezählt', waiting: 'Belohnung unterwegs', beforeConnect: 'vor dem Verbinden — ohne Belohnung',
     factsNote: 'Beendete Sitzungen nach dem Verbinden werden zu erledigten Quests.',
-    setupTitle: 'Senku bringt jetzt Belohnungen', setupText: 'Jede beendete Sitzung nach dem Verbinden wird eine erledigte Quest mit XP und Gold im Bereich des Stapels. Wie soll der Bereich eines Stapels gewählt werden?', setupAi: 'Mit KI', setupNames: 'Nur nach Namen',
+    setupTitle: 'Senku bringt jetzt Belohnungen', setupText: 'Wie sollen Kartenwiederholungen zählen?', setupAi: 'Als Quests — KI wählt den Bereich', setupNames: 'Als Quests — nach Stapelnamen', setupHabit: 'Als Gewohnheit „Senku“',
+    modeTitle: 'Wie Wiederholungen zählen', modeQuests: 'Quests im Bereich des Stapels', modeHabit: 'Gewohnheit „Senku“', habitNote: 'An einem Tag mit beendeter Sitzung wird die Gewohnheit von selbst abgehakt.', habitMissing: 'Die Gewohnheit Senku wurde gelöscht — wähle erneut, wie Wiederholungen zählen.', habitToast: (xp, gold) => `Senku: Gewohnheit abgehakt · +${xp} XP · +${gold} Gold`,
   },
   es: {
-    intro: 'Muestra en «Hoy» cuántas tarjetas repasaste en Senku y convierte cada sesión terminada en una misión completada con XP y oro en el área del mazo.',
+    intro: 'Los repasos de tarjetas en Senku cuentan en Satoru.',
     address: 'Dirección de Senku', key: 'Clave de Senku', keyPlaceholder: 'Pega la clave completa',
     keyHint: 'Senku emite la clave: Cuenta → Satoru → «Emitir clave». Satoru la guarda solo en su servidor y no vuelve a mostrarla.',
     connect: 'Conectar', connecting: 'Comprobando la clave…', connectedToast: 'Senku conectado', connected: 'Conectado',
@@ -16278,18 +16285,19 @@ const SENKU_COPY = {
     voice: 'Por voz', visual: 'A la vista', open: 'sigue en curso', untrusted: 'duración no contada', min: 'min',
     cards: (n) => `${n} ${n === 1 ? 'tarjeta' : 'tarjetas'}`,
     noDeck: 'Mazo sin nombre', updated: (time) => `actualizado a las ${time}`,
-    rewardsOn: (since) => `Recompensas: cada sesión terminada${since ? ` desde el ${since}` : ''} se convierte en una misión completada con la recompensa habitual. Las sesiones anteriores a la conexión no cuentan.`,
+    rewardsOn: (since) => `Cuentan las sesiones${since ? ` desde el ${since}` : ''}.`,
     aiToggle: 'Elegir el área de un mazo nuevo con IA',
-    aiNote: 'El servicio de IA verá los nombres de mazos y carpetas (tu clave o Pro). Sin IA, el área se elige por los nombres y tu historial de misiones.',
+    aiNote: 'El servicio de IA verá los nombres de mazos y carpetas.',
     aiUnavailable: 'La IA no está disponible ahora: añade una clave en la tarjeta de IA de arriba o hazte Pro. Mientras tanto se elige por los nombres.',
     defaultSphere: 'Área si no se reconoce el mazo', decksTitle: (n) => `Mazos y áreas (${n})`,
-    decksNote: 'Una nueva elección se aplica a las próximas sesiones. El área de una misión ya recompensada se cambia en la propia misión.',
+    decksNote: 'Se aplica a las próximas sesiones.',
     sphereFor: (label) => `Área del mazo ${label}`,
     by: { ai: 'IA', name: 'por nombre', history: 'por historial', manual: 'manual', default: 'por defecto' },
-    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} 🪙 — ${count} ${count === 1 ? 'misión' : 'misiones'}`,
+    rewardToast: (count, xp, gold) => `Senku: +${xp} XP · +${gold} de oro — ${count} ${count === 1 ? 'misión' : 'misiones'}`,
     rewarded: 'misión contada', waiting: 'recompensa en camino', beforeConnect: 'antes de conectar: sin recompensa',
     factsNote: 'Las sesiones terminadas después de conectar se convierten en misiones completadas.',
-    setupTitle: 'Senku ya da recompensas', setupText: 'Cada sesión terminada después de conectar se convierte en una misión completada con XP y oro en el área del mazo. ¿Cómo elegir el área de un mazo?', setupAi: 'Con IA', setupNames: 'Solo por nombres',
+    setupTitle: 'Senku ya da recompensas', setupText: '¿Cómo deben contar los repasos de tarjetas?', setupAi: 'Como misiones — la IA elige el área', setupNames: 'Como misiones — por nombres de mazos', setupHabit: 'Como el hábito «Senku»',
+    modeTitle: 'Cómo cuentan los repasos', modeQuests: 'Misiones en el área del mazo', modeHabit: 'El hábito «Senku»', habitNote: 'Un día con una sesión terminada, el hábito se marca solo.', habitMissing: 'Se borró el hábito Senku: elige de nuevo cómo cuentan los repasos.', habitToast: (xp, gold) => `Senku: hábito marcado · +${xp} XP · +${gold} de oro`,
   },
 };
 const SENKU_DAY_REFRESH_MS = 3 * 60 * 1000;
@@ -16348,7 +16356,7 @@ function senkuConnectFormHTML(s, c, extra = '') {
 }
 function senkuCard() {
   const s = State.senku; const c = senkuCopy();
-  const head = `<h3>${satoruIconHTML('media.notes', 'heading-glyph', '🗂')} Senku</h3>`;
+  const head = `<h3>Senku</h3>`;
   const message = State._senkuMessage ? `<p class="senku-message" role="alert">${esc(State._senkuMessage)}</p>` : '';
   if (!s || !Object.keys(s).length) return `<div class="card senku-card">${head}<p class="muted">${esc(c.loading)}</p></div>`;
   if (s.error) return `<div class="card senku-card">${head}<p class="muted">${esc(c.loadFailed)}</p></div>`;
@@ -16374,31 +16382,18 @@ function senkuTodayHTML() {
   const s = State.senku;
   if (!s || s.connected !== true) return '';
   const c = senkuCopy();
-  const head = satoruIconHTML('media.notes', 'inline-glyph', '');
   if (s.state === 'reconnect') {
-    return `<div class="card senku-today senku-today--dead"><span>${head} ${esc(c.dead)}</span>
+    return `<div class="card senku-today senku-today--dead"><span>${esc(c.dead)}</span>
       <button type="button" class="btn ghost sm" data-action="senku-open-settings">${esc(c.reconnect)}</button></div>`;
   }
-  const view = State._senkuDay && State._senkuDay.day === todayStr() ? State._senkuDay.view : null;
-  const setup = senkuSettings().setup === true ? '' : `<section class="card senku-setup" aria-labelledby="senku-setup-title">
-      <h3 id="senku-setup-title">${head} ${esc(c.setupTitle)}</h3><p>${esc(c.setupText)}</p>
-      <div class="settings-actions"><button type="button" class="btn" data-action="senku-setup-ai">${esc(c.setupAi)}</button>
-        <button type="button" class="btn ghost" data-action="senku-setup-names">${esc(c.setupNames)}</button></div>
-      <p class="muted senku-hint">${esc(c.aiNote)}</p>
-      <label class="senku-field"><span>${esc(c.defaultSphere)}</span><select data-action="senku-default-sphere">${senkuSphereList().map((sphere) =>
-        `<option value="${esc(sphere.id)}" ${sphere.id === senkuDefaultSkillId() ? 'selected' : ''}>${esc(sphere.path.join(' › '))}</option>`).join('')}</select></label></section>`;
-  if (!view) return setup;
-  if (!view.sessions.length) return `${setup}<div class="card senku-today senku-today--empty"><span>${head} ${esc(c.empty)}</span></div>`;
-  const rows = view.sessions.map((one) => {
-    const time = one.open ? `${senkuTime(one.startedAt)} — ${c.open}` : `${senkuTime(one.startedAt)}–${senkuTime(one.endedAt)}`;
-    const length = one.open ? '' : one.durationTrusted ? ` · ${one.minutes} ${c.min}` : ` · ${c.untrusted}`;
-    const decks = one.decks.map((deck) => `<li><span class="senku-deck">${esc([...(deck.folder || []), deck.name || c.noDeck].join(' › '))}</span><span class="senku-deck-cards">${deck.cards}</span></li>`).join('');
-    const reward = one.claimed ? c.rewarded : one.rewardable ? c.waiting : !one.open && one.durationTrusted && s.rewardsFrom && Date.parse(one.startedAt) < Date.parse(s.rewardsFrom) ? c.beforeConnect : '';
-    return `<li class="senku-session"><p><b>${esc(time)}</b> · ${esc(one.kind === 'voice' ? c.voice : c.visual)}${esc(length)} · ${esc(c.cards(one.cards))}${reward ? ` · <span class="senku-reward${one.claimed ? ' is-done' : ''}">${esc(reward)}</span>` : ''}</p><ul class="senku-decks">${decks}</ul></li>`;
-  }).join('');
-  const updated = s.lastExchangeAt ? ` · ${c.updated(senkuTime(s.lastExchangeAt))}` : '';
-  return `${setup}<details class="card senku-today"><summary><span>${head} ${esc(c.line(view.cards, view.minutes, view.voiceCards))}</span>${satoruIconHTML('action.expand', 'senku-chevron', '')}</summary>
-    <div class="senku-today-body"><ul class="senku-sessions">${rows}</ul><p class="muted senku-hint">${esc(c.factsNote + updated)}</p></div></details>`;
+  // Owner 01.10: the sessions are already in the day as quests (or as the habit) — no second list below.
+  if (senkuSettings().setup === true || senkuSettings().mode === 'habit') return '';
+  return `<section class="card senku-setup" aria-labelledby="senku-setup-title">
+      <h3 id="senku-setup-title">${esc(c.setupTitle)}</h3><p>${esc(c.setupText)}</p>
+      <div class="senku-setup-actions"><button type="button" class="btn" data-action="senku-setup-ai">${esc(c.setupAi)}</button>
+        <button type="button" class="btn ghost" data-action="senku-setup-names">${esc(c.setupNames)}</button>
+        <button type="button" class="btn ghost" data-action="senku-setup-habit">${esc(c.setupHabit)}</button></div>
+      <p class="muted senku-hint">${esc(c.aiNote)}</p></section>`;
 }
 async function senkuConnect(form) {
   const c = senkuCopy();
@@ -16506,12 +16501,58 @@ function senkuQuestTitle(draft) {
   const shown = names.length ? names.slice(0, 2).join(', ') + (names.length > 2 ? ` +${names.length - 2}` : '') : c.noDeck;
   return `Senku: ${shown} — ${c.cards(draft.senkuCards)}`.slice(0, 160);
 }
+// ---- Senku as a habit (owner 01.10): a day with a finished session marks the habit «Senku» through
+// the ordinary habit write (the habit's own reward); no quests then. Quests stay the default.
+function senkuHabit() {
+  const id = senkuSettings().habitId;
+  return id ? (State.habits || []).find((h) => h.id === id && !h.archived) || null : null;
+}
+async function senkuEnableHabit() {
+  if (State._habitTxnBusy || State._habitsLoadError) return false;
+  let habit = senkuHabit();
+  if (!habit) {
+    habit = { id: 'h_' + uid(), title: 'Senku', skillId: senkuDefaultSkillId(), estimateMin: 15, difficulty: 'easy',
+      days: [0, 1, 2, 3, 4, 5, 6], archived: false, createdAt: new Date().toISOString(), atomic: { twoMin: '' }, source: 'senku' };
+    const next = [...(State.habits || []), habit];
+    const saved = await habitDataCommit({ habits: next }, () => { State.habits = next; });
+    if (!saved) return false;
+  }
+  const settingsSaved = await senkuSaveSettings((senku) => Object.assign(senku, { mode: 'habit', habitId: habit.id }));
+  if (!settingsSaved) return false;
+  State._senkuRewardCheckedAt = 0; senkuImportRewards({ force: true });
+  return true;
+}
+async function senkuImportHabit(data, current) {
+  const habit = senkuHabit();
+  if (!habit || State._habitTxnBusy || State._habitsLoadError) return; // nothing is claimed: no reward is lost
+  const planned = window.SenkuRewardsV1.plan(data.sittings, { sphereFor: () => habit.skillId, existingKeys: new Set(), newId: uid,
+    dateOf: (iso) => fmtDate(new Date(iso)), nowIso: new Date().toISOString() });
+  if (!planned.claims.length) return;
+  const days = new Map();
+  for (const sitting of data.sittings) if (sitting && sitting.endedAt) days.set(fmtDate(new Date(sitting.startedAt)), sitting.endedAt);
+  const nextLog = structuredClone(State.habitlog || {}); const marked = [];
+  for (const [day, at] of days) {
+    if (nextLog[day] && nextLog[day][habit.id]) continue; // already marked that day (by hand or earlier): no second reward
+    nextLog[day] = Object.assign({}, nextLog[day], { [habit.id]: { xp: itemXp(habit), gold: itemGold(habit), min: Number(habit.estimateMin) || 0, at, source: 'senku' } });
+    marked.push(day);
+  }
+  if (marked.length) {
+    const saved = await habitDataCommit({ habitlog: nextLog }, () => { if (!current()) return false; State.habitlog = nextLog; return true; });
+    if (!saved || !current()) return;
+  }
+  await fetch('/api/bridge/senku/claim', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ claims: planned.claims }) }).catch(() => {});
+  if (marked.length) {
+    checkAchievements(); publishLeaderboard();
+    toast(senkuCopy().habitToast(itemXp(habit) * marked.length, itemGold(habit) * marked.length));
+  }
+}
 async function senkuImportRewards({ force = false } = {}) {
   const s = State.senku;
   if (State._senkuRewardBusy || State._tasksLoadError || !window.SenkuRewardsV1 || !s || s.connected !== true || s.state === 'reconnect') return;
   // Первое начисление — только после разового выбора, как подбирать сферу (это и согласие на ИИ):
   // иначе накопленные с подключения сессии ушли бы в сферу по умолчанию раньше, чем человек решил.
-  if (senkuSettings().setup !== true) return;
+  const habitMode = senkuSettings().mode === 'habit';
+  if (senkuSettings().setup !== true && !habitMode) return;
   if (!force && Date.now() - (State._senkuRewardCheckedAt || 0) < SENKU_DAY_REFRESH_MS) return;
   State._senkuRewardBusy = true; State._senkuRewardCheckedAt = Date.now();
   const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
@@ -16521,6 +16562,7 @@ async function senkuImportRewards({ force = false } = {}) {
     if (!response.ok) return;
     const data = await response.json();
     if (!current() || data.connected !== true || !Array.isArray(data.sittings) || !data.sittings.length) return;
+    if (habitMode) { await senkuImportHabit(data, current); return; }
     const decks = [...new Map(data.sittings.flatMap((one) => one.decks || []).filter((deck) => deck.deck).map((deck) => [deck.deck, deck])).values()];
     const assigned = await senkuAssignSpheres(decks);
     const fallback = senkuDefaultSkillId();
@@ -16534,7 +16576,7 @@ async function senkuImportRewards({ force = false } = {}) {
         dateOf: (iso) => fmtDate(new Date(iso)), nowIso: new Date().toISOString() });
       claims = planned.claims;
       made = planned.drafts.map((draft) => {
-        const task = Object.assign({}, draft, { title: senkuQuestTitle(draft), iconId: 'media.notes' });
+        const task = Object.assign({}, draft, { title: senkuQuestTitle(draft) });
         task.xpAwarded = Math.max(1, itemXp(task)); task.goldAwarded = itemGold(task);
         return task;
       });
@@ -16575,7 +16617,14 @@ function senkuRewardsSettingsHTML(s, c) {
       <select data-action="senku-deck-sphere" data-deck="${esc(deck.deck)}" aria-label="${esc(c.sphereFor(label))}">${opts(mapped || fallback)}</select></label>
       <span class="senku-deck-by">${esc(by)}</span></li>`;
   }).join('');
-  return `<div class="senku-rewards">
+  const habitMode = senkuSettings().mode === 'habit';
+  const modeChoice = `<fieldset class="senku-mode"><legend>${esc(c.modeTitle)}</legend>
+      <label class="senku-check"><input type="radio" name="senku-mode" value="quests" data-action="senku-mode" ${habitMode ? '' : 'checked'} /><span>${esc(c.modeQuests)}</span></label>
+      <label class="senku-check"><input type="radio" name="senku-mode" value="habit" data-action="senku-mode" ${habitMode ? 'checked' : ''} /><span>${esc(c.modeHabit)}</span></label></fieldset>`;
+  if (habitMode) {
+    return `<div class="senku-rewards">${modeChoice}<p class="muted senku-hint">${esc(senkuHabit() ? c.habitNote : c.habitMissing)}</p></div>`;
+  }
+  return `<div class="senku-rewards">${modeChoice}
     <p class="senku-hint">${esc(c.rewardsOn(since))}</p>
     <label class="senku-check"><input type="checkbox" data-action="senku-ai-spheres" ${senkuSettings().aiSpheres === true ? 'checked' : ''} />
       <span>${esc(c.aiToggle)}</span></label>
@@ -18197,6 +18246,9 @@ function damageUiKey() { return `satoru:damage:${String(State.me?.id || '')}`; }
 function rememberDamageUI(dismissed = false) {
   const record = { signature: State._damageSignature, dismissed, result: State._damageResult || null };
   try { sessionStorage.setItem(damageUiKey(), JSON.stringify(record)); } catch {}
+  // "Hide until the tab closes" brought the card back on every launch of the phone app: the choice
+  // now holds until the damage changes (a different signature shows the card again).
+  if (dismissed) { try { localStorage.setItem(`${damageUiKey()}:ack`, String(State._damageSignature || '')); } catch {} }
 }
 function reportDataDamageOnce() {
   const summary = scanDataDamage(), key = `${State.me?.id}:${summary.signature}`;
@@ -18206,22 +18258,38 @@ function reportDataDamageOnce() {
   const same = saved?.signature === summary.signature;
   State._damageResult = same && window.DamageRepairV1.validReceipt(saved.result) ? saved.result : null;
   State._damageError = '';
-  State._dataDamage = same && saved.dismissed ? null : summary.rows;
+  let acknowledged = ''; try { acknowledged = localStorage.getItem(`${damageUiKey()}:ack`) || ''; } catch {}
+  State._dataDamage = (same && saved.dismissed) || acknowledged === summary.signature ? null : summary.rows;
+}
+function damagePlaces(limit = 6) {
+  const R = window.DamageRepairV1; if (!R) return [];
+  const areas = { 'Квесты': State.tasks, 'Цели': State.goals, 'Привычки': State.habits, 'Заметки': State.inbox, 'Настройки': State.settings, 'Дни': State.days };
+  const at = (root, path) => (path.match(/\[[0-9]+\]|\.[^.[]+/g) || []).reduce((node, part) => node == null ? node : node[part[0] === '[' ? Number(part.slice(1, -1)) : part.slice(1)], root);
+  const out = [];
+  for (const [area, value] of Object.entries(areas)) {
+    for (const spot of R.findDamage(value)) {
+      const text = String(at(value, spot.path) || ''), i = text.indexOf(R.MARK);
+      out.push({ area, text: (i > 30 ? '…' : '') + text.slice(Math.max(0, i - 30), i + 30) + (i + 30 < text.length ? '…' : '') });
+      if (out.length >= limit) return out;
+    }
+  }
+  return out;
 }
 function dataDamageNoticeHTML() {
   const damage = State._dataDamage, result = State._damageResult;
   if (!damage || (!damage.length && !result)) return '';
   const total = damage.reduce((sum, d) => sum + d.count, 0);
   const left = result ? result.total - result.done : total;
-  const where = damage.map(d => `${t(d.area)}: ${d.count}`).join(', ');
+  // Where exactly: the person can fix a sentence only if they can find it.
+  const places = damagePlaces().map((p) => `<li><b>${esc(t(p.area))}</b> <span data-noi18n>${esc(p.text).replace(/�/g, '<mark>�</mark>')}</span></li>`).join('');
   return `<section class="card data-damage-card" role="status">
     <h3>${esc(t('Повреждённые поля'))}: ${left}</h3>
-    ${where ? `<p class="muted">${esc(where)}</p>` : ''}
-    ${result ? `<p>${esc(t('Проверено'))}: ${result.total} · ${esc(t('Восстановлено'))}: ${result.done} · ${esc(t('Осталось'))}: ${left}</p><p class="muted">${esc(t(left ? 'Целой копии оставшихся полей нет. Проверь текст в указанных разделах и исправь его вручную.' : 'Повреждений не осталось'))}</p>` : `<p class="muted">${esc(t('Восстановление заменит повреждённые поля целым текстом из резервных копий. Остальные данные останутся прежними.'))}</p>`}
+    ${result ? `<p class="muted">${esc(t(left ? 'Целой копии оставшихся полей нет. Проверь текст в указанных разделах и исправь его вручную.' : 'Повреждений не осталось'))}</p>` : ''}
+    ${places ? `<ul class="data-damage-places">${places}</ul>` : ''}
     ${State._damageError ? `<p role="alert">${esc(State._damageError)}</p>` : ''}
     <div class="propose-actions">
       ${!result || State._damageError ? `<button type="button" class="btn" data-action="damage-repair"${State._damageBusy ? ' disabled' : ''}>${esc(t(State._damageBusy ? 'Восстанавливаю…' : 'Восстановить из копий'))}</button>` : ''}
-      <button type="button" class="btn ghost" data-action="damage-dismiss"${State._damageBusy ? ' disabled' : ''}>${esc(t('Скрыть до закрытия вкладки'))}</button>
+      <button type="button" class="btn ghost" data-action="damage-dismiss"${State._damageBusy ? ' disabled' : ''}>${esc(t('Больше не показывать'))}</button>
     </div></section>`;
 }
 async function repairDataDamage() {
@@ -22168,11 +22236,14 @@ function renderToday() {
   // и только потом обычная подсказка следующего хода.
   const cs = coreState();
   const closed = dayClosed();
-  const heroKicker = closed ? t('День закрыт') : cs.closed ? t('Ядро закрыто') : t('Сегодня');
+  const focusTask = tm && tmTask && !closed ? tmTask : null;
+  const heroKicker = closed ? t('День закрыт') : focusTask ? t('Сейчас') : cs.closed ? t('Ядро закрыто') : t('Сегодня');
   const heroTitle = closed ? t('На сегодня всё.')
+    : focusTask ? esc(focusTask.title)
     : cs.closed ? t('Главное сделано')
     : nextQuest ? esc(nextQuest.title) : t('План на сегодня');
   const heroSub = closed ? t('Следующий день — в календаре.')
+    : focusTask ? `${focusTask.startTime ? esc(focusTask.startTime) + ' · ' : ''}${fmtDur(Number(focusTask.estimateMin) || 0)}`
     : cs.closed ? t('Остальное — по желанию.')
     : nextQuest ? `${nextQuest.startTime ? esc(nextQuest.startTime) + ' · ' : ''}${fmtDur(Number(nextQuest.estimateMin) || 0)}${nextQuest.core ? ' · ' + t('Ядро дня') : ''}`
     : t('Добавь первое дело ниже.');
@@ -25345,8 +25416,7 @@ function timeBySphereChartHTML(items, emptyText) {
       <span class="dchart-track" aria-hidden="true"><span class="dchart-fill" style="width:${r.pct}%;background:${esc(r.color || 'var(--accent)')}"></span></span></li>`).join('');
   return `<figure class="dchart dchart-bars">
     <ol class="dchart-rows">${rows}</ol>
-    ${model.zero.length ? `<p class="muted dchart-zero">${t('Без записанного времени')}: ${model.zero.map((z) => sphereNameHTML(z.label)).join(', ')}</p>` : ''}
-    <figcaption class="dchart-summary">${t('Всего')} ${fmtDur(model.total)}. ${t('Длина полосы — доля от самой большой сферы.')}</figcaption>
+    <figcaption class="dchart-summary">${t('Всего')} ${fmtDur(model.total)}</figcaption>
   </figure>`;
 }
 // Ритм сфер: доля тех, кто попал в собственную объявленную частоту. Это ответ
@@ -26583,7 +26653,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
         ${!closed && pendingReturn && primary.kind !== 'return' ? `<button class="secretary-action" data-action="attention-open-return">${satoruIconHTML('action.back', 'button-glyph')}<b>${t('Вернуться одним шагом')}</b></button>` : ''}
         <button class="secretary-action" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-glyph')}<b>${t('Отдохнуть с границей')}</b></button>
         ${!closed && primary.kind !== 'evening' ? `<button class="secretary-action" data-action="evening-open">${satoruIconHTML('system.day-end', 'button-glyph')}<b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` : ''}
-        ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${esc(policies[0].name)}</b></button>` : `<button class="secretary-action" data-action="attention-open-setup">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${t('Настроить границу входа')}</b></button>`}
+        ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${esc(policies[0].name)}</b></button>` : ''}
         ${secretaryExperimentAvailable() && secretaryExperimentLaunchEnabled() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open">${satoruIconHTML('system.focus', 'button-glyph')}<b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentStatusHTML(experiment)}
       </div>
     </details>
@@ -32552,6 +32622,11 @@ async function onClick(e) {
   if (action === 'strava-connect') { window.location.href = '/api/strava/connect'; return; }
   if (action === 'strava-sync') { stravaSync(); return; }
   if (action === 'senku-refresh') { ensureSenkuDay({ force: true }); return; }
+  if (action === 'senku-setup-habit') {
+    el.disabled = true;
+    if (!await senkuEnableHabit()) { el.disabled = false; toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); return; }
+    render(); return;
+  }
   if (action === 'senku-setup-ai' || action === 'senku-setup-names') {
     const ai = action === 'senku-setup-ai'; el.disabled = true;
     const saved = await senkuSaveSettings((senku) => Object.assign(senku, { setup: true, aiSpheres: ai, defaultSkillId: senku.defaultSkillId || senkuDefaultSkillId() }));
@@ -33925,7 +34000,7 @@ async function onClick(e) {
       State._entryTask = null;
       if (!target) return;
       track('entry:accept-task');
-      toast('🕯 ' + t('Только вход. Через десять минут ты вправе остановиться'));
+      toast(t('Только вход. Через десять минут ты вправе остановиться'));
       startFocus(target.id);
       return;
     }
@@ -33934,13 +34009,13 @@ async function onClick(e) {
     const skillId = State._entrySkill || (entryTopSpheres()[0]);
     if (!skillId) { closeLegacyDialog('entry-modal'); return; }
     const step = entryStepFor(skillId);
-    const q = { id: uid(), title: ('🕯 ' + t('Заход') + ': ' + t(step)).slice(0, 110), skillId, skillIds: [skillId],
+    const q = { id: uid(), title: (t('Заход') + ': ' + t(step)).slice(0, 110), skillId, skillIds: [skillId],
       estimateMin: 10, difficulty: 'easy', date: todayStr(), done: false, completedAt: null,
       xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, entry: true, createdAt: new Date().toISOString() };
     State.tasks.push(q); Store.save('tasks', State.tasks);
     closeLegacyDialog('entry-modal');
     track('entry:accept');
-    toast('🕯 ' + t('Тень зажгла огонёк: десять минут — и вечер твой'));
+    toast(t('Тень зажгла огонёк: десять минут — и вечер твой'));
     startFocus(q.id);
   } else if (action === 'sphere-guide') {
     openSphereGuide(el.dataset.skill); track('sphere:guide');
@@ -34950,6 +35025,12 @@ function onChange(e) {
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; autosaveSettings(); toast(`🤖 ${t('ИИ по умолчанию')}: ${aiProviderLabel(el.value)}`); return; }
   if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; autosaveSettings(); return; }
   if (a === 'senku-ai-spheres') { const on = !!el.checked; senkuSaveSettings((senku) => Object.assign(senku, { aiSpheres: on, setup: true })).then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); }); return; }
+  if (a === 'senku-mode') {
+    const habit = el.value === 'habit';
+    (habit ? senkuEnableHabit() : senkuSaveSettings((senku) => Object.assign(senku, { mode: 'quests', setup: true })))
+      .then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); });
+    return;
+  }
   if (a === 'senku-default-sphere') { const value = el.value; senkuSaveSettings((senku) => Object.assign(senku, { defaultSkillId: value })).then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); }); return; }
   if (a === 'senku-deck-sphere') { const deck = el.dataset.deck, value = el.value; if (!deck) return; senkuSaveSettings((senku) => { senku.decks[deck] = { skillId: value, by: 'manual' }; senku.setup = true; return senku; }).then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); }); return; }
   if (a === 'habit-atomic') { updateHabitAtomic(el.dataset.id, el.dataset.field, el.value); return; }
@@ -35405,7 +35486,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v316';
+const PWA_CACHE_VERSION = 'satoru-v317';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -251,8 +251,7 @@
           <span><b>${tr(t, label)}</b><small>${tr(t, hint)}</small></span>
         </label>`).join('')}</div>
       </fieldset>
-      <p class="attention-privacy-note">${tr(t, 'Это не ежедневный трекер и не долг. Записывается только граница этого отдыха.')}</p>
-      <p class="attention-privacy-note" role="note">${tr(t, 'PWA покажет границу, пока Satoru открыт. Если уходишь из приложения, поставь системный таймер.')}</p>
+      <p class="attention-privacy-note" role="note">${tr(t, 'Работает, пока Satoru открыт.')}</p>
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
       <div class="attention-actions">
         <button type="button" class="btn ghost" data-action="close-attention-dialog">${tr(t, 'Отмена')}</button>
@@ -278,7 +277,6 @@
       <ol class="attention-evening-plan" aria-label="${tr(t, 'План завершения вечера')}">${steps.map(([label, hint]) => `<li>
         <span aria-hidden="true">✓</span><div><b>${tr(t, label)}</b><small>${tr(t, hint)}</small></div>
       </li>`).join('')}</ol>
-      <p class="attention-privacy-note">${tr(t, 'Завершение этого плана не означает, что ты уже лёг спать или восстановился.')}</p>
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
       <div class="attention-actions">
         <button type="button" class="btn ghost" data-action="close-attention-dialog">${tr(t, 'Закрыть')}</button>
@@ -289,7 +287,7 @@
       <header class="attention-flow-head">
         <p class="attention-kicker">${tr(t, 'Конец дня')}</p>
         <h2 id="attention-dialog-title" tabindex="-1">${tr(t, 'Настроить завершение вечера')}</h2>
-        <p id="attention-dialog-description">${tr(t, 'Выбери время. Это одна подсказка, а не новый ежедневный трекер.')}</p>
+        <p id="attention-dialog-description">${tr(t, 'Выбери время.')}</p>
       </header>
       <label class="attention-field">
         <span>${tr(t, 'Во сколько убрать устройства')} <small>(${tr(t, 'необязательно')})</small></span>
@@ -297,7 +295,7 @@
       </label>
       <label class="attention-choice">
         <input type="checkbox" name="dailyReminder" ${dailyReminder ? 'checked' : ''} />
-        <span><b>${tr(t, 'Напоминать каждый вечер')}</b><small>${tr(t, 'Подсказка появится в Satoru. Уведомление вне приложения доступно при включённых уведомлениях браузера.')}</small></span>
+        <span><b>${tr(t, 'Напоминать каждый вечер')}</b><small>${tr(t, 'Подсказка появится в Satoru.')}</small></span>
       </label>
       <p class="attention-form-status" data-attention-status role="status" aria-live="polite"></p>
       <div class="attention-actions">

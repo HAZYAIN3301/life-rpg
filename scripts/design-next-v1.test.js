@@ -11,7 +11,9 @@ test('redesign ships together with its local font and preserves the old UI entry
  assert.match(sw,/'fonts\/russo-one\/RussoOne\.ttf'/);
  assert.match(css,/\[data-theme=light\]/);
  assert.match(css,/prefers-reduced-motion:reduce/);
- assert.match(app,/href="\/compare\.html"/);
+ // Owner 01.10: the old-UI comparison is not a profile-menu item any more (it overlapped on the phone);
+ // the page itself stays reachable by its address.
+ assert.doesNotMatch(app,/href="\/compare\.html"/);
  assert.match(app,/dataset\.design = 'next'/);
  assert.match(index,/<html[^>]+data-design="next"/,'guest/login uses the same design before State is loaded');
 });

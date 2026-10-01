@@ -9017,8 +9017,10 @@ html.mobile-nav-open body {
     gap: var(--sp-2);
   }
 
+  /* Only the form's own buttons span the row. A descendant selector also caught the buttons inside
+     the sphere picker and pushed each sphere row into a 44px column: names broke letter by letter. */
   .card-addquest :is(.add-field-title, .add-field-duration),
-  .card-addquest .add-row button {
+  .card-addquest .add-row > button {
     grid-column: 1 / -1;
   }
 
@@ -22647,3 +22649,56 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .senku-setup .senku-field { display: grid; gap: var(--sp-1); min-width: 0; }
 .senku-setup .senku-field > span { font-size: var(--type-meta); color: var(--text-soft); }
 .senku-setup .senku-field select { width: 100%; min-width: 0; min-height: var(--touch-min); font-size: var(--type-control); }
+
+/* ---- Phone pass (owner video 01.10): shared causes fixed once for every screen ---- */
+/* A dialog repainted by a choice inside it keeps its place: no second entrance fade ("screamer" frame). */
+.modal-overlay.is-refresh, .modal-overlay.is-refresh > * { animation: none; }
+
+@media (max-width: 600px) {
+  /* Quest menu: a sheet above the bottom bar instead of a popover squeezed between list rows. */
+  :root .task-more[open] > .task-menu,
+  :root[data-design=next] .task-more[open] > .task-menu {
+    position: fixed;
+    inset: auto var(--sp-2) calc(76px + env(safe-area-inset-bottom)) var(--sp-2);
+    width: auto; min-width: 0; max-width: none;
+    max-height: min(64dvh, 520px); overflow: auto;
+    z-index: 320; padding: var(--sp-2); border-radius: var(--radius-xl);
+  }
+  /* Tapping outside the sheet taps the summary and closes it. */
+  :root .task-more[open] > summary::after {
+    content: ""; position: fixed; inset: 0; z-index: 310;
+    background: color-mix(in srgb, var(--surface-0, #000) 55%, transparent);
+  }
+  /* The app shell's quick actions repeat in-app actions and took a tenth of the phone screen. */
+  #native-quick-actions { display: none; }
+}
+
+/* Numbers sit in the middle of their pills: the display face rode low in badges and date pills. */
+:root .calv-day, :root[data-design=next] .calv-day { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+:root .calv-day .cd-n, :root[data-design=next] .calv-day .cd-n { line-height: 1; }
+:root .calv-day :is(.cd-dot, .cd-dot-empty), :root[data-design=next] .calv-day :is(.cd-dot, .cd-dot-empty) { height: 18px; }
+:root .calv-day .cd-dot, :root[data-design=next] .calv-day .cd-dot:not(:empty) {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 18px; padding: 0 5px;
+  font: 700 var(--type-floor)/1 var(--font-ui); font-variant-numeric: tabular-nums;
+}
+.calv-tray-count {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; padding: 0 6px;
+  border-radius: 999px; font: 700 var(--type-floor)/1 var(--font-ui); font-variant-numeric: tabular-nums;
+}
+/* Goal deadline in the date strip: a quiet ring in the app's colour, not an Apple emoji. */
+.cal-goal-mark { display: inline-flex; align-items: center; gap: 2px; color: var(--warn); font: 700 var(--type-floor)/1 var(--font-ui); }
+.cal-goal-mark i { width: 7px; height: 7px; border: 2px solid currentColor; border-radius: 50%; }
+
+/* Calendar subscription: the how-to is folded away. */
+.cal-sub-help > summary { min-height: var(--touch-min); display: flex; align-items: center; cursor: pointer; font-size: var(--type-control); color: var(--text-soft); }
+.cal-sub-help > p { margin: var(--sp-1) 0 0; font-size: var(--type-meta); line-height: var(--leading-ui); color: var(--text-soft); }
+
+/* Damaged fields: where exactly, so the sentence can be fixed by hand. */
+.data-damage-places { margin: var(--sp-2) 0; padding: 0; list-style: none; display: grid; gap: var(--sp-1); }
+.data-damage-places li { font-size: var(--type-meta); line-height: var(--leading-ui); overflow-wrap: anywhere; }
+.data-damage-places mark { padding: 0 2px; border-radius: 3px; color: var(--surface-0, #000); background: var(--warn); }
+
+/* Senku: one choice on Today, mode switch in Settings. */
+.senku-setup-actions { display: grid; gap: var(--sp-2); }
+.senku-card .senku-mode { display: grid; gap: var(--sp-1); margin: 0; padding: 0; border: 0; }
+.senku-card .senku-mode > legend { margin-bottom: var(--sp-1); font-size: var(--type-meta); color: var(--text-soft); }

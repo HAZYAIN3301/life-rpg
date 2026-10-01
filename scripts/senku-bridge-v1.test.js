@@ -508,18 +508,22 @@ test('клиент: награда только обычным путём кве
   assert.ok(start > 0 && end > start, 'блок Senku в app.js не найден');
   const block = app.slice(start, end);
   for (const banned of [/localStorage|sessionStorage|indexedDB/, /\/api\/(?:data|analytics)\b/, /\btrack\(/,
-    /State\.(?:habits|habitlog|days|goals|rewards|purchases)\b/, /grantXp|awardXp|addGold|xpAwarded\s*[+=]\s*\d/]) {
+    /State\.(?:days|goals|rewards|purchases)\b/, /grantXp|awardXp|addGold|xpAwarded\s*[+=]\s*\d/]) {
     assert.doesNotMatch(block, banned, `блок Senku не должен трогать ${banned}`);
   }
   // Награда считается обычной формулой и пишется обычной записью квестов; отметка — только после неё.
   assert.match(block, /task\.xpAwarded = Math\.max\(1, itemXp\(task\)\); task\.goldAwarded = itemGold\(task\);/);
-  const write = block.indexOf("Store.updateNow('tasks'"); const claim = block.indexOf("fetch('/api/bridge/senku/claim'");
+  const write = block.indexOf("Store.updateNow('tasks'"); const claim = block.indexOf("fetch('/api/bridge/senku/claim'", write);
   assert.ok(write > 0 && claim > write, 'сессии отмечаются на сервере только после записи квестов');
   // Названия колод уходят ИИ только при включённом согласии.
   const ai = block.indexOf("fetch('/api/ai/analyze'"); const consent = block.lastIndexOf('aiSpheres === true', ai);
   assert.ok(ai > 0 && consent > 0 && ai - consent < 400, 'вызов ИИ стоит сразу под проверкой согласия');
   assert.equal(block.match(/\/api\/ai\//g).length, 1, 'ИИ вызывается в одном месте');
-  assert.match(block, /if \(senkuSettings\(\)\.setup !== true\) return;/, 'первое начисление — только после разового выбора человека');
+  assert.match(block, /if \(senkuSettings\(\)\.setup !== true && !habitMode\) return;/, 'первое начисление — только после разового выбора человека (или режима привычки)');
+  // Режим привычки (владелец 01.10): отметка обычной записью привычек, отметка сессий — после неё.
+  const habitWrite = block.indexOf('habitDataCommit({ habitlog: nextLog }'); const habitClaim = block.indexOf("fetch('/api/bridge/senku/claim'", habitWrite);
+  assert.ok(habitWrite > 0 && habitClaim > habitWrite, 'в режиме привычки сессии отмечаются только после записи журнала привычек');
+  assert.match(block, /if \(nextLog\[day\] && nextLog\[day\]\[habit\.id\]\) continue;/, 'день, уже отмеченный руками, второй награды не даёт');
   assert.match(block, /aiSurfaceRun\('senku'/, 'ИИ идёт через общий механизм отмены и таймаута');
   assert.match(block, /fetch\('\/api\/bridge\/senku\/connect'/);
   assert.match(block, /form\.key\.value = ''/, 'ключ стирается из поля после подключения');
