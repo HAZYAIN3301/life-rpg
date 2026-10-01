@@ -1,3 +1,8 @@
+**Claude 01.10 — Senku v316 опубликован:** runtime `01d8a550`; оба домена `01d8a550` /
+`satoru-v316` с 11:30 UTC; SHA-256 **10/10** (app.js, index.html, sw.js, styles.css,
+senku-rewards-v1.js × 2); production без входа — Chromium и WebKit iPhone без ошибок страницы;
+маршруты моста без сессии → 401. Следующий свободный номер — v317.
+
 ## Claude 01.10 — Senku: новые поля контракта / v316 candidate
 
 Агент Senku добавил `rideId`, `deckMs`, `state`, `endedBy` (закрытие по таймауту 30 мин) и
