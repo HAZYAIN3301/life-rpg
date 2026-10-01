@@ -1,3 +1,7 @@
+**Claude 01.10 — v317 опубликован:** runtime `4bb4b6d5`; оба домена `4bb4b6d5` / `satoru-v317` с
+18:49 UTC; SHA-256 **10/10** (app.js, index.html, sw.js, styles.css, attention-ui-v1.js × 2);
+production без входа — Chromium и WebKit iPhone без ошибок страницы. Следующий свободный номер — v318.
+
 ## Claude 01.10 — телефонная версия по видео владельца + Senku-привычка / v317 candidate
 
 Видео владельца (26 мин, iPhone) разобрано; исправлены **общие причины**, а не экраны по одному:
