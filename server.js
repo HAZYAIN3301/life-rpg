@@ -178,6 +178,10 @@ const USER_DATA_FILES = [
 // привязать заново, либо они остаются частью серверной учётной записи.
 const ACCOUNT_PORTABLE_FILES = AccountImportV1.FILES;
 const ACCOUNT_PORTABLE_TYPES = AccountImportV1.TYPES;
+// Секреты и серверные счётчики в папке пользователя. Общий /api/data и админские
+// бэкапы их не отдают и не принимают: ключи ИИ, токены Strava, сессии устройств и
+// расход ИИ-квоты меняются только своими маршрутами (/api/ai/keys, /api/strava/*, ...).
+const SERVER_SECRET_DATA_NAMES = Object.freeze(['ai-keys', 'strava', 'devices', 'ai-usage']);
 const PASSWORD_MIN = 8;
 
 // ============================================================
@@ -7202,6 +7206,7 @@ const server = http.createServer(async (req, res) => {
     if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const name = safeName(m[1].replace(/\.json$/, ''));
     if (!name) return sendJson(res, 400, { error: 'bad name' });
+    if (SERVER_SECRET_DATA_NAMES.includes(name)) return sendJson(res, 403, { error: 'server_owned_data' });
     if (name === FocusSessionsV1.FILE || name === 'secretary' || name.startsWith('secretary-')) return sendJson(res, 403, { error: 'server_owned_data' });
     if (name === 'inspiration-discovery' || name === 'board-discovery' || name === 'board-community' || name === QUESTIONNAIRE_FILE || name === PARTY_REWARDS_FILE || name === ChestRewardServiceV1.LEDGER_FILE || name === SenkuBridgeV1.FILE) return sendJson(res, 403, { error: 'server_owned_data' });
     const dir = userDataDir(uid);
@@ -7346,6 +7351,7 @@ const server = http.createServer(async (req, res) => {
     if (am && req.method === 'GET') {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
       if (!safeName(am[2])) return sendJson(res, 400, { error: 'bad name' });
+      if (SERVER_SECRET_DATA_NAMES.includes(am[2])) return sendJson(res, 403, { error: 'server_owned_data' });
       const fp = path.join(backupDir(userDataDir(am[1]), am[2]), am[3] + '.json');
       if (!fp.startsWith(DATA_DIR)) return sendJson(res, 400, { error: 'bad path' });
       return fs.readFile(fp, 'utf8', (err, txt) => err ? sendJson(res, 404, { error: 'not found' }) : send(res, 200, txt, { 'Content-Type': MIME['.json'] }));
@@ -7357,7 +7363,7 @@ const server = http.createServer(async (req, res) => {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
       let b = {}; try { b = JSON.parse(await readBody(req)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
       const name = safeName(String(b.name || '')); if (!name) return sendJson(res, 400, { error: 'bad name' });
-      if (name === FocusSessionsV1.FILE || name === 'inspiration-discovery' || name === 'secretary' || name.startsWith('secretary-') || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
+      if (SERVER_SECRET_DATA_NAMES.includes(name) || name === FocusSessionsV1.FILE || name === 'inspiration-discovery' || name === 'secretary' || name.startsWith('secretary-') || name === ChestRewardServiceV1.LEDGER_FILE) return sendJson(res, 403, { error: 'server_owned_data' });
       const dir = userDataDir(am[1]);
       const bfile = path.join(backupDir(dir, name), String(b.stamp || '') + '.json');
       if (!bfile.startsWith(DATA_DIR) || !fs.existsSync(bfile)) return sendJson(res, 404, { error: 'backup not found' });
