@@ -126,7 +126,7 @@ test('an unscheduled calendar task opens with an empty time input', () => {
   const source = functionSource(APP, 'openCalendarTaskEditor');
   const input = source.match(/<input name="startTime"[\s\S]{0,260}?\/>/);
   assert.ok(input, 'calendar editor must render its startTime input');
-  assert.match(input[0], /calendarTimeValue\(task\.startTime\)\s*\|\|\s*['"]['"]/, 'unscheduled task must keep its time field empty');
+  assert.match(input[0], /calendarTimeValue\(task\.startTime, true\)\s*\|\|\s*['"]['"]/, 'unscheduled task must keep its time field empty');
   assert.doesNotMatch(input[0], /\|\|\s*['"]09:00['"]/, 'calendar editor invents 09:00 for an unscheduled task');
 });
 

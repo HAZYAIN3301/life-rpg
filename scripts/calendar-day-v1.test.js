@@ -166,7 +166,7 @@ test('move is awaitable, rolls back on failure, and offers undo', () => {
   assert.match(move, /expiresAt: Date\.now\(\) \+ 12000/);
   assert.match(move, /setTimeout\(\(\) => \{[\s\S]*State\._calendarUndo !== receipt[\s\S]*12050/);
   const undo = functionBody('undoCalendarMove');
-  assert.match(undo, /moveCalendarTask\([\s\S]*\{ makeUndo: false, renderAfter: false \}/);
+  assert.match(undo, /moveCalendarTask\([\s\S]*\{ makeUndo: false, renderAfter: false, exactTime: true \}/);
   const failedUndo = undo.match(/if \(!ok\) \{([\s\S]*?)\n  \}/);
   assert.ok(failedUndo, 'failed Undo branch must exist');
   assert.doesNotMatch(failedUndo[1], /State\._calendarUndo = null/, 'failed Undo must retain its receipt');
@@ -176,7 +176,7 @@ test('move is awaitable, rolls back on failure, and offers undo', () => {
 
 test('desktop timeline preserves per-date scroll and composes overlaps into truthful lanes', () => {
   assert.match(app, /const CAL_H0 = 0, CAL_H1 = 23, CAL_ROWH = 48/);
-  assert.match(functionBody('openCalendarTaskEditor'), /type="time" min="00:00" max="23:45"/);
+  assert.match(functionBody('openCalendarTaskEditor'), /type="time" min="00:00" max="23:59"/);
   const sync = functionBody('syncCalendarDayViewport');
   assert.match(sync, /State\._calendarViewportDate === date/);
   assert.match(sync, /viewport\.scrollTop = State\._calendarViewportScroll/);

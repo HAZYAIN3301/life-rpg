@@ -12807,6 +12807,8 @@ function phoneCopy(key) {
     hours: ['Время для дел', 'Time for tasks', 'Zeit für Aufgaben', 'Час для справ', 'Tiempo para tareas'],
     slots: ['Подобрать время', 'Find time slots', 'Freie Zeiten finden', 'Підібрати час', 'Buscar huecos'],
     busy: ['Занято', 'Busy', 'Belegt', 'Зайнято', 'Ocupado'],
+    duration: ['Укажи длительность', 'Set a duration', 'Dauer angeben', 'Укажи тривалість', 'Indica la duración'],
+    capacity: ['Нет свободного интервала', 'No free slot', 'Kein freies Zeitfenster', 'Немає вільного інтервалу', 'No hay hueco libre'],
     remaining: ['Не поместилось', 'Could not fit', 'Kein Platz', 'Не вмістилося', 'Sin espacio'],
     changed: ['План изменился. Подбери время заново.', 'Plan changed. Find slots again.', 'Plan geändert. Zeiten neu suchen.', 'План змінився. Підбери час знову.', 'El plan cambió. Busca huecos de nuevo.'],
     invalid: ['Проверь дни и время.', 'Check days and times.', 'Tage und Zeiten prüfen.', 'Перевір дні та час.', 'Revisa días y horas.'],
@@ -12836,7 +12838,7 @@ function closeWeekWorkshop() { _weekWorkshop?.request?.cancel(); _weekWorkshop=n
 function openWeekWorkshop() {
   const saved=State.settings.weeklyRoutineV1 || {};
   let blocks=[];try {blocks=window.WeekPlannerV1.blocks(saved.blocks||[]);}catch{}
-  _weekWorkshop={owner:State.me?.id,epoch:Store._writeEpoch,blocks,text:typeof saved.text==='string'?saved.text.slice(0,6000):'',from:window.WeekPlannerV1.minutes(saved.from)!==null?saved.from:'09:00',to:window.WeekPlannerV1.minutes(saved.to)!==null?saved.to:'18:00',moves:[],notice:''};
+  _weekWorkshop={owner:State.me?.id,epoch:Store._writeEpoch,start:State.weekStart||weekStart(todayStr()),unplaced:[],blocks,text:typeof saved.text==='string'?saved.text.slice(0,6000):'',from:window.WeekPlannerV1.minutes(saved.from)!==null?saved.from:'09:00',to:window.WeekPlannerV1.minutes(saved.to)!==null?saved.to:'18:00',moves:[],notice:''};
   paintWeekWorkshop();
 }
 function weekWorkshopRead() {
@@ -12853,13 +12855,15 @@ function paintWeekWorkshop() {
   document.getElementById('week-workshop')?.remove();
   const days=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
   const ov=document.createElement('div');ov.id='week-workshop';ov.className='modal-overlay';
-  ov.innerHTML=`<section class="ai-box week-workshop"><button class="modal-x" data-action="routine-close" aria-label="${esc(t('Закрыть'))}">×</button><h2 id="routine-heading">${esc(phoneCopy('routine'))}</h2>
+  ov.innerHTML=`<section class="ai-box week-workshop"><button class="modal-x" data-action="routine-close" aria-label="${esc(t('Закрыть'))}">×</button><h2 id="routine-heading">${esc(phoneCopy('plan'))}</h2>
+    <details class="routine-settings" ${w.moves.length||w.unplaced?.length?'':'open'}><summary>${esc(phoneCopy('routine'))}</summary>
     <label>${esc(phoneCopy('routine'))}<textarea id="routine-text" maxlength="6000" rows="3">${esc(w.text)}</textarea></label>
     <div class="propose-actions"><button class="btn ghost" data-action="routine-extract" ${w.busy?'disabled':''}>${esc(phoneCopy('extract'))}</button>${window.satoruNativeOCR?`<button class="btn ghost" data-action="routine-photo">${esc(phoneCopy('photo'))}</button><input type="file" id="routine-photo-file" accept="image/jpeg,image/png,image/webp" hidden>`:''}</div>
     <div class="routine-rows">${w.blocks.map((b,i)=>`<div data-routine-row><select aria-label="${esc(t('День'))}">${days.map((d,j)=>`<option value="${j}" ${j===b.day?'selected':''}>${esc(t(d))}</option>`).join('')}</select><input data-title maxlength="100" aria-label="${esc(t('Название'))}" value="${esc(b.title)}"><input data-start type="time" aria-label="${esc(t('Начало'))}" value="${b.start}"><input data-end type="time" aria-label="${esc(t('Конец'))}" value="${b.end}"><button class="btn ghost" data-action="routine-remove" data-index="${i}" aria-label="${esc(t('Удалить'))}">${satoruIconHTML('action.delete','button-glyph')}</button></div>`).join('')}</div>
     <button class="btn ghost" data-action="routine-add">${esc(t('Добавить'))}</button>
     <fieldset class="routine-hours"><legend>${esc(phoneCopy('hours'))}</legend><input id="routine-from" type="time" aria-label="${esc(t('Начало'))}" value="${w.from}"><span>–</span><input id="routine-to" type="time" aria-label="${esc(t('Конец'))}" value="${w.to}"></fieldset>
-    <p data-routine-status role="status">${esc(w.notice)}</p><div class="propose-actions"><button class="btn" data-action="routine-save" ${w.busy?'disabled':''}>${esc(t('Сохранить'))}</button><button class="btn ghost" data-action="routine-slots" ${w.busy?'disabled':''}>${esc(phoneCopy('slots'))}</button></div>
+    <button class="btn" data-action="routine-save" ${w.busy?'disabled':''}>${esc(t('Сохранить'))}</button></details><p data-routine-status role="status">${esc(w.notice)}</p><button class="btn ghost" data-action="routine-slots" ${w.busy?'disabled':''}>${esc(phoneCopy('slots'))}</button>
+    ${w.unplaced?.length?`<ul class="routine-preview routine-unplaced">${w.unplaced.map(item=>`<li><span data-noi18n>${esc(questById(item.id)?.title||'')}</span><span>${esc(phoneCopy(item.reason))}</span><button type="button" class="btn ghost" data-action="routine-edit" data-id="${esc(item.id)}">${esc(t('Изменить расписание квеста'))}</button></li>`).join('')}</ul>`:''}
     ${w.moves.length?`<ul class="routine-preview">${w.moves.map(m=>`<li>${esc(questById(m.id)?.title||'')}<span>${m.date} · ${m.startTime} · ${fmtDur(m.estimateMin)}</span></li>`).join('')}</ul><button class="btn" data-action="routine-apply" ${w.busy?'disabled':''}>${esc(t('Применить'))}</button>`:''}</section>`;
   ov.querySelectorAll('input,select,textarea').forEach(el=>{el.disabled=!!w.busy;});
   mountLegacyDialog(ov,{labelledBy:'routine-heading',closeAction:'routine-close'});
@@ -12870,6 +12874,14 @@ async function weekWorkshopAction(action, el) {
   const w=_weekWorkshop;if(!w||w.busy||!weekWorkshopCurrent(w))return;
   try {
     weekWorkshopRead();w.notice='';
+    if(action==='routine-edit'){
+      if(!questById(el.dataset.id))return;
+      closeLegacyDialog('week-workshop');
+      const editor=openCalendarTaskEditor(el.dataset.id,null);
+      if(!editor){paintWeekWorkshop();return;}
+      editor._afterClose=()=>{if(weekWorkshopCurrent(w)){State.weekStart=w.start;w.moves=[];w.unplaced=[];w.notice=phoneCopy('changed');paintWeekWorkshop();}};
+      return;
+    }
     if(action==='routine-photo'){document.getElementById('routine-photo-file')?.click();return;}
     if(action==='routine-add'){w.blocks.push({day:1,start:'09:00',end:'10:00',title:''});w.moves=[];paintWeekWorkshop();return;}
     if(action==='routine-remove'){w.blocks.splice(Number(el.dataset.index),1);w.moves=[];paintWeekWorkshop();return;}
@@ -12898,8 +12910,8 @@ async function weekWorkshopAction(action, el) {
     }
     if(action==='routine-slots'){
       const now=new Date();
-      const result=window.WeekPlannerV1.propose({start:State.weekStart||weekStart(todayStr()),today:todayStr(),tasks:State.tasks.map(q=>questCommitment(q)?{...q,done:true}:q),routine:w.blocks,from:w.from,to:w.to,nowTime:`${pad2(now.getHours())}:${pad2(now.getMinutes())}`});
-      w.moves=result.moves;w.snapshot=JSON.stringify(State.tasks);w.constraints=JSON.stringify([w.blocks,w.from,w.to]);w.notice=result.unplaced.length?`${phoneCopy('remaining')}: ${result.unplaced.length}`:!w.moves.length?t('Пусто'):'';paintWeekWorkshop();return;
+      const result=window.WeekPlannerV1.propose({start:w.start,today:todayStr(),tasks:State.tasks.map(q=>questCommitment(q)?{...q,done:true}:q),routine:w.blocks,from:w.from,to:w.to,nowTime:`${pad2(now.getHours())}:${pad2(now.getMinutes())}`});
+      w.moves=result.moves;w.unplaced=result.unplaced;w.snapshot=JSON.stringify(State.tasks);w.constraints=JSON.stringify([w.blocks,w.from,w.to]);w.notice=result.unplaced.length?`${phoneCopy('remaining')}: ${result.unplaced.length}`:!w.moves.length?t('Пусто'):'';paintWeekWorkshop();return;
     }
     if(action==='routine-apply'){
       if(w.snapshot!==JSON.stringify(State.tasks)||w.constraints!==JSON.stringify([w.blocks,w.from,w.to])){w.moves=[];w.notice=phoneCopy('changed');paintWeekWorkshop();return;}
@@ -12909,7 +12921,7 @@ async function weekWorkshopAction(action, el) {
         if(w.snapshot!==JSON.stringify(State.tasks)||next.date<todayStr()||(next.date===todayStr()&&next.startTime<`${pad2(now.getHours())}:${pad2(now.getMinutes())}`)){
           w.moves=[];w.busy=false;w.notice=phoneCopy('changed');paintWeekWorkshop();return;
         }
-        if(!await moveCalendarTask(w.moves[0],{makeUndo:false,renderAfter:false}))break;
+        if(!await moveCalendarTask(w.moves[0],{makeUndo:false,renderAfter:false,exactTime:true}))break;
         if(!weekWorkshopCurrent(w))return;w.moves.shift();w.snapshot=JSON.stringify(State.tasks);
       }
       if(!weekWorkshopCurrent(w))return;
@@ -15080,10 +15092,11 @@ async function retryTasksLoad() {
   render();
 }
 
-function calendarTimeValue(value) {
+function calendarTimeValue(value, exact = false) {
   if (!/^\d{2}:\d{2}$/.test(String(value || ''))) return null;
   const [hours, minutes] = String(value).split(':').map(Number);
-  if (!Number.isFinite(hours) || !Number.isFinite(minutes) || minutes > 59) return null;
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes) || hours > 23 || minutes > 59) return null;
+  if (exact) return String(value);
   const total = Math.max(CAL_H0 * 60, Math.min(CAL_H1 * 60 + 45, hours * 60 + minutes));
   return fmtHM(Math.round(total / 15) * 15);
 }
@@ -15117,15 +15130,15 @@ function calendarMoveReceiptHTML() {
   if (!receipt || receipt.expiresAt < Date.now() || !questById(receipt.taskId)) return '';
   return `<div class="cal-move-receipt" role="status"><span>${esc(t(receipt.unscheduled ? 'Квест снят с расписания' : 'Квест перенесён'))}</span><button type="button" class="link-btn cal-move-undo" data-action="cal-move-undo">${esc(t('Вернуть'))}</button></div>`;
 }
-async function moveCalendarTask(command, { makeUndo = true, renderAfter = true } = {}) {
+async function moveCalendarTask(command, { makeUndo = true, renderAfter = true, exactTime = false } = {}) {
   const task = questById(command && command.id);
   if (!task || State._tasksLoadError) return false;
   // Счётчики переноса входят в снимок: иначе неудачная запись откатила бы дату,
   // но оставила бы дело «отложенным ещё раз» — память соврала бы о том, чего не было.
-  const before = { date: task.date, startTime: task.startTime || null, estimateMin: Number(task.estimateMin) || 30, postponedCount: task.postponedCount, firstDate: task.firstDate };
+  const before = { date: task.date, startTime: task.startTime || null, estimateMin: task.estimateMin, postponedCount: task.postponedCount, firstDate: task.firstDate };
   const nextDate = calendarDateValue(command.date, task.date || todayStr());
-  const nextTime = command.startTime == null || command.startTime === '' ? null : calendarTimeValue(command.startTime);
-  const nextDuration = Math.max(5, Math.min(18 * 60, Math.round(Number(command.estimateMin) || before.estimateMin)));
+  const nextTime = command.startTime == null || command.startTime === '' ? null : calendarTimeValue(command.startTime, exactTime);
+  const nextDuration = Math.max(5, Math.min(18 * 60, Math.round(Number(command.estimateMin) || Number(before.estimateMin) || 30)));
   if (command.startTime != null && command.startTime !== '' && !nextTime) return false;
   const dateChanged = nextDate !== before.date;
   const guideOwns = guideV3ContextActive('calendar', 'task-date-persisted')
@@ -15205,7 +15218,7 @@ async function undoCalendarMove() {
   }
   const ok = await moveCalendarTask(
     { id: receipt.taskId, ...receipt.before },
-    { makeUndo: false, renderAfter: false },
+    { makeUndo: false, renderAfter: false, exactTime: true },
   );
   if (!ok) {
     State._calendarFocusAfterCommit = '.cal-move-undo';
@@ -15228,6 +15241,7 @@ function closeCalendarTaskEditor({ restoreFocus = true } = {}) {
   unlockCalendarDialogScroll();
   if (target) requestAnimationFrame(() => focusPathChoiceTarget(target));
   repaintGuideV3AfterBlockingSurface();
+  overlay._afterClose?.();
   return true;
 }
 function handleCalendarTaskKeydown(event) {
@@ -15268,7 +15282,7 @@ function openCalendarTaskEditor(id, returnFocus = document.activeElement) {
     <p class="cal-task-name" id="cal-task-name" data-noi18n>${esc(task.title)}</p>
     <form id="cal-task-form">
       <label class="cal-task-field"><span>${esc(t('Дата'))}</span><input name="date" type="date" value="${esc(calendarDateValue(task.date))}" required /></label>
-      <label class="cal-task-field"><span>${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:45" step="900" value="${esc(calendarTimeValue(task.startTime) || '')}" /></label>
+      <label class="cal-task-field"><span>${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:59" step="60" value="${esc(calendarTimeValue(task.startTime, true) || '')}" /></label>
       <label class="cal-task-field"><span>${esc(t('Длительность'))}</span><input name="estimateMin" type="number" min="5" max="1080" step="5" value="${Math.max(5, Number(task.estimateMin) || 30)}" required /></label>
       <p class="cal-task-status muted" aria-live="polite"></p>
       <div class="cal-task-actions"><button type="button" class="btn ghost cal-task-cancel" data-action="cal-task-close">${esc(t('Отмена'))}</button>${scheduled ? `<button type="button" class="btn ghost cal-task-unschedule" data-action="cal-task-unschedule">${esc(t('Оставить без времени'))}</button>` : ''}<button type="submit" class="btn cal-task-save">${esc(t('Сохранить расписание'))}</button></div>
@@ -15302,7 +15316,7 @@ async function saveCalendarTaskEditor({ unschedule = false } = {}) {
     date: data.get('date'),
     startTime: unschedule ? null : data.get('startTime'),
     estimateMin: data.get('estimateMin'),
-  }, { renderAfter: false });
+  }, { renderAfter: false, exactTime: true });
   if (ok) {
     if (State.calMode === 'week' || State.calMode === 'month') {
       State.calDate = calendarDateValue(data.get('date'));
@@ -35681,7 +35695,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v318';
+const PWA_CACHE_VERSION = 'satoru-v319';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

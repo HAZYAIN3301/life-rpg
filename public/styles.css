@@ -22724,6 +22724,8 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .week-workshop label { display: grid; gap: var(--sp-2); }
 .week-workshop textarea { width: 100%; }
 .routine-rows { display: grid; gap: var(--sp-3); }
+.routine-settings > summary { min-height: var(--touch-min); padding-block: var(--sp-3); cursor: pointer; }
+.routine-settings > :not(summary) { margin-block-start: var(--sp-3); }
 [data-routine-row] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: var(--sp-2); }
 [data-routine-row] [data-title] { grid-column: 2 / -1; }
 [data-routine-row] input, [data-routine-row] select { width: 100%; min-width: 0; min-height: var(--touch-min); }
