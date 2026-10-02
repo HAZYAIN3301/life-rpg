@@ -22702,3 +22702,33 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .senku-setup-actions { display: grid; gap: var(--sp-2); }
 .senku-card .senku-mode { display: grid; gap: var(--sp-1); margin: 0; padding: 0; border: 0; }
 .senku-card .senku-mode > legend { margin-bottom: var(--sp-1); font-size: var(--type-meta); color: var(--text-soft); }
+
+/* Phone pass: one functional icon language, quiet notes, complete week agenda. */
+.satoru-icon--vector { display: inline-block; width: 1.2em; height: 1.2em; flex: 0 0 auto; vertical-align: -.2em; background: none; }
+.notes-header { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.notes-header .notes-back { flex-basis: 100%; justify-content: flex-start; }
+.notes-screen .capture-card .cap-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sp-2); }
+.notes-screen .capture-card .cap-add { width: auto; padding-inline: var(--sp-3); min-height: var(--touch-min); }
+.notes-screen .capture-secondary { display: flex; justify-content: flex-start; gap: var(--sp-2); }
+.notes-screen .capture-status:empty { display: none; }
+.notes-screen .cap-btn { display: inline-flex; align-items: center; justify-content: center; min-width: var(--touch-min); min-height: var(--touch-min); background: transparent; border-color: transparent; }
+.notes-screen .notes-list { gap: 0; border-top: 1px solid var(--line); }
+.notes-screen .note-card { background: transparent; box-shadow: none; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: var(--sp-3) 0 !important; }
+.notes-screen .note-text { background: transparent; border-color: transparent; padding-inline: 0; }
+.notes-screen .note-text:focus { border-color: var(--accent); padding-inline: var(--sp-2); }
+.notes-screen .note-save-status:empty { display: none; }
+.week-agenda-day { border-bottom: 1px solid var(--line); padding-block: var(--sp-3); }
+.week-agenda-day h4 { margin: 0 0 var(--sp-2); font-size: var(--type-heading); }
+.week-agenda-day .wk-add-btn { margin-top: var(--sp-2); }
+.week-workshop { display: grid; gap: var(--sp-3); }
+.week-workshop label { display: grid; gap: var(--sp-2); }
+.week-workshop textarea { width: 100%; }
+.routine-rows { display: grid; gap: var(--sp-3); }
+[data-routine-row] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: var(--sp-2); }
+[data-routine-row] [data-title] { grid-column: 2 / -1; }
+[data-routine-row] input, [data-routine-row] select { width: 100%; min-width: 0; min-height: var(--touch-min); }
+.routine-hours { display: flex; gap: var(--sp-2); padding: var(--sp-2) 0; border: 0; }
+.routine-hours input { min-width: 0; width: 45%; min-height: var(--touch-min); }
+.routine-preview { padding: 0; list-style: none; }
+.routine-preview li { display: grid; gap: var(--sp-1); padding-block: var(--sp-2); border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+.routine-preview span { color: var(--muted); font-size: var(--type-meta); }

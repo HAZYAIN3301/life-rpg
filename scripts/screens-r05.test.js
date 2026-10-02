@@ -17,7 +17,8 @@ function registry() {
 }
 
 test('every literal icon id used by the app exists, so no fallback emoji is shown silently', () => {
-  const R = registry();
+  const inline = vm.runInNewContext(APP.slice(APP.indexOf('const UI_SYMBOLS ='), APP.indexOf('function satoruIconHTML')) + '\nUI_SYMBOLS');
+  const R = { ...registry(), ...inline };
   const ids = [...new Set([...APP.matchAll(/satoruIconHTML\('([a-z]+\.[a-z0-9_.-]+)'/g)].map((m) => m[1]))];
   assert.ok(ids.length > 40, 'icon usage was found');
   const conditional = [...APP.matchAll(/satoruIconHTML\([^)]*\? '([a-z]+\.[a-z0-9_.-]+)' : '([a-z]+\.[a-z0-9_.-]+)'/g)].flatMap((m) => [m[1], m[2]]);

@@ -466,6 +466,7 @@
   }
 
   async function speak(value, options) {
+    if (typeof global.prepareAudioRoute === 'function') global.prepareAudioRoute();
     const opts = options || {};
     const text = normalizeText(value);
     if (!text) return { mode: 'unavailable', reason: 'empty_text' };

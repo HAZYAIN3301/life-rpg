@@ -427,15 +427,16 @@
 :root[data-design=next] .hb-nmt{font-size:.875rem}
 :root[data-design=next] .notes-screen{max-width:none}
 :root[data-design=next] .notes-workspace{display:grid;grid-template-columns:300px minmax(0,1fr);gap:var(--sp-5);align-items:start}
-:root[data-design=next] .notes-workspace .cap-row{display:grid;grid-template-columns:44px 44px minmax(0,1fr);gap:var(--sp-2)}
+:root[data-design=next] .notes-workspace .cap-row{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--sp-2)}
 :root[data-design=next] .notes-workspace #capture-text{grid-column:1/-1;min-width:0}
 :root[data-design=next] .notes-workspace .capture-status{grid-column:1/-1}
-:root[data-design=next] .notes-workspace .cap-btn,:root[data-design=next] .notes-workspace .cap-add{width:100%;min-height:44px}
+:root[data-design=next] .notes-workspace .cap-btn{width:auto;min-width:44px;min-height:44px;background:transparent;border:0}
+:root[data-design=next] .notes-workspace .cap-add{width:auto;inline-size:auto;min-height:44px;justify-self:start;color:var(--on-accent)}
 :root[data-design=next] .notes-gallery .note-top h3{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 :root[data-design=next] .notes-gallery .note-text{background:transparent;border-color:transparent;padding:var(--sp-2) 0;line-height:1.6}
 :root[data-design=next] .notes-gallery .note-text:focus{border-color:var(--line-strong);background:var(--panel)}
-:root[data-design=next] .notes-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:var(--sp-4)}
-:root[data-design=next] .notes-gallery .note-card{margin:0;padding:var(--sp-4);border-top:3px solid var(--design-core-border)}
+:root[data-design=next] .notes-gallery{display:grid;grid-template-columns:minmax(0,1fr);gap:0}
+:root[data-design=next] .notes-gallery .note-card{margin:0;padding:var(--sp-3) 0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none}
 :root[data-design=next] .note-top{align-items:start;flex-direction:column;gap:var(--sp-2)}
 :root[data-design=next] .note-acts{display:flex;gap:var(--sp-2);align-items:center;width:100%}
 :root[data-design=next] .note-acts .del{margin-left:auto}

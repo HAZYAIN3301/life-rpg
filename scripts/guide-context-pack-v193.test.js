@@ -184,7 +184,7 @@ test('Calendar and Notes Guide actions fail closed around real writes and recove
   assert.match(captureBar, /const guideTextOnly = guideV3ContextActive\('notes', 'note-persisted'\)/);
   assert.match(captureBar, /const mediaTools = guideTextOnly \? '' : `[\s\S]*data-action="cap-voice"[\s\S]*data-action="cap-video"/);
   assert.match(captureBar, /const secondaryTools = guideTextOnly \? '' : `<button class="dayrec-btn"[\s\S]*data-action="goto-notes"/);
-  assert.match(captureBar, /\$\{expanded \? mediaTools : ''\}/);
+  assert.match(captureBar, /expanded && secondaryTools \? `<div class="capture-secondary">\$\{mediaTools\}/);
   assert.match(captureBar, /expanded && secondaryTools[\s\S]*!expanded && secondaryTools/);
 
   const textSubmit = APP.slice(APP.indexOf("if (f.id === 'capture-form')"), APP.indexOf("if (f.id === 'chat-form')"));
@@ -284,9 +284,9 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
 });
 
 test('v205 Guide assets and v210 shell ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v317'/);
+  assert.match(SW, /const CACHE = 'satoru-v318'/);
   assert.match(INDEX, /guide-v3\.js\?v=20260830-guide-tree-v205-1/);
-  assert.match(INDEX, /app\.js\?v=20261001-phone-pass-v317-1/);
+  assert.match(INDEX, /app\.js\?v=20261002-phone-workflow-v318-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*commitFeatureSnapshotData/);
   assert.match(SERVER, /function commitFeatureSnapshotData[\s\S]*commitCommitmentGraphDurable/);

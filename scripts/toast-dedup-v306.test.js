@@ -5,6 +5,7 @@ const start=app.indexOf('function toast(msg) {'),end=app.indexOf('\n}\n',start)+
 test('one refusal has one toast; distinct messages and later retries remain visible',()=>{
 const nodes=[];const host={querySelectorAll:()=>nodes,appendChild:e=>nodes.push(e)};
 const c={document:{getElementById:()=>host,createElement:()=>({classList:{add(){},remove(){}},remove(){nodes.splice(nodes.indexOf(this),1)}})},requestAnimationFrame:f=>f(),setTimeout:()=>0};
-vm.createContext(c);vm.runInContext(app.slice(start,end),c);
+c.t=value=>value;vm.createContext(c);vm.runInContext(app.slice(start,end),c);
 c.toast('Retry');c.toast('Retry');assert.equal(nodes.length,1);c.toast('Another result');assert.equal(nodes.length,2);nodes[0].remove();c.toast('Retry');assert.equal(nodes.length,2);
+c.toast('+20 🪙 ✅');assert.equal(nodes.at(-1).textContent,'+20 золота');
 });
