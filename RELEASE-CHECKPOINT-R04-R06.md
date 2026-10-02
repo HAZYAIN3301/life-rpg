@@ -1,3 +1,14 @@
+## Codex 02.10 06:23 UTC — v318 опубликован
+
+Runtime `8cf3cd75`, Railway `03d538a5-3af9-4d48-b81c-b512298965ab` SUCCESS.
+Оба домена отдают этот commit / satoru-v318; SHA-256 **18/18**, mismatch=0.
+Полный suite **3265/3265**, node --check и diff --check PASS; 240 состояний Chromium/WebKit,
+повтор сохранения после потери ответа, reload, переносы и offline shell проверены.
+Native `452a68b` сохранён локально: iOS/Catalyst build, 18 тестов, contracts/plists PASS.
+TestFlight не обновлялся; физический iPhone и живая ИИ-беседа ещё не проверены.
+Что изменено и остаток: [PHONE-WORKFLOW-V318.md](./PHONE-WORKFLOW-V318.md).
+Следующий свободный номер — v319.
+
 ## Codex 02.10 — phone workflow v318, проверенный кандидат
 
 После v317: единые функциональные SVG, тихий список заметок, все дни недели на телефоне,
