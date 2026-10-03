@@ -137,9 +137,9 @@
     const resolved = evidence.entityId ? resolveReference(evidence, context) : null;
     const outcome = translate(context, OUTCOME_LABELS[evidence.outcomeType] || 'Настоящий результат сохранён');
     return {
-      eyebrow: translate(context, STATUS_LABELS.first_value_reached), title: translate(context, 'Первый настоящий результат уже здесь'),
-      description: resolved ? `${outcome}: ${resolved.title}.` : `${outcome}.`,
-      body: `<p class="first-value-card__proof">${escapeHtml(translate(context, 'Satoru дождался подтверждённой записи — поэтому этому результату можно доверять.'))}</p>`,
+      eyebrow: '', title: outcome,
+      description: resolved ? resolved.title : '',
+      body: '',
       primary: accepts(view, 'journey_completed') ? actionButton(ACTIONS.complete, 'Продолжить в Satoru', {}, context) : '',
     };
   }
