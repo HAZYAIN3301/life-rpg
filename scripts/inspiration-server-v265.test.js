@@ -188,18 +188,16 @@ test('discovery uses only stored opt-in, honestly reports configuration, and pro
   await r.stop(); await r.start({ BRAVE_SEARCH_API_KEY: 'isolated-provider-key' });
   assert.equal((await r.api('/api/inspiration/discovery', { cookie: b.cookie, method: 'POST', body: {} })).data.status, 'disabled');
   const first = await r.api('/api/inspiration/discovery', { cookie: a.cookie, method: 'POST', body: {} });
-  assert.equal(first.status, 200); assert.equal(first.data.status, 'ready'); assert.equal(first.data.candidates.length, 2); assert.equal(r.calls().length, 2);
-  assert.deepEqual(first.data.candidates[0].keywords, ['blue', 'mountain', 'photograph']);
-  assert.ok(!first.data.candidates[0].keywords.includes('neon'), 'query taste is not evidence of the candidate content');
-  const saved = r.read(a, 'inspiration-discovery'); assert.equal(saved.quota.attempts, 2);
-  const replay = await r.api('/api/inspiration/discovery', { cookie: a.cookie, method: 'POST', body: {} });
-  assert.equal(replay.data.cached, true); assert.deepEqual(replay.data.candidates, first.data.candidates); assert.equal(r.calls().length, 2);
+  assert.equal(first.status, 200); assert.equal(first.data.status, 'unconfigured');
+  assert.deepEqual(first.data.candidates, []); assert.equal(r.calls().length, 0);
   for (const method of ['GET', 'POST', 'PUT']) assert.equal((await r.api('/api/data/inspiration-discovery', { cookie: a.cookie, method, body: method === 'GET' ? undefined : {} })).status, 403);
-  for (const broken of ['{bad', 'null', '{}']) {
-    fs.writeFileSync(r.file(a, 'inspiration-discovery'), broken);
+  // Disabled discovery must not consume or repair old cache, even with a configured key.
+  for (const saved of ['{bad', 'null', '{}']) {
+    fs.writeFileSync(r.file(a, 'inspiration-discovery'), saved);
     const result = await r.api('/api/inspiration/discovery', { cookie: a.cookie, method: 'POST', body: {} });
-    assert.equal(result.status, 503); assert.equal(result.data.status, 'storage_error');
-    assert.equal(fs.readFileSync(r.file(a, 'inspiration-discovery'), 'utf8'), broken); assert.equal(r.calls().length, 2);
+    assert.equal(result.status, 200); assert.equal(result.data.status, 'unconfigured');
+    assert.equal(fs.readFileSync(r.file(a, 'inspiration-discovery'), 'utf8'), saved);
+    assert.equal(r.calls().length, 0);
   }
 });
 

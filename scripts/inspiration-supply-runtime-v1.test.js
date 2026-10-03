@@ -16,7 +16,7 @@ const opts = (extra) => Object.assign({ now: NOW, day: DAY, locale: 'en', profil
 const candidate = (id, extra) => Object.assign({}, Batch.CANDIDATES[0], { id, externalId: id, source: id }, extra);
 const video = (extra) => candidate('clip', Object.assign({
   format: 'video', lang: 'en', durationSec: 30, interestIds: ['creative'],
-  rights: { kind: 'official-source', holder: 'Source', url: 'https://source.invalid/rights', embedAllowed: true, downloadAllowed: false },
+  rights: { kind: 'licensed-direct', holder: 'Source', url: 'https://source.invalid/rights', embedAllowed: true, downloadAllowed: false },
   delivery: { policy: 'embed', embedUrl: 'https://www.youtube-nocookie.com/embed/example', sourceUrl: 'https://source.invalid/clip' },
   lastCheckedAt: NOW, available: true, checkMethod: 'playback',
 }, extra));
@@ -87,6 +87,19 @@ test('synthetic fixtures cannot become production supply', () => {
   const out = R.prepare(opts({ candidates: [candidate('fake', { synthetic: true }), candidate('unverified', { verified: false })] }));
   assert.equal(out.catalog.length, 0);
   assert.ok(out.admission.rejected.every((r) => r.code === 'unverified_fixture'));
+});
+test('first release rejects official links without a licence, keeps stored receipts and personal links', () => {
+  const row = video({ rights: { kind: 'official-source', holder: 'Source', url: 'https://source.invalid/rights', embedAllowed: true } });
+  const p = profile(['creative'], ['video']);
+  p.digest = { day: DAY, ids: ['clip'], doneIds: ['clip'] };
+  const before = JSON.stringify(p);
+  const out = R.ensureDigest(opts({ profile: p, candidates: [row] }));
+  assert.deepEqual(out.items, []); assert.deepEqual(out.unavailableIds, ['clip']);
+  assert.equal(out.admission.rejected[0].code, 'release_rights_required');
+  assert.equal(JSON.stringify(p), before); assert.deepEqual(out.profile.digest, p.digest);
+  const personal = { id: 'mine', url: 'https://www.tiktok.com/@example/video/7647936071673629973' };
+  assert.equal(R.resolveSaved(personal, []), personal);
+  assert.equal(R.ensureDigest(opts({ candidates: [video()], profile: profile(['creative'], ['video']) })).items.length, 1);
 });
 test('language gap is relevant to this profile, not to unrelated blocked sources', () => {
   const foreign = candidate('foreign', { contentLocales: ['ru'], lang: 'ru', interestIds: ['business'] });

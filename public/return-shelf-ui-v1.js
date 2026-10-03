@@ -38,6 +38,7 @@
     catch { return ''; }
   }
   function safeImage(url, provider) {
+    if (provider === 'tiktok' || Media?.externalOnly(url)) return '';
     const image = Media && Media.safeImage(url, provider);
     if (image) return image;
     try {
@@ -175,7 +176,7 @@
     const referenceRow = (reference = {}, index = 0) => {
       const source = mediaSource(reference);
       const image = safeImage(reference.imageUrl, source && source.provider);
-      const preview = source || image ? `<div class="inspiration-reference-preview${source ? ` is-${source.provider}` : ''}" data-inspiration-media="reference-${index}">${image ? `<img src="${esc(image)}" alt="${esc(reference.title)}" loading="lazy" referrerpolicy="no-referrer">` : ''}${source ? `<button type="button" class="btn ghost sm" data-action="inspiration-reference-preview" data-reference-index="${index}">${tr(t, 'Показать референс')}</button>` : ''}</div>` : '';
+      const preview = source || image ? `<div class="inspiration-reference-preview${source ? ` is-${source.provider}` : ''}" data-inspiration-media="reference-${index}">${image ? `<img src="${esc(image)}" alt="${esc(reference.title)}" loading="lazy" referrerpolicy="no-referrer">` : ''}${source ? `<button type="button" class="btn ghost sm" data-action="inspiration-reference-preview" data-reference-index="${index}">${tr(t, Media?.externalOnly(reference) ? 'Открыть источник' : 'Показать референс')}</button>` : ''}</div>` : '';
       return `<div class="inspiration-reference-row" data-inspiration-reference-row>
       ${preview}
       <label class="inspiration-reference-url"><span>${tr(t, 'Ссылка на пин или видео')}</span><input type="url" name="referenceUrl" value="${esc(reference.url)}" maxlength="1000" placeholder="${tr(t, 'Pinterest, TikTok, YouTube…')}" inputmode="url" autocomplete="url"></label>
@@ -197,14 +198,14 @@
       <fieldset><legend><b>2</b><span>${tr(t, 'Что показывать')}</span><small>${tr(t, 'Можно выбрать несколько форматов.')}</small></legend><div class="inspiration-format-choices">${formatChoices}</div>
       <details class="inspiration-setup-more"><summary>${tr(t, 'Что не показывать')}</summary><label class="inspiration-free"><span>${tr(t, 'Исключить темы')}</span><input name="blocked" value="${esc((profile.blocked || []).join(', '))}" maxlength="300" placeholder="${tr(t, 'Необязательно. Например: hustle, сравнение тел, политика.')}" autocomplete="off"></label></details></fieldset>
       <fieldset class="inspiration-reference-fieldset"><legend><b>3</b><span>${tr(t, 'Референсы: фото и эдиты')}</span><small>${tr(t, 'Необязательно · до 10 ссылок.')}</small></legend>
-      <p class="inspiration-reference-intro">${tr(t, 'Ссылки задают вкус. Новые находки подбираются отдельно; твои примеры не выдаются за открытия.')}</p>
+      <p class="inspiration-reference-intro">${tr(t, 'Сохраняй свои материалы; TikTok открывается снаружи.')}</p>
       <div class="inspiration-reference-head"><details class="inspiration-reference-storage"><summary>${tr(t, 'Как хранятся ссылки')}</summary><p>${tr(t, 'Фото и видео остаются у источника. В Satoru сохраняются ссылки, подписи и твои объяснения.')}</p></details><output data-inspiration-reference-count>${references.length} / 10</output></div>
       <div class="inspiration-reference-list" data-inspiration-reference-list>${referenceRows}</div>
       <button type="button" class="btn ghost sm inspiration-reference-add" data-action="inspiration-reference-add" ${references.length >= 10 ? 'disabled' : ''}>+ ${tr(t, 'Добавить референс')}</button>
       <template id="inspiration-reference-template">${referenceRow({})}</template></fieldset>
       <fieldset class="inspiration-taste-fieldset"><legend><b>4</b><span>${tr(t, 'Твой визуальный вкус')}</span><small>${tr(t, 'Какие образы, настроение, цвет, монтаж тебе близки?')}</small></legend>
       <label class="inspiration-free"><span class="sr-only">${tr(t, 'Твой визуальный вкус')}</span><textarea name="visualTaste" rows="3" maxlength="600" placeholder="${tr(t, 'Например: комиксы о повседневности, зал среди зелени, горы и приключенческие коллажи.')}">${esc(profile.visualTaste)}</textarea></label>
-      <label class="inspiration-discovery-choice"><input type="checkbox" name="discoveryEnabled" ${profile.discoveryEnabled === true ? 'checked' : ''}><span><b>${tr(t, 'Искать новые пины и эдиты по моему вкусу')}</b><small>${tr(t, 'Поисковому сервису передаются только описанные здесь темы и стиль. До трёх находок на день.')}</small></span></label>
+      ${Media?.DISCOVERY_ENABLED ? `<label class="inspiration-discovery-choice"><input type="checkbox" name="discoveryEnabled" ${profile.discoveryEnabled === true ? 'checked' : ''}><span><b>${tr(t, 'Искать новые пины и эдиты по моему вкусу')}</b><small>${tr(t, 'Поисковому сервису передаются только описанные здесь темы и стиль. До трёх находок на день.')}</small></span></label>` : ''}
       ${renderDiscoveryStatus(vm, t)}</fieldset>
       <p class="inspiration-privacy">${tr(t, 'Интересы принадлежат твоему аккаунту. Satoru использует их только для конечной подборки и не публикует.')}</p>
       <p class="return-shelf-form-status" data-shelf-form-status role="status" aria-live="polite">${tr(t, 'Черновик сохраняется автоматически')}</p>
@@ -213,6 +214,7 @@
   }
 
   function mediaControl(item, t) {
+    if (Media?.externalOnly(item)) return `<button type="button" class="inspiration-play" data-action="inspiration-open-source" data-id="${esc(item.id)}">${tr(t, 'Открыть источник')}</button>`;
     const source = mediaSource(item);
     if (source && item.mediaPolicy === 'iframe' && Media.isAllowedEmbed(item.embedUrl, source.url)) {
       const action = source.provider === 'tiktok' ? 'Смотреть эдит' : 'Рассмотреть';
@@ -225,10 +227,10 @@
 
   function renderVisual(item, t) {
     const source = mediaSource(item);
-    const imageUrl = safeImage(item.imageUrl, source && source.provider);
+    const imageUrl = Media?.externalOnly(item) ? '' : safeImage(item.imageUrl, source && source.provider);
     const image = imageUrl ? `<img class="inspiration-visual-image" src="${esc(imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
     if (source || image) {
-      return `<div class="inspiration-media-card"><div class="inspiration-visual is-media${source ? ` is-${source.provider}` : ''}${image ? ' has-image' : ' has-no-image'}" data-inspiration-media="${esc(item.id)}">${image}${image ? '' : `<p class="inspiration-media-unavailable">${tr(t, 'Предпросмотр недоступен. Открой материал из источника.')}</p>`}${mediaControl(item, t)}</div>
+      return `<div class="inspiration-media-card"><div class="inspiration-visual is-media${source ? ` is-${source.provider}` : ''}${image ? ' has-image' : ' has-no-image'}" data-inspiration-media="${esc(item.id)}">${image}${image ? '' : `<p class="inspiration-media-unavailable">${tr(t, Media?.externalOnly(item) ? 'TikTok открывается вне Satoru.' : 'Предпросмотр недоступен. Открой материал из источника.')}</p>`}${mediaControl(item, t)}</div>
       <div class="inspiration-media-caption"><span class="inspiration-media-provider" data-noi18n>${esc(providerLabel(item))}</span><h3 id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</h3>${item.body ? `<p data-noi18n>${esc(item.body)}</p>` : ''}</div></div>`;
     }
     const quote = item.format === 'quote' ? `<blockquote id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</blockquote>` : '';

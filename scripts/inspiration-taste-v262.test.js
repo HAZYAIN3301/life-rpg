@@ -181,7 +181,7 @@ test('an own reference is removed from a fixed digest without replacing its ids 
 test('supply excludes a personal reference from both a new pool and fixed-day resolution', () => {
   const sourceUrl = 'https://www.pinterest.com/pin/100000000000000001/';
   const own = { ...candidate('own'), format: 'image', durationSec: null,
-    rights: { kind: 'official-source', holder: 'Creator', url: sourceUrl, embedAllowed: false, downloadAllowed: false },
+    rights: { kind: 'licensed-direct', holder: 'Creator', url: sourceUrl, embedAllowed: false, downloadAllowed: false },
     delivery: { policy: 'link', sourceUrl }, available: true, checkMethod: 'manual', lastCheckedAt: `${DAY}T00:00:00Z` };
   const p = profile({ videoReferences: [{ url: `${sourceUrl}?utm_source=share` }] });
   const fresh = supply(p, [own], DAY);

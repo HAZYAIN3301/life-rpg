@@ -616,7 +616,8 @@ function readInspirationDiscoveryAccount(uid) {
   }
 }
 const inspirationDiscovery = InspirationDiscoveryV1.createInspirationDiscoveryService({
-  apiKey: BRAVE_SEARCH_API_KEY,
+  // Public search results are not a licensed catalog. Keep Board discovery independent.
+  apiKey: require('./public/inspiration-media-v1.js').DISCOVERY_ENABLED ? BRAVE_SEARCH_API_KEY : '',
   requestJson: boardV2RequestJson,
   readAccount: readInspirationDiscoveryAccount,
   writeAccount: (uid, value) => {

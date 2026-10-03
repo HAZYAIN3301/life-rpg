@@ -27546,7 +27546,7 @@ async function startAttentionEntry(form) {
   toast(t('Окно внимания началось'));
   if (shelfSource) {
     const url = shelfSource.url; State._shelfPendingSource = null;
-    try { location.assign(url); } catch { State._shelfError = 'Не удалось изменить Полку. Данные остались на месте.'; }
+    try { navigateInspirationSource(url); } catch { State._shelfError = 'Не удалось изменить Полку. Данные остались на месте.'; }
   }
 }
 
@@ -27781,7 +27781,7 @@ async function prepareInspirationDigest({ retry = false } = {}) {
       || !inspirationProfileEqual(candidate.base, base)) candidate = null;
     if (!candidate) {
       let finds = [];
-      if (base.discoveryEnabled && base.digest?.day !== day) {
+      if (window.InspirationMediaV1?.DISCOVERY_ENABLED && base.discoveryEnabled && base.digest?.day !== day) {
         const { response, data } = await inspirationJSON('/api/inspiration/discovery', { dayKey: day }, controller.signal);
         if (!active()) return false;
         if (response.status === 401) { handleAccountSessionExpired(); return false; }
@@ -27792,7 +27792,7 @@ async function prepareInspirationDigest({ retry = false } = {}) {
         if (!['ready', 'partial', 'empty', 'unconfigured', 'needs_taste'].includes(data.status)
           || data.status === 'unconfigured' && data.providerAvailable) throw new Error('discovery_unavailable');
         finds = await enrichInspirationFinds(data.candidates, { signal: controller.signal, active });
-      } else if (!base.discoveryEnabled) {
+      } else if (!window.InspirationMediaV1?.DISCOVERY_ENABLED || !base.discoveryEnabled) {
         State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = 'disabled';
       }
       if (!active()) return false;
@@ -27998,6 +27998,8 @@ function inspirationYoutubeEmbed(url) {
 }
 function inspirationPersonalMedia(item) {
   const M = window.InspirationMediaV1, source = M?.parseSource(item.url || item.sourceUrl);
+  if (M?.externalOnly(item)) return { ...item, provider: 'tiktok', sourceUrl: item.url || item.sourceUrl || '',
+    embedUrl: '', imageUrl: '', mediaPolicy: 'link' };
   const embedUrl = source ? M.buildEmbed(source) : inspirationYoutubeEmbed(item.url);
   return { ...item, provider: source?.provider || '', sourceUrl: source?.url || item.url || '', embedUrl,
     imageUrl: source ? M.safeImage(item.imageUrl, source.provider) : '',
@@ -28149,7 +28151,8 @@ function inspirationDraftFromSetupForm(form) {
     return { ...(prior || {}), url, title, why, interestIds: inspirationSemanticIds(`${title} ${why}`) };
   }).filter((reference) => reference.url).slice(0, P.MAX_VIDEO_REFERENCES || 10);
   const visualTaste = String(form.elements.visualTaste?.value || '').slice(0, 600);
-  const discoveryEnabled = form.elements.discoveryEnabled?.checked === true;
+  const discoveryEnabled = window.InspirationMediaV1?.DISCOVERY_ENABLED
+    ? form.elements.discoveryEnabled?.checked === true : inspirationProfileState()?.discoveryEnabled === true;
   return P.normalize({ ...base, interests: P.uniqueInterests(interests), customInterests, visualTaste,
     discoveryEnabled, formats, blocked, videoReferences });
 }
@@ -28220,7 +28223,7 @@ async function enrichInspirationVideoReferences(profile, { signal, active = () =
     if (signal?.aborted || !active()) return null;
     const results = await Promise.all(references.slice(start, start + 2).map(async (reference) => {
       const source = M.parseSource(reference.url);
-      if (!source) return reference;
+      if (!source || M.externalOnly(reference)) return reference;
       try {
         const { response, data } = await inspirationJSON('/api/inspiration/metadata', { url: source.url }, signal, 8500);
         if (!active() || signal?.aborted) return reference;
@@ -28451,6 +28454,7 @@ async function saveInspirationCatalogItem(id) {
   render(); sfx('confirm'); toast(t('Материал сохранён')); track('inspiration:save');
 }
 function inspirationEmbedAllowed(value, source) {
+  if (window.InspirationMediaV1?.externalOnly(value) || window.InspirationMediaV1?.externalOnly(source)) return false;
   if (window.InspirationMediaV1?.isAllowedEmbed(value, source)) return true;
   try {
     const url = new URL(String(value || ''));
@@ -28475,6 +28479,7 @@ function previewInspirationReference(button) {
   const item = inspirationPersonalMedia({ url, imageUrl: prior?.imageUrl,
     mediaType: prior?.mediaFormat === 'image' ? 'image' : undefined,
     title: String(row.querySelector('[name="referenceTitle"]')?.value || '').trim() });
+  if (window.InspirationMediaV1?.externalOnly(item)) { openProtectedInspirationSource(item, button); return; }
   const host = row.querySelector(`[data-inspiration-media="reference-${index}"]`);
   if (window.InspirationPlayerV1?.open({ host, item, opener: button, copy: inspirationVisualCopy, allowLegacy: inspirationEmbedAllowed })) sfx('open');
 }
@@ -28562,6 +28567,14 @@ async function confirmShelfDelete() {
 }
 function shelfSourceTarget(item) {
   try { return new URL(item.url).hostname.replace(/^www\./, '').slice(0, 80); } catch { return ''; }
+}
+function navigateInspirationSource(url) {
+  // WKWebView cancels scripted external location changes. Use its link delegate
+  // only after the attention session's durable receipt.
+  if (inAppShell()) {
+    const link = document.createElement('a'); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+    document.body.appendChild(link); link.click(); link.remove();
+  } else location.assign(url);
 }
 function openProtectedInspirationSource(item, opener) {
   if (item?.catalogId) {
@@ -35812,7 +35825,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v322';
+const PWA_CACHE_VERSION = 'satoru-v323';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

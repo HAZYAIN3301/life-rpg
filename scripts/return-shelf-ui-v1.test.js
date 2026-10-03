@@ -155,7 +155,7 @@ test('настройка принимает фото и эдиты с необя
   assert.match(html, /Фото и видео остаются у источника/);
 });
 
-test('настройка восстанавливает визуальный вкус, подпись референса и явный opt-in', () => {
+test('настройка сохраняет вкус и референсы, поиск первого выпуска скрыт', () => {
   const reference = {
     url: 'https://www.pinterest.com/pin/354658539408264219/',
     title: 'Мой <личный> образ', why: 'Зелёный свет & тишина',
@@ -164,7 +164,7 @@ test('настройка восстанавливает визуальный в�
   const profile = { ...configuredProfile(), visualTaste: 'Тишина <script> и комиксы', discoveryEnabled: true, videoReferences: [reference] };
   const html = UI.render(ready({ setupOpen: true, profile }), t);
   assert.match(html, /name="visualTaste"[^>]+maxlength="600"[^>]*>Тишина &lt;script&gt; и комиксы/);
-  assert.match(html, /name="discoveryEnabled" checked/);
+  assert.doesNotMatch(html, /name="discoveryEnabled"/);
   assert.match(html, /name="referenceTitle" value="Мой &lt;личный&gt; образ"/);
   assert.match(html, /data-inspiration-media="reference-0"/);
   assert.match(html, /data-action="inspiration-reference-preview" data-reference-index="0"/);
@@ -177,7 +177,7 @@ test('настройка восстанавливает визуальный в�
   assert.match(tenHtml, /data-action="inspiration-reference-add" disabled/);
 });
 
-test('Pinterest и TikTok показывают настоящие картинки, а подпись идёт после изображения', () => {
+test('Pinterest показывает картинку, TikTok — только внешний переход', () => {
   const pinUrl = 'https://www.pinterest.com/pin/354658539408264219/';
   const tiktokUrl = 'https://www.tiktok.com/@maker/video/7647936071673629973';
   const pinImage = 'https://i.pinimg.com/564x/b3/6e/78/b36e78c729e4291048afa0720c13428e.jpg';
@@ -186,10 +186,10 @@ test('Pinterest и TikTok показывают настоящие картинк
     digestItem('pin', 'image', { sourceUrl: pinUrl, imageUrl: pinImage, mediaPolicy: 'iframe', embedUrl: Media.buildEmbed(pinUrl) }),
     digestItem('edit', 'edit', { sourceUrl: tiktokUrl, imageUrl: poster, mediaPolicy: 'iframe', embedUrl: Media.buildEmbed(tiktokUrl) }),
   ], digestTotal: 2 }), t);
-  assert.equal((html.match(/class="inspiration-visual-image"/g) || []).length, 2);
+  assert.equal((html.match(/class="inspiration-visual-image"/g) || []).length, 1);
   assert.match(html, /is-media is-pinterest has-image/);
-  assert.match(html, /is-media is-tiktok has-image/);
-  assert.match(html, /data-action="inspiration-play" data-id="edit"[^>]*>.*Смотреть эдит/);
+  assert.match(html, /is-media is-tiktok has-no-image/);
+  assert.match(html, /data-action="inspiration-open-source" data-id="edit"/);
   assert.match(html, /data-noi18n>Pinterest<\/span>/);
   assert.match(html, /data-noi18n>TikTok<\/span>/);
   assert.ok(html.indexOf('src="' + pinImage) < html.indexOf('id="inspiration-item-pin"'));
@@ -467,7 +467,7 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20261003-store-v322-1');
+  const appAt = index.indexOf('app.js?v=20261003-inspiration-release-v323-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'return-shelf-v1.js']) {
@@ -475,21 +475,22 @@ test('интеграция подключает профиль и каталог
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
   for (const asset of ['inspiration-catalog-v1.js', 'inspiration-supply-policy-v1.js', 'inspiration-supply-batch-v1.js', 'inspiration-supply-runtime-v1.js', 'inspiration-supply-ui-v1.js']) {
-    const pin = ['inspiration-supply-policy-v1.js','inspiration-supply-runtime-v1.js'].includes(asset) ? '20260919-inspiration-v265-1' : '20260912-inspiration-v257-1';
+    const pin = asset === 'inspiration-supply-runtime-v1.js' ? '20261003-inspiration-release-v323-1' : asset === 'inspiration-supply-policy-v1.js' ? '20260919-inspiration-v265-1' : '20260912-inspiration-v257-1';
     assert.ok(index.includes(asset + '?v=' + pin));
     assert.ok(index.indexOf(asset) < uiAt);
     assert.ok(sw.includes(asset));
   }
   for (const asset of ['inspiration-profile-v1.js','inspiration-media-v1.js','inspiration-player-v1.js','inspiration-visual-batch-v1.js','inspiration-visual-copy-v1.js']) {
-    assert.ok(index.includes(asset + '?v=20260919-inspiration-v265-1'));
+    const pin = ['inspiration-profile-v1.js','inspiration-visual-batch-v1.js'].includes(asset) ? '20260919-inspiration-v265-1' : '20261003-inspiration-release-v323-1';
+    assert.ok(index.includes(asset + '?v=' + pin));
     assert.ok(index.indexOf(asset) < uiAt && sw.includes(asset));
   }
   assert.ok(index.indexOf('inspiration-media-v1.js') < index.indexOf('inspiration-supply-policy-v1.js'));
-  assert.match(index, /return-shelf-ui-v1\.js\?v=20260919-inspiration-v265-1/);
+  assert.match(index, /return-shelf-ui-v1\.js\?v=20261003-inspiration-release-v323-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
-  assert.match(index, /styles\.css\?v=20261003-store-v322-1/);
-  assert.match(sw, /satoru-v322/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v322'/);
+  assert.match(index, /styles\.css\?v=20261003-inspiration-release-v323-1/);
+  assert.match(sw, /satoru-v323/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v323'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {

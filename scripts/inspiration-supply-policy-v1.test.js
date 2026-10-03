@@ -43,7 +43,7 @@ test('allowlist встраивания совпадает с фактическ�
   const context = vm.createContext({URL,window:{InspirationMediaV1:Media}});
   vm.runInContext(APP.slice(start,end),context);
   const posts = require('../public/inspiration-visual-batch-v1.js').CANDIDATES;
-  for (const post of posts) assert.equal(context.inspirationEmbedAllowed(post.delivery.embedUrl,post.delivery.sourceUrl),true);
+  for (const post of posts) assert.equal(context.inspirationEmbedAllowed(post.delivery.embedUrl,post.delivery.sourceUrl),!Media.externalOnly(post.delivery.sourceUrl));
   for (const host of P.PRODUCTION_EMBED_HOSTS.filter(host => !['assets.pinterest.com','www.tiktok.com'].includes(host))) {
     assert.equal(context.inspirationEmbedAllowed(`https://${host}/embed/test`),true);
   }

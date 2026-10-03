@@ -25,9 +25,12 @@
     // Test examples are never a production supply, even if all their fields look valid.
     const synthetic = raw.filter((c) => c && (c.synthetic === true || c.verified === false));
     const ctx = Object.assign({}, opts.ctx || {}, { now: opts.now });
-    const admission = Policy.admit(raw.filter((c) => !synthetic.includes(c)), ctx);
+    // An official source or embed permission alone is not a content licence.
+    const unlicensed = raw.filter(c => !Policy.SELF_HOSTABLE_RIGHTS.includes(c?.rights?.kind));
+    const admission = Policy.admit(raw.filter((c) => !synthetic.includes(c) && !unlicensed.includes(c)), ctx);
     if (!admission.ok) return admission;
-    const rejected = admission.rejected.concat(synthetic.map((c) => ({ id: c.id, code: 'unverified_fixture', detail: '' })));
+    const rejected = admission.rejected.concat(synthetic.map((c) => ({ id: c.id, code: 'unverified_fixture', detail: '' })),
+      unlicensed.filter(c => c && !synthetic.includes(c)).map(c => ({ id: c.id, code: 'release_rights_required', detail: '' })));
     const catalog = Policy.toCatalogRows(admission.items, locale);
     const byId = new Map(catalog.map((row) => [row.id, row]));
     const wanted = new Set(profile.interests.map((i) => i.id));

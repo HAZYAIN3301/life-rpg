@@ -142,10 +142,10 @@ selected release. No automatic “Data Not Collected” or “not linked” decl
 - Trader/territories and telemetry legal basis remain owner decisions. No personal address,
   legal status or final age number is inferred here.
 
-Recommended product decision: for 1.0 use user-added links and owned/licensed materials,
-with TikTok opening externally pending player tracking evidence. Alternative: keep embedded
-playback and delay App Review while provider behavior and rights are established. This
-recommendation does not silently change the product or close copyright/privacy gates.
+Owner accepted 03.10: user-added links and owned/licensed catalog materials; TikTok opens
+externally. Implemented in v323; see INSPIRATION-FIRST-RELEASE-V323.md for the exact boundary,
+tests and reviewer-note addendum. The product choice is closed. Physical-device verification,
+rights declarations and privacy/trader forms remain separate owner gates.
 
 ### App Review notes — English, replace the old notes after build selection
 
@@ -161,7 +161,10 @@ personal/shared progress. Senku is optional and needs a separate connection key;
 planning does not depend on it. Settings includes export, account deletion and optional
 app lock. Denying speech/camera/notification permissions does not disable text planning.
 Family Controls and closed-app blocking are not part of this release. No payment flow was
-added. The final Inspiration/player configuration must be reflected here before submission.
+added. Inspiration uses personal saved links and an admitted owned/licensed catalog.
+TikTok opens externally after a bounded attention session; no TikTok iframe or poster loads
+inside the app. Automatic public-web discovery is disabled. Personal Pinterest/YouTube
+media can still connect to those providers; do not infer a global no-tracking guarantee.
 
 ### Screenshots and owner acceptance
 

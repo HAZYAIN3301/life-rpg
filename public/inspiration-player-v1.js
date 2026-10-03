@@ -21,7 +21,7 @@
       if (restoreFocus && active.opener?.isConnected) active.opener.focus();
     }
     function open({ host, item, opener, copy = (key) => key, allowLegacy = () => false } = {}) {
-      if (!host || !item || item.supplyUnavailable) return false;
+      if (!host || !item || item.supplyUnavailable || Media.externalOnly(item)) return false;
       const source = Media?.parseSource(item.sourceUrl || item.url), url = item.embedUrl;
       const imageUrl = source?.provider === 'pinterest' && item.mediaType === 'image' && Media.safeImage(item.imageUrl, 'pinterest');
       if (!imageUrl && (source ? !Media.isAllowedEmbed(url, source) : !allowLegacy(url))) return false;

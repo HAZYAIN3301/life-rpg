@@ -10,6 +10,16 @@
   'use strict';
 
   const VERSION = '1.0.0';
+  // First-release contract, 03.10: personal links survive, TikTok stays outside.
+  const DISCOVERY_ENABLED = false;
+  function externalOnly(value) {
+    if (value && typeof value === 'object') return value.provider === 'tiktok'
+      || ['url', 'sourceUrl', 'embedUrl', 'imageUrl'].some(key => externalOnly(value[key]));
+    try {
+      const host = new URL(String(value || '')).hostname.toLowerCase();
+      return ['tiktok.com', 'tiktokcdn.com', 'tiktokcdn-eu.com', 'muscdn.com'].some(domain => host === domain || host.endsWith('.' + domain));
+    } catch (_) { return false; }
+  }
   const TIKTOK_ORIGIN = 'https://www.tiktok.com';
   const PINTEREST_ORIGIN = 'https://assets.pinterest.com';
   const MAX_URL_LENGTH = 4096;
@@ -142,5 +152,5 @@
     return null;
   }
 
-  return Object.freeze({ VERSION, TIKTOK_ORIGIN, PINTEREST_ORIGIN, parseSource, buildEmbed, isAllowedEmbed, safeImage, parsePlayerEvent });
+  return Object.freeze({ VERSION, DISCOVERY_ENABLED, externalOnly, TIKTOK_ORIGIN, PINTEREST_ORIGIN, parseSource, buildEmbed, isAllowedEmbed, safeImage, parsePlayerEvent });
 });

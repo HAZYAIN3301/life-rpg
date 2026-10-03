@@ -7,6 +7,8 @@
   'use strict';
   const locales = ['ru','en','de','uk','es'];
   const rows = [
+    ['Сохраняй свои материалы; TikTok открывается снаружи.','Save your materials; TikTok opens externally.','Speichere deine Inhalte; TikTok öffnet sich außerhalb.','Зберігай свої матеріали; TikTok відкривається зовні.','Guarda tus materiales; TikTok se abre fuera de Satoru.'],
+    ['TikTok открывается вне Satoru.','TikTok opens outside Satoru.','TikTok öffnet sich außerhalb von Satoru.','TikTok відкривається поза Satoru.','TikTok se abre fuera de Satoru.'],
     ['Твой визуальный вкус','Your visual taste','Dein visueller Geschmack','Твій візуальний смак','Tu gusto visual'],
     ['Какие образы, настроение, цвет, монтаж тебе близки?','Which images, moods, colours and editing styles speak to you?','Welche Bilder, Stimmungen, Farben und Schnittstile sprechen dich an?','Які образи, настрій, кольори й монтаж тобі близькі?','¿Qué imágenes, ambientes, colores y estilos de montaje te atraen?'],
     ['Например: комиксы о повседневности, зал среди зелени, горы и приключенческие коллажи.','For example: everyday-life comics, a gym surrounded by greenery, mountains and adventure collages.','Zum Beispiel: Alltagscomics, ein Fitnessraum im Grünen, Berge und Abenteuer-Collagen.','Наприклад: комікси про повсякденність, зал серед зелені, гори й пригодницькі колажі.','Por ejemplo: cómics cotidianos, un gimnasio entre plantas, montañas y collages de aventuras.'],

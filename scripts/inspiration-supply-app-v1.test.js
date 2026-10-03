@@ -32,7 +32,7 @@ function functionSource(name) {
 function profile() {
   return Profile.configure({ interests: ['creative', 'learning', 'rest'].map(id => ({ id, label: id })), formats: ['quote'] });
 }
-function harness({ paired = false, modes = [] } = {}) {
+function harness({ paired = false, modes = [], discoveryTest = false } = {}) {
   const events = [], requests = [], toasts = [], sounds = [], renders = [];
   const initial = Profile.recordShown(Supply.ensureDigest({ profile: profile(), day: DAY, now: NOW, locale: 'en' }).profile, DAY);
   const State = { me: { id: 'owner-a' }, view: 'shelf', settings: { inspiration: initial, unrelated: { keep: 1 } }, tasks: [],
@@ -43,7 +43,7 @@ function harness({ paired = false, modes = [] } = {}) {
   const ctx = vm.createContext({ State, URL, Response, AbortController, structuredClone, clearTimeout, setTimeout,
     Date: class extends Date { constructor(...args) { super(...(args.length ? args : [NOW])); } },
     window: { InspirationProfileV1: Profile, InspirationCatalogV1: Catalog, InspirationSupplyRuntimeV1: Supply,
-      InspirationSupplyUIV1: Copy, ReturnShelfUIV1: UI, ReturnShelfV1: Shelf, CommitmentStoreV1: Commit, InspirationMediaV1: Media },
+      InspirationSupplyUIV1: Copy, ReturnShelfUIV1: UI, ReturnShelfV1: Shelf, CommitmentStoreV1: Commit, InspirationMediaV1: discoveryTest ? { ...Media, DISCOVERY_ENABLED: true } : Media },
     CSS: { escape: String }, console: { error() {}, warn() {} },
     lang: () => 'en', todayStr: () => DAY, t: text => text, esc: String,
     render: () => renders.push(clone(State)), toast: text => toasts.push(text),
@@ -358,8 +358,20 @@ test('empty day is a durable receipt and never loops/refills', async () => {
   await h.ctx.prepareInspirationDigest(); await h.ctx.prepareInspirationDigest({ retry: true });
   assert.equal(h.requests.length, 1); assert.equal(h.ctx.shelfViewModel().digestPending, '');
 });
+test('first release does not search even with saved opt-in; durable digest survives retry', async () => {
+  const h = harness({ modes: ['lost-reply'] }); newDay(h, { discoveryEnabled: true });
+  await h.ctx.prepareInspirationDigest();
+  assert.equal(h.State._inspirationDigestPending, 'error');
+  assert.deepEqual(h.requests.map(row => row.url), ['/api/inspiration/profile']);
+  const proposed = clone(h.requests[0].payload);
+  await h.ctx.prepareInspirationDigest({ retry: true });
+  assert.deepEqual(h.requests[1].payload, proposed);
+  assert.equal(h.State.settings.inspiration.discoveryEnabled, true);
+  assert.equal(h.ctx.inspirationDailyReceipt(), true);
+  assert.ok(h.requests.every(row => row.url === '/api/inspiration/profile'));
+});
 test('explicit discovery opt-in sends only day and unconfigured provider has honest finite fallback', async () => {
-  const h = harness(); newDay(h, { discoveryEnabled: true });
+  const h = harness({ discoveryTest: true }); newDay(h, { discoveryEnabled: true });
   await h.ctx.prepareInspirationDigest();
   assert.deepEqual(h.requests.map(row => row.url), ['/api/inspiration/discovery', '/api/inspiration/profile']);
   assert.deepEqual(h.requests[0].payload, { dayKey: DAY });
@@ -368,7 +380,7 @@ test('explicit discovery opt-in sends only day and unconfigured provider has hon
   await h.ctx.prepareInspirationDigest(); assert.equal(h.requests.length, 2);
 });
 test('configured provider error hides new deck and requires explicit retry', async () => {
-  const h = harness(); newDay(h, { discoveryEnabled: true });
+  const h = harness({ discoveryTest: true }); newDay(h, { discoveryEnabled: true });
   const original = h.ctx.fetch;
   h.ctx.fetch = async (url, options) => url === '/api/inspiration/discovery'
     ? new Response(JSON.stringify({ providerAvailable: true, status: 'provider_rate_limited', dayKey: DAY, candidates: [] }))
@@ -382,7 +394,7 @@ test('configured provider error hides new deck and requires explicit retry', asy
   await h.ctx.prepareInspirationDigest({ retry: true }); assert.equal(h.ctx.inspirationDailyReceipt(), true);
 });
 test('daily lost reply retains exact candidate and retry does not search or refill', async () => {
-  const h = harness({ modes: [undefined, 'lost-reply'] }); newDay(h, { discoveryEnabled: true });
+  const h = harness({ discoveryTest: true, modes: [undefined, 'lost-reply'] }); newDay(h, { discoveryEnabled: true });
   await h.ctx.prepareInspirationDigest();
   assert.equal(h.State.settings.inspiration.digest, null); assert.equal(h.State._inspirationDigestPending, 'error');
   const proposed = clone(h.requests[1].payload);
@@ -437,17 +449,30 @@ test('queued stale taste is rejected inside the Store lock before sending', asyn
   assert.equal(h.requests.length, 0); assert.deepEqual(h.events, []);
   assert.equal(h.State.settings.inspiration.visualTaste, 'A newer choice');
 });
-test('current personal Pinterest and TikTok URLs use validated provider embeds, denied catalog entries remain denied', () => {
+test('external source uses the native link delegate or browser navigation with the exact URL', () => {
+  const url = 'https://www.tiktok.com/@example/video/7647936071673629973';
+  for (const native of [false, true]) {
+    const events = [], link = { click() { events.push(['click', this.href, this.target, this.rel]); }, remove() { events.push(['remove']); } };
+    const ctx = vm.createContext({ inAppShell: () => native,
+      document: { createElement(tag) { assert.equal(tag, 'a'); return link; }, body: { appendChild(node) { assert.equal(node, link); events.push(['append']); } } },
+      location: { assign(href) { events.push(['assign', href]); } } });
+    vm.runInContext(functionSource('navigateInspirationSource'), ctx); ctx.navigateInspirationSource(url);
+    assert.deepEqual(events, native ? [['append'], ['click', url, '_blank', 'noopener noreferrer'], ['remove']] : [['assign', url]]);
+  }
+});
+test('personal TikTok stays external, Pinterest keeps its validated embed, denied catalog stays denied', () => {
   const h = harness();
   h.State.shelf.items.push({ id: 'pin', url: 'https://www.pinterest.com/pin/974818281863152085/' },
     { id: 'edit', url: 'https://www.tiktok.com/@example/video/7647936071673629973' });
   assert.equal(h.ctx.inspirationFormatFromContent(h.State.shelf.items[0].url), 'image');
   assert.match(h.ctx.inspirationActionItem('pin').embedUrl, /assets.pinterest.com/);
-  assert.match(h.ctx.inspirationActionItem('edit').embedUrl, /autoplay=0/);
+  assert.equal(h.ctx.inspirationActionItem('edit').embedUrl, '');
+  assert.equal(h.ctx.inspirationActionItem('edit').mediaPolicy, 'link');
+  assert.equal(h.State.shelf.items[1].url, 'https://www.tiktok.com/@example/video/7647936071673629973');
   assert.equal(h.ctx.inspirationEmbedAllowed(Media.buildEmbed(h.State.shelf.items[1].url), h.State.shelf.items[0].url), false);
 });
 test('setup reads explicit visual taste, opt-in and title while preserving metadata only for the unchanged URL', () => {
-  const h = harness(), url = 'https://www.pinterest.com/pin/974818281863152085/';
+  const h = harness({ discoveryTest: true }), url = 'https://www.pinterest.com/pin/974818281863152085/';
   h.State._inspirationDraft = Profile.normalize({ ...profile(), videoReferences: [{ url, title: 'Old title', why: 'Old why',
     imageUrl: 'https://i.pinimg.com/564x/b3/6e/78/b36e78c729e4291048afa0720c13428e.jpg', mediaFormat: 'image', authorName: 'A pinner' }] });
   vm.runInContext(functionSource('inspirationDraftFromSetupForm'), h.ctx);
@@ -514,7 +539,7 @@ test('stored normalized findings reconstruct delivery URLs and combine with visu
   assert.deepEqual(find.delivery, { policy: 'embed' });
 });
 test('insufficient discovery taste gets a truthful catalog fallback rather than an endless retry error', async () => {
-  const h = harness(); newDay(h, { discoveryEnabled: true }); const original = h.ctx.fetch;
+  const h = harness({ discoveryTest: true }); newDay(h, { discoveryEnabled: true }); const original = h.ctx.fetch;
   h.ctx.fetch = async (url, options) => url === '/api/inspiration/discovery'
     ? new Response(JSON.stringify({ providerAvailable: true, status: 'needs_taste', dayKey: DAY, candidates: [] })) : original(url, options);
   await h.ctx.prepareInspirationDigest();
