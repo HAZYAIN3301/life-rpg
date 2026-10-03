@@ -28,3 +28,21 @@ test('an existing appointment with unknown duration does not invent free time af
  const result=P.propose({...base,tasks:[{id:'fixed',date:base.start,startTime:'09:00'},{id:'a',date:base.start,estimateMin:30}]});
  assert.equal(result.moves[0].date,'2026-10-06');
 });
+test('overnight fixed work from the previous week blocks Monday until its actual end',()=>{
+ const tasks=[{id:'night',date:'2026-10-04',startTime:'23:00',estimateMin:720},{id:'next',date:base.start,estimateMin:30}];
+ const before=JSON.stringify(tasks);
+ const result=P.propose({...base,to:'12:00',tasks});
+ assert.deepEqual(result.moves.map(m=>[m.date,m.startTime]),[['2026-10-05','11:00']]);
+ assert.equal(JSON.stringify(tasks),before);
+});
+test('fixed intervals crossing midnight combine with recurring blocks and expire at the exact boundary',()=>{
+ const tasks=[{id:'night',date:base.start,startTime:'23:00',estimateMin:120},{id:'a',date:base.start,estimateMin:30}];
+ const result=P.propose({...base,today:'2026-10-06',from:'00:00',to:'03:00',routine:[{day:2,start:'01:00',end:'01:05'}],tasks});
+ assert.equal(result.moves[0].startTime,'01:05');
+ const midnight=P.propose({...base,today:'2026-10-06',from:'00:00',to:'03:00',tasks:[{...tasks[0],estimateMin:60},tasks[1]]});
+ assert.equal(midnight.moves[0].startTime,'00:00');
+});
+test('invalid current date or time cannot silently schedule into the past',()=>{
+ for(const today of ['', '2026-02-30',null])assert.throws(()=>P.propose({...base,today}),/invalid_date/);
+ for(const nowTime of ['invalid','24:00','9:05',null])assert.throws(()=>P.propose({...base,nowTime}),/invalid_time/);
+});

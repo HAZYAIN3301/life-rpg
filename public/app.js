@@ -12931,7 +12931,13 @@ async function weekWorkshopAction(action, el) {
         if(w.snapshot!==JSON.stringify(State.tasks)||next.date<todayStr()||(next.date===todayStr()&&next.startTime<`${pad2(now.getHours())}:${pad2(now.getMinutes())}`)){
           w.moves=[];w.busy=false;w.notice=phoneCopy('changed');paintWeekWorkshop();return;
         }
-        if(!await moveCalendarTask(w.moves[0],{makeUndo:false,renderAfter:false,exactTime:true}))break;
+        const context=window.WeekPlannerV1.moveContext(State.tasks,next.id);
+        const saved=await moveCalendarTask(next,{makeUndo:false,renderAfter:false,exactTime:true});
+        if(!weekWorkshopCurrent(w))return;
+        if(context!==window.WeekPlannerV1.moveContext(State.tasks,next.id)||!window.WeekPlannerV1.sameSchedule(questById(next.id),saved?next:next.before)){
+          w.moves=[];w.busy=false;w.notice=phoneCopy('changed');paintWeekWorkshop();render();return;
+        }
+        if(!saved)break;
         if(!weekWorkshopCurrent(w))return;w.moves.shift();w.snapshot=JSON.stringify(State.tasks);
       }
       if(!weekWorkshopCurrent(w))return;
@@ -15140,15 +15146,17 @@ function calendarMoveReceiptHTML() {
   if (!receipt || receipt.expiresAt < Date.now() || !questById(receipt.taskId)) return '';
   return `<div class="cal-move-receipt" role="status"><span>${esc(t(receipt.unscheduled ? 'Квест снят с расписания' : 'Квест перенесён'))}</span><button type="button" class="link-btn cal-move-undo" data-action="cal-move-undo">${esc(t('Вернуть'))}</button></div>`;
 }
-async function moveCalendarTask(command, { makeUndo = true, renderAfter = true, exactTime = false } = {}) {
+async function moveCalendarTask(command, { makeUndo = true, renderAfter = true, exactTime = false, undoReceipt = null } = {}) {
   const task = questById(command && command.id);
   if (!task || State._tasksLoadError) return false;
+  if (undoReceipt && (undoReceipt !== State._calendarUndo || undoReceipt.taskId !== task.id || undoReceipt.expiresAt < Date.now())) return false;
+  const restore = undoReceipt?.before;
   // Счётчики переноса входят в снимок: иначе неудачная запись откатила бы дату,
   // но оставила бы дело «отложенным ещё раз» — память соврала бы о том, чего не было.
   const before = { date: task.date, startTime: task.startTime || null, estimateMin: task.estimateMin, postponedCount: task.postponedCount, firstDate: task.firstDate };
   const nextDate = calendarDateValue(command.date, task.date || todayStr());
   const nextTime = command.startTime == null || command.startTime === '' ? null : calendarTimeValue(command.startTime, exactTime);
-  const nextDuration = Math.max(5, Math.min(18 * 60, Math.round(Number(command.estimateMin) || Number(before.estimateMin) || 30)));
+  const nextDuration = restore ? restore.estimateMin : Math.max(5, Math.min(18 * 60, Math.round(Number(command.estimateMin) || Number(before.estimateMin) || 30)));
   if (command.startTime != null && command.startTime !== '' && !nextTime) return false;
   const dateChanged = nextDate !== before.date;
   const guideOwns = guideV3ContextActive('calendar', 'task-date-persisted')
@@ -15162,7 +15170,8 @@ async function moveCalendarTask(command, { makeUndo = true, renderAfter = true, 
     saved = await commitmentDataCommit(({ settings, tasks }) => {
       const workingTask = tasks.find((item) => String(item.id) === String(task.id));
       if (!workingTask) return null;
-      const postponeNote = window.StuckTaskV1 ? window.StuckTaskV1.notePostpone(workingTask, nextDate, todayStr()) : null;
+      const postponeNote = restore ? { postponedCount: restore.postponedCount, firstDate: restore.firstDate }
+        : window.StuckTaskV1 ? window.StuckTaskV1.notePostpone(workingTask, nextDate, todayStr()) : null;
       workingTask.date = nextDate;
       workingTask.startTime = nextTime;
       workingTask.estimateMin = nextDuration;
@@ -15181,7 +15190,8 @@ async function moveCalendarTask(command, { makeUndo = true, renderAfter = true, 
     if (!workingTask) return false;
     // Считается ДО присваивания: notePostpone читает текущую task.date, чтобы
     // отличить настоящий перенос от правки расписания будущего дела.
-    const postponeNote = window.StuckTaskV1 ? window.StuckTaskV1.notePostpone(task, nextDate, todayStr()) : null;
+    const postponeNote = restore ? { postponedCount: restore.postponedCount, firstDate: restore.firstDate }
+      : window.StuckTaskV1 ? window.StuckTaskV1.notePostpone(task, nextDate, todayStr()) : null;
     workingTask.date = nextDate;
     workingTask.startTime = nextTime;
     workingTask.estimateMin = nextDuration;
@@ -15228,7 +15238,7 @@ async function undoCalendarMove() {
   }
   const ok = await moveCalendarTask(
     { id: receipt.taskId, ...receipt.before },
-    { makeUndo: false, renderAfter: false, exactTime: true },
+    { makeUndo: false, renderAfter: false, exactTime: true, undoReceipt: receipt },
   );
   if (!ok) {
     State._calendarFocusAfterCommit = '.cal-move-undo';
@@ -35825,7 +35835,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v323';
+const PWA_CACHE_VERSION = 'satoru-v324';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -7,10 +7,11 @@ const app=fs.readFileSync(require('node:path').join(__dirname,'../public/app.js'
 function harness(saved=true) {
  const task={id:'a',date:'2026-10-05',startTime:null,estimateMin:0,done:false};
  const c={State:{tasks:[task]},questById:()=>task,guideV3ContextActive:()=>false,questCommitment:()=>null,
-  window:{},Store:{saveNow:async()=>saved},toast:()=>{},t:x=>x,CSS:{escape:x=>x},render:()=>{},todayStr:()=>task.date,
+  window:{StuckTaskV1:require('../public/stuck-task-v1')},Store:{saveNow:async()=>saved},toast:()=>{},t:x=>x,CSS:{escape:x=>x},render:()=>{},todayStr:()=>'2026-10-05',
+  setTimeout:()=>1,clearTimeout:()=>{},
   CAL_H0:0,CAL_H1:23,fmtHM:n=>`${String(Math.floor(n/60)).padStart(2,'0')}:${String(n%60).padStart(2,'0')}`};
  vm.createContext(c);
- vm.runInContext(app.slice(app.indexOf('function calendarTimeValue('),app.indexOf('function syncCalendarDayViewport('))+app.slice(app.indexOf('async function moveCalendarTask('),app.indexOf('async function undoCalendarMove(')),c);
+ vm.runInContext(app.slice(app.indexOf('function calendarTimeValue('),app.indexOf('function syncCalendarDayViewport('))+app.slice(app.indexOf('async function moveCalendarTask('),app.indexOf('function closeCalendarTaskEditor(')),c);
  return {c,task};
 }
 test('five-minute proposal saves exactly after a recurring block ending 09:05',async()=>{
@@ -32,4 +33,23 @@ test('refused scheduling restores unknown duration instead of inventing thirty m
  const {c,task}=harness(false),before=JSON.stringify(task);
  assert.equal(await c.moveCalendarTask({id:'a',date:task.date,startTime:'09:05',estimateMin:15},{makeUndo:false,exactTime:true}),false);
  assert.equal(JSON.stringify(task),before);
+});
+test('undo restores unknown duration and postponement history, including retry after a refused write',async()=>{
+ const {c,task}=harness(),before=JSON.stringify(task);
+ assert(await c.moveCalendarTask({id:'a',date:'2026-10-06',startTime:'09:05',estimateMin:15},{exactTime:true}));
+ assert.equal(task.postponedCount,1);
+ const moved=JSON.stringify(task),receipt=c.State._calendarUndo;
+ c.Store.saveNow=async()=>false;
+ await c.undoCalendarMove();
+ assert.equal(JSON.stringify(task),moved);assert.equal(c.State._calendarUndo,receipt);
+ c.Store.saveNow=async()=>true;
+ await c.undoCalendarMove();
+ assert.equal(JSON.stringify(task),before);assert.equal(c.State._calendarUndo,null);
+});
+test('undo preserves the existing original date and count rather than treating reversal as a new postponement',async()=>{
+ const {c,task}=harness();Object.assign(task,{date:'2026-10-03',estimateMin:0,postponedCount:4,firstDate:'2026-09-30'});
+ const before=JSON.stringify(task);
+ await c.moveCalendarTask({id:'a',date:'2026-10-05',startTime:'10:00',estimateMin:20},{exactTime:true});
+ assert.equal(task.postponedCount,5);
+ await c.undoCalendarMove();assert.equal(JSON.stringify(task),before);
 });

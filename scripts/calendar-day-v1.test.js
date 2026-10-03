@@ -166,7 +166,7 @@ test('move is awaitable, rolls back on failure, and offers undo', () => {
   assert.match(move, /expiresAt: Date\.now\(\) \+ 12000/);
   assert.match(move, /setTimeout\(\(\) => \{[\s\S]*State\._calendarUndo !== receipt[\s\S]*12050/);
   const undo = functionBody('undoCalendarMove');
-  assert.match(undo, /moveCalendarTask\([\s\S]*\{ makeUndo: false, renderAfter: false, exactTime: true \}/);
+  assert.match(undo, /moveCalendarTask\([\s\S]*\{ makeUndo: false, renderAfter: false, exactTime: true, undoReceipt: receipt \}/);
   const failedUndo = undo.match(/if \(!ok\) \{([\s\S]*?)\n  \}/);
   assert.ok(failedUndo, 'failed Undo branch must exist');
   assert.doesNotMatch(failedUndo[1], /State\._calendarUndo = null/, 'failed Undo must retain its receipt');
