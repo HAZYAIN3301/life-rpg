@@ -22734,3 +22734,15 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .routine-preview { padding: 0; list-style: none; }
 .routine-preview li { display: grid; gap: var(--sp-1); padding-block: var(--sp-2); border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 .routine-preview span { color: var(--muted); font-size: var(--type-meta); }
+
+/* Brand: the app icon is the symbol of Satoru (owner 03.10), shown as is — no glow, no frame. */
+.brand-app-mark { width: 100%; height: 100%; display: block; border-radius: 22%; object-fit: cover; }
+.brand .logo:has(.brand-app-mark), .auth-brand-mark:has(.brand-app-mark) { padding: 0; border: 0; background: none; box-shadow: none; }
+:root .brand .logo:has(.brand-app-mark), :root[data-design=next] .brand .logo:has(.brand-app-mark) { width: 36px; height: 36px; border-radius: 22%; }
+.auth-brand-mark:has(.brand-app-mark) { width: 72px; height: 72px; border-radius: 22%; }
+@media (max-width: 600px) {
+  :root[data-design=next] .brand .logo:has(.brand-app-mark) { width: 30px; height: 30px; }
+}
+/* Damaged fields: the AI note is quiet; the before text is struck through in the preview. */
+.data-damage-note { margin: var(--sp-2) 0 0; font-size: var(--type-meta); }
+.data-damage-places s { color: var(--text-soft); }

@@ -73,8 +73,9 @@ function navMotionIconHTML(id) {
   return satoruIconHTML(id, 'navsec-icon', '');
 }
 
+// Owner 03.10: the symbol of Satoru is the app icon (the question mark), not the Shadow.
 function brandMarkHTML(className = '') {
-  return `<img class="brand-shadow-mark${className ? ` ${className}` : ''}" src="/art/companions/shadow-v3-20260730/shadow-spirit-calm.png?v=20260730-1" alt="" aria-hidden="true" decoding="async" />`;
+  return `<img class="brand-app-mark${className ? ` ${className}` : ''}" src="/icon.svg" width="40" height="40" alt="" aria-hidden="true" decoding="async" />`;
 }
 
 function bossEmblemHTML(boss, className = '', fallback = '') {
@@ -563,6 +564,15 @@ const I18N_EXTRA = {
   'Работает, пока Satoru открыт.': { en: 'Works while Satoru is open.', de: 'Funktioniert, solange Satoru geöffnet ist.', uk: 'Працює, поки Satoru відкритий.', es: 'Funciona mientras Satoru está abierto.' },
   'Подсказка появится в Satoru.': { en: 'The reminder appears in Satoru.', de: 'Die Erinnerung erscheint in Satoru.', uk: 'Підказка з’явиться в Satoru.', es: 'El aviso aparecerá en Satoru.' },
   'Выбери время.': { en: 'Choose a time.', de: 'Wähle eine Uhrzeit.', uk: 'Обери час.', es: 'Elige una hora.' },
+  'Исправить с помощью ИИ': { en: 'Fix with AI', de: 'Mit KI reparieren', uk: 'Виправити за допомогою ШІ', es: 'Corregir con IA' },
+  'Фрагменты с «�» увидит ИИ-сервис.': { en: 'The AI service will see the fragments with «�».', de: 'Der KI-Dienst sieht die Stellen mit «�».', uk: 'ШІ-сервіс побачить фрагменти з «�».', es: 'El servicio de IA verá los fragmentos con «�».' },
+  'Ищу исправления…': { en: 'Looking for fixes…', de: 'Suche Korrekturen…', uk: 'Шукаю виправлення…', es: 'Buscando correcciones…' },
+  'Проверь исправления': { en: 'Check the fixes', de: 'Prüfe die Korrekturen', uk: 'Перевір виправлення', es: 'Revisa las correcciones' },
+  'Применить': { en: 'Apply', de: 'Übernehmen', uk: 'Застосувати', es: 'Aplicar' },
+  'Исправлено': { en: 'Fixed', de: 'Repariert', uk: 'Виправлено', es: 'Corregido' },
+  'ИИ сейчас недоступен: добавь ключ в Настройках → ИИ или включи Pro.': { en: 'AI is not available: add a key in Settings → AI or turn on Pro.', de: 'KI ist nicht verfügbar: Füge in Einstellungen → KI einen Schlüssel hinzu oder aktiviere Pro.', uk: 'ШІ недоступний: додай ключ у Налаштуваннях → ШІ або увімкни Pro.', es: 'La IA no está disponible: añade una clave en Ajustes → IA o activa Pro.' },
+  'ИИ не ответил. Попробуй ещё раз.': { en: 'The AI did not answer. Try again.', de: 'Die KI hat nicht geantwortet. Versuche es erneut.', uk: 'ШІ не відповів. Спробуй ще раз.', es: 'La IA no respondió. Inténtalo de nuevo.' },
+  'Эти места ИИ не смог восстановить надёжно — поправь их вручную.': { en: 'The AI could not restore these places reliably — fix them by hand.', de: 'Diese Stellen konnte die KI nicht sicher wiederherstellen — korrigiere sie von Hand.', uk: 'Ці місця ШІ не зміг надійно відновити — виправ їх вручну.', es: 'La IA no pudo restaurar estos fragmentos con seguridad: corrígelos a mano.' },
   'Больше не показывать': { en: 'Don\'t show again', de: 'Nicht mehr anzeigen', uk: 'Більше не показувати', es: 'No volver a mostrar' },
   "Цель накопления": {"en":"Savings goal","de":"Sparziel","uk":"Ціль накопичення","es":"Meta de ahorro"},
   "До цели": {"en":"Towards","de":"Bis zum Ziel","uk":"До цілі","es":"Para la meta"},
@@ -17020,7 +17030,7 @@ function openAiModal(title, bodyHtml, loading) {
 // а поздний ответ мог заполнить уже другую форму или попасть к следующему аккаунту.
 // Теперь у поверхности не больше одного запроса. Новый запрос, закрытие окна, выход
 // из аккаунта или «Отменить запрос» прерывают прежний, и его ответ не показывается.
-const AI_SURFACE_TIMEOUT_MS = Object.freeze({ cat: 20000, senku: 30000, stuck: 30000, dayrec: 90000, episode: 90000, propose: 120000, treemap: 90000, profile: 90000, onboard: 90000, moment: 8000, nudgeVoice: 20000 });
+const AI_SURFACE_TIMEOUT_MS = Object.freeze({ cat: 20000, senku: 30000, damage: 60000, stuck: 30000, dayrec: 90000, episode: 90000, propose: 120000, treemap: 90000, profile: 90000, onboard: 90000, moment: 8000, nudgeVoice: 20000 });
 const AI_SURFACE_UI = Object.freeze({
   dayrec: { modal: 'dayrec-modal', result: 'dayrec-result', run: 'dayrec-run' },
   episode: { modal: 'ep-modal', result: 'ep-result', run: 'ep-run' },
@@ -18440,11 +18450,15 @@ function captureBar(options = {}) {
 // но уже испорченные символы не восстанавливаются: байты потеряны. Молчать об этом нельзя —
 // человек должен знать, где в его данных дырка, чтобы поправить текст руками.
 let _dataDamageReported = '';
+const DAMAGE_AREA_FILES = Object.freeze({ 'Квесты': 'tasks', 'Цели': 'goals', 'Привычки': 'habits', 'Заметки': 'inbox', 'Настройки': 'settings', 'Дни': 'days' });
+function damageAreaValues() {
+  return { 'Квесты': State.tasks, 'Цели': State.goals, 'Привычки': State.habits, 'Заметки': State.inbox, 'Настройки': State.settings, 'Дни': State.days };
+}
+function damageTextAt(root, path) {
+  return (path.match(/\[[0-9]+\]|\.[^.[]+/g) || []).reduce((node, part) => node == null ? node : node[part[0] === '[' ? Number(part.slice(1, -1)) : part.slice(1)], root);
+}
 function scanDataDamage() {
-  return window.DamageRepairV1.summary({
-    'Квесты': State.tasks, 'Цели': State.goals, 'Привычки': State.habits,
-    'Заметки': State.inbox, 'Настройки': State.settings, 'Дни': State.days,
-  });
+  return window.DamageRepairV1.summary(damageAreaValues());
 }
 function damageUiKey() { return `satoru:damage:${String(State.me?.id || '')}`; }
 function rememberDamageUI(dismissed = false) {
@@ -18467,12 +18481,10 @@ function reportDataDamageOnce() {
 }
 function damagePlaces(limit = 6) {
   const R = window.DamageRepairV1; if (!R) return [];
-  const areas = { 'Квесты': State.tasks, 'Цели': State.goals, 'Привычки': State.habits, 'Заметки': State.inbox, 'Настройки': State.settings, 'Дни': State.days };
-  const at = (root, path) => (path.match(/\[[0-9]+\]|\.[^.[]+/g) || []).reduce((node, part) => node == null ? node : node[part[0] === '[' ? Number(part.slice(1, -1)) : part.slice(1)], root);
   const out = [];
-  for (const [area, value] of Object.entries(areas)) {
+  for (const [area, value] of Object.entries(damageAreaValues())) {
     for (const spot of R.findDamage(value)) {
-      const text = String(at(value, spot.path) || ''), i = text.indexOf(R.MARK);
+      const text = String(damageTextAt(value, spot.path) || ''), i = text.indexOf(R.MARK);
       out.push({ area, text: (i > 30 ? '…' : '') + text.slice(Math.max(0, i - 30), i + 30) + (i + 30 < text.length ? '…' : '') });
       if (out.length >= limit) return out;
     }
@@ -18480,21 +18492,104 @@ function damagePlaces(limit = 6) {
   return out;
 }
 function dataDamageNoticeHTML() {
-  const damage = State._dataDamage, result = State._damageResult;
+  const damage = State._dataDamage, result = State._damageResult, ai = State._damageAi;
   if (!damage || (!damage.length && !result)) return '';
   const total = damage.reduce((sum, d) => sum + d.count, 0);
   const left = result ? result.total - result.done : total;
+  const mark = (text) => esc(text).replace(/�/g, '<mark>�</mark>');
+  if (ai && ai.proposals) {
+    // The person sees every change before anything is written.
+    const rows = ai.proposals.map((p) => `<li><b>${esc(t(p.area))}</b> <span data-noi18n><s>${mark(p.before)}</s> → ${esc(p.after)}</span></li>`).join('');
+    return `<section class="card data-damage-card" role="status">
+      <h3>${esc(t('Проверь исправления'))}: ${ai.proposals.length}</h3>
+      ${rows ? `<ul class="data-damage-places">${rows}</ul>` : ''}
+      ${ai.skipped ? `<p class="muted">${esc(t('Эти места ИИ не смог восстановить надёжно — поправь их вручную.'))} (${ai.skipped})</p>` : ''}
+      ${ai.error ? `<p role="alert">${esc(ai.error)}</p>` : ''}
+      <div class="propose-actions">
+        ${ai.proposals.length ? `<button type="button" class="btn" data-action="damage-ai-apply"${ai.busy ? ' disabled' : ''}>${esc(t('Применить'))}</button>` : ''}
+        <button type="button" class="btn ghost" data-action="damage-ai-cancel"${ai.busy ? ' disabled' : ''}>${esc(t('Отмена'))}</button>
+      </div></section>`;
+  }
   // Where exactly: the person can fix a sentence only if they can find it.
-  const places = damagePlaces().map((p) => `<li><b>${esc(t(p.area))}</b> <span data-noi18n>${esc(p.text).replace(/�/g, '<mark>�</mark>')}</span></li>`).join('');
+  const places = damagePlaces().map((p) => `<li><b>${esc(t(p.area))}</b> <span data-noi18n>${mark(p.text)}</span></li>`).join('');
   return `<section class="card data-damage-card" role="status">
     <h3>${esc(t('Повреждённые поля'))}: ${left}</h3>
-    ${result ? `<p class="muted">${esc(t(left ? 'Целой копии оставшихся полей нет. Проверь текст в указанных разделах и исправь его вручную.' : 'Повреждений не осталось'))}</p>` : ''}
     ${places ? `<ul class="data-damage-places">${places}</ul>` : ''}
     ${State._damageError ? `<p role="alert">${esc(State._damageError)}</p>` : ''}
+    ${ai && ai.error ? `<p role="alert">${esc(ai.error)}</p>` : ''}
     <div class="propose-actions">
-      ${!result || State._damageError ? `<button type="button" class="btn" data-action="damage-repair"${State._damageBusy ? ' disabled' : ''}>${esc(t(State._damageBusy ? 'Восстанавливаю…' : 'Восстановить из копий'))}</button>` : ''}
+      <button type="button" class="btn" data-action="damage-ai"${ai && ai.busy ? ' disabled' : ''}>${esc(t(ai && ai.busy ? 'Ищу исправления…' : 'Исправить с помощью ИИ'))}</button>
+      ${!result ? `<button type="button" class="btn ghost" data-action="damage-repair"${State._damageBusy ? ' disabled' : ''}>${esc(t(State._damageBusy ? 'Восстанавливаю…' : 'Восстановить из копий'))}</button>` : ''}
       <button type="button" class="btn ghost" data-action="damage-dismiss"${State._damageBusy ? ' disabled' : ''}>${esc(t('Больше не показывать'))}</button>
-    </div></section>`;
+    </div>
+    <p class="muted data-damage-note">${esc(t('Фрагменты с «�» увидит ИИ-сервис.'))}</p></section>`;
+}
+// Owner 03.10: «у нас же есть ИИ — пусть исправит нормально». Only fragments around «�» leave;
+// a proposal counts only if it fills the holes and changes nothing else (DamageRepairV1), the person
+// confirms, and the server checks every replacement again before it writes.
+async function proposeDamageFixes() {
+  const R = window.DamageRepairV1;
+  if (!R || State._damageAi?.busy) return;
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  await ensureAiKeys();
+  if (!canUseAi()) { State._damageAi = { error: t('ИИ сейчас недоступен: добавь ключ в Настройках → ИИ или включи Pro.') }; render(); return; }
+  const items = [];
+  for (const [area, value] of Object.entries(damageAreaValues())) {
+    for (const spot of R.findDamage(value)) {
+      const text = damageTextAt(value, spot.path);
+      if (typeof text === 'string') items.push({ area, file: DAMAGE_AREA_FILES[area], path: spot.path, text, wins: R.windows(text) });
+    }
+  }
+  const fragments = items.flatMap((item, i) => item.wins.map((w, j) => ({ id: `${i}.${j}`, text: w.text })));
+  if (!fragments.length) return;
+  State._damageAi = { busy: true }; render();
+  const system = 'These text fragments lost some characters: every lost character was replaced by the symbol � (one lost Cyrillic letter usually leaves two �). '
+    + 'Restore each fragment: replace every run of � with the most likely original character(s) for the context and language. Change nothing else — '
+    + 'no other letters, words, spaces or punctuation. Answer with JSON only: {"fixed":[{"id":"<id>","text":"<the whole restored fragment>"}]}';
+  const out = await aiSurfaceRun('damage', async (signal) => {
+    const response = await fetch('/api/ai/analyze', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider: aiProvider(), system, prompt: JSON.stringify(fragments) }) });
+    return { ok: response.ok, data: response.ok ? await response.json() : null };
+  });
+  if (!current()) return;
+  if (out.status !== 'done' || !out.value || !out.value.ok) { State._damageAi = { error: t('ИИ не ответил. Попробуй ещё раз.') }; render(); return; }
+  const fixed = {};
+  try {
+    const raw = String(out.value.data && out.value.data.text || '');
+    const json = JSON.parse(raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1));
+    for (const row of (json && Array.isArray(json.fixed) ? json.fixed : [])) if (row && typeof row.id === 'string' && typeof row.text === 'string') fixed[row.id] = row.text;
+  } catch {}
+  const proposals = [];
+  items.forEach((item, i) => {
+    const texts = item.wins.map((w, j) => fixed[`${i}.${j}`]);
+    const to = texts.every((x) => typeof x === 'string') ? R.spliceWindows(item.text, item.wins, texts) : null;
+    if (to) proposals.push({ area: item.area, file: item.file, path: item.path, from: item.text, to, before: item.wins.map((w) => w.text.trim()).join(' … '), after: texts.map((x) => x.trim()).join(' … ') });
+  });
+  State._damageAi = { proposals, skipped: items.length - proposals.length };
+  render();
+}
+async function applyDamageFixes() {
+  const ai = State._damageAi;
+  if (!ai || !ai.proposals || !ai.proposals.length || ai.busy) return;
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  State._damageAi = { ...ai, busy: true, error: '' }; render();
+  try {
+    const r = await fetch('/api/account/repair-damage', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apply: true, restorations: ai.proposals.map(({ file, path, from, to }) => ({ file, path, from, to })) }) });
+    if (!current()) return;
+    if (r.status === 401) { handleAccountSessionExpired(); return; }
+    const d = await r.json();
+    if (!r.ok || !window.DamageRepairV1.validReceipt(d)) throw new Error('repair_unconfirmed');
+    State._damageAi = null; State._damageResult = null;
+    await initApp();
+    if (!current()) return;
+    _dataDamageReported = ''; reportDataDamageOnce();
+    toast(`${t('Исправлено')}: ${d.done}`);
+  } catch {
+    if (current()) State._damageAi = { ...ai, busy: false, error: t('Не удалось сохранить. Ничего не изменено — повтори попытку.') };
+  } finally { if (current()) render(); }
 }
 async function repairDataDamage() {
   if (State._damageBusy) return;
@@ -34041,6 +34136,9 @@ async function onClick(e) {
   } else if (action === 'cap-voice') { startCapture('voice');
   } else if (action === 'cap-video') { startCapture('video');
   } else if (action === 'cap-stop') { stopCapture();
+  } else if (action === 'damage-ai') { proposeDamageFixes();
+  } else if (action === 'damage-ai-apply') { applyDamageFixes();
+  } else if (action === 'damage-ai-cancel') { State._damageAi = null; render();
   } else if (action === 'damage-repair') { repairDataDamage();
   } else if (action === 'damage-dismiss') { rememberDamageUI(true); State._dataDamage = null; State._damageResult = null; render();
   } else if (action === 'notes-back') {
@@ -35695,7 +35793,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v319';
+const PWA_CACHE_VERSION = 'satoru-v320';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

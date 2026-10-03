@@ -87,3 +87,40 @@ test('исходный объект не мутируется', () => {
   D.applyRepair(current, plan.plan);
   assert.equal(current.tasks[0].title, dmg, 'план не должен править вход на месте');
 });
+
+// Владелец 03.10: «у нас же есть ИИ — пусть исправит». Правило «ничего не угадывать» смягчено ровно
+// настолько: догадка модели принимается, только если она заполняет дыры «�» и не трогает больше
+// ни одного символа, человек видит «было → стало» до записи, а сервер проверяет каждую замену снова.
+test('восстановление может только заполнить дыры: остальной текст символ в символ', () => {
+  const damaged = 'не ух��дя в слив';
+  assert.equal(D.restorationValid(damaged, 'не уходя в слив'), true);
+  assert.equal(D.restorationValid(damaged, 'не уходя в сливы'), false, 'добавить слово нельзя');
+  assert.equal(D.restorationValid(damaged, 'Не уходя в слив'), false, 'поменять регистр нельзя');
+  assert.equal(D.restorationValid(damaged, 'не ухдя в слив'), false, 'дыру нельзя оставить пустой');
+  assert.equal(D.restorationValid(damaged, 'не ухоооодя в слив'), false, 'дыра из двух знаков — не больше двух символов');
+  assert.equal(D.restorationValid(damaged, 'не ух�дя в слив'), false, 'знак порчи не может остаться');
+  assert.equal(D.restorationValid('без порчи', 'без порчи'), false, 'целую строку «чинить» нечего');
+  assert.equal(D.restorationValid('С��да (как) [и] $1 вебшутеры.*', 'Сюда (как) [и] $1 вебшутеры.*'), true, 'спецсимволы регулярных выражений — просто текст');
+});
+
+test('наружу уходят только фрагменты вокруг дыр, и они собираются обратно', () => {
+  const text = 'А'.repeat(300) + ' ух��дя ' + 'Б'.repeat(300) + ' С��да ' + 'В'.repeat(10) + ' ��ичная';
+  const wins = D.windows(text, 20);
+  assert.equal(wins.length, 2, 'близкие дыры сливаются в один фрагмент');
+  assert.ok(wins.every((w) => w.text.length < 80));
+  const fixed = wins.map((w) => w.text.replace('ух��дя', 'уходя').replace('С��да', 'Сюда').replace('��ичная', 'личная'));
+  const whole = D.spliceWindows(text, wins, fixed);
+  assert.equal(whole, text.replace('ух��дя', 'уходя').replace('С��да', 'Сюда').replace('��ичная', 'личная'));
+  assert.equal(D.spliceWindows(text, wins, [fixed[0], fixed[1] + '!']), null, 'один нечестный фрагмент — строка не меняется');
+});
+
+test('план из восстановлений: только та же строка на том же месте', () => {
+  const current = { skills: [{ id: 's1', name: 'Учёба', note: 'не ух��дя в слив' }] };
+  const ok = { path: '.skills[0].note', from: 'не ух��дя в слив', to: 'не уходя в слив' };
+  assert.equal(D.planFromRestorations(current, [ok]).length, 1);
+  assert.equal(D.planFromRestorations(current, [{ ...ok, from: 'другое ух��дя' }]).length, 0, 'строка уже другая');
+  assert.equal(D.planFromRestorations(current, [{ ...ok, path: '.skills[0].name' }]).length, 0, 'чужое место');
+  assert.equal(D.planFromRestorations(current, [{ ...ok, to: 'совсем другой текст' }]).length, 0, 'не только дыры');
+  const applied = D.applyRepair(current, D.planFromRestorations(current, [ok]));
+  assert.equal(applied.value.skills[0].note, 'не уходя в слив');
+});

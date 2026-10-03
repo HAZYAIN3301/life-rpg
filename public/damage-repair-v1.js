@@ -137,5 +137,53 @@
       && data.fixable === data.report.reduce((s, r) => s + r.repairable, 0)
       && data.done === data.report.reduce((s, r) => s + r.applied, 0);
   }
-  return Object.freeze({ VERSION, MARK, MAX_SPOTS, findDamage, planRepair, applyRepair, summary, validReceipt });
+  /*
+   * Восстановление без бэкапа (владелец 03.10: «у нас же есть ИИ — пусть исправит»). Байты
+   * потеряны, поэтому догадку делает модель, но ей разрешено ТОЛЬКО заполнить дыры: всё вне
+   * «�» остаётся символ в символ, а каждая серия из N знаков становится 1…N символами
+   * (потерянная кириллическая буква оставляет два знака). Наружу уходят лишь фрагменты
+   * вокруг дыр, не весь текст.
+   */
+  function windows(text, radius = 60) {
+    const out = [];
+    const re = /�+/g; let m;
+    while ((m = re.exec(String(text || '')))) {
+      let start = Math.max(0, m.index - radius), end = Math.min(text.length, m.index + m[0].length + radius);
+      if (start > 0 && /[\uDC00-\uDFFF]/.test(text[start])) start -= 1; // never split a surrogate pair
+      if (end < text.length && /[\uD800-\uDBFF]/.test(text[end - 1])) end += 1;
+      const last = out[out.length - 1];
+      if (last && start <= last.end) last.end = Math.max(last.end, end); else out.push({ start, end });
+    }
+    return out.map((w) => ({ start: w.start, end: w.end, text: text.slice(w.start, w.end) }));
+  }
+  function escapeRe(value) { return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function restorationValid(damaged, fixed) {
+    if (typeof damaged !== 'string' || typeof fixed !== 'string' || !damaged.includes(MARK) || fixed.includes(MARK)) return false;
+    const parts = damaged.split(/(�+)/);
+    const pattern = parts.map((part, i) => (i % 2 ? `[^\\uFFFD\\r\\n]{1,${[...part].length}}` : escapeRe(part))).join('');
+    try { return new RegExp(`^${pattern}$`, 'u').test(fixed); } catch { return false; }
+  }
+  /** Вставить исправленные фрагменты обратно; хоть один неверный — строка остаётся как была. */
+  function spliceWindows(text, wins, fixedTexts) {
+    let out = String(text);
+    for (let i = wins.length - 1; i >= 0; i -= 1) {
+      if (!restorationValid(wins[i].text, fixedTexts[i])) return null;
+      out = out.slice(0, wins[i].start) + fixedTexts[i] + out.slice(wins[i].end);
+    }
+    return out.includes(MARK) ? null : out;
+  }
+  /** План из готовых восстановлений: только если строка на месте та же и замена честная. */
+  function planFromRestorations(current, items) {
+    const plan = [];
+    for (const item of (items || [])) {
+      if (!item || typeof item.path !== 'string') continue;
+      const now = atPath(current, item.path);
+      if (typeof now !== 'string' || now !== item.from || !restorationValid(item.from, item.to)) continue;
+      plan.push({ path: item.path, clean: item.to, source: 'restoration' });
+    }
+    return plan;
+  }
+
+  return Object.freeze({ VERSION, MARK, MAX_SPOTS, findDamage, planRepair, applyRepair, summary, validReceipt,
+    windows, restorationValid, spliceWindows, planFromRestorations });
 }));

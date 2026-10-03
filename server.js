@@ -6244,8 +6244,12 @@ const server = http.createServer(async (req, res) => {
   // человеку в его же данных нельзя. Без ?apply=1 только отчёт, ничего не пишем.
   if (u === '/api/account/repair-damage' && req.method === 'POST') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
-    let body = {}; try { body = JSON.parse(await readBody(req, 8 * 1024)); } catch { body = {}; }
+    let body = {}; try { body = JSON.parse(await readBody(req, 512 * 1024)); } catch { body = {}; }
     const apply = body.apply === true;
+    // Without a clean backup the client may bring restorations (AI-proposed, shown to the person
+    // first). Each one is checked again here: same damaged string still on that path, and only the
+    // runs of «�» filled. Anything else is skipped, never written.
+    const restorations = Array.isArray(body.restorations) ? body.restorations.slice(0, 500) : null;
     const dir = userDataDir(uid);
     const report = [];
     try {
@@ -6261,7 +6265,11 @@ const server = http.createServer(async (req, res) => {
             try { backups.push({ label: f.replace('.json', ''), value: JSON.parse(fs.readFileSync(path.join(bdir, f), 'utf8')) }); } catch {}
           }
         } catch {}
-        const planned = DamageRepairV1.planRepair(current, backups);
+        let planned = DamageRepairV1.planRepair(current, backups);
+        if (restorations) {
+          const own = DamageRepairV1.planFromRestorations(current, restorations.filter((item) => item && item.file === name));
+          planned = { ...planned, plan: own, repairable: own.length };
+        }
         const row = { file: name, spots: planned.spots, repairable: planned.repairable, applied: 0, backups: backups.length };
         if (apply && planned.repairable) {
           const fixed = DamageRepairV1.applyRepair(current, planned.plan);
