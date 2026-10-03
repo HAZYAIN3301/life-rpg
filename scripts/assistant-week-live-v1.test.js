@@ -6,6 +6,7 @@ function harness(){
 }
 test('selected week is rebuilt from current task status on every message, with explicit clock',()=>{
  const c=harness();let s=c.freshPhoneHelpContext();assert(s.includes('not_marked_done'));assert(!s.includes('stale'));
+ c.State.tasks[0].actualMin=25;s=c.freshPhoneHelpContext();assert(s.includes('"actualMin":25'));assert(s.includes('not_marked_done'));
  c.State.tasks[0].done=true;c.State.tasks[0].completedAt='2026-10-03T12:00:00Z';s=c.freshPhoneHelpContext();
  assert(s.includes('"status":"done"'));assert(s.includes('"date":"2026-10-03"'));assert(s.includes('"timezone":'));assert(s.includes('"time":'));
 });

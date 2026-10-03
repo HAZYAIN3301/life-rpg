@@ -229,6 +229,9 @@
       }
       const out = { kind, tier: spec.tier, targetId: id, targetKind: spec.target, targetTitle: str(found.title, MAX_TITLE) || '' };
       if (kind === 'quest_reschedule') {
+        // This action changes a date only. Dropping time fields would turn a
+        // timed promise into a different operation while reporting success.
+        if (raw.startTime != null || raw.estimateMin != null || raw.endTime != null) return { ok: false, reason: REASONS.INVALID_VALUE, kind };
         const date = isDay(raw.date) && isDay(c.today) && raw.date >= c.today ? raw.date : null;
         if (!date) return { ok: false, reason: REASONS.NO_TARGET, kind };
         out.date = date;
@@ -255,7 +258,10 @@
     };
     if (kind === 'quest') {
       out.date = isDay(raw.date) && isDay(c.today) && raw.date >= c.today ? raw.date : (c.today || null);
-      out.estimateMin = clampInt(raw.estimateMin, 5, 600, 30);
+      // Zero is the existing task representation for an unknown duration.
+      // A missing estimate must not silently become a 30-minute promise.
+      const estimate = Number(raw.estimateMin);
+      out.estimateMin = Number.isFinite(estimate) && estimate > 0 ? clampInt(estimate, 5, 600, 0) : 0;
       out.difficulty = DIFFICULTY.includes(raw.difficulty) ? raw.difficulty : 'normal';
     } else if (kind === 'habit') {
       out.estimateMin = clampInt(raw.estimateMin, 2, 240, 10);
@@ -330,6 +336,10 @@
   function promptContract() {
     return 'kind ∈ ' + KIND_LIST.join(' | ')
       + '. Изменяющие виды требуют targetId — точный id объекта из контекста; по описанию адресовать нельзя.'
+      + ' В обычном ответе называй дела по названию; внутренние id оставляй только внутри ACTIONS.'
+      + ' quest_reschedule меняет только дату: он НЕ сохраняет startTime, endTime или estimateMin. Для точного часа и длительности направь в План → расписание дела; не обещай применить их карточкой переноса даты. Не меняй заново дело, уже стоящее на нужной дате.'
+      + ' Поправка к намерению или просьба обсудить не означает просьбу создать новый объект. Если похожая задача уже есть, сначала уточни: речь о ней или о новой. Не создавай дубль условной фразой «если это отдельная задача».'
+      + ' Для quest не придумывай estimateMin: используй названную человеком длительность, либо 0 (пока неизвестна). Для размещения во времени сначала уточни длительность. Предлагаемый короткий шаг можно оценить, но прямо назови время предложением и дождись выбора.'
       + ' Для массовой паузы/архива используй один goal_pause_many/goal_archive_many с targetIds — массивом точных id (до 100); перечисли все выбранные цели, не заменяй массив свободным фильтром.'
       + ' attention_open_policy требует точный policyId из контекста. attention_policy_draft — только черновик: targetLabel до 80 символов, purpose publish/create/reply/research/watch/rest/unsure, minutes 5–240, mode trust/adaptive/control и необязательный outcomeHint до 160 символов.'
       + ' Виды *_open только открывают экран: они не запрашивают разрешения, не завершают сессии и не меняют режим хранения.'
