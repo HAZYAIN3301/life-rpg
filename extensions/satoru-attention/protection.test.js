@@ -119,7 +119,7 @@ test('bundled rulesets (0.7.0+): manifest, rule shape, allowlist precedence and 
   const fs = require('node:fs');
   const path = require('node:path');
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'manifest.json'), 'utf8'));
-  assert.ok(['0.8.0', '0.9.0', '0.10.0', '0.10.1'].includes(manifest.version), manifest.version);
+  assert.ok(['0.8.0', '0.9.0', '0.10.0', '0.10.1', '0.10.2'].includes(manifest.version), manifest.version);
   assert.deepEqual(manifest.declarative_net_request.rule_resources, [
     { id: 'adult_redirect', enabled: false, path: 'rules/adult-redirect.json' },
     { id: 'adult_block', enabled: false, path: 'rules/adult-block.json' },

@@ -1,3 +1,13 @@
+## Codex 03.10 — store preparation v322
+
+Политики приложения и расширения на пяти языках; HTML и JS политики согласованы.
+Reddit использует cookies браузера: исправлено обещание отсутствия передачи данных
+в UI расширения (0.10.2), листинге и инструкциях. Разрешения и механики неизменны.
+[STORE-PUBLICATION-V322.md](./STORE-PUBLICATION-V322.md): поля Chrome, матрица Apple,
+review notes и оставшиеся решения. Native build 10: unsigned Release archives iOS/Mac;
+подпись, TestFlight и device QA не подтверждены. Inspiration/rights/tracking/trader открыты.
+QA и квитанция публикации — внешний CHECKPOINT; не считать этот кандидат опубликованным.
+
 ## Claude 03.10 — магазины Chrome и Apple переданы Codex
 
 Решение владельца 03.10: документы и подготовку Chrome Web Store и App Store Connect ведёт Codex.

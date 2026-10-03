@@ -1,3 +1,5 @@
+> Superseded by [STORE-PUBLICATION-V322.md](../../../STORE-PUBLICATION-V322.md). Use 0.10.2; the older “no data types” instructions below are historical.
+
 # Satoru Attention 0.10.1 — публикация в Chrome Web Store и «железный» замок браузера
 
 Подготовлено 26.09.2026, обновлено 28.09 для 0.10.1 (шахматная задача; мост и ссылки работают на satoruapp.com — добавлен постоянный доступ к satoruapp.com). **Не отправлено, не подписано, не опубликовано.** Отправка в магазин,

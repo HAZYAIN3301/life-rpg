@@ -1,7 +1,9 @@
-# Satoru Attention 0.10.2 — current store copy
+# Stores — current preparation, 03 October 2026
 
-See [STORE-PUBLICATION-V322.md](../../STORE-PUBLICATION-V322.md) for owner gates and evidence.
+Supersedes STORE-PUBLICATION-V261.md. Candidate: web v322, Attention 0.10.2,
+native 1.0 (10). This document is preparation, not a submitted declaration.
 
+## Chrome: ready-to-copy fields
 
 Name: Satoru Attention. Category: Productivity. Price: Free.
 Support: https://satoruapp.com/support.html — satoru@satoruapp.com.
@@ -100,3 +102,81 @@ same-origin requests to Reddit; no account or personal browsing data is needed f
    timing yourself. An Item ID alone does not prove that an install URL is public.
 4. After approval: verify the live listing, then replace download links and test Chrome/
    Brave installation and updating. The system policy/helper is a separate owner action.
+
+## Apple: candidate and declaration evidence
+
+Native build 10 archives are prepared **without signing**: release/build-10 in satoru-ios.
+They prove Release compilation, not distribution readiness. The owner's Xcode signing/
+upload flow must create the signed archive, then select the new build in TestFlight.
+No credentials, certificates, account declarations or store buttons were used here.
+Build 9 remains the last recorded TestFlight build; ASC was not read live this turn.
+
+| Data/feature | Draft classification and evidence |
+|---|---|
+| Name/email; user/session IDs | Linked; App Functionality. Existing auth and device-session routes. User ID also accompanies telemetry/personalization; do not drop these purposes. |
+| Plans, notes, reflections, weekly intention and timetable text | Other User Content; linked; App Functionality and Product Personalization where used by the assistant. public/app.js contextual AI and week-planner modules. |
+| Senku session/deck facts | Other User Content / study progress; linked. server-senku-bridge-v1.js stores the connection key server-side. Optional AI assignment is gated by aiSpheres. Not payment or authentication of the Satoru account. |
+| Uploaded photos/audio; support; fitness | Existing Photos or Videos, Audio Data, Customer Support, Fitness categories remain applicable. Native OCR alone does not upload a timetable image. |
+| Native Apple Speech | May process microphone audio on Apple servers. App/ShellView.swift does not require on-device recognition. Do not claim all dictation stays local; transcript can be saved/sent. Audio Data already exists in the draft inventory. Verify applicable Apple processing terms before final labeling. |
+| Damage repair | Text fragments around damaged characters go to configured AI after the user requests repair; these are Other User Content, not anonymous merely because fragmented. server.js + damage-repair-v1.js. |
+| RPG/shared activity | Gameplay Content; linked. Other User Content for shared names/messages. A private group's content is still user-generated. |
+| Interaction/crash/diagnostics | Existing analytics and operational purposes remain. Defaults were not changed. The manifest is not proof of third-party behavior. |
+| TikTok/other embeds | Actual tracking and retention are not established. Do not finalize tracking=false based only on absence of an advertising SDK or a native manifest flag. |
+
+All 13 existing categories remain an inventory, not an approved final set. Matrix details:
+release/app-store/PRIVACY-MATRIX.md. Final labels must match provider behavior and the
+selected release. No automatic “Data Not Collected” or “not linked” declaration.
+
+### Age/content-rights draft
+
+- User-generated content: present (shared names, activity and encouragement reactions).
+- Messaging/communication: Tribe already supports /api/party/cheer encouragement
+  reactions and invitations. This is interaction; it does not prove a free-text chat exists.
+  Review the questionnaire against those current features.
+- Loot boxes: inspect randomized chest items separately from gambling; no cash-out or
+  money wagering was introduced by this release. Owner confirms the exact questionnaire.
+- Advertising, mature/violent/sexual content, unrestricted web access: unresolved for the
+  final Inspiration catalog/player configuration. A personal link is not a content license.
+- Content rights: owner must confirm rights to included assets/media in distribution regions;
+  THIRD-PARTY-NOTICES and credits cover named assets, not every externally linked video.
+- Trader/territories and telemetry legal basis remain owner decisions. No personal address,
+  legal status or final age number is inferred here.
+
+Recommended product decision: for 1.0 use user-added links and owned/licensed materials,
+with TikTok opening externally pending player tracking evidence. Alternative: keep embedded
+playback and delay App Review while provider behavior and rights are established. This
+recommendation does not silently change the product or close copyright/privacy gates.
+
+### App Review notes — English, replace the old notes after build selection
+
+Satoru combines daily tasks, habits, weekly planning and RPG progress. Use the dedicated
+review account already supplied in App Store Connect. Account data and AI require internet.
+Create and complete a task in Today, then a habit. In Plan → Week, enter an intention and
+open the assistant or recurring timetable. Review proposed changes before saving. AI needs
+an available configured provider; confirm the review account has access before submission.
+Notes supports text and optional dictation. In build 10, dictation asks for microphone and
+Speech access and may use Apple servers. Timetable photo recognition runs on-device;
+recognized text is editable before a separate AI-planning request. Den and Tribe expose
+personal/shared progress. Senku is optional and needs a separate connection key; core
+planning does not depend on it. Settings includes export, account deletion and optional
+app lock. Denying speech/camera/notification permissions does not disable text planning.
+Family Controls and closed-app blocking are not part of this release. No payment flow was
+added. The final Inspiration/player configuration must be reflected here before submission.
+
+### Screenshots and owner acceptance
+
+15 Apple sets from 23.09 are historical. Refresh Today, Habits, Den and Plan from the chosen
+build on iPhone/iPad/Mac in five languages after the Inspiration choice; use synthetic data.
+Do not fake native screenshots with web captures. Device checklist: allow/deny dictation,
+stop/background/retry, speaker after recording, Bluetooth route, timetable OCR edit/save.
+Owner's 03.10 “day recap voice works” is recorded; it is not proof of build-10 audio routing.
+
+## Sources checked 03.10
+
+Google requires disclosure of local handling too:
+https://developer.chrome.com/docs/webstore/program-policies/user-data-faq.
+Apple distinguishes off-device collection and third-party tracking:
+https://developer.apple.com/app-store/app-privacy-details/.
+Age answers must describe the submitted app:
+https://developer.apple.com/help/app-store-connect/reference/app-information/age-ratings-values-and-definitions.
+These sources guide the draft; this is not a claim of legal compliance or store approval.

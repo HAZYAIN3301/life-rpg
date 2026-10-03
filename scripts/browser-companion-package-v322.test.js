@@ -1,5 +1,5 @@
 'use strict';
-// v305: Satoru Attention 0.10.1 — the bridge and Satoru links also work on satoruapp.com (store candidate).
+// v322: Satoru Attention 0.10.2 — the bridge and Satoru links also work on satoruapp.com (store candidate).
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -8,12 +8,12 @@ const { createHash } = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
 const ext = path.join(root, 'extensions/satoru-attention');
-const receipt = JSON.parse(fs.readFileSync(path.join(ext, 'store-kit-v305/release.json')));
+const receipt = JSON.parse(fs.readFileSync(path.join(ext, 'store-kit-v322/release.json')));
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 
-test('v305 package is exact-source, carries the merged rulesets, the Reddit guard and every license', () => {
-  assert.equal(receipt.release, 'v305'); assert.equal(receipt.extensionVersion, '0.10.1'); assert.equal(receipt.published, false);
-  assert.deepEqual(receipt.outputs.map(item => item.path), ['public/downloads/satoru-attention-chromium-v305.zip']);
+test('v322 package is exact-source, carries the merged rulesets, the Reddit guard and every license', () => {
+  assert.equal(receipt.release, 'v322'); assert.equal(receipt.extensionVersion, '0.10.2'); assert.equal(receipt.published, false);
+  assert.deepEqual(receipt.outputs.map(item => item.path), ['public/downloads/satoru-attention-chromium-v322.zip']);
   const zip = path.join(root, receipt.outputs[0].path);
   const bytes = fs.readFileSync(zip);
   assert.equal(hash(bytes), receipt.outputs[0].sha256); assert.equal(bytes.length, receipt.outputs[0].bytes);
@@ -24,16 +24,28 @@ test('v305 package is exact-source, carries the merged rulesets, the Reddit guar
     assert.ok(entries.includes(needed), needed);
   assert.equal(entries.some(name => /\.test\.|store-kit|SUBMISSION|package\.json/.test(name)), false);
   for (const item of receipt.runtime) {
-    // Current source equality and download links are checked by v322; preserve this historical ZIP receipt.
+    assert.equal(hash(fs.readFileSync(path.join(ext, item.path))), item.sha256, `${item.path} requires a package rebuild`);
     assert.equal(hash(execFileSync('unzip', ['-p', zip, item.path], { maxBuffer: 64 * 1024 * 1024 })), item.sha256);
   }
   const current = JSON.parse(execFileSync('unzip', ['-p', zip, 'manifest.json'], { encoding: 'utf8' }));
   const previous = JSON.parse(execFileSync('unzip', ['-p', path.join(root, 'public/downloads/satoru-attention-chromium-v260.zip'), 'manifest.json'], { encoding: 'utf8' }));
   // The list needs no new permission: static DNR rulesets use the existing declarativeNetRequest grant.
-  // 0.10.1 adds exactly one permanent host — satoruapp.com — so the bridge works on the main address.
+  // 0.10.2 adds exactly one permanent host — satoruapp.com — so the bridge works on the main address.
   for (const field of ['permissions', 'optional_host_permissions']) assert.deepEqual(current[field], previous[field], field);
   assert.deepEqual(current.host_permissions, ['https://satoruapp.com/*', ...previous.host_permissions]);
   const notices = fs.readFileSync(path.join(ext, 'THIRD-PARTY-NOTICES.md'), 'utf8');
   for (const needed of ['OISD NSFW', "HaGeZi's NSFW", 'rules/LICENSE-GPL-3.0.txt', 'StevenBlack hosts', 'rules/LICENSE-MIT-StevenBlack.txt', 'rules/adult-extra.txt'])
     assert.ok(notices.includes(needed), needed);
+});
+
+test('the site offers the v322 package and no longer precaches the ZIP', () => {
+  const app = fs.readFileSync(path.join(root, 'public/app.js'), 'utf8');
+  assert.match(app, /const BROWSER_COMPANION_DOWNLOAD = 'downloads\/satoru-attention-chromium-v322\.zip';/);
+  assert.match(fs.readFileSync(path.join(root, 'public/browser-companion.html'), 'utf8'), /href="downloads\/satoru-attention-chromium-v322\.zip"/);
+  const landing = fs.readFileSync(path.join(root, 'public/browser-companion-landing-v1.js'), 'utf8');
+  assert.equal((landing.match(/downloads\/satoru-attention-chromium-v322\.zip/g) || []).length, 5);
+  assert.doesNotMatch(landing, /v(260|297|299|300|304|305)\.zip/);
+  assert.doesNotMatch(fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8'), /downloads\//);
+  assert.match(fs.readFileSync(path.join(root, 'public/browser-companion-privacy-v1.js'), 'utf8'), /Extension 0\.10\.2/);
+  assert.match(fs.readFileSync(path.join(root, 'public/browser-companion-privacy-v1.js'), 'utf8'), /about\.json whether a community or profile/);
 });

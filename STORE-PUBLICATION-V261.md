@@ -1,3 +1,5 @@
+> Current: [STORE-PUBLICATION-V322.md](./STORE-PUBLICATION-V322.md). This older document is historical; do not use its data declarations.
+
 # Chrome/Brave — публикация v261
 
 > **Устарело (03.10).** Расширение теперь 0.10.1, адрес — satoruapp.com. Документы и подготовку
