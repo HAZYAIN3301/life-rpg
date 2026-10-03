@@ -22746,3 +22746,7 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 /* Damaged fields: the AI note is quiet; the before text is struck through in the preview. */
 .data-damage-note { margin: var(--sp-2) 0 0; font-size: var(--type-meta); }
 .data-damage-places s { color: var(--text-soft); }
+.chat-tools-details { flex: 0 0 auto; }
+.chat-tools-details > summary { cursor: pointer; min-height: var(--touch-min); display: flex; align-items: center; color: var(--text-soft); }
+.chat-wake-status:empty { display: none; }
+.chat-request-error { margin-block: var(--sp-2); padding: var(--sp-2); color: var(--text-soft); font-size: var(--type-meta); }
