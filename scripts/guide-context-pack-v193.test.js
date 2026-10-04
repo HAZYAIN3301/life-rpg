@@ -284,9 +284,9 @@ test('Guide feature commit is authenticated, account-owned and rejects malformed
 });
 
 test('v205 Guide assets and v210 shell ship the whole pack together', () => {
-  assert.match(SW, /const CACHE = 'satoru-v333'/);
+  assert.match(SW, /const CACHE = 'satoru-v334'/);
   assert.match(INDEX, /guide-v3\.js\?v=20260830-guide-tree-v205-1/);
-  assert.match(INDEX, /app\.js\?v=20261004-design-v333-1/);
+  assert.match(INDEX, /app\.js\?v=20261004-spheres-v334-1/);
   assert.match(SERVER, /if \(u === '\/api\/guide\/commit' && req\.method === 'POST'\)/);
   assert.match(SERVER, /commitGuideData[\s\S]*commitFeatureSnapshotData/);
   assert.match(SERVER, /function commitFeatureSnapshotData[\s\S]*commitCommitmentGraphDurable/);

@@ -77,7 +77,7 @@ test('the module stays pure: no DOM, State, network or clock', () => {
   for (const forbidden of ['document', 'window.State', 'fetch(', 'localStorage', 'Date.now', 'new Date()']) {
     assert.equal(source.includes(forbidden), false, `модуль не должен обращаться к ${forbidden}`);
   }
-  assert.deepEqual(Object.keys(Touch).sort(), ['daysFor', 'topOwnerMap', 'touchDaysBySphere']);
+  assert.deepEqual(Object.keys(Touch).sort(), ['daysFor', 'topOwnerMap', 'touchDaysByNode', 'touchDaysBySphere']);
 });
 
 // ── Клиентский контракт: частота объявляется у сферы и читается в Прогрессе ──
@@ -97,8 +97,8 @@ test('both modules are loaded before app.js and cached once for offline', () => 
   for (const file of ['sphere-frequency-v1', 'sphere-touch-v1']) {
     assert.equal((SW.match(new RegExp(`'${file}\\.js'`, 'g')) || []).length, 1, file);
   }
-  assert.match(SW, /const CACHE = 'satoru-v333'/);
-  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v333'/);
+  assert.match(SW, /const CACHE = 'satoru-v334'/);
+  assert.match(APP, /const PWA_CACHE_VERSION = 'satoru-v334'/);
 });
 
 test('the rhythm is declared where the sphere is edited, not in a screen of its own', () => {

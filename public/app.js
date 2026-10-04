@@ -8479,7 +8479,7 @@ function goldBalance() { return Math.round(goldEarned() - goldSpent()); }
 // ── Форма / Momentum (импорт v2): «свежесть» по активности. НЕ трогает уровень (Proven).
 //    Уровень — доказанное мастерство (не сгорает). Форма мягко падает без тренировок и легко возвращается.
 const FORM_FLOOR = 25, FORM_FRESH = 3, FORM_DECAY = 21;
-function skillLastActive(id) { let last = null; for (const e of xpEvents()) if (e.skillId === id && e.date && (!last || e.date > last)) last = e.date; return last; }
+function skillLastActive(id) { let last = null; const today = todayStr(); for (const e of xpEvents()) if (e.skillId === id && e.date && e.date <= today && (!last || e.date > last)) last = e.date; return last; }
 function daysSinceDate(dateStr) { if (!dateStr) return Infinity; const d = new Date(dateStr + 'T00:00:00'); return Math.max(0, Math.floor((Date.now() - d.getTime()) / 86400000)); }
 function skillForm(id) {
   const last = skillLastActive(id);
@@ -8581,7 +8581,8 @@ function balanceSpheres() { return topSkills().filter((s) => !isProjectSkill(s))
 function windowMinMap(days) {
   const since = addDays(todayStr(), -((days || BALANCE_WINDOW_DAYS) - 1));
   const map = {};
-  for (const e of xpEvents()) if (e.date >= since && e.skillId) map[e.skillId] = (map[e.skillId] || 0) + (e.min || 0);
+  const today = todayStr();
+  for (const e of xpEvents()) if (e.date >= since && e.date <= today && e.skillId) map[e.skillId] = (map[e.skillId] || 0) + (e.min || 0);
   return map;
 }
 // Минуты сферы в окне = свои + все потомки (агрегация вверх по дереву любой глубины).
@@ -21000,10 +21001,12 @@ const NUDGE_SIG_HINT = {
 };
 let _nudgeVoiceBusy = false, _nudgeVoiceFailAt = 0;
 function nudgeVoiceGet(sig) {
+  if (sig === 'load') return null; // Live sphere facts must not use yesterday's generated copy.
   const v = State.settings && State.settings.nudgeVoice;
   return (v && sig && v.sig === sig && v.lang === lang() && v.personaVersion === window.ShadowPersonaV1?.VERSION && v.text) ? v.text : null;
 }
 function nudgeVoiceStale(sig) {
+  if (sig === 'load') return false;
   const v = State.settings && State.settings.nudgeVoice;
   if (!v || v.sig !== sig || v.lang !== lang() || v.personaVersion !== window.ShadowPersonaV1?.VERSION) return true;
   return (Date.now() - (Date.parse(v.at) || 0)) > 24 * 3600 * 1000;  // тот же — не чаще раза в сутки
@@ -21031,6 +21034,7 @@ function nudgeVoiceBudgetSpend() {
   } catch {}
 }
 async function nudgeVoiceFetch(sig, staticText) {
+  if (sig === 'load') return;
   if (_nudgeVoiceBusy || !sig || !canUseAi() || !nudgeVoiceStale(sig)) return;
   if (nudgeVoiceBudgetLeft() <= 0) return;                // украшение не занимает дневной запас
   if (Date.now() - _nudgeVoiceFailAt < 10 * 60000) return; // после сбоя не долбим на каждый рендер
@@ -21665,16 +21669,18 @@ function boardOrderTitle(order) {
     ? window.BoardPoolV1.titleFor(order, lang())
     : String(order.title || '');
 }
-// Запущенная сфера = ни одного закрытого дела за неделю. Поля `targetPerWeek`
-// ещё нет (оно приедет со `sphere-frequency-v1`), но ждать его, чтобы доска
-// начала попадать в пустые сферы, незачем — это работающий пока прокси.
+// Board ranking uses the same recorded activity as Progress, by completion day.
+// Main descendants count for every ancestor; background layers are not practice.
 function boardNeglectedSpheres() {
-  const since = addDays(todayStr(), -6);
-  const touched = new Set();
-  (State.tasks || []).forEach((x) => {
-    if (x.done && x.date >= since && x.skillId) touched.add(x.skillId);
-  });
-  return (State.settings.skills || []).map((s) => s.id).filter((id) => !touched.has(id));
+  const T = window.SphereTouchV1, F = window.SphereFrequencyV1;
+  if (!T || !F) return [];
+  const skills = State.settings.skills || [], today = todayStr();
+  const index = T.touchDaysByNode(xpEvents(), skills);
+  return skills.filter(s => !s.archived && !s.paused && !isProjectSkill(s)).filter(s => {
+    const days = T.daysFor(index, s.id);
+    const rhythm = F.sphereRhythm(s, days, today);
+    return rhythm.status === 'under' || (rhythm.status === 'unset' && !days.some(d => d >= addDays(today, -6) && d <= today));
+  }).map(s => s.id);
 }
 // Наклон листа — детерминированный по id, а не случайный: доска не должна
 // «дёргаться» на каждом рендере. Диапазон узкий (±2.4°) — приколотая бумага
@@ -36168,7 +36174,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v333';
+const PWA_CACHE_VERSION = 'satoru-v334';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

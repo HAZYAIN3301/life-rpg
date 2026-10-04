@@ -21,8 +21,6 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function buildSphereTouch() {
   'use strict';
 
-  const MAX_DEPTH = 8;
-
   function isObject(value) { return !!value && typeof value === 'object' && !Array.isArray(value); }
   function nonEmptyString(value) { return typeof value === 'string' && !!value.trim(); }
   function isDay(value) { return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value); }
@@ -40,8 +38,8 @@
     }
     const owner = new Map();
     for (const [id, sphere] of byId) {
-      let current = sphere, seen = new Set([id]), depth = 0;
-      while (current && nonEmptyString(current.parentId) && depth++ < MAX_DEPTH) {
+      let current = sphere, seen = new Set([id]);
+      while (current && nonEmptyString(current.parentId)) {
         const parentId = String(current.parentId);
         if (seen.has(parentId) || !byId.has(parentId)) break;
         seen.add(parentId);
@@ -75,6 +73,26 @@
     return out;
   }
 
+  // Every node sees its own activity and that of its descendants. A day is
+  // counted once even when several main skills of one task share an ancestor.
+  function touchDaysByNode(events, spheres) {
+    const byId = new Map((Array.isArray(spheres) ? spheres : [])
+      .filter(s => isObject(s) && nonEmptyString(s.id)).map(s => [s.id, s]));
+    const days = new Map();
+    for (const e of Array.isArray(events) ? events : []) {
+      if (!isObject(e) || e.layer === true || !isDay(e.date)) continue;
+      let id = e.skillId;
+      const seen = new Set();
+      while (byId.has(id) && !seen.has(id)) {
+        seen.add(id);
+        if (!days.has(id)) days.set(id, new Set());
+        days.get(id).add(e.date);
+        id = byId.get(id).parentId;
+      }
+    }
+    return new Map([...days].map(([id, dates]) => [id, [...dates].sort()]));
+  }
+
   /** Дни одной сферы. Пустой день отвечает одним и тем же пустым массивом. */
   const EMPTY = Object.freeze([]);
   function daysFor(index, sphereId) {
@@ -82,5 +100,5 @@
     return index.get(String(sphereId)) || EMPTY;
   }
 
-  return Object.freeze({ topOwnerMap, touchDaysBySphere, daysFor });
+  return Object.freeze({ topOwnerMap, touchDaysBySphere, touchDaysByNode, daysFor });
 });

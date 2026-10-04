@@ -98,9 +98,10 @@
     const observed = observedBaseDays(win, historyStart);
     const baseReady = observed >= MIN_BASE_DAYS;
 
-    const recentBy = new Map(), baseBy = new Map(), baseDaysBy = new Map();
+    const recentBy = new Map(), baseBy = new Map(), baseDaysBy = new Map(), latestBy = new Map();
     for (const event of events) {
       if (!event || !event.skillId || !isDate(event.date)) continue;
+      if (event.date <= today && (!latestBy.has(event.skillId) || event.date > latestBy.get(event.skillId))) latestBy.set(event.skillId, event.date);
       const xp = num(event.xp);
       if (!xp) continue;
       if (event.date >= win.recentFrom && event.date <= win.recentTo) {
@@ -113,10 +114,13 @@
     }
 
     const rows = (Array.isArray(inp.spheres) ? inp.spheres : []).map((sphere) => {
-      const ids = Array.isArray(sphere.memberIds) && sphere.memberIds.length ? sphere.memberIds : [sphere.id];
+      const ids = [...new Set(Array.isArray(sphere.memberIds) && sphere.memberIds.length ? sphere.memberIds : [sphere.id])];
       let recentXp = 0, baseXp = 0;
+      let lastActive = null;
       const activeDays = new Set();
       for (const id of ids) {
+        const last = latestBy.get(id);
+        if (last && (!lastActive || last > lastActive)) lastActive = last;
         recentXp += recentBy.get(id) || 0;
         baseXp += baseBy.get(id) || 0;
         for (const date of baseDaysBy.get(id) || []) activeDays.add(date);
@@ -124,7 +128,8 @@
       const recentPerDay = recentXp / RECENT_DAYS;
       const basePerDay = observed ? baseXp / observed : 0;
       const restores = !!sphere.restores;
-      const lastActive = isDate(sphere.lastActive) ? sphere.lastActive : null;
+      // The same events power both totals and recency; stale caller metadata
+      // must never turn recorded descendant activity into "no records".
       const quietDays = lastActive ? Math.max(0, daysBetween(lastActive, today)) : null;
       let state, reason = null, ratio = null;
       if (!baseReady) { state = 'unknown'; reason = 'history'; }
