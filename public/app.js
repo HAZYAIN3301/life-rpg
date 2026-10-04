@@ -1513,6 +1513,7 @@ const I18N_EXTRA = {
   'Правила': { en: 'Rules', de: 'Regeln', uk: 'Правила', es: 'Reglas' },
   'Вернуться одним шагом': { en: 'Return with one step', de: 'Mit einem Schritt zurückkehren', uk: 'Повернутися одним кроком', es: 'Volver con un solo paso' },
   'Отдохнуть с границей': { en: 'Take a bounded rest', de: 'Mit einer Grenze ausruhen', uk: 'Відпочити з межею', es: 'Descansar con un límite' },
+  'Ограничить приложения iPhone': { en: 'Limit iPhone apps', de: 'iPhone-Apps begrenzen', uk: 'Обмежити застосунки iPhone', es: 'Limitar apps del iPhone' },
   'Завершить вечер': { en: 'Close the evening', de: 'Den Abend abschließen', uk: 'Завершити вечір', es: 'Cerrar la noche' },
   'Настроить границу входа': { en: 'Set an entry boundary', de: 'Einstiegsgrenze einrichten', uk: 'Налаштувати межу входу', es: 'Configurar el límite de entrada' },
   'рабочий день закончен. Сохрани незавершённое и убери устройства.': { en: 'the workday is over. Save unfinished work and put devices away.', de: 'der Arbeitstag ist beendet. Sichere Unerledigtes und lege die Geräte weg.', uk: 'робочий день завершено. Збережи незавершене й прибери пристрої.', es: 'la jornada ha terminado. Guarda lo pendiente y aparta los dispositivos.' },
@@ -27219,11 +27220,23 @@ function openAttentionReturn(opener = null, experimentEpisodeId = '') {
 function openRecoveryLauncher(opener = null, defaults = {}) {
   if (attentionHasLoadError()) { attentionOpenError(opener); return null; }
   const prefs = State.settings?.secretary?.recovery || {};
-  return showAttentionDialog('recovery', {
+  const overlay = showAttentionDialog('recovery', {
     minutes: defaults.minutes || prefs.minutes || 20,
     recoveryLabel: defaults.recoveryLabel || '',
     deviceMode: defaults.deviceMode || prefs.deviceMode || 'none',
   }, { opener, source: defaults.source || 'recovery' });
+  if (overlay && window.satoruNativeAttention === true && typeof window.webkit?.messageHandlers?.satoruShell?.postMessage === 'function') {
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'btn ghost';
+    button.dataset.action = 'native-attention-open'; button.textContent = t('Ограничить приложения iPhone');
+    overlay.querySelector('.attention-actions')?.before(button);
+  }
+  return overlay;
+}
+function openNativeAttention() {
+  if (window.satoruNativeAttention !== true || typeof window.webkit?.messageHandlers?.satoruShell?.postMessage !== 'function') return false;
+  const purpose = String(document.querySelector('#attention-recovery-form [name="recoveryLabel"]')?.value || '').trim().slice(0,160);
+  try { window.webkit.messageHandlers.satoruShell.postMessage({ action:'attention-open', purpose, language:State.settings.lang }); return true; }
+  catch { return false; }
 }
 function eveningCoachLine() {
   const name = String(State.me?.name || '').trim();
@@ -32319,6 +32332,7 @@ async function onClick(e) {
     return;
   }
   if (action === 'recovery-open') { openRecoveryLauncher(el); return; }
+  if (action === 'native-attention-open') { openNativeAttention(); return; }
   if (action === 'evening-open') { openEveningLanding(el); return; }
   if (action === 'evening-configure') { openEveningLanding(el, { active: false, speak: false }); return; }
   if (action === 'finish-evening-landing') { await finishEveningLanding(); return; }
@@ -35851,7 +35865,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v327';
+const PWA_CACHE_VERSION = 'satoru-v328';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
