@@ -12834,7 +12834,7 @@ function openContextHelp(mode, opener) {
       tasks: State.tasks.filter(q => q.date >= ws && q.date <= addDays(ws, 6)).map(q => ({ id: q.id, title: taskDisplayTitle(q), date: q.date, startTime: q.startTime, estimateMin: q.estimateMin, done: q.done })),
       review: document.getElementById('week-review')?.value ?? State.weeks[ws]?.review ?? '', routine: State.settings.weeklyRoutineV1 || null };
   const instruction = mode === 'entry'
-    ? 'В начале спроси одним коротким вопросом, что мешает начать выбранное дело. Учитывай уже полученный ответ, не переспрашивай. Затем предложи один конкретный шаг до 10 минут. Не создавай новое дело без выбора человека.'
+    ? 'Короткий Заход в выбранное дело. Если препятствие ещё неизвестно, весь ответ — один короткий вопрос о нём: без советов, вариантов и второго вопроса. Когда человек уже объяснил препятствие, не переспрашивай: предложи ровно один физический шаг до 10 минут, максимум двумя короткими предложениями. Не перечисляй варианты и весь план, не добавляй вопрос «попробуем?». Новую задачу не создавай: уже выбрано дело. Карточка создания допустима только после отдельной явной просьбы человека.'
     : mode === 'review' ? 'Разбираем только указанный период. Сопоставь выполненные и открытые дела; причины пропуска неизвестны — спроси, не выдумывай. Один вопрос или один следующий шаг за сообщение.'
     : 'Планируем указанную неделю. Сначала уточни главный результат и постоянные занятия, затем оценки времени. Не обещай сохранение времени или регулярного расписания без доступного действия. Изменения только через подтверждаемые действия.';
   State._phoneHelp = { mode, owner: State.me?.id, epoch: Store._writeEpoch, context, instruction };
@@ -18146,6 +18146,14 @@ function openHelperChat(opener = document.activeElement) {
   // Its closing animation otherwise consumes Escape and can unset helper inert.
   if (document.getElementById('mobile-nav-sheet')) closeMobileNavSheet({ restoreFocus: false, immediate: true });
   let ov = document.getElementById('helper-modal');
+  let memoryDraft = null;
+  if (!ov && State._chatMemoryReturn) {
+    const back = State._chatMemoryReturn; delete State._chatMemoryReturn;
+    if (back.owner === State.me?.id && back.epoch === Store._writeEpoch) {
+      memoryDraft = back.text;
+      if (!State._phoneHelp && back.context) State._phoneHelp = back.context;
+    }
+  }
   if (!ov) {
     ov = document.createElement('div'); ov.id = 'helper-modal'; ov.className = 'modal-overlay'; ov._returnFocus = opener && opener.isConnected ? opener : document.querySelector('[data-action="open-helper"]');
     ov.addEventListener('keydown', handleHelperKeydown);
@@ -18165,15 +18173,16 @@ function openHelperChat(opener = document.activeElement) {
       : `<div id="chat-msgs" class="chat-msgs" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="${State._chatBusy ? 'true' : 'false'}"></div>
          <details class="chat-tools-details"><summary>${esc(t('Ещё'))}</summary><div class="chat-context-tools" role="group" aria-label="${t('Контекст помощника')}">
            <button type="button" class="btn ghost sm" data-action="chat-plan-file">${satoruIconHTML('action.import', 'button-glyph', '📎')} ${t('План из файла')}</button>
+           <button type="button" class="btn ghost sm" data-action="helper-memory">${satoruIconHTML('nav.shadow', 'button-glyph')} ${esc(actionableTranslate('Память помощника'))}</button>
            <input id="chat-plan-file" type="file" multiple accept=".txt,.md,.markdown,.json,.csv,text/plain,text/markdown,application/json,text/csv" hidden />
            ${assistantWakeSupported() ? `<button type="button" class="btn ghost sm assistant-wake-toggle" data-action="assistant-wake-toggle" aria-pressed="${_assistantWakeArmed ? 'true' : 'false'}"></button>` : ''}
          </div>
          <p class="chat-context-note">${t('Вижу цели и задачи Satoru. Файлы компьютера — только после выбора.')} ${assistantWakeSupported() ? t('Голос распознаёт браузер только после твоего разрешения; остановить прослушивание можно этой же кнопкой.') : ''}</p>
          <p class="chat-context-note">${t('До 5 файлов, каждый до 512 КБ. При отправке вопроса модель получит найденные фрагменты и имена файлов.')}</p>
-         </details>${attached ? `<div class="chat-file-chip"><span>📄 <b>${esc(attached.name)}</b></span><button type="button" class="link-btn" data-action="chat-plan-remove">${t('Убрать файл')}</button></div>` : ''}
+         </details>${attached ? `<div class="chat-file-chip"><span>${satoruIconHTML('action.import', 'button-glyph')} <b>${esc(attached.name)}</b></span><button type="button" class="link-btn" data-action="chat-plan-remove">${t('Убрать файл')}</button></div>` : ''}
          <p id="assistant-wake-status" class="chat-wake-status" role="status" aria-live="polite"></p>
          <form id="chat-form" class="chat-form"><label class="sr-only" for="chat-input">${t('Сообщение помощнику')}</label><input id="chat-input" data-guide-target="helper-input" placeholder="${t('Спроси про любую функцию…')}" autocomplete="off" /><button type="submit" class="cap-add" aria-label="${t('Отправить')}">↵</button></form>`}</section>`;
-  if (!noKey) { renderChatMessages(); assistantWakePaint(); setTimeout(() => { const i = document.getElementById('chat-input'); if (i) { if (State._chatVoiceDraft != null) { i.value = State._chatVoiceDraft; delete State._chatVoiceDraft; } i.focus(); } }, 30); }
+  if (!noKey) { if (memoryDraft !== null) document.getElementById('chat-input').value = memoryDraft; renderChatMessages(); assistantWakePaint(); setTimeout(() => { if (!ov.isConnected) return; const i = ov.querySelector('#chat-input'); if (i) { if (State._chatVoiceDraft != null) { i.value = State._chatVoiceDraft; delete State._chatVoiceDraft; } if (!ov.contains(document.activeElement)) i.focus(); } }, 30); }
   else setTimeout(() => focusPathChoiceTarget(document.getElementById('helper-title')), 30);
 }
 function renderChatMessages() {
@@ -18198,7 +18207,7 @@ function renderChatMessages() {
       acts = `<div class="chat-actions${remaining ? '' : ' applied'}" data-mi="${mi}"><div class="dayrec-list">${m.actions.map((action, index) => chatActionRow(action, index, results[index])).join('')}</div>
         ${remaining ? `<button class="btn sm" data-action="chat-actions-apply" data-mi="${mi}" ${m.actionBusy ? 'disabled aria-busy="true"' : ''}>${m.actionBusy ? t('Сохраняю…') : Object.values(results).some((r) => r.status === 'failed') ? t('Повторить неприменённое') : `✓ ${t('Применить выбранное')}`}</button>` : ''}</div>`;
     }
-    const refused = m.refused && m.refused.length ? `<p class="chat-action-refused" role="status">⛔ ${t('Помощник предложил недоступное действие. Оно не выполнено.')}</p>` : '';
+    const refused = m.refused && m.refused.length ? `<p class="chat-action-refused" role="status">${t('Помощник предложил недоступное действие. Оно не выполнено.')}</p>` : '';
     // md-lite-v1 экранирует сам, до появления собственных тегов — второй esc() здесь
     // задвоил бы разметку в текст. Ответ ИИ — недоверенный ввод (fb_ms4lg28wwpe4:
     // «пытается использовать неподдерживаемое форматирование, звёздочки видны как есть»).
@@ -18226,15 +18235,16 @@ function parseChatActions(text) {
   return contract ? contract.fromReply(text, assistantActionContext()) : { clean: String(text || ''), actions: [], refused: [], extraBlocks: 0 };
 }
 function chatActionLabel(action) {
+  if (action.kind === 'memory_open') return actionableTranslate('Память помощника');
   const labels = { goal_pause: 'Приостановить цель', goal_resume: 'Возобновить цель', goal_archive: 'Архивировать цель', goal_pause_many: 'Приостановить выбранные цели', goal_archive_many: 'Архивировать выбранные цели', quest_reschedule: 'Перенести квест', quest_done: 'Отметить квест выполненным', habit_pause: 'Приостановить привычку', habit_resume: 'Возобновить привычку', attention_policy_draft: 'Настроить границу', attention_open_policy: 'Открыть правило внимания', attention_open_return: 'Вернуться к делу', recovery_open: 'Отдохнуть с границей', evening_open: 'Завершить вечер', push_settings_open: 'Настроить напоминания' };
   return labels[action.kind] ? t(labels[action.kind]) : action.kind === 'habit' ? t('Привычка') : action.kind === 'goal' ? t('Цель') : t('Квест');
 }
 function chatActionRow(a, index, result) {
-  const openIcons = { attention_policy_draft: '🛡️', attention_open_policy: '🛡️', attention_open_return: '↩️', recovery_open: '🌿', evening_open: '🌙', push_settings_open: '🔔' };
-  const icon = openIcons[a.kind] || (a.targetKind === 'habit' || a.kind === 'habit' ? '🔁' : a.targetKind === 'goal' || a.kind === 'goal' ? '🎯' : '⚔️');
+  const openIcons = { attention_policy_draft: 'nav.settings', attention_open_policy: 'nav.settings', attention_open_return: 'nav.today', recovery_open: 'nav.shadow', evening_open: 'system.day-end', push_settings_open: 'nav.settings', memory_open: 'nav.shadow' };
+  const icon = satoruIconHTML(openIcons[a.kind] || (a.targetKind === 'habit' || a.kind === 'habit' ? 'nav.habits' : a.targetKind === 'goal' || a.kind === 'goal' ? 'nav.plan' : 'nav.today'), 'button-glyph');
   const bulkTitles = Array.isArray(a.targetTitles) ? a.targetTitles : [];
   const fixedTitles = { attention_open_return: 'Контур возвращения', recovery_open: 'Восстановление', evening_open: 'Завершение дня', push_settings_open: 'Уведомления' };
-  const title = bulkTitles.length ? `${bulkTitles.length} ${t('целей')}: ${bulkTitles.slice(0, 3).join(' · ')}${bulkTitles.length > 3 ? ` · +${bulkTitles.length - 3}` : ''}` : a.targetTitle || a.title || a.targetLabel || a.policyLabel || t(fixedTitles[a.kind] || 'Открыть Satoru');
+  const title = a.kind === 'memory_open' ? actionableTranslate('Память помощника') : bulkTitles.length ? `${bulkTitles.length} ${t('целей')}: ${bulkTitles.slice(0, 3).join(' · ')}${bulkTitles.length > 3 ? ` · +${bulkTitles.length - 3}` : ''}` : a.targetTitle || a.title || a.targetLabel || a.policyLabel || t(fixedTitles[a.kind] || 'Открыть Satoru');
   let meta = chatActionLabel(a);
   if (a.kind === 'quest') meta += ` · ${dmShort(a.date)}${a.estimateMin > 0 ? ` · ${fmtDur(a.estimateMin)}` : ''}${a.sphereName ? ` · ${a.sphereName}` : ''}`;
   else if (a.kind === 'habit') meta += ` · ${a.days.length === 7 ? t('ежедневно') : a.days.length + ' ' + t('дн/нед')} · ${fmtDur(a.estimateMin)} · ${a.sphereName || ''}`;
@@ -18244,11 +18254,16 @@ function chatActionRow(a, index, result) {
   const settled = ['done', 'noop'].includes(result?.status);
   const status = result ? `<span class="chat-action-state is-${esc(result.status)}">${result.status === 'done' ? t('Применено') : result.status === 'opened' ? t('Открыто — сохранится только после твоего подтверждения') : result.status === 'noop' ? t('Без изменений') : result.status === 'refused' ? t('Действие заблокировано') : t('Не сохранено — можно повторить')}</span>` : '';
   return `<label class="drc-row chat-action-row"><input type="checkbox" data-ca data-index="${index}" ${settled ? 'disabled' : 'checked'} />
-    <span><b>${icon} ${esc(title)}</b><span class="chat-action-meta">${esc(meta)}</span>${status}</span></label>`;
+    <span><b>${icon} ${esc(title)}</b>${meta !== title ? `<span class="chat-action-meta">${esc(meta)}</span>` : ''}${status}</span></label>`;
 }
 function openAssistantDestination(action) {
   if (!action || action.tier !== 'open') return false;
+  if (action.kind === 'memory_open') State._chatMemoryReturn = { owner:State.me?.id, epoch:Store._writeEpoch, text:document.getElementById('chat-input')?.value || '', context:State._phoneHelp || null };
   closeHelperChat({ restoreFocus: false });
+  if (action.kind === 'memory_open') {
+    State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit = '#ai-memory-title'; render();
+    return true;
+  }
   if (action.kind === 'attention_policy_draft') {
     return !!openAttentionSetup(null, { targetLabel: action.targetLabel, purpose: action.purpose, minutes: action.minutes, mode: action.mode, outcomeHint: action.outcomeHint || '', source: 'assistant' });
   }
@@ -32196,6 +32211,7 @@ async function onClick(e) {
   if (action === 'open-attention-settings') {
     State.view='settings'; State.settingsSection='experience'; State._settingsFocusAfterCommit='.attention-settings-card'; render(); return;
   }
+  if (action === 'helper-memory') { openAssistantDestination({ kind:'memory_open', tier:'open' }); return; }
   if (action === 'ai-memory-retry') { State._aiMemoryLoaded = false; await ensureAiMemory(true); return; }
   if (action === 'ai-memory-edit') { State._aiMemoryEditing = String(id || ''); State._settingsFocusAfterCommit = `.ai-memory-edit-form[data-memory-id="${CSS.escape(String(id || ''))}"] textarea`; render(); return; }
   if (action === 'ai-memory-cancel') { State._aiMemoryEditing = ''; render(); return; }
@@ -35835,7 +35851,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v326';
+const PWA_CACHE_VERSION = 'satoru-v327';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
