@@ -84,7 +84,7 @@
     }
     if (view === 'goals') {
       const menu = q('.goals-more-menu'), nav = q('.goals-route-nav');
-      if (menu && nav) {
+      if (menu && nav && !q('.goals-empty')) {
         const direct = el(root.ownerDocument, 'div', 'goals-direct-tools');
         ['goals-toggle-bulk','ai-import-goals'].forEach(action => {
           const button = menu.querySelector(`[data-action="${action}"]`); if (button) direct.append(button);

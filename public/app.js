@@ -22,7 +22,16 @@ const UI_SYMBOLS = Object.freeze({
   'media.microphone': '<rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0m-7 7v3m-3 0h6"/>',
   'media.video': '<rect x="3" y="6" width="12" height="12" rx="2"/><path d="m15 10 6-3v10l-6-3"/>',
 });
+const PAPER_ICONS = Object.freeze({
+  'difficulty.easy': 0, 'difficulty.normal': 1, 'difficulty.hard': 2, 'difficulty.protected': 3,
+  'system.focus': 4, 'system.core': 5, 'system.calendar': 6, 'system.cards': 7,
+  'system.task': 8, 'action.delete': 9, 'action.home': 6,
+});
 function satoruIconHTML(id, className = '', fallback = '') {
+  if (Number.isInteger(PAPER_ICONS[id])) {
+    const n = PAPER_ICONS[id];
+    return `<span class="satoru-icon satoru-icon--paper ${esc(className)}" data-icon-id="${esc(id)}" style="--paper-x:${n % 4 * 100 / 3}%;--paper-y:${Math.floor(n / 4) * 50}%" aria-hidden="true"></span>`;
+  }
   if (UI_SYMBOLS[id]) return `<svg class="satoru-icon satoru-icon--vector ${esc(className)}" data-icon-id="${esc(id)}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${UI_SYMBOLS[id]}</svg>`;
   const icon = window.SatoruIconRegistry && window.SatoruIconRegistry[id];
   if (!icon) return fallback;
@@ -7735,7 +7744,7 @@ function track(event) {
     const now = Date.now();
     if (_lastTrack[event] && now - _lastTrack[event] < 2000) return;
     _lastTrack[event] = now;
-    fetch('/api/analytics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event }) });
+    fetch('/api/analytics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event }) }).catch(() => {});
   } catch {}
 }
 function pad2(n) { return String(n).padStart(2, '0'); }
@@ -7808,20 +7817,20 @@ function sphereFieldSummaryHTML(main, background) {
     return `<span class="sphere-summary-chip${index ? '' : ' is-primary'}" style="--sphere-color:${esc(skill.color)}"><i aria-hidden="true"></i><span data-noi18n>${esc(skill.name)}</span></span>`;
   });
   if (main.length > 3) chips.push(`<span class="sphere-summary-more">+${main.length - 3}</span>`);
-  if (background.length) chips.push(`<span class="sphere-summary-background">${esc(t('Фон'))} · ${background.length}</span>`);
+  if (background.length) chips.push(`<span class="sphere-summary-background">${esc(phoneCopy('alongsideShort'))} · ${background.length}</span>`);
   return chips.join('') || `<span class="sphere-trigger-placeholder">${esc(t('Выбрать сферу'))}</span>`;
 }
 function sphereChoiceRowHTML(skill, main, background, query = '') {
   const isMain = main.includes(skill.id), isBackground = background.includes(skill.id), depth = skillDepth(skill.id);
   const path = skillLabel(skill.id), label = query ? path : skill.name;
   return `<div class="sphere-choice-row${isMain ? ' is-main' : ''}${isBackground ? ' is-background' : ''}" style="--sphere-depth:${Math.min(depth, 6)};--sphere-color:${esc(skill.color)}" data-sphere-choice="${esc(skill.id)}">
-    <span class="sphere-choice-rail" aria-hidden="true"></span><span class="sphere-choice-name" data-noi18n>${esc(label)}</span>
-    <div class="sphere-choice-actions" role="group" aria-label="${esc(path)}"><button type="button" class="sphere-role-button sphere-role-main" data-action="sphere-pick" data-id="${esc(skill.id)}" data-label="${esc(path)}" aria-pressed="${isMain ? 'true' : 'false'}">${esc(t(isMain ? 'Основная' : 'Выбрать'))}</button><button type="button" class="sphere-role-button sphere-role-background" data-action="sphere-background-pick" data-id="${esc(skill.id)}" aria-pressed="${isBackground ? 'true' : 'false'}">${esc(t(isBackground ? 'Фон' : '+ Фон'))}</button></div>
+    <span class="sphere-choice-rail" aria-hidden="true"></span><button type="button" class="sphere-choice-name sphere-role-main" data-action="sphere-pick" data-id="${esc(skill.id)}" data-label="${esc(path)}" aria-label="${esc(t('Основная') + ': ' + path)}" aria-pressed="${isMain ? 'true' : 'false'}"><span data-noi18n>${esc(label)}</span>${isMain ? '<span aria-hidden="true">✓</span>' : ''}</button>
+    <div class="sphere-choice-actions" role="group" aria-label="${esc(path)}"><button type="button" class="sphere-role-button sphere-role-background" data-action="sphere-background-pick" data-id="${esc(skill.id)}" aria-pressed="${isBackground ? 'true' : 'false'}">${esc(phoneCopy('alongsideShort'))}</button></div>
   </div>`;
 }
 function sphereSelectedHTML(main, background) {
   return [...main.map(id => [id, 'sphere-pick', 'Основная']), ...background.map(id => [id, 'sphere-background-pick', 'Фон'])]
-    .map(([id, action, role]) => `<button type="button" class="sphere-selected-chip" data-action="${action}" data-id="${esc(id)}" aria-label="${esc(t('Убрать') + ': ' + sphereNameText(skillLabel(id)))}" title="${esc(sphereNameText(skillLabel(id)))}"><span data-noi18n>${esc(skillById(id).name)}</span><small>${esc(t(role))}</small><span aria-hidden="true">×</span></button>`).join('') || `<p class="muted">${esc(t('Нужна хотя бы одна основная сфера'))}</p>`;
+    .map(([id, action, role]) => `<button type="button" class="sphere-selected-chip" data-action="${action}" data-id="${esc(id)}" aria-label="${esc(t('Убрать') + ': ' + sphereNameText(skillLabel(id)))}" title="${esc(sphereNameText(skillLabel(id)))}"><span data-noi18n>${esc(skillById(id).name)}</span><small>${esc(role === 'Фон' ? phoneCopy('alongside') : t(role))}</small><span aria-hidden="true">×</span></button>`).join('') || `<p class="muted">${esc(t('Нужна хотя бы одна основная сфера'))}</p>`;
 }
 function sphereMultiResultsHTML(query, main, background, expanded = new Set()) {
   const q = String(query || '').trim(), visible = pickerVisibleSkills();
@@ -7923,7 +7932,7 @@ function sphereFieldHTML(selectedId, options = {}) {
       <div class="sphere-panel-head"><div><strong>${esc(t('Сферы'))}</strong></div><button type="button" class="sphere-panel-done" data-action="sphere-picker-done">${esc(t('Готово'))}</button></div>
       <label class="sr-only" for="sphere-search-${esc(fallback)}">${esc(t('Искать сферу'))}</label>
       <input type="text" id="sphere-search-${esc(fallback)}" class="sphere-search-input" placeholder="${esc(t('Искать сферу…'))}" autocomplete="off" />
-      <div class="sphere-selection">${sphereSelectedHTML(main, background)}</div>
+      <p class="sphere-role-hint" data-noi18n>${esc(phoneCopy('sphereHint'))}</p><div class="sphere-selection">${sphereSelectedHTML(main, background)}</div>
       <div class="sphere-panel-results">${sphereMultiResultsHTML('', main, background)}</div>
     </div>
     <input type="hidden" name="skillId" value="${esc(main[0] || '')}" /><input type="hidden" name="skillIds" value="${esc(main.join(','))}" /><input type="hidden" name="${esc(backgroundName)}" value="${esc(background.join(','))}" /></details>`;
@@ -12765,7 +12774,7 @@ function emptyDayHTML() {
   if (!src.length) return `<div class="empty-day"><p class="muted">${t('На сегодня пусто.')}</p>
     <button type="button" class="btn ghost sm" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></div>`;
   return `<div class="empty-repeat"><p class="muted">${t('На сегодня пусто.')}</p>
-    <button class="btn ghost" data-action="repeat-yesterday">↻ ${t('Повторить вчерашний план')} (${src.length})</button></div>`;
+    <details class="repeat-previous"><summary data-noi18n>${esc(phoneCopy('optionalRepeat'))}</summary><button class="btn ghost" data-action="repeat-yesterday">${t('Повторить вчерашний план')} (${src.length})</button></details></div>`;
 }
 function openEntryRitual({ reopen = false, focus = '' } = {}) {
   if (!reopen && document.getElementById('entry-modal')) { reopenLegacyDialog('entry-modal', openEntryRitual); return; }
@@ -12810,6 +12819,15 @@ function activityCountForDate(d) {
 }
 function phoneCopy(key) {
   const copy = {
+    alongside: ['Сопутствующая', 'Alongside', 'Begleitend', 'Супутня', 'Complementaria'],
+    alongsideShort: ['Сопутствует', 'Alongside', 'Begleitend', 'Супутня', 'Complementaria'],
+    sphereHint: ['Пример: бег — основная, аудиокнига — сопутствующая.', 'Example: running is primary, an audiobook is alongside.', 'Beispiel: Laufen ist Hauptbereich, Hörbuch begleitend.', 'Приклад: біг — основна, аудіокнига — супутня.', 'Ejemplo: correr es principal, un audiolibro es complementario.'],
+    boundaryHint: ['Выбери время и результат; границу можно снять.', 'Choose a time and result; you can release the boundary.', 'Zeit und Ergebnis wählen; die Grenze lässt sich aufheben.', 'Обери час і результат; межу можна зняти.', 'Elige una hora y un resultado; puedes quitar el límite.'],
+    selectedDate: ['На выбранный день', 'For the selected day', 'Für den gewählten Tag', 'На обраний день', 'Para el día elegido'],
+    optionalRepeat: ['Взять дела из вчера', 'Use yesterday’s tasks', 'Aufgaben von gestern', 'Взяти справи з учора', 'Usar tareas de ayer'],
+    habitsEmpty: ['На сегодня привычек нет.', 'No habits due today.', 'Heute keine Gewohnheiten geplant.', 'На сьогодні звичок немає.', 'No hay hábitos para hoy.'],
+    wardrobeNote: ['Облик примерочной; в Логове пока другой.', 'Wardrobe look; the Den currently uses another.', 'Anprobe-Look; im Zuhause derzeit ein anderer.', 'Образ примірочної; у Лігві поки інший.', 'Aspecto del probador; el Refugio usa otro.'],
+    inspirationIntro: ['Твои материалы и идеи для следующего шага.', 'Your materials and ideas for the next step.', 'Deine Inhalte und Ideen für den nächsten Schritt.', 'Твої матеріали та ідеї для наступного кроку.', 'Tus materiales e ideas para el siguiente paso.'],
     reflection: ['Рефлексия', 'Reflection', 'Rückblick', 'Рефлексія', 'Reflexión'],
     tomorrow: ['Первое дело завтра', 'First task tomorrow', 'Erste Aufgabe morgen', 'Перша справа завтра', 'Primera tarea de mañana'],
     recapHint: ['Что удалось сделать?', 'What did you get done?', 'Was hast du geschafft?', 'Що вдалося зробити?', '¿Qué lograste hacer?'],
@@ -12840,7 +12858,7 @@ async function openContextHelp(mode, opener) {
   if (State._chatBusy) { openHelperChat(opener); return; }
   const ws = State.weekStart || weekStart(todayStr());
   const context = mode === 'entry'
-    ? { task: questById(State._entryTask)?.title || '', sphere: skillById(State._entrySkill)?.name || '' }
+    ? { task: questById(State._entryTask)?.title || '', taskId: State._entryTask || '', date: questById(State._entryTask)?.date || '', done: !!questById(State._entryTask)?.done, sphere: skillById(State._entrySkill)?.name || '' }
     : { start: ws, end: addDays(ws, 6), intention: document.getElementById('week-intention')?.value ?? State.weeks[ws]?.intention ?? '',
       tasks: State.tasks.filter(q => q.date >= ws && q.date <= addDays(ws, 6)).map(q => ({ id: q.id, title: taskDisplayTitle(q), date: q.date, startTime: q.startTime, estimateMin: q.estimateMin, done: q.done })),
       review: document.getElementById('week-review')?.value ?? State.weeks[ws]?.review ?? '', routine: State.settings.weeklyRoutineV1 || null };
@@ -14837,9 +14855,8 @@ function openQuestCommitmentDialog(task, mode = 'take') {
   overlay.id = 'quest-commitment-modal'; overlay.className = 'modal-overlay';
   overlay.innerHTML = `<section class="desire-box commitment-dialog" role="dialog" aria-modal="true" aria-labelledby="quest-commitment-title">
     <button type="button" class="modal-x" data-action="commitment-close" aria-label="${esc(t('Закрыть'))}">✕</button>
-    <p class="commitment-kicker">${satoruIconHTML('difficulty.protected', 'button-glyph')} ${esc(t('Личная граница'))}</p>
-    <h3 id="quest-commitment-title" tabindex="-1">${esc(t(revise ? 'Пересмотреть границу' : 'Обязательство по квесту'))}</h3>
-    <p class="commitment-task" data-noi18n>${esc(task.title)}</p>
+    <h3 id="quest-commitment-title" tabindex="-1">${satoruIconHTML('difficulty.protected', 'button-glyph')} ${esc(t(revise ? 'Пересмотреть границу' : 'Личная граница'))}</h3>
+    <p class="commitment-task" data-noi18n>${esc(task.title)}</p><p class="commitment-hint muted" data-noi18n>${esc(phoneCopy('boundaryHint'))}</p>
     <label class="commitment-win"><span>${esc(t('Что считается выполненным'))}</span><input id="quest-commitment-win" type="text" maxlength="120" value="${esc(defaultWin)}" required /></label>
     <label class="commitment-time"><span>${esc(t('Закончить до'))}</span><input id="quest-commitment-time" type="time" value="${esc(commitmentTimeOf(current))}" required /></label>
     <button type="button" class="btn" data-action="commitment-confirm" data-id="${esc(task.id)}" data-mode="${revise ? 'revise' : 'take'}">${esc(t(revise ? 'Сохранить новую границу' : 'Взять обязательство'))}</button>
@@ -14901,6 +14918,7 @@ function questRow(q, links) {
       ${!q.done ? `<button data-action="focus-task" data-id="${q.id}" aria-label="${t(active ? 'Открыть активный фокус' : 'Начать фокус')}: ${esc(fullTitle)}">${satoruIconHTML(active ? 'media.pause' : 'media.play', 'task-action-icon', active ? '⏱' : '▶')} ${t(active ? 'Открыть фокус' : 'Начать фокус')}</button>` : ''}
       ${q.date === todayStr() ? `<button data-action="toggle-core" data-id="${q.id}" aria-pressed="${q.core ? 'true' : 'false'}">${satoruIconHTML('system.core', 'task-action-icon')} ${esc(coreLabel)}</button>` : ''}
       ${commitmentMenu}
+      ${!q.done ? `<button data-action="quest-help" data-id="${esc(q.id)}">${satoruIconHTML('nav.shadow', 'task-action-icon')} ${esc(phoneCopy('help'))}</button>` : ''}
       <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
     </div></details>`;
   return `<li class="task task-entry-layout ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}" data-id="${esc(q.id)}"${guideRowTarget}>
@@ -15697,7 +15715,7 @@ function renderCalendarView() {
         </section>
       </main>
       <aside class="calendar-day-support" aria-label="${esc(t(addOpen ? 'Новый квест' : 'Квесты без времени'))}">
-        ${addOpen ? `<section class="card card-addquest calendar-add-card"><div class="calendar-add-head"><h3>${esc(t('Новый квест'))}</h3><button type="button" class="btn ghost sm calendar-add-close" data-action="cal-close-add" aria-label="${esc(t('Закрыть'))}">✕</button></div><form id="add-task" class="add-row calendar-add-form">
+        ${addOpen ? `<section class="card card-addquest calendar-add-card"><div class="calendar-add-head"><div><h3>${esc(t('Новый квест'))}</h3><p class="calendar-add-date" data-noi18n>${esc(phoneCopy('selectedDate'))}: ${esc(dmShort(date))}</p></div><button type="button" class="btn ghost sm calendar-add-close" data-action="cal-close-add" aria-label="${esc(t('Закрыть'))}">✕</button></div><form id="add-task" class="add-row calendar-add-form">
           <input type="hidden" name="date" value="${date}" />
           <label class="add-field add-field-title"><span class="add-field-label">${esc(t('Название квеста'))}</span><input name="title" placeholder="${esc(t('Новый квест на этот день…'))}" autocomplete="off" maxlength="160" required /></label>
           <label class="add-field add-field-time"><span class="add-field-label">${esc(t('Начало'))}</span><input name="startTime" type="time" min="00:00" max="23:45" step="900" /></label>
@@ -15846,9 +15864,9 @@ function habitsRecoveryHTML() {
 }
 function habitsTodayHTML() {
   const due = todaysHabits();
-  const rows = due.length ? `<ul class="tasks habits-today-list">${due.map(habitRow).join('')}</ul>` : `<p class="muted">${t('На сегодня привычек нет. Это не долг — следующий запланированный день останется в расписании.')}</p>`;
+  const rows = due.length ? `<ul class="tasks habits-today-list">${due.map(habitRow).join('')}</ul>` : `<p class="muted">${esc(phoneCopy('habitsEmpty'))}</p>`;
   const guideCompose = guideV3HabitsStep('compose');
-  return `<div class="card habits-today"><div class="habits-work-head"><div><h3>${t('Сегодня')}</h3><p class="muted">${t('Стрик — наблюдение, не долг. Пропуск не стирает сделанное.')}</p></div><span>${due.length}</span></div>${rows}
+  return `<div class="card habits-today"><div class="habits-work-head"><div><h3>${t('Сегодня')}</h3></div><span>${due.length}</span></div>${rows}
     <details class="habit-create" data-guide-target="habit-create"${guideCompose ? ' open' : ''}><summary>${t('+ Создать привычку')}</summary>${habitCreateFormHTML()}</details></div>`;
 }
 function guideV3HabitsStep(step) {
@@ -19507,10 +19525,7 @@ function companionCard(controlHTML = '') {
   } else if (form === 'name') {
     actions = `<form id="comp-rename" class="comp-form"><label for="comp-rename-name">Как зовут твоего спутника?</label><input id="comp-rename-name" name="name" maxlength="24" value="${esc(c.name)}" /><div class="comp-form-btns"><button type="submit" class="btn">Назвать</button><button type="button" class="btn ghost" data-action="comp-cancel">Отмена</button></div></form>`;
   } else {
-    const due = compCheckinDue(), b = [];
-    if (due.includes('m')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="m">${satoruIconHTML('nav.today', 'button-glyph', '◇')} ${t18('Утренний чек-ин')}</button>`);
-    if (due.includes('e')) b.push(`<button class="btn comp-cta" data-action="comp-check" data-kind="e">${satoruIconHTML('system.day-end', 'button-glyph', '◇')} ${t18('Вечерний чек-ин')}</button>`);
-    b.push(`<button class="btn ghost" data-action="comp-pet"${petToday ? ' disabled' : ''}>${satoruIconHTML('pet.trait.friend', 'button-emblem', '◇')} ${t18(petToday ? 'обнял сегодня' : 'Погладить')}</button>`);
+    const b = [`<button class="btn comp-cta" data-action="open-helper">${satoruIconHTML('nav.shadow', 'button-glyph', '◇')} ${esc(phoneCopy('help'))}</button>`];
     actions = `<div class="comp-actions">${b.join('')}</div>`;
   }
   const last = c.journal[c.journal.length - 1];
@@ -22969,7 +22984,7 @@ function goalSpheresHTML(goal, { compact = false } = {}) {
   const main = goalSkillIds(goal), background = goalBackgroundSkillIds(goal), visible = compact ? main.slice(0, 2) : main;
   const chips = visible.map((id) => { const skill = skillById(id); return `<span class="goal-sphere-chip" style="--sphere-color:${esc(skill.color)}"><i aria-hidden="true"></i><span data-noi18n>${esc(skill.name)}</span></span>`; });
   if (compact && main.length > 2) chips.push(`<span class="goal-sphere-more">+${main.length - 2}</span>`);
-  if (background.length) chips.push(`<span class="goal-sphere-background">${esc(t('Фон'))} · ${background.length}</span>`);
+  if (background.length) chips.push(`<span class="goal-sphere-background">${esc(phoneCopy('alongsideShort'))} · ${background.length}</span>`);
   return chips.join('');
 }
 function goalsBulkSet() {
@@ -23614,7 +23629,7 @@ function characterWardrobeV1HTML(cr, oi, arch) {
     <div class="character-wardrobe-layout">
       <div class="character-wardrobe-preview-panel">
         <figure class="character-wardrobe-preview"><div class="character-wardrobe-stage">${avatarFigureHTML({ appearance })}</div><figcaption>${t('Предпросмотр образа')}</figcaption></figure>
-        <p class="character-wardrobe-note">${t('Этот образ используется в примерочной. Живой Traveller в Логове пока имеет отдельный облик.')}</p>
+        <p class="character-wardrobe-note">${esc(phoneCopy('wardrobeNote'))}</p>
         <div class="character-wardrobe-slots" role="group" aria-label="${t('Слоты экипировки')}">${slotButtons}</div>
       </div>
       <section class="character-wardrobe-drawer" id="character-wardrobe-drawer" aria-labelledby="character-wardrobe-slot-title">
@@ -33403,7 +33418,7 @@ async function onClick(e) {
     return;
   }
   if (action === 'sphere-picker-done') {
-    e.preventDefault(); el.closest('.sphere-field')?.removeAttribute('open'); return;
+    e.preventDefault(); const field = el.closest('.sphere-field'); field?.removeAttribute('open'); focusPathChoiceTarget(field?.querySelector('summary')); return;
   }
   if (action === 'claim-daily-reward' || action === 'close-daily-reward') { clearChestReelSounds(el.closest('#loot-modal')); sfx('close'); closeAccountDialog('loot-modal', { restoreFocus: false }); State._rewardsFocusAfterCommit = '.daily-reward-card .lb-chest, #daily-reward-title'; render(); return; }
   if (action === 'close-economy-confirm') { closeAccountDialog('economy-confirm-modal'); return; }
@@ -34502,6 +34517,9 @@ async function onClick(e) {
     State._inboxFocusAfterCommit = el.dataset.id && (State.inbox || []).some(note => note.id === el.dataset.id)
       ? `#note-${CSS.escape(el.dataset.id)}-text` : '#notes-title';
     track('view:notes'); render();
+  } else if (action === 'quest-help') {
+    const task = questById(el.dataset.id); if (!task || task.done) return;
+    State._entryTask = task.id; State._entrySkill = task.skillId; await openContextHelp('entry', el);
   } else if (action === 'phone-assist') { openContextHelp(el.dataset.mode, el);
   } else if (action === 'ai-review') { runWeeklyReview(el);
   } else if (action === 'ai-import-goals') { openProposeModal('goals');
@@ -36150,7 +36168,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v332';
+const PWA_CACHE_VERSION = 'satoru-v333';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -36364,6 +36382,9 @@ async function init() {
       panel.open = !panel.open;
       if (e.isTrusted) sfx(panel.open ? 'open' : 'close');
       return;
+    }
+    if (e.key === 'Escape' && document.querySelector('.sphere-field[open]')) {
+      e.preventDefault(); const field = document.querySelector('.sphere-field[open]'); field.open = false; focusPathChoiceTarget(field.querySelector('summary')); return;
     }
     if (handleTreeDialogKeydown(e)) return;
     // Escape can arrive before the helper's delayed initial focus. Its visible

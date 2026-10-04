@@ -22804,3 +22804,52 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .shutdown-context > summary { min-height: var(--touch-min); display: flex; align-items: center; color: var(--text-soft); cursor: pointer; }
 :root[data-design=next] .today-support .comp-name > b { font-family: var(--font-ui, system-ui); font-size: 18px; line-height: 1.4; }
 :root[data-design=next] .today-support .comp-line { font-family: var(--font-ui, system-ui); font-size: 16px; line-height: 1.5; }
+
+/* Final phone pass v333: one paper language for meaningful game symbols. */
+.satoru-icon--paper { display: inline-block; flex: 0 0 auto; width: 28px; height: 28px; background: url('/art/ui/paper-v333/atlas.png') var(--paper-x) var(--paper-y) / 400% 300% no-repeat !important; mask: none !important; -webkit-mask: none !important; vertical-align: middle; filter: none !important; clip-path: inset(4%); }
+:root[data-design=next] .satoru-icon--paper:is(.inline-glyph,.task-action-icon,.task-difficulty-icon,.button-glyph) { width: 28px; height: 28px; }
+:root[data-design=next] .satoru-icon--paper.heading-glyph { width: 36px; height: 36px; }
+:root[data-design=next] .sphere-panel { display: flex; flex-direction: column; overflow: hidden; gap: var(--sp-2); padding: var(--sp-3); max-height: min(72dvh,620px); }
+:root[data-design=next] .sphere-panel-head { align-items: center; padding: 0; flex-shrink: 0; }
+:root[data-design=next] .sphere-panel-done { color: var(--on-accent); background: var(--accent); padding-inline: var(--sp-3); }
+:root[data-design=next] .sphere-panel-results { min-height: 60px; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+:root[data-design=next] .sphere-search-input { flex-shrink: 0; min-height: var(--touch-min); font-size: max(16px,var(--type-body)); }
+.sphere-role-hint { margin: 0; color: var(--text-soft); font: var(--type-meta)/var(--leading-ui) var(--font-ui); }
+:root[data-design=next] .sphere-selection { max-height: 100px; overflow-y: auto; flex-shrink: 0; }
+:root[data-design=next] .sphere-choice-actions { flex-wrap: wrap; }
+:root[data-design=next] .sphere-role-button { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+:root[data-design=next] .sphere-branch-head { min-width: 0; }
+:root[data-design=next] .sphere-choice-row { min-width: 0; }
+:root[data-design=next] .sphere-panel button.sphere-choice-name { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: var(--touch-min); border: 0; background: transparent; color: var(--text-strong); text-align: start; padding: 4px; font: var(--type-control)/var(--leading-ui) var(--font-ui); }
+:root[data-design=next] .sphere-branch-toggle { min-width: var(--touch-min); min-height: var(--touch-min); flex-shrink: 0; }
+:root[data-design=next] .commitment-dialog { width: min(480px,calc(100vw - 32px)); margin: auto; box-sizing: border-box; text-align: left; padding: var(--sp-4); }
+:root[data-design=next] .commitment-dialog h3 { padding-inline-end: 36px; margin-block: var(--sp-2); }
+.commitment-hint { margin-block: var(--sp-2); font-size: var(--type-control); }
+.calendar-add-date { margin: var(--sp-1) 0 0; color: var(--text-soft); font-size: var(--type-control); }
+.repeat-previous { flex-basis: 100%; }
+.repeat-previous > summary { min-height: var(--touch-min); display: flex; align-items: center; cursor: pointer; color: var(--text-soft); }
+:root[data-design=next] .inspiration-head { padding: 0 0 var(--sp-3); background: none; border: 0; }
+:root[data-design=next] .inspiration-head .inspiration-kicker { display: none; }
+:root[data-design=next] .inspiration-first-visual { min-height: 100px; max-height: 140px; }
+:root[data-design=next] .inspiration-first-use { gap: var(--sp-3); }
+:root[data-design=next] .character-name { font: 650 var(--type-heading)/var(--leading-ui) var(--font-ui); }
+:root[data-design=next] .character-wardrobe-note { font-size: var(--type-control); }
+:root[data-design=next] .goal-title { font: 650 var(--type-heading)/var(--leading-ui) var(--font-ui); }
+:root[data-design=next] :is(.calv-day,.month-overview-day,.week-overview-day) { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 4px; padding: 8px 2px; min-width: 0; }
+:root[data-design=next] .calv-day .cd-n { display: grid; place-items: center; line-height: 1; min-width: 28px; min-height: 28px; font-variant-numeric: tabular-nums; }
+:root[data-design=next] .calv-day .cd-dot { display: grid; place-items: center; line-height: 1; min-width: 20px; height: 20px; padding: 0 3px; box-sizing: border-box; border-radius: 6px; font-variant-numeric: tabular-nums; }
+:root[data-design=next] .calv-day .cd-dot-empty { min-height: 20px; }
+:root[data-design=next] :is(.ai-box,.desire-box,.commitment-dialog) :is(input,textarea,select) { box-sizing: border-box; max-width: 100%; min-width: 0; }
+@media(max-width:600px) {
+  :root[data-design=next] .tree-hero-stats { display: grid; grid-template-columns: 1fr; }
+  :root[data-design=next] .tree-hero-stats > span { display: flex; align-items: baseline; justify-content: space-between; gap: var(--sp-2); border-inline: 0; padding: 6px 0; }
+  :root[data-design=next] .tree-hero-stats small { order: -1; text-transform: none; letter-spacing: 0; word-break: normal; overflow-wrap: normal; font: var(--type-control)/var(--leading-ui) var(--font-ui); }
+  :root[data-design=next] .sphere-field .sphere-panel { position: fixed; inset: auto 12px calc(76px + env(safe-area-inset-bottom)) 12px; width: auto; max-inline-size: none; max-height: min(70dvh,620px); z-index: 100; }
+  :root[data-design=next] .sphere-choice-row { grid-template-columns: 3px minmax(0,1fr) minmax(90px,auto); gap: 4px; padding-inline-start: var(--sp-1); }
+  :root[data-design=next] .sphere-multi-kids { margin-inline-start: 8px; }
+  :root[data-design=next] .sphere-choice-actions { display: flex; grid-column: auto; max-width: 118px; }
+  :root[data-design=next] .sphere-role-button { padding-inline: 6px; }
+  :root[data-design=next] :is(input[type=time],input[type=date]) { min-height: var(--touch-min); font-size: 16px; padding: 8px; line-height: 1.35; }
+  :root[data-design=next] .dur-input { gap: 4px; flex-wrap: nowrap; }
+  :root[data-design=next] .dur-input input { min-width: 0; min-height: var(--touch-min); font-size: 16px; }
+}

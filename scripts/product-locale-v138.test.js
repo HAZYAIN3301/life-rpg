@@ -59,7 +59,7 @@ test('v138 renders authored Today, Notes, Pets, Rewards, Stats and Settings copy
     "esc(t(it.name))",
     "t(s.label)",
     "t('Реликвии (сфера-привязка)')",
-    "t18('Утренний чек-ин')",
+    "esc(phoneCopy('help'))",
   ]) assert.ok(app.includes(source), source);
   assert.match(app, /return `\$\{t\(skin\.name\)\} · \$\{propName\} · \$\{equipment\}`/);
 });
@@ -70,5 +70,5 @@ test('v138 does not add duplicate locale rows and ships a fresh shell', () => {
   const block = app.slice(marker, end);
   const keys = [...block.matchAll(/^  '((?:\\'|[^'])+)':/gm)].map((match) => match[1]);
   assert.equal(keys.length, new Set(keys).size);
-  assert.match(sw, /const CACHE = 'satoru-v332'/);
+  assert.match(sw, /const CACHE = 'satoru-v333'/);
 });

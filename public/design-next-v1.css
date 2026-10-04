@@ -3,11 +3,11 @@
 @font-face{font-family:"Russo One";src:url("/fonts/russo-one/RussoOne.ttf") format("truetype");font-weight:400;font-display:swap}
 :root[data-design=next]{
   --font-display:"Russo One",var(--font-ui);--font-number:var(--font-ui);
-  --bg:#25262f;--panel:#2e303b;--panel2:#3a3b48;--line:#52505f;--text:#f2eff5;--muted:#c2bdcb;
-  --surface-0:var(--bg);--surface-1:var(--panel);--surface-2:var(--panel2);--surface-3:#42414f;--surface-4:#4a4759;
-  --line-soft:#494754;--line-strong:#9b90ab;--text-strong:var(--text);--text-soft:var(--muted);
+  --bg:#1c1e28;--panel:#282b39;--panel2:#333747;--line:#484b60;--text:#f2eff5;--muted:#c2bdcb;
+  --surface-0:var(--bg);--surface-1:var(--panel);--surface-2:var(--panel2);--surface-3:#3b4053;--surface-4:#46485f;
+  --line-soft:#3c4053;--line-strong:#9b90ab;--text-strong:var(--text);--text-soft:var(--muted);
   --design-accent:#c6afe9;--design-on-accent:#2e223d;--design-core:#393342;--design-core-border:#a08ab8;
-  --design-rail:#292933;--design-shadow:0 12px 36px #11131b28;--on-accent:var(--design-on-accent);
+  --design-rail:#222431;--design-shadow:0 12px 36px #11131b28;--on-accent:var(--design-on-accent);
   --good:#add0b7;--warn:#efbd87;--bad:#f5a6b6;--accent2:var(--design-accent);
   --type-meta:14px;--type-micro:12px;--type-control:14px;--type-body:16px;
   --type-heading:18px;--type-title:clamp(24px,3vw,34px);--type-hero:clamp(22px,2.4vw,30px);
