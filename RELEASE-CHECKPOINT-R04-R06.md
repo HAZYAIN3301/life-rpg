@@ -1,3 +1,12 @@
+## Codex 04.10 — build 11 загружен, privacy и ES
+
+Native e911378: existing Apple IDs/group согласованы, Distribution включён,
+signed iOS/Mac build 11 загружены в Apple. На iPhone 14 установлен напрямую;
+экран заблокирован, device QA не выполнен. ASC browser требует вход.
+Privacy описывает локальные Screen Time данные на пяти языках. ES live Заход PASS;
+живое применение плана дважды остановлено provider rate_limit, без смены тарифа/модели.
+[Квитанция и остаток](./NATIVE-RELEASE-20261004.md). Web runtime v328 не менялся.
+
 ## Codex 04.10 — native Attention bridge, v328
 
 Из отдыха можно явно открыть ограничения приложений iPhone в новой оболочке build 11.
