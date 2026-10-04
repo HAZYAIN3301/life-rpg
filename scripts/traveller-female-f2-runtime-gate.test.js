@@ -187,8 +187,8 @@ test('v183 shell retains the complete immutable F2 runtime and pins changed shel
     assert.match(html, new RegExp(`${file.replaceAll('.', '\\.')}\\?v=${originalRevision}`));
   }
   assert.match(html, /styles\.css\?v=20261003-inspiration-release-v323-1/);
-  assert.match(html, /app\.js\?v=20261004-native-attention-v328-1/);
-  assert.match(sw, /const CACHE = 'satoru-v328';/);
+  assert.match(html, /app\.js\?v=20261004-memory-chat-v329-1/);
+  assert.match(sw, /const CACHE = 'satoru-v329';/);
   const shellRoutes = [appearance.assetManifest('female').runtimeManifest, ...appearance.expectedAssets('female')]
     .map((route) => route.replace(/^\//, ''));
   for (const route of shellRoutes) {

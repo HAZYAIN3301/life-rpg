@@ -19,8 +19,8 @@ test('failed retry keeps one question and excludes transport errors from provide
  const c={State:{me:{id:'a'},chatLog:[]},Store:{_writeEpoch:1},canUseAi:()=>true,guideV3ContextActive:()=>false,
   renderChatMessages(){},document:{getElementById:()=>input},CHAT_TIMEOUT_MS:1000,GOJO_MANUAL:'manual',
   lang:()=> 'ru',aiAnswerLangLine:()=>'',chatUserContext:()=> 'fresh context',aiProvider:()=> 'test',t:s=>s,aiHandleErr:()=>false,
-  track(){},parseChatActions:text=>({clean:text,actions:[]}),window:{ShadowPersonaV1:{systemInstruction:()=> 'persona'},AiRequestV1:require('../public/ai-request-v1')},
-  fetch:async(url,options)=>{payloads.push(JSON.parse(options.body));attempt++;if(attempt===1)throw Error('offline');if(attempt===2)return {ok:false,status:502,json:async()=>{throw Error('HTML')}};return {ok:true,json:async()=>({text:'answer'})};}};
+  track(){},parseChatActions:text=>({clean:text,actions:[]}),window:{ShadowPersonaV1:{systemInstruction:()=> 'persona'},AiRequestV1:require('../public/ai-request-v1'),AiMemoryPolicyV1:require('../public/ai-memory-policy-v1')},
+  fetch:async(url,options)=>{if(url==='/api/ai/memory')return {ok:true,json:async()=>({entries:[],legacy:{text:''},partial:false})};payloads.push(JSON.parse(options.body));attempt++;if(attempt===1)throw Error('offline');if(attempt===2)return {ok:false,status:502,json:async()=>{throw Error('HTML')}};return {ok:true,json:async()=>({text:'answer'})};}};
  vm.createContext(c);vm.runInContext('let _chatRequest=null;\n'+app.slice(app.indexOf('async function sendChat('),app.indexOf('function captureBar(')),c);
  await c.sendChat('same question');assert.equal(input.value,'same question');
  await c.sendChat('same question');assert(c.State.chatLog.at(-1).content.includes('HTTP 502'));

@@ -424,7 +424,7 @@ test('🔴 модуль не заводит второй источник пра
   assert.deepStrictEqual(Object.keys(M).sort(), [
     'CATEGORIES', 'ENTRY_SCHEMA_VERSION', 'MAX_ENTRIES', 'MAX_PROMPT_CHARS', 'PATCHABLE',
     'SCOPES', 'SENSITIVITIES', 'SOURCE_TYPES', 'STATUSES', 'STORE_SCHEMA_VERSION', 'VERSION',
-    'applyMemoryOperation', 'explainMemoryEntry', 'exportMemory', 'normalizeMemoryStore', 'selectMemoryForPrompt',
+    'applyMemoryOperation', 'chatPromptMemory', 'explainMemoryEntry', 'exportMemory', 'normalizeMemoryStore', 'selectMemoryForPrompt',
   ]);
   const src = fs.readFileSync(path.join(ROOT, 'public', 'ai-memory-policy-v1.js'), 'utf8');
   for (const forbidden of ['fetch(', 'localStorage', 'document.', 'Date.now(', 'require(']) {
