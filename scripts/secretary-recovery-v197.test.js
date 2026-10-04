@@ -41,8 +41,10 @@ test('Today composes one work contour and moves secondary systems out of its ren
     assert.equal(composition.includes(oldCard), false, `${oldCard} returned to the Today composition`);
   }
 
-  assert.match(composition, /\$\{questBoard\}.*\$\{addQuestCard\}\$\{habitsCard\}/,
-    'tasks remain before the composer and recurring work');
+  assert.match(composition, /\$\{questBoard\}.*\$\{habitsCard\}/,
+    'task board remains before recurring work');
+  assert.match(renderToday, /\$\{addQuestCard\}\$\{todays\.length/,
+    'the collapsible composer remains inside the task board');
   assert.match(composition, /<aside class="today-support"[^>]*>.*\$\{captureBar\(\)\}/,
     'capture is kept in the support rail, not dropped');
   assert.match(composition, /day-recap-direct[\s\S]*data-action="day-recap"/,

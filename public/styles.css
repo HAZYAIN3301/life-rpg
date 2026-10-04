@@ -22777,3 +22777,30 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .overdue-bulk-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .overdue-bulk-actions .btn { min-height: 44px; }
 .overdue-bulk-error { margin: 0; color: var(--text); font-size: 14px; }
+/* Phone review v332: overview first, editor only when opened. */
+:root[data-design=next] :is(.today-route-head h2, .notes-header h2, .first-value-card h2, .first-value-card h3, .first-value-card__boundary strong, .up-name) { color: var(--text-strong); }
+:root[data-design=next] .today-task-composer[hidden] { display: none !important; }
+:root[data-design=next] .today-task-composer { margin-block: var(--sp-3); padding: var(--sp-3); border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius-card); }
+.today-composer-close { display: flex; margin-inline-start: auto; margin-bottom: var(--sp-2); min-height: var(--touch-min); }
+:root[data-design=next] .notes-screen .notes-back { flex-basis: auto; min-width: var(--touch-min); width: auto; margin-inline-end: auto; }
+:root[data-design=next] .notes-screen .notes-header { display: grid; grid-template-columns: 1fr auto; gap: var(--sp-3); }
+:root[data-design=next] .notes-screen .notes-header .notes-back { grid-column: 1 / -1; }
+:root[data-design=next] .notes-screen .note-disclosure > summary { display: grid; gap: var(--sp-2); padding: var(--sp-2) 0; cursor: pointer; list-style: none; min-height: var(--touch-min); }
+.note-disclosure > summary::-webkit-details-marker { display: none; }
+:root[data-design=next] .notes-screen .note-preview h3 { position: static; width: auto; height: auto; clip-path: none; white-space: normal; padding: 0; margin: 0; color: var(--text-strong); font: inherit; font-size: 16px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+:root[data-design=next] .notes-screen .note-when { color: var(--text-soft); font-size: 12px; }
+:root[data-design=next] .notes-screen .note-editor { display: grid; gap: var(--sp-2); padding-top: var(--sp-2); }
+:root[data-design=next] .notes-screen .note-text { border: 1px solid var(--line); background: var(--panel); padding: var(--sp-2); margin: 0; width: 100%; min-height: 110px; box-sizing: border-box; }
+:root[data-design=next] .notes-screen .note-acts { display: flex; justify-content: flex-start; gap: var(--sp-2); }
+:root[data-design=next] .notes-screen .note-acts .del { margin-inline-start: auto; }
+.note-disclosure > summary:focus-visible { outline: var(--focus-ring); outline-offset: 4px; border-radius: var(--radius-sm); }
+.capture-pending { display: grid; gap: var(--sp-2); }
+.capture-pending p { margin: 0; }
+:root[data-design=next] .shutdown-body { display: grid; gap: var(--sp-3); }
+:root[data-design=next] .shutdown-body > label, :root[data-design=next] .shutdown-body .fl-label { color: var(--text-strong); margin: 0; font-size: 15px; }
+:root[data-design=next] .shutdown-body textarea { margin: 0; min-height: 100px; }
+.shutdown-save { margin-top: var(--sp-2); }
+.shutdown-context { margin-top: var(--sp-2); }
+.shutdown-context > summary { min-height: var(--touch-min); display: flex; align-items: center; color: var(--text-soft); cursor: pointer; }
+:root[data-design=next] .today-support .comp-name > b { font-family: var(--font-ui, system-ui); font-size: 18px; line-height: 1.4; }
+:root[data-design=next] .today-support .comp-line { font-family: var(--font-ui, system-ui); font-size: 16px; line-height: 1.5; }

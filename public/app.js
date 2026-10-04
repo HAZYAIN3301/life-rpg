@@ -12810,6 +12810,13 @@ function activityCountForDate(d) {
 }
 function phoneCopy(key) {
   const copy = {
+    reflection: ['Рефлексия', 'Reflection', 'Rückblick', 'Рефлексія', 'Reflexión'],
+    tomorrow: ['Первое дело завтра', 'First task tomorrow', 'Erste Aufgabe morgen', 'Перша справа завтра', 'Primera tarea de mañana'],
+    recapHint: ['Что удалось сделать?', 'What did you get done?', 'Was hast du geschafft?', 'Що вдалося зробити?', '¿Qué lograste hacer?'],
+    dayDetails: ['Подробности дня', 'Day details', 'Details zum Tag', 'Подробиці дня', 'Detalles del día'],
+    history: ['Сохранённый эксперимент', 'Saved experiment', 'Gespeichertes Experiment', 'Збережений експеримент', 'Experimento guardado'],
+    captureFailed: ['Запись не сохранена. Повтори до закрытия вкладки.', 'Recording not saved. Retry before closing the tab.', 'Aufnahme nicht gespeichert. Vor dem Schließen erneut versuchen.', 'Запис не збережено. Повтори до закриття вкладки.', 'Grabación sin guardar. Reintenta antes de cerrar la pestaña.'],
+    saveRecording: ['Повторить сохранение', 'Retry saving', 'Speichern wiederholen', 'Повторити збереження', 'Reintentar guardar'],
     help: ['Обсудить с Тенью', 'Talk with Shadow', 'Mit dem Schatten besprechen', 'Обговорити з Тінню', 'Hablar con la Sombra'],
     plan: ['Спланировать неделю', 'Plan the week', 'Woche planen', 'Спланувати тиждень', 'Planificar la semana'],
     entry: ['Помоги начать с маленького шага.', 'Help me start with a small step.', 'Hilf mir mit einem kleinen Schritt anzufangen.', 'Допоможи почати з малого кроку.', 'Ayúdame a empezar con un paso pequeño.'],
@@ -17257,10 +17264,9 @@ function openDayRecap() {
       <input type="date" id="dayrec-date" value="${todayStr()}" max="${todayStr()}" /></label>`;
   ov.innerHTML = `<div class="ai-box ai-surface" role="dialog" aria-modal="true" aria-labelledby="dayrec-heading">${aiSurfaceCloseHTML('dayrec-close')}
     <h2 id="dayrec-heading">${satoruIconHTML('media.microphone', 'heading-glyph', '🎤')} ${esc(t('Итог дня'))}</h2>
-    <p class="muted ai-surface-intro">${esc(t('Расскажи своими словами, что делал — как другу. Тень разложит по делам, сферам и времени. Мелочи (умылся, перекусил) не нужны.'))}</p>
     ${dsel}
     ${SR ? `<button type="button" class="btn ghost ai-dictate" id="dayrec-mic" data-action="dayrec-mic">${dictationButtonHTML(false)}</button>` : `<p class="muted ai-surface-note">${esc(t('Голос не поддерживается в этом браузере — впиши текстом.'))}</p>`}
-    <textarea id="dayrec-text" rows="5" placeholder="${esc(t('Например: с утра учил биологию часа два, потом погулял минут сорок, вечером убрался дома и приготовил ужин…'))}"></textarea>
+    <label class="sr-only" for="dayrec-text" data-noi18n>${esc(phoneCopy('recapHint'))}</label><textarea id="dayrec-text" rows="5" placeholder="${esc(phoneCopy('recapHint'))}"></textarea>
     <div class="propose-actions">${canUseAi()
       ? `<button type="button" class="btn" data-action="dayrec-run">${satoruIconHTML('nav.shadow', 'button-glyph', '🤖')} ${esc(t('Разобрать день'))}</button>`
       : `<p class="muted ai-surface-note">${esc(t('Нужен ИИ — добавь ключ в Настройках (бесплатные Gemini/Groq есть), и Тень разберёт твой рассказ.'))}</p>`}</div>
@@ -18677,6 +18683,9 @@ async function sendChat(text) {
 }
 function captureBar(options = {}) {
   const expanded = options.expanded === true;
+  if (_capturePending && captureOwnerCurrent(_capturePending)) {
+    return `<div class="card capture-card capture-pending" role="status" data-noi18n><p>${esc(_capturePending.failed ? phoneCopy('captureFailed') : t('Сохраняю…'))}</p>${_capturePending.failed ? `<button type="button" class="btn" data-action="cap-retry">${esc(phoneCopy('saveRecording'))}</button>` : ''}</div>`;
+  }
   const receipt = State._captureReceipt;
   const savedNote = receipt?.accountId === String(State.me?.id || '') && (State.inbox || []).find(note => note.id === receipt.id);
   if (_rec) {
@@ -18905,12 +18914,12 @@ function noteCard(it) {
     ? `<video class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></video>`
     : `<audio class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
   const icon = it.kind === 'voice' ? satoruIconHTML('media.microphone', 'note-kind-icon', '🎤') : it.kind === 'video' ? satoruIconHTML('media.video', 'note-kind-icon', '🎥') : satoruIconHTML('media.notes', 'note-kind-icon', '📝');
-  const when = (it.at || '').replace('T', ' ').slice(0, 16);
+  const when = it.at && Number.isFinite(Date.parse(it.at)) ? new Intl.DateTimeFormat(lang(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(it.at)) : '';
   return `<article class="card note-card" data-guide-target="note-created" data-id="${esc(it.id)}" tabindex="-1" aria-labelledby="note-${esc(it.id)}-title">
-    <div class="note-top"><div><h3 id="note-${esc(it.id)}-title">${esc(noteTitle(it))}</h3><span class="note-when muted">${icon} ${esc(when)}</span></div>
-      <span class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">${satoruIconHTML('nav.shadow', 'inline-glyph')} ${t('Цель')}</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button><button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">${satoruIconHTML('action.delete', 'button-glyph')}</button></span></div>
+    <details class="note-disclosure"><summary class="note-preview"><h3 id="note-${esc(it.id)}-title" tabindex="-1" data-noi18n>${esc(it.text?.trim() || noteTitle(it))}</h3><span class="note-when muted">${icon}<time datetime="${esc(it.at || '')}">${esc(when)}</time></span></summary><div class="note-editor">
     ${media}
-    <label class="sr-only" for="note-${esc(it.id)}-text">${t('Текст заметки')}</label><textarea id="note-${esc(it.id)}-text" class="note-text" data-action="note-edit" data-id="${it.id}" rows="2" maxlength="1000" placeholder="${t(it.file ? 'Подпиши заметку…' : 'Текст заметки…')}">${esc(it.text || '')}</textarea><p class="note-save-status" data-note-status="${it.id}" role="status"></p></article>`;
+    <label class="sr-only" for="note-${esc(it.id)}-text">${t('Текст заметки')}</label><textarea id="note-${esc(it.id)}-text" class="note-text" data-action="note-edit" data-id="${it.id}" rows="4" maxlength="1000" placeholder="${t(it.file ? 'Подпиши заметку…' : 'Текст заметки…')}">${esc(it.text || '')}</textarea><p class="note-save-status" data-note-status="${it.id}" role="status"></p>
+    <div class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">${satoruIconHTML('nav.shadow', 'inline-glyph')} ${t('Цель')}</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button><button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">${satoruIconHTML('action.delete', 'button-glyph')}</button></div></div></details></article>`;
 }
 function notesPeekToday() {
   const n = (State.inbox || []).length; if (!n) return '';
@@ -19030,9 +19039,9 @@ async function onCaptureStop(stoppedCapture = _rec) {
   if (_rec === rec) _rec = null;
   if (!captureOwnerCurrent(rec)) return;
   const blob = new Blob(rec.chunks, { type: rec.recorder.mimeType || (rec.kind === 'video' ? 'video/webm' : 'audio/webm') });
-  _capturePending = rec; render();
+  rec.failed = false; _capturePending = rec; render();
   if (!blob.size) { _capturePending = null; toast(t('Пустая запись')); return; }
-  if (State._inboxBusy || !inboxWriteAllowed(true)) { _capturePending = null; return; }
+  if (State._inboxBusy || !inboxWriteAllowed(true)) { rec.failed = true; render(); return; }
   State._inboxBusy = true;
   try {
     const dataUrl = await blobToDataUrl(blob);
@@ -19040,22 +19049,22 @@ async function onCaptureStop(stoppedCapture = _rec) {
     rec.abortController = typeof AbortController === 'function' ? new AbortController() : null;
     const request = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataUrl, kind: rec.kind }) };
     if (rec.abortController) request.signal = rec.abortController.signal;
-    const r = await fetch('/api/inbox/media', request);
+    const r = rec.upload ? null : await fetch('/api/inbox/media', request);
     rec.abortController = null;
     if (!captureOwnerCurrent(rec)) return;
-    if (!r.ok) { toast(t('Не удалось сохранить запись')); return; }
-    const d = await r.json();
+    if (r && !r.ok) { rec.failed = true; toast(t('Не удалось сохранить запись')); return; }
+    const d = rec.upload || await r.json(); rec.upload = d;
     if (!captureOwnerCurrent(rec)) return;
-    const item = { id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() };
-    const nextInbox = [item, ...(State.inbox || [])];
+    const item = rec.item || { id: uid(), kind: rec.kind, text: '', file: d.file, type: d.type, at: new Date().toISOString() }; rec.item = item;
+    const nextInbox = [item, ...(State.inbox || []).filter(note => note.id !== item.id)];
     const saved = await commitInbox(nextInbox, { lockOwned: true });
-    if (!saved || !captureOwnerCurrent(rec)) { if (captureOwnerCurrent(rec)) toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); return; }
+    if (!saved || !captureOwnerCurrent(rec)) { if (captureOwnerCurrent(rec)) { rec.failed = true; toast(t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.')); } return; }
     State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:' + rec.kind); toast(rec.kind === 'video' ? '🎥 Видео в Заметках' : '🎤 Голос в Заметках'); render();
   } catch (error) {
-    if (captureOwnerCurrent(rec) && error?.name !== 'AbortError') toast(t('Ошибка сохранения записи'));
+    if (captureOwnerCurrent(rec) && error?.name !== 'AbortError') { rec.failed = true; toast(t('Ошибка сохранения записи')); }
   } finally {
     rec.abortController = null;
-    if (_capturePending === rec) { _capturePending = null; State._inboxBusy = false; }
+    if (_capturePending === rec) { if (!rec.failed) _capturePending = null; State._inboxBusy = false; if (captureOwnerCurrent(rec)) render(); }
   }
 }
 // Nested-прогрессия (Brawl-Stars: «всегда что-то почти готово») — день → неделя → серия
@@ -22819,7 +22828,8 @@ function renderToday() {
       </div>
       <div class="th-stats" aria-label="${t('Состояние дня')}">${heroStats}</div>
     </section>`;
-  const addQuestCard = `<div class="card card-addquest"><form id="add-task" class="add-row" data-guide-target="first-task-create">
+  const showTaskComposer = State._todayTaskOpen || (guideV3RuntimeAllowed() && guideV3State()?.currentChapter === window.GuideV3?.FIRST_CHAPTER && guideV3State()?.currentStep === 'recognize');
+  const addQuestCard = `<div class="card card-addquest today-task-composer" ${showTaskComposer ? '' : 'hidden'}><button type="button" class="today-composer-close btn ghost" data-action="close-add-task" aria-label="${esc(t('Свернуть'))}">${satoruIconHTML('action.close', 'button-glyph')} ${t('Свернуть')}</button><form id="add-task" class="add-row" data-guide-target="first-task-create">
         <label class="add-field add-field-title"><span class="add-field-label">${t('Квест')}</span><input name="title" placeholder="${t('Новый квест на сегодня…')}" maxlength="160" autocomplete="off" required /></label>
         ${sphereFieldHTML()}
         <div class="quest-add-options-body">
@@ -22852,8 +22862,8 @@ function boardTakenLineHTML() {
 }
   const questBoard = `<section class="card card-quests" aria-label="${t('Квесты на сегодня')}"><div class="daystat">
         <span>${t('Квестов:')} <b>${doneCount}/${todays.length}</b></span>
-        <span>${t('План:')} <b>${fmtDur(planned)}</b></span><button type="button" class="today-add-link" data-action="focus-add-task">${t('+ Квест')}</button></div>
-      ${todays.length ? `<ul class="tasks">${todays.map((task) => questRow(task, questGoalLinks)).join('')}</ul>` : emptyDayHTML()}${boardTakenLineHTML()}</section>`;
+        <span>${t('План:')} <b>${fmtDur(planned)}</b></span><button type="button" class="today-add-link" data-action="focus-add-task" aria-expanded="${!!showTaskComposer}" aria-controls="add-task">${t('+ Квест')}</button></div>
+      ${addQuestCard}${todays.length ? `<ul class="tasks">${todays.map((task) => questRow(task, questGoalLinks)).join('')}</ul>` : emptyDayHTML()}${boardTakenLineHTML()}</section>`;
   const habitsCard = State._habitsLoadError
     ? habitsRecoveryHTML()
     : `<div class="card card-habits"><h3>${satoruIconHTML('nav.habits', 'heading-glyph', '🔁')} ${t('🔁 Привычки на сегодня').replace(/^🔁\s*/, '')}</h3>
@@ -22867,21 +22877,18 @@ function boardTakenLineHTML() {
         <button class="btn ghost sm" data-action="dayobs-no">${t('Не совсем')}</button>
       </div></div>` : '';
   const shutdownCard = `<details class="card shutdown"><summary><span>${satoruIconHTML('scene.day-summary', 'day-summary-emblem', '☾')} <b>${t(day.closed ? 'День закрыт' : 'Завершить день')}</b></span><span class="muted">${doneCount}/${todays.length} · ${fmtDur(minToday)}</span></summary><div class="shutdown-body">
-      <p class="muted">${t('Квестов:')} ${doneCount}/${todays.length} · ${t('привычек')} ${habits.filter((h) => habitDone(h, today)).length}/${habits.length} · ${fmtDur(minToday)} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>
-      ${failureContextHTML(arenaHist, today)}
-      ${obsBlock}
-      <label class="sr-only" for="reflection">${t('Итог дня')}</label>
-      <textarea id="reflection" placeholder="Рефлексия: что получилось, что перенести, как себя чувствую…">${esc(day.reflection || '')}</textarea>
+      <label for="reflection" data-noi18n>${esc(phoneCopy('reflection'))}</label>
+      <textarea id="reflection" rows="3" maxlength="6000">${esc(day.reflection || '')}</textarea>
       <div class="fl-ask">
-        <label class="fl-label" for="first-line">${t('Первое действие завтра — одной строкой')}</label>
+        <label class="fl-label" for="first-line" data-noi18n>${esc(phoneCopy('tomorrow'))}</label>
         <div class="fl-row">
           <input id="first-line" class="fl-input" maxlength="140" autocomplete="off"
-            placeholder="${t('Например: открыть файл и написать один абзац')}"
             value="${esc(firstLinePending() ? firstLinePending().text : '')}" />
           <button class="btn ghost sm" data-action="first-line-save">${t('Записать')}</button>
         </div>
       </div>
-      <div style="margin-top:10px"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${day.closed ? '✓ День закрыт — открыть заново' : 'Закрыть день'}</button></div></div></details>`;
+      <div class="shutdown-save"><button class="${day.closed ? 'btn ghost' : 'btn'}" data-action="${day.closed ? 'reopen-day' : 'close-day'}">${t(day.closed ? 'Открыть день заново' : 'Закрыть день')}</button></div>
+      <details class="shutdown-context"><summary data-noi18n>${esc(phoneCopy('dayDetails'))}</summary><p class="muted">${t('Квестов:')} ${doneCount}/${todays.length} · +${xpToday} XP · +${goldToday} ${satoruIconHTML('status.gold', 'inline-emblem', '◇')}</p>${failureContextHTML(arenaHist, today)}${obsBlock}</details></div></details>`;
   const deeperPath = `<button class="today-deeper" data-action="goto-rewards">${satoruIconHTML('nav.rewards', 'button-glyph', '◇')} ${t('Награды')} <span aria-hidden="true">→</span></button>`;
   // Вкладки «Сегодня». Не новая nav-вкладка: неподвижная граница продукта —
   // ровно 4 primary destinations + More, и доска живёт ВНУТРИ «Сегодня».
@@ -22896,7 +22903,7 @@ function boardTakenLineHTML() {
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}<div data-focus-sync-host>${focusSyncNotice()}</div>${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${rewardLifeUI().today()}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${addQuestCard}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}<div data-focus-sync-host>${focusSyncNotice()}</div>${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${rewardLifeUI().today()}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -26801,7 +26808,7 @@ async function persistSecretaryExperiment(experimentOrUpdater, failureKey) {
   return saved;
 }
 function secretaryExperimentLaunchEnabled() {
-  // Owner decision 2026-09-28: defer new runs until after the first free release.
+  // Owner decision 2026-10-04: retire this experiment from the daily route.
   // History, stop and export remain available; never erase an existing run.
   return false;
 }
@@ -27100,7 +27107,7 @@ function attentionTodayPrimaryReserved() {
   const activeAttention = C && window.AttentionSessionV1 && window.AttentionSessionV1.active(State.attentionSessions);
   const activeBrowser = !!(C && browserCompanionCurrentStatus()?.active);
   return !C || attentionHasLoadError() || !!activeAttention || activeBrowser || dayClosed()
-    || attentionPendingReturn() || !!State._eveningDue || secretaryExperimentHasPrimary();
+    || attentionPendingReturn() || !!State._eveningDue || (secretaryExperimentLaunchEnabled() && secretaryExperimentHasPrimary());
 }
 function secretaryNudgeEligible(html) {
   if (!html) return false;
@@ -27125,7 +27132,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
   const cfg = secretarySettings();
   const experiment = secretaryExperimentState();
   const experimentSignal = secretaryExperimentLatestSignal(experiment);
-  const experimentOffer = secretaryExperimentOfferHTML(experiment, experimentSignal);
+  const experimentOffer = secretaryExperimentLaunchEnabled() ? secretaryExperimentOfferHTML(experiment, experimentSignal) : '';
   const fallbackPrimary = {
     kind: 'fallback',
     title: t('Сейчас всё ясно'),
@@ -27140,7 +27147,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
   // решение осталось одно, поэтому ход стоит выше возврата. Вне утреннего окна
   // движок молчит, и возврат ведёт себя как раньше.
   _secretaryOfferSlotFree = !!C && !State._attentionLoadError && !active
-    && !(State._secretaryExperimentSetupOpen && experiment.status === 'draft');
+    && !(secretaryExperimentLaunchEnabled() && State._secretaryExperimentSetupOpen && experiment.status === 'draft');
 
   if (!C) {
     controlState = ' is-error';
@@ -27171,7 +27178,7 @@ function attentionTodayControlHTML(selectedOffer = null) {
         html: `<div class="secretary-control-copy"><b>${esc(active.target.label)}</b><small>${boundary ? t('Граница уже достигнута') : t('До границы: {minutes} мин').replace('{minutes}', Math.max(1, Math.ceil(active.session.remainingSeconds / 60)))}</small></div><button class="btn ghost" data-action="browser-companion-options">${t('Открыть настройки расширения')}</button>`,
       };
     }
-  } else if (State._secretaryExperimentSetupOpen && experiment.status === 'draft') {
+  } else if (secretaryExperimentLaunchEnabled() && State._secretaryExperimentSetupOpen && experiment.status === 'draft') {
     primary = { kind: 'experiment', title: t('Личный эксперимент'), html: experimentOffer };
   } else if (secretaryNextHTML()) {
     primary = { kind: 'offer', title: t('Следующий ход'), html: secretaryNextHTML() };
@@ -27207,7 +27214,6 @@ function attentionTodayControlHTML(selectedOffer = null) {
         <button class="secretary-action" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-glyph')}<b>${t('Отдохнуть с границей')}</b></button>
         ${!closed && primary.kind !== 'evening' ? `<button class="secretary-action" data-action="evening-open">${satoruIconHTML('system.day-end', 'button-glyph')}<b>${t('Завершить вечер')}</b>${cfg.dailyReminder && cfg.eveningTime ? `<small>${esc(cfg.eveningTime)}</small>` : ''}</button>` : ''}
         ${policies[0] ? `<button class="secretary-action" data-action="attention-open-entry" data-policy-id="${esc(policies[0].id)}">${satoruIconHTML('difficulty.protected', 'button-glyph')}<b>${esc(policies[0].name)}</b></button>` : ''}
-        ${secretaryExperimentAvailable() && secretaryExperimentLaunchEnabled() && experiment.status === 'draft' ? `<button class="secretary-action" data-action="secretary-experiment-open">${satoruIconHTML('system.focus', 'button-glyph')}<b>${t('30 дней с Тенью')}</b></button>` : secretaryExperimentStatusHTML(experiment)}
       </div>
     </details>
   </section>`;
@@ -27610,6 +27616,7 @@ function attentionSettingsCard() {
       return `<div class="attention-policy-row"><div><b>${esc(policy.name)}</b><small>${policy.purposes.filter((rule) => rule.enabled !== false).map((rule) => `${esc(attentionPurposeName(rule.purpose))} · ${fmtDur(rule.defaultMinutes)}`).join(' · ')}</small><small class="attention-policy-link-state">${t(linked ? 'Уговор связан с Тенью' : 'Уговор ещё не связан')}</small></div><div class="attention-policy-actions"><button class="btn ghost" data-action="attention-edit-policy" data-policy-id="${esc(policy.id)}">${t(linked ? 'Изменить уговор' : 'Связать уговор')}</button><button class="btn ghost" data-action="attention-open-entry" data-policy-id="${esc(policy.id)}">${t('Проверить вход')}</button></div></div>`;
     }).join('')}</div>` : `<p class="muted">${t('Правил пока нет. Начни с одного приложения и одной цели — это займёт до двух минут.')}</p>`}
     ${browserCompanionSettingsHTML()}
+    ${secretaryExperimentStatusHTML(secretaryExperimentState()) ? `<details class="settings-disclosure experiment-archive"><summary data-noi18n>${esc(phoneCopy('history'))}</summary>${secretaryExperimentStatusHTML(secretaryExperimentState())}</details>` : ''}
     <div class="attention-settings-shortcuts"><button class="btn ghost" data-action="recovery-open">${satoruIconHTML('status.balance', 'button-emblem', '◇')} ${t('Отдых с границей')}</button><button class="btn ghost" data-action="evening-configure">${satoruIconHTML('system.day-end', 'button-glyph', '🌙')} ${t(secretary.configured ? 'Изменить завершение вечера' : 'Настроить завершение вечера')}</button>${secretary.dailyReminder && secretary.eveningTime ? `<span class="muted">${t('Напоминание')}: ${esc(secretary.eveningTime)}</span>` : ''}</div>
     <p class="attention-privacy-note">${State.attentionMode === 'contracts' ? t('По отдельному согласию синхронизируются правила, сессии и записанные исходы. История устройства и просмотренные материалы не собираются.') : t('Полные правила и исходы остаются на этом устройстве. В аккаунте хранится только названный тобой уговор: ярлык, граница и выигрыш — без URL и содержимого экрана.')}</p></div>`;
 }
@@ -30080,7 +30087,11 @@ function afterMainCommit() {
     State._tasksFocusAfterCommit = '';
     requestAnimationFrame(() => {
       const target = document.querySelector(selector) || document.querySelector('#main h2');
-      if (target) focusPathChoiceTarget(target);
+      if (target) {
+        const composer = target.closest('.today-task-composer');
+        if (composer) { State._todayTaskOpen = true; composer.hidden = false; document.querySelector('.today-add-link')?.setAttribute('aria-expanded', 'true'); }
+        focusPathChoiceTarget(target);
+      }
     });
   }
   if (State._habitsFocusAfterCommit && (State.view === 'habits' || State.view === 'today')) {
@@ -30253,15 +30264,46 @@ function commitMainView(main, staging, view) {
   // Keep the actual form (including multi-sphere state and cursor), never a second
   // persistence path. A successful submit explicitly releases this draft.
   let draftFocus = null, draftSelection = null;
+  if (_renderedMainView === view && view === 'notes') {
+    main.querySelectorAll('.note-card').forEach(oldCard => {
+      const nextCard = staging.querySelector(`.note-card[data-id="${CSS.escape(oldCard.dataset.id)}"]`);
+      if (!nextCard) return;
+      const oldDetails = oldCard.querySelector('.note-disclosure');
+      const nextDetails = nextCard.querySelector('.note-disclosure');
+      if (oldDetails?.open && nextDetails) nextDetails.open = true;
+      const input = oldCard.querySelector('.note-text');
+      if (input && (input.value !== input.defaultValue || input.disabled || input.hasAttribute('aria-invalid'))) {
+        if (input === document.activeElement) { draftFocus = input; draftSelection = [input.selectionStart, input.selectionEnd]; }
+        nextCard.querySelector('.note-text')?.replaceWith(input);
+        const status = oldCard.querySelector('.note-save-status');
+        if (status) nextCard.querySelector('.note-save-status')?.replaceWith(status);
+      }
+      const player = oldCard.querySelector('.note-media'), replacement = nextCard.querySelector('.note-media');
+      if (oldDetails?.open && player && replacement && player.getAttribute('src') === replacement.getAttribute('src')) replacement.replaceWith(player);
+    });
+  }
+  if (_renderedMainView === view && view === 'today') {
+    const shutdown = main.querySelector('.shutdown'), replacement = staging.querySelector('.shutdown');
+    if (shutdown?.open && replacement) {
+      replacement.open = true;
+      for (const id of ['reflection', 'first-line']) {
+        const input = main.querySelector('#' + id);
+        if (input && input.value !== input.defaultValue) {
+          if (input === document.activeElement) { draftFocus = input; draftSelection = [input.selectionStart, input.selectionEnd]; }
+          replacement.querySelector('#' + id)?.replaceWith(input);
+        }
+      }
+    }
+  }
   if (_renderedMainView === view && view === 'today' && main.querySelector('details.senku-today[open]')) staging.querySelector('details.senku-today')?.setAttribute('open', '');
-  for (const selector of ['#add-task','#add-habit-v126','#ai-keys','#senku-connect']) {
+  for (const selector of ['#add-task','#capture-form','#add-habit-v126','#ai-keys','#senku-connect']) {
     const oldComposer = main.querySelector(selector);
     const newComposer = staging.querySelector(selector);
     const isHabit = selector === '#add-habit-v126';
     const sameCandidate = !isHabit || (oldComposer?.dataset.guideCompose === newComposer?.dataset.guideCompose
       && oldComposer?.elements.namedItem('existingId')?.value === newComposer?.elements.namedItem('existingId')?.value);
     const keepComposer = _renderedMainView === view && oldComposer && newComposer && sameCandidate
-      && (oldComposer.elements.namedItem('title')?.value.trim() || (isHabit && oldComposer.closest('details')?.open)
+      && (oldComposer.elements.namedItem('title')?.value.trim() || (selector === '#capture-form' && oldComposer.elements.namedItem('text')?.value.trim()) || (isHabit && oldComposer.closest('details')?.open)
         || ((selector === '#ai-keys' || selector === '#senku-connect') && [...oldComposer.querySelectorAll('input[type=password]')].some(input=>input.value)))
       && oldComposer.dataset.persisted !== 'true';
     if (!keepComposer) continue;
@@ -31075,6 +31117,7 @@ async function onSubmit(e) {
       focusPathChoiceTarget(f.text); return;
     }
     if (guideNotes) { State._guideV3NoteDraftId = ''; State._guideNoteAttempt = null; }
+    f.dataset.persisted = 'true';
     State._captureReceipt = { id: item.id, accountId: String(State.me?.id || '') };
     State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast(t('Сохранено')); render();
     return;
@@ -31313,6 +31356,7 @@ async function onSubmit(e) {
       return;
     }
     f.dataset.persisted = 'true';
+    State._todayTaskOpen = false;
     await firstValuePrepareReferenceForTask(task);
     const guide = guideV3State();
     if (guideV3RuntimeAllowed() && guide?.currentChapter === window.GuideV3?.FIRST_CHAPTER && guide.currentStep === 'recognize') {
@@ -32669,9 +32713,18 @@ async function onClick(e) {
     flushSettingsForm(); State.view = 'settings'; State._mobileNavFocusAfterCommit = '#settings-title, #main h2'; State.adminUsers = null; State.analytics = undefined; track('view:settings'); render(); return;
   }
   if (action === 'focus-add-task') {
+    State._todayTaskOpen = true;
+    const composer = document.querySelector('.today-task-composer'); if (composer) composer.hidden = false;
+    document.querySelector('.today-add-link')?.setAttribute('aria-expanded', 'true');
     const input = document.querySelector('#add-task input[name="title"]');
     if (input) { input.scrollIntoView({ block: 'center' }); input.focus({ preventScroll: true }); }
     return;
+  }
+  if (action === 'close-add-task') {
+    State._todayTaskOpen = false;
+    const composer = document.querySelector('.today-task-composer'); if (composer) composer.hidden = true;
+    document.querySelector('.today-add-link')?.setAttribute('aria-expanded', 'false');
+    document.querySelector('.today-add-link')?.focus(); return;
   }
   if (action.startsWith('guide-') && await guideV3HandleAction(action, el)) return;
   // --- Гайд (туториал) ---
@@ -34433,6 +34486,7 @@ async function onClick(e) {
   } else if (action === 'goto-calendar') { sfx('navigate'); State.calDate = el.dataset.date || todayStr(); State.view = 'calendar'; render();
 
   // --- Инбокс / быстрый захват (Блок 2) ---
+  } else if (action === 'cap-retry') { if (_capturePending?.failed && !State._inboxBusy) await onCaptureStop(_capturePending);
   } else if (action === 'cap-voice') { startCapture('voice');
   } else if (action === 'cap-video') { startCapture('video');
   } else if (action === 'cap-stop') { stopCapture();
@@ -35016,6 +35070,7 @@ function autosaveSettings() { return SettingsAutosave.queue(); }
 function flushSettingsForm() { return SettingsAutosave.flush(); }
 
 function clearAllData() {
+  State._todayTaskOpen = false;
   State._sphereRestoreBusy = false;
   closeAccountDialog('device-revoke-dialog', { restoreFocus: false });
   Object.assign(deviceUI, { uid: null, epoch: deviceUI.epoch + 1, data: null, busy: false, error: false, checked: 0 });
@@ -35546,7 +35601,9 @@ function onChange(e) {
       const saved = await commitInbox(next);
       input.disabled = false;
       if (!saved) { if (status) { status.textContent = t('Не удалось сохранить заметку. Ничего не изменено — повтори попытку.'); status.setAttribute('role', 'alert'); } input.setAttribute('aria-invalid', 'true'); item.text = before; focusPathChoiceTarget(input); return; }
+      input.defaultValue = input.value;
       input.removeAttribute('aria-invalid'); if (status) status.textContent = t('Сохранено');
+      const title = document.getElementById(`note-${id}-title`); if (title) title.textContent = input.value.trim() || noteTitle({ ...item, text: '' });
     })();
     return;
   }
@@ -36093,7 +36150,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v331';
+const PWA_CACHE_VERSION = 'satoru-v332';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -150,8 +150,10 @@ test('draft setup is explicit, dismissible, and never steals Today before launch
     'setup needs a Not now exit');
 
   const control = functionSource('attentionTodayControlHTML');
-  assert.match(control, /data-action="secretary-experiment-open"/,
-    'manual setup belongs behind Other support');
+  assert.doesNotMatch(control, /data-action="secretary-experiment-open"|secretaryExperimentStatusHTML/,
+    'owner retired the experiment from daily support on 04.10');
+  assert.match(functionSource('attentionSettingsCard'), /experiment-archive[\s\S]*secretaryExperimentStatusHTML/,
+    'saved history, stop and export remain reachable in settings');
   const click = APP.slice(APP.indexOf("if (action === 'secretary-experiment-open')"), APP.indexOf("if (action === 'browser-companion-refresh')"));
   assert.match(click, /State\._secretaryExperimentSetupOpen = true/);
   assert.match(click, /State\._secretaryExperimentSetupOpen = false/);
