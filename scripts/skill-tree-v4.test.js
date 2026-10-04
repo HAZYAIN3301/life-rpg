@@ -295,7 +295,7 @@ test('Tree v4 release keeps app, service worker, and index pins synchronized', (
   const appPin = (index.match(/app\.js\?v=([^"']+)/) || [])[1];
   assert.ok(stylePin && appPin, 'index must pin both app.js and styles.css');
   assert.match(appPin, new RegExp('v' + appVersion + '-'), 'changed app must identify the current release');
-  assert.equal(stylePin, '20261004-schedule-v335-1', 'schedule controls require the current CSS pin');
+  assert.equal(stylePin, '20261004-adventure-v336-1', 'schedule controls require the current CSS pin');
   const v4Ready = /Tree v4/i.test(css) && /await Store\.saveNow\('skilltree', State\.tree\)/.test(actionSource('ms-claim-yes', 'ms-claim-no'));
   if (v4Ready) {
     assert.ok(Number(appVersion) > 203, `Tree v4 must bump the PWA cache beyond v203, got v${appVersion}`);

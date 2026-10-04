@@ -47,6 +47,7 @@ const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyDenV1 = require('./server-party-den-v1.js');
 const PartyProjectV1 = require('./public/party-project-v1.js');
+const PartyAdventureV1 = require('./public/party-adventure-v1.js');
 const PartyProjectSourcesV1 = require('./server-party-project-sources-v1.js');
 const FocusSessionsV1 = require('./server-focus-sessions-v1.js');
 const PartyRewardPolicyV1 = require('./public/party-reward-policy-v1.js');
@@ -702,6 +703,7 @@ function validateParties(rows) {
     if (!p || !Array.isArray(p.members)) return true;
     PartyDenV1.validate(p.sharedDen);
     PartyProjectV1.validate(p.projectWork);
+    PartyAdventureV1.validate(p.adventureWork);
     return p.sessions !== undefined && (!Array.isArray(p.sessions) || p.sessions.some((s) => !PartySessionV1.validStored(s)));
   })) {
     throw new Error('party_data_unreadable');
@@ -807,6 +809,7 @@ function removeUserFromParties(uid, parties) {
   for (const source of parties || []) {
     const party = structuredClone(source);
     party.projectWork = PartyProjectV1.forget(party.projectWork, projectHash(party.id, uid));
+    party.adventureWork = PartyAdventureV1.forget(party.adventureWork, uid, projectHash(party.id, uid));
     party.members = (party.members || []).filter((id) => id !== uid);
     party.sharedDen = PartyDenV1.depart(party.sharedDen, [uid]);
     party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
@@ -6592,6 +6595,7 @@ const server = http.createServer(async (req, res) => {
     return { id: party.id, name: party.name, code: party.code, createdBy: party.createdBy, members, max: PARTY_MAX, ws: r.ws,
       sharedDen: PartyDenV1.view(party.sharedDen, party.members),
       projects: PartyProjectV1.view(party.projectWork),
+      adventure: PartyAdventureV1.view(party.adventureWork, party.members),
       sessions: partySessionViews(party, me), serverNow: new Date().toISOString(),
       sessionInvitesEnabled: !(party.sessionMuted || []).includes(me),
       raid: { total: r.total, target: r.target, won: r.won,
@@ -6603,7 +6607,7 @@ const server = http.createServer(async (req, res) => {
   }
   // A pending membership journal must fail closed without terminating the server.
   try {
-  if (u === '/api/party/den' || u === '/api/party/projects') {
+  if (u === '/api/party/den' || u === '/api/party/projects' || u === '/api/party/expedition') {
     const me = sessionUserId(req);
     if (!me || !loadUsers().some(user => user.id === me)) return sendJson(res, 401, { error: 'not_logged_in' });
     if (!['GET', 'POST'].includes(req.method)) return sendJson(res, 405, { error: 'method_not_allowed' });
@@ -6619,6 +6623,24 @@ const server = http.createServer(async (req, res) => {
     // Re-read after await: membership and revision must describe this operation.
     const parties = loadParties(), party = partyOf(me, parties);
     if (!party) return sendJson(res, 404, { error: 'no_party' });
+    if (u === '/api/party/expedition') {
+      try {
+        recoverCommitmentJournal(me);
+        const tasks = PartyProjectSourcesV1.load(userDataDir(me), (id, kind) => projectHash(party.id, me, id, kind));
+        const blocked = PartyProjectV1.validate(party.projectWork).chapters.flatMap(c => c.steps.map(s => s.source).filter(Boolean));
+        const now = new Date().toISOString(); let replay = false;
+        if (req.method === 'POST') {
+          const result = PartyAdventureV1.change(party.adventureWork, input, { partyId:party.id, userId:me, actor:projectHash(party.id,me), now, blocked,
+            source:projectHash(party.id,me,input?.taskId,input?.sourceType || 'task'), task:tasks.find(t=>t.id===input?.taskId&&t.kind===input?.sourceType) });
+          party.adventureWork=result.state; replay=result.replay; saveParties(parties);
+        }
+        const eligible=tasks.filter(t=>PartyAdventureV1.eligible(party.adventureWork,t,t.source,now,blocked)).slice(0,100).map(t=>({id:t.id,kind:t.kind,title:String(t.title||'').slice(0,200)}));
+        return sendJson(res,200,{partyId:party.id,adventure:PartyAdventureV1.view(party.adventureWork,party.members),eligible,replay});
+      } catch(error) {
+        const status=({adventure_request:400,adventure_consent:412,adventure_conflict:409,adventure_locked:409,adventure_source:409,adventure_partner:409})[error.code];
+        return sendJson(res,status||503,{error:status?error.code:'adventure_storage'});
+      }
+    }
     if (u === '/api/party/projects') {
       try {
         recoverCommitmentJournal(me);
@@ -6627,10 +6649,10 @@ const server = http.createServer(async (req, res) => {
         if (req.method === 'POST') {
           const result = PartyProjectV1.change(party.projectWork, input, { partyId: party.id,
             actor: projectHash(party.id, me), source: projectHash(party.id, me, input?.taskId, input?.sourceType || 'task'), now,
-            task: tasks.find(task => task.id === input?.taskId && task.kind === (input?.sourceType || 'task')) });
+            task: tasks.find(task => task.id === input?.taskId && task.kind === (input?.sourceType || 'task') && !PartyAdventureV1.consumed(party.adventureWork, task.source)) });
           party.projectWork = result.state; replay = result.replay; saveParties(parties);
         }
-        const eligible = tasks.filter(task => PartyProjectV1.eligible(party.projectWork, task, task.source, now))
+        const eligible = tasks.filter(task => PartyProjectV1.eligible(party.projectWork, task, task.source, now) && !PartyAdventureV1.consumed(party.adventureWork, task.source))
           .slice(0, 100).map(task => ({ id: task.id, kind: task.kind, title: String(task.title || '').slice(0, 200) }));
         return sendJson(res, 200, { partyId: party.id, projects: PartyProjectV1.view(party.projectWork), eligible, replay });
       } catch (error) {
@@ -6798,6 +6820,7 @@ const server = http.createServer(async (req, res) => {
     if (party) {
       party.members = party.members.filter((x) => x !== me);
       party.sharedDen = PartyDenV1.depart(party.sharedDen, [me]);
+      party.adventureWork = PartyAdventureV1.depart(party.adventureWork, me);
       party.sessions = PartySessionV1.prune(party.sessions, Date.now(), party.members);
       party.sessionMuted = (party.sessionMuted || []).filter((id) => id !== me);
       if (party.cheers) delete party.cheers[me];
