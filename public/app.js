@@ -23011,7 +23011,7 @@ function boardTakenLineHTML() {
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
-    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}<div data-focus-sync-host>${focusSyncNotice()}</div>${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-adventure-today-host>${partyAdventureUI().today()}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${rewardLifeUI().today()}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
+    <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}<div data-focus-sync-host>${focusSyncNotice()}</div>${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-trial-today-host>${partyTrialUI().today()}</div><div data-adventure-today-host>${State.party?.trial?.trials.some(r=>!r.completedAt)?'':partyAdventureUI().today()}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${rewardLifeUI().today()}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
     <div class="today-footer">${shutdownCard}</div>
   </div>`;
@@ -29562,6 +29562,17 @@ let _partyDuoUI = null;
 let _partyDenUI = null;
 let _partyProjectUI = null;
 let _partyAdventureUI = null;
+let _partyTrialUI = null;
+function partyTrialUI() {
+  if(!_partyTrialUI)_partyTrialUI=window.PartyTrialUIV1.createUI({state:()=>State,lang,escape:esc,epoch:()=>Store._writeEpoch,sound:sfx,
+    isOpen:()=>!!State._partyTrialOpen,
+    open:()=>{State._partyTrialOpen=true;State.view='party';render();},
+    close:()=>{State._partyTrialOpen=false;State.view='party';render();},
+    room:()=>{State._partyTrialOpen=false;openPartyRoom();},
+    tasks:()=>{State.view='today';render();},
+  });return _partyTrialUI;
+}
+function partyTrialRank(){return State.party?.trial?.trials.filter(r=>r.completedAt).length||0;}
 function openPartyRoom(section='party-world-room') {
   State._partyRoomAfterCommit=section; State.view='party'; render();
 }
@@ -29570,13 +29581,14 @@ function partyAdventureUI() {
     sprite:(gender,pose)=>pose==='idle'?avatarCorePoseSrc('idle',gender):window.TravellerAppearanceV1.assetPath(gender,'motion','walk-a.png'),
     navigate:view=>{State.view=view;render();},
     room:openPartyRoom,
+    trial:()=>{State._partyTrialOpen=true;State.view='party';render();},
     shop:()=>{State.view='rewards';render();},
   });
   return _partyAdventureUI;
 }
 function partyAdventureMementoHTML() {
   const done=State.party?.adventure?.runs.filter(r=>r.completedAt)||[];
-  return done.length?`<div class="adventure-memento"><img src="/art/party-adventure-v1/guardian.png" alt=""><div><strong>${esc(window.PartyAdventureUIV1.text('finished',lang()))}</strong><p>${done.map(r=>esc(window.PartyAdventureUIV1.text(r.id+'Route',lang()))).join(' · ')}</p></div></div>`:'';
+  return done.length?`<div class="adventure-memento"><img src="/art/party-adventure-v1/guardian.png" alt=""><div><strong>${esc(window.PartyAdventureUIV1.text('finished',lang()))}</strong><p>${done.map(r=>esc(window.PartyAdventureUIV1.text(r.id+'Route',lang()))).join(' · ')}</p>${partyTrialRank()?`<span class="trial-trophy-rank">${esc(window.PartyTrialUIV1.text('win',lang()))}: ${partyTrialRank()}/3</span>`:''}</div></div>`:'';
 }
 function partyRoomSceneHTML(room) {
   const chapters = State.party?.projects?.chapters || [];
@@ -29584,7 +29596,7 @@ function partyRoomSceneHTML(room) {
   const light = hearth?.completedAt ? 'night' : 'day';
   const den = { theme: 'workshop', light, slots: Object.fromEntries(room.placements.map(p => [p.slot, p.itemId])) };
   const ids = room.placements.map(p => p.itemId), plants = garden?.completedAt ? 2 : (garden?.progress || 0) >= 4 ? 1 : 0;
-  return `<div class="den-scene shared-den-scene" data-project-hearth="${hearth?.completedAt ? 'done' : (hearth?.progress || 0) >= 3 ? 'warm' : 'none'}" data-project-garden="${plants}" data-den-renderer="v3" data-den-theme="workshop" data-den-light="${light}" data-den-phase="${light}" role="img" aria-label="${esc(window.PartyDenUIV1.text('title', lang()))}">${denSceneSVG(DEN_THEMES[0], light, den)}${denObjectsHTML(den, false, '', ids)}${denLegacyRoomFixturesHTML(false)}${State.party?.adventure?.runs.some(r=>r.completedAt)?`<img class="adventure-den-trophy" src="/art/party-adventure-v1/guardian.png" alt="${esc(window.PartyAdventureUIV1.text('keepsake',lang()))}">`:''}${hearth?.completedAt ? '<img class="project-hearth-flame" src="/art/den/v4/ambient/fireplace-flame-runtime.png" alt="" aria-hidden="true">' : ''}<span class="project-hearth-glow" aria-hidden="true"></span>${Array.from({ length: plants }, (_, i) => `<img class="project-window-plant plant-${i}" src="${denItem('comfort-bonsai').src}" alt="" aria-hidden="true">`).join('')}</div>`;
+  return `<div class="den-scene shared-den-scene" data-project-hearth="${hearth?.completedAt ? 'done' : (hearth?.progress || 0) >= 3 ? 'warm' : 'none'}" data-project-garden="${plants}" data-den-renderer="v3" data-den-theme="workshop" data-den-light="${light}" data-den-phase="${light}" role="img" aria-label="${esc(window.PartyDenUIV1.text('title', lang()))}">${denSceneSVG(DEN_THEMES[0], light, den)}${denObjectsHTML(den, false, '', ids)}${denLegacyRoomFixturesHTML(false)}${State.party?.adventure?.runs.some(r=>r.completedAt)?`<img class="adventure-den-trophy" data-trial-rank="${partyTrialRank()}" src="/art/party-adventure-v1/guardian.png" alt="${esc(window.PartyAdventureUIV1.text('keepsake',lang()))}">`:''}${hearth?.completedAt ? '<img class="project-hearth-flame" src="/art/den/v4/ambient/fireplace-flame-runtime.png" alt="" aria-hidden="true">' : ''}<span class="project-hearth-glow" aria-hidden="true"></span>${Array.from({ length: plants }, (_, i) => `<img class="project-window-plant plant-${i}" src="${denItem('comfort-bonsai').src}" alt="" aria-hidden="true">`).join('')}</div>`;
 }
 function partyProjectUI() {
   if (!_partyProjectUI) _partyProjectUI = window.PartyProjectUIV1.createUI({ state: () => State, lang, escape: esc, notice: focusSyncNotice,
@@ -29723,7 +29735,8 @@ function partyHTML(p) {
     <section class="card event-hero duo-hero">
       <header class="duo-header"><div>${satoruIconHTML('nav.tribe', 'duo-emblem', '◇')}<h2 id="party-title" tabindex="-1">${esc(p.name)}</h2></div><span class="party-code">${t('код')} <strong>${esc(p.code)}</strong></span></header>
     </section>
-    <div data-adventure-host>${partyAdventureUI().body()}</div>
+    <div data-adventure-host ${State._partyTrialOpen?'hidden':''}>${partyAdventureUI().body()}</div>
+    <div data-trial-host>${partyTrialUI().body()}</div>
     <details id="party-world-room" class="card party-world-details"><summary>${window.PartyAdventureUIV1.text('room',lang())}</summary>${partyAdventureMementoHTML()}<div data-party-den-host>${partyDenUI().body()}</div></details>
     <details id="party-world-sessions" class="card party-world-details"><summary>${window.PartyAdventureUIV1.text('together',lang())}</summary><div data-duo-host>${partyDuoUI()?.body() || ''}</div></details>
     <section class="card party-members-card"><h3>${t('Состав и права')}</h3><p class="muted">${owner ? t('Ты создатель: можешь удалить пати для всех или передать роль, выйдя из неё.') : t('Ты участник: можешь выйти в любой момент. Только создатель может удалить пати для всех.')}</p><div class="pm-list" role="list" aria-label="${esc(t('Состав и права'))}">${members}</div>
@@ -32511,6 +32524,7 @@ async function confirmGoalDelete() {
   await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; State._goalDeepLinkId = ''; closeGoalsBulkMode(); syncGoalDeepLink(''); });
 }
 async function onClick(e) {
+  if (e.target.closest('[data-trial]') && await partyTrialUI().handle(e)) return;
   if (e.target.closest('[data-adventure]') && await partyAdventureUI().handle(e)) return;
   if (e.target.closest('[data-reward-life]') && await rewardLifeUI().handle(e)) return;
   if (e.target.closest('[data-action="focus-sync-retry"]')) { await focusSessionSync().flush(); return; }
@@ -36306,7 +36320,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v336';
+const PWA_CACHE_VERSION = 'satoru-v337';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
