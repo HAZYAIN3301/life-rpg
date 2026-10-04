@@ -43,10 +43,11 @@
   const api = factory(root);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.AssistantActionsV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildAssistantActions() {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildAssistantActions(root) {
   'use strict';
 
-  const VERSION = '1.1.0';
+  const VERSION = '1.2.0';
+  const Schedule = typeof module === 'object' && module.exports ? require('./assistant-schedule-v1.js') : root.AssistantScheduleV1;
 
   // Столько же, сколько принимал старый парсер: больше пяти карточек за ответ —
   // это уже не помощь, а список дел, который человек не прочитает.
@@ -74,6 +75,7 @@
     goal_pause_many:  { tier: 'modify', target: 'goal', many: true },
     goal_archive_many:{ tier: 'modify', target: 'goal', many: true },
     quest_reschedule: { tier: 'modify', target: 'quest' },
+    quest_schedule:   { tier: 'modify', target: 'quest' },
     quest_done:       { tier: 'modify', target: 'quest' },
     habit_pause:      { tier: 'modify', target: 'habit' },
     habit_resume:     { tier: 'modify', target: 'habit' },
@@ -237,6 +239,10 @@
         if (!date) return { ok: false, reason: REASONS.NO_TARGET, kind };
         out.date = date;
       }
+      if (kind === 'quest_schedule') {
+        if (!Schedule || !Schedule.valid(raw, c.today) || found.done) return { ok: false, reason: REASONS.INVALID_VALUE, kind };
+        Object.assign(out, { date: raw.date, startTime: raw.startTime, estimateMin: raw.estimateMin });
+      }
       return { ok: true, action: out };
     }
 
@@ -258,6 +264,7 @@
       sphereName: picked ? picked.name : '',
     };
     if (kind === 'quest') {
+      if (raw.startTime != null || raw.endTime != null) return { ok: false, reason: REASONS.INVALID_VALUE, kind };
       out.date = isDay(raw.date) && isDay(c.today) && raw.date >= c.today ? raw.date : (c.today || null);
       // Zero is the existing task representation for an unknown duration.
       // A missing estimate must not silently become a 30-minute promise.
@@ -338,7 +345,7 @@
     return 'kind ∈ ' + KIND_LIST.join(' | ')
       + '. Изменяющие виды требуют targetId — точный id объекта из контекста; по описанию адресовать нельзя.'
       + ' В обычном ответе называй дела по названию; внутренние id оставляй только внутри ACTIONS.'
-      + ' quest_reschedule меняет только дату: он НЕ сохраняет startTime, endTime или estimateMin. Для точного часа и длительности направь в План → расписание дела; не обещай применить их карточкой переноса даты. Не меняй заново дело, уже стоящее на нужной дате.'
+      + ' quest_reschedule меняет только дату. Для точного часа существующего дела используй quest_schedule: targetId, date YYYY-MM-DD, startTime HH:MM, estimateMin целое 5–1080. Только названная или согласованная длительность; иначе сначала уточни её. Карточка редактируется человеком и проверяет пересечения до сохранения. Не обещай, что время уже записано. Для новой задачи сначала quest без startTime/endTime; после её сохранения можно предложить quest_schedule по полученному id. Не меняй заново дело, уже стоящее на нужной дате и времени.'
       + ' Поправка к намерению или просьба обсудить не означает просьбу создать новый объект. Если похожая задача уже есть, сначала уточни: речь о ней или о новой. Не создавай дубль условной фразой «если это отдельная задача».'
       + ' Для quest не придумывай estimateMin: используй названную человеком длительность, либо 0 (пока неизвестна). Для размещения во времени сначала уточни длительность. Предлагаемый короткий шаг можно оценить, но прямо назови время предложением и дождись выбора.'
       + ' Для массовой паузы/архива используй один goal_pause_many/goal_archive_many с targetIds — массивом точных id (до 100); перечисли все выбранные цели, не заменяй массив свободным фильтром.'

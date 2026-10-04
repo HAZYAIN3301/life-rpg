@@ -1,7 +1,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const app=fs.readFileSync(require('node:path').join(__dirname,'../public/app.js'),'utf8');
 function harness(){
- const c={State:{me:{id:'a'},settings:{},tasks:[{id:'task',title:'Synthetic task',date:'2026-10-03',done:false}],_phoneHelp:{mode:'plan',owner:'a',epoch:1,instruction:'plan',context:{start:'2026-09-28',end:'2026-10-04',tasks:[{id:'stale'}]}}},Store:{_writeEpoch:1},todayStr:()=> '2026-10-03',pad2:n=>String(n).padStart(2,'0'),taskDisplayTitle:q=>q.title,Intl,Date};
+ const c={structuredClone,State:{me:{id:'a'},settings:{},tasks:[{id:'task',title:'Synthetic task',date:'2026-10-03',done:false}],_phoneHelp:{mode:'plan',owner:'a',epoch:1,instruction:'plan',context:{start:'2026-09-28',end:'2026-10-04',tasks:[{id:'stale'}]}}},Store:{_writeEpoch:1},todayStr:()=> '2026-10-03',pad2:n=>String(n).padStart(2,'0'),taskDisplayTitle:q=>q.title,Intl,Date};
  vm.createContext(c);vm.runInContext(app.slice(app.indexOf('function freshPhoneHelpContext('),app.indexOf('function chatUserContext(')),c);return c;
 }
 test('selected week is rebuilt from current task status on every message, with explicit clock',()=>{
@@ -16,7 +16,7 @@ test('a context from another account or write epoch is never reused',()=>{
 test('failed retry keeps one question and excludes transport errors from provider history',async()=>{
  const input={value:'',focus(){}},payloads=[];
  let attempt=0;
- const c={State:{me:{id:'a'},chatLog:[]},Store:{_writeEpoch:1},canUseAi:()=>true,guideV3ContextActive:()=>false,
+ const c={structuredClone,State:{me:{id:'a'},chatLog:[]},Store:{_writeEpoch:1},canUseAi:()=>true,guideV3ContextActive:()=>false,
   chatThreadSession:()=>({current:{id:'test-chat'}}),chatThreadBoot:async()=>{},chatThreadSave:async()=>{},chatThreadPaint(){},
   renderChatMessages(){},document:{getElementById:()=>input},CHAT_TIMEOUT_MS:1000,GOJO_MANUAL:'manual',
   lang:()=> 'ru',aiAnswerLangLine:()=>'',chatUserContext:()=> 'fresh context',aiProvider:()=> 'test',t:s=>s,aiHandleErr:()=>false,

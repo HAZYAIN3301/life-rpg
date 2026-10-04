@@ -22805,6 +22805,15 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 :root[data-design=next] .today-support .comp-name > b { font-family: var(--font-ui, system-ui); font-size: 18px; line-height: 1.4; }
 :root[data-design=next] .today-support .comp-line { font-family: var(--font-ui, system-ui); font-size: 16px; line-height: 1.5; }
 
+.chat-schedule-card { display:grid; gap:var(--sp-2); padding:var(--sp-3); color:var(--text); border:1px solid var(--line); border-radius:var(--radius-card,16px); min-width:0; }
+.chat-schedule-select { display:flex; align-items:center; gap:var(--sp-2); }
+.chat-schedule-select b { overflow-wrap:anywhere; }
+.chat-schedule-card p { margin:0; font-size:var(--type-control); }
+.chat-schedule-fields { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:var(--sp-2); }
+.chat-schedule-fields label { display:grid; gap:var(--sp-1); min-width:0; font-size:var(--type-control); }
+.chat-schedule-fields input { width:100%; min-width:0; box-sizing:border-box; min-height:var(--touch-min); font-size:16px; }
+@media(max-width:600px){.chat-schedule-fields { grid-template-columns:repeat(2,minmax(0,1fr)); }.chat-schedule-fields label:first-child { grid-column:1/-1; }}
+
 /* Final phone pass v333: one paper language for meaningful game symbols. */
 .satoru-icon--paper { display: inline-block; flex: 0 0 auto; width: 28px; height: 28px; background: url('/art/ui/paper-v333/atlas.png') var(--paper-x) var(--paper-y) / 400% 300% no-repeat !important; mask: none !important; -webkit-mask: none !important; vertical-align: middle; filter: none !important; clip-path: inset(4%); }
 :root[data-design=next] .satoru-icon--paper:is(.inline-glyph,.task-action-icon,.task-difficulty-icon,.button-glyph) { width: 28px; height: 28px; }

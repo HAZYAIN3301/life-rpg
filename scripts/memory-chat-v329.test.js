@@ -11,7 +11,7 @@ test('chat memory filters scopes, sensitive and dismissed records, preserves pro
  for(const bad of [null,{},view([{}]),{...raw,partial:true}])assert.throws(()=>M.chatPromptMemory(bad));
 });
 function harness(read){
- const payloads=[],input={value:'',focus(){}},c={State:{me:{id:'a'},chatLog:[],profile:{text:'STALE'}},Store:{_writeEpoch:1},canUseAi:()=>true,guideV3ContextActive:()=>false,
+ const payloads=[],input={value:'',focus(){}},c={structuredClone,State:{me:{id:'a'},chatLog:[],profile:{text:'STALE'}},Store:{_writeEpoch:1},canUseAi:()=>true,guideV3ContextActive:()=>false,
  chatThreadSession:()=>({current:{id:'test-chat'}}),chatThreadBoot:async()=>{},chatThreadSave:async()=>{},chatThreadPaint(){},
  renderChatMessages(){},document:{getElementById:()=>input},CHAT_TIMEOUT_MS:1000,GOJO_MANUAL:'manual',lang:()=> 'ru',aiAnswerLangLine:()=>'',chatUserContext:(_,m)=>m.legacyText+m.structuredText,aiProvider:()=> 'test',t:s=>s,aiHandleErr:()=>false,track(){},parseChatActions:text=>({clean:text,actions:[]}),
  window:{ShadowPersonaV1:{systemInstruction:()=> 'persona'},AiRequestV1:R,AiMemoryPolicyV1:M},
@@ -39,7 +39,7 @@ test('late memory after account switch or cancellation is never transmitted',asy
 });
 test('settings memory fetch and mutation do not overwrite the next account UI',async()=>{
  for(const mutation of [false,true]){
-  let release;const c={State:{me:{id:'a'},phase:'app'},Store:{_writeEpoch:1},render(){},console,fetch:()=>new Promise(resolve=>release=resolve)};
+  let release;const c={structuredClone,State:{me:{id:'a'},phase:'app'},Store:{_writeEpoch:1},render(){},console,fetch:()=>new Promise(resolve=>release=resolve)};
   vm.createContext(c);vm.runInContext(src.slice(src.indexOf('async function ensureAiMemory('),src.indexOf('async function downloadAiMemory(')),c);
   const pending=mutation?c.mutateAiMemory('a','dismiss'):c.ensureAiMemory();c.State={me:{id:'b'},marker:'new'};release({ok:true,json:async()=>view([entry('a','old')])});await pending;assert.deepEqual(c.State,{me:{id:'b'},marker:'new'});
  }
