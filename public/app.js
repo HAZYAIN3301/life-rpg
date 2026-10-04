@@ -12601,6 +12601,8 @@ function controlReviewCardHTML() {
       </div>
     </article>
     ${remaining ? `<p class="control-review-remaining">${esc(t('Ещё'))} ${remaining} · ${esc(t('появятся по одному после решения'))}</p>` : ''}
+    <button class="btn ghost" data-action="overdue-bulk-open" data-noi18n>${esc(overdueBulkCopy('open'))}</button>
+    <button class="btn ghost" data-action="overdue-bulk-open" data-noi18n>${esc(overdueBulkCopy('open'))}</button>
     <p class="control-review-note">${esc(t('Ни один выбор не отнимает XP, золото или серию.'))}</p>
   </section>`;
 }
@@ -14730,6 +14732,92 @@ function beginCommitmentUiAction(control) {
 function endCommitmentUiAction(control) {
   if (_commitmentUiBusy?.control === control) _commitmentUiBusy = null;
   if (control && control.isConnected) { control.disabled = false; control.removeAttribute('aria-busy'); }
+}
+function overdueBulkCopy(key) {
+  const copy = {
+    ru: { open: 'Выбрать несколько', title: 'Разобрать старые дела', all: 'Выбрать все', count: 'Выбрано', date: 'Перенести на', move: 'Перенести', remove: 'Удалить', close: 'Закрыть', confirm: 'Удалить выбранные дела?', failed: 'Не сохранено. Выбор остался — попробуй ещё раз.', changed: 'Дела изменились. Закрой окно и выбери их заново.', focus: 'Сначала заверши фокус по выбранному делу.', limit: 'Выбери от 1 до 50 дел.', invalidDate: 'Выбери сегодня или будущую дату.', saved: 'Сохранено' },
+    en: { open: 'Select several', title: 'Review unfinished tasks', all: 'Select all', count: 'Selected', date: 'Move to', move: 'Move', remove: 'Delete', close: 'Close', confirm: 'Delete the selected tasks?', failed: 'Not saved. Your selection is kept — try again.', changed: 'Tasks changed. Close this window and select them again.', focus: 'Finish focus on the selected task first.', limit: 'Select 1 to 50 tasks.', invalidDate: 'Choose today or a future date.', saved: 'Saved' },
+    de: { open: 'Mehrere auswählen', title: 'Offene Aufgaben ordnen', all: 'Alle auswählen', count: 'Ausgewählt', date: 'Verschieben auf', move: 'Verschieben', remove: 'Löschen', close: 'Schließen', confirm: 'Ausgewählte Aufgaben löschen?', failed: 'Nicht gespeichert. Die Auswahl bleibt — erneut versuchen.', changed: 'Aufgaben geändert. Fenster schließen und neu auswählen.', focus: 'Beende zuerst den Fokus für die ausgewählte Aufgabe.', limit: 'Wähle 1 bis 50 Aufgaben.', invalidDate: 'Wähle heute oder ein zukünftiges Datum.', saved: 'Gespeichert' },
+    uk: { open: 'Вибрати кілька', title: 'Розібрати старі справи', all: 'Вибрати всі', count: 'Вибрано', date: 'Перенести на', move: 'Перенести', remove: 'Видалити', close: 'Закрити', confirm: 'Видалити вибрані справи?', failed: 'Не збережено. Вибір залишився — спробуй ще раз.', changed: 'Справи змінилися. Закрий вікно та вибери їх знову.', focus: 'Спершу заверши фокус для вибраної справи.', limit: 'Вибери від 1 до 50 справ.', invalidDate: 'Вибери сьогодні або майбутню дату.', saved: 'Збережено' },
+    es: { open: 'Seleccionar varias', title: 'Revisar tareas pendientes', all: 'Seleccionar todas', count: 'Seleccionadas', date: 'Mover al', move: 'Mover', remove: 'Eliminar', close: 'Cerrar', confirm: '¿Eliminar las tareas seleccionadas?', failed: 'No se guardó. Conservamos tu selección: inténtalo de nuevo.', changed: 'Las tareas cambiaron. Cierra y vuelve a seleccionarlas.', focus: 'Primero termina el enfoque de la tarea seleccionada.', limit: 'Selecciona entre 1 y 50 tareas.', invalidDate: 'Elige hoy o una fecha futura.', saved: 'Guardado' },
+  };
+  return (copy[lang()] || copy.en)[key];
+}
+function openOverdueBulkDialog() {
+  const api = window.OverdueBulkV1;
+  if (!api || !taskWriteAllowed('overdueBulk', true)) return;
+  const shown = api.snapshot(State.tasks, todayStr()); if (!shown.length) return;
+  closeAccountDialog('overdue-bulk-modal', { restoreFocus: false });
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  const current = () => accountId === String(State.me?.id || '') && epoch === Store._writeEpoch;
+  const copy = key => esc(overdueBulkCopy(key));
+  const overlay = document.createElement('div'); overlay.id = 'overdue-bulk-modal'; overlay.className = 'modal-overlay';
+  overlay.innerHTML = `<section class="desire-box overdue-bulk-dialog" role="dialog" aria-modal="true" aria-labelledby="overdue-bulk-title" data-noi18n>
+    <button type="button" class="modal-x" data-bulk-close aria-label="${copy('close')}">×</button>
+    <h3 id="overdue-bulk-title" tabindex="-1">${copy('title')}</h3>
+    <label class="overdue-bulk-all"><input type="checkbox" data-bulk-all> ${copy('all')}</label>
+    <div class="overdue-bulk-list">${shown.map(task => `<label class="overdue-bulk-row"><input type="checkbox" data-bulk-id="${esc(task.id)}"><span>${esc(task.title)}<small>${esc(dmShort(task.date))}</small></span></label>`).join('')}</div>
+    <output class="overdue-bulk-count" aria-live="polite"></output>
+    <label class="overdue-bulk-date">${copy('date')}<input type="date" min="${todayStr()}" value="${todayStr()}" aria-label="${copy('date')}"></label>
+    <p class="overdue-bulk-error" role="status" hidden></p>
+    <div class="overdue-bulk-actions"><button type="button" class="btn" data-bulk-kind="move">${copy('move')}</button><button type="button" class="btn ghost" data-bulk-kind="delete">${copy('remove')}</button></div>
+  </section>`;
+  const boxes = () => [...overlay.querySelectorAll('[data-bulk-id]')];
+  const selected = () => boxes().filter(input => input.checked).map(input => input.dataset.bulkId);
+  const error = message => { const node = overlay.querySelector('.overdue-bulk-error'); node.textContent = message; node.hidden = !message; };
+  const sync = () => {
+    const count = selected().length, all = overlay.querySelector('[data-bulk-all]');
+    all.checked = count === shown.length; all.indeterminate = count > 0 && count < shown.length;
+    overlay.querySelector('output').textContent = `${overdueBulkCopy('count')}: ${count}`;
+    overlay.querySelectorAll('[data-bulk-kind]').forEach(button => { button.disabled = !count || count > 50; });
+    error(count > 50 ? overdueBulkCopy('limit') : '');
+  };
+  overlay.addEventListener('change', event => {
+    if (event.target.matches('[data-bulk-all]')) boxes().forEach(input => { input.checked = event.target.checked; });
+    sync();
+  });
+  overlay.addEventListener('click', async event => {
+    if (event.target.closest('[data-bulk-close]')) { closeAccountDialog(overlay.id); return; }
+    const button = event.target.closest('[data-bulk-kind]'); if (!button || overlay._saving || !current()) return;
+    const ids = selected(), kind = button.dataset.bulkKind, date = overlay.querySelector('input[type="date"]').value;
+    const options = () => ({ kind, date, activeTaskId: State.timer?.taskId });
+    let check = api.select(State.tasks, shown, ids, todayStr(), options());
+    const report = code => error(overdueBulkCopy(({ date: 'invalidDate', selection: 'limit', changed: 'changed', focus: 'focus' })[code] || 'failed'));
+    if (!check.ok) { report(check.error); return; }
+    if (kind === 'delete' && !confirm(`${overdueBulkCopy('confirm')} (${ids.length})`)) return;
+    if (!beginCommitmentUiAction(button)) return;
+    overlay._saving = true;
+    overlay.querySelectorAll('input, button').forEach(node => { node.disabled = true; });
+    try {
+      const saved = await commitmentDataCommit(({ settings, tasks }) => {
+        check = api.select(tasks, shown, ids, todayStr(), options());
+        if (!check.ok) return null;
+        for (const target of check.tasks) {
+          if (!releaseActiveQuestCommitmentCandidate(settings, target).ok) return null;
+          if (kind === 'move') {
+            const note = window.StuckTaskV1?.notePostpone(target, date, todayStr());
+            target.date = date; if (note) Object.assign(target, note);
+          }
+        }
+        return { settings, tasks: kind === 'delete' ? tasks.filter(task => !ids.includes(String(task.id))) : tasks };
+      });
+      if (!current()) return;
+      if (!saved) { report(check.ok ? 'failed' : check.error); return; }
+      overlay._saving = false;
+      closeAccountDialog(overlay.id, { restoreFocus: false });
+      State._todayEarlierOpen = true; State._tasksFocusAfterCommit = '#main h2';
+      toast(`${overdueBulkCopy('saved')}: ${ids.length}`); render();
+    } catch {
+      if (current()) report('failed');
+    } finally {
+      overlay._saving = false; endCommitmentUiAction(button);
+      if (overlay.isConnected && current()) {
+        overlay.querySelectorAll('input, button').forEach(node => { node.disabled = false; });
+        button.focus();
+      }
+    }
+  });
+  sync(); mountAccountDialog(overlay, { initial: '#overdue-bulk-title' });
 }
 function openQuestCommitmentDialog(task, mode = 'take') {
   if (!task || task.done) return;
@@ -22685,7 +22773,7 @@ function renderToday() {
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${satoruIconHTML('status.warning', 'heading-glyph', '⏳')} ${t('⏳ Просрочено').replace(/^⏳\s*/, '')} (${overdue.length})</h3>
       <ul class="tasks">${overdue.map((task) => questRow(task, questGoalLinks)).join('')}</ul>
-      <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
+      <div class="overdue-bulk-actions"><button class="btn ghost" data-action="overdue-bulk-open" data-noi18n>${esc(overdueBulkCopy('open'))}</button><button class="btn ghost" data-action="move-overdue">${t('↪ Перенести всё на сегодня')}</button></div></div>` : '';
   // Control promises a visible decision, not a review hidden among optional history.
   const overdueSurface = currentPath() === 'control' ? controlReviewCardHTML()
     : overdueCard ? `<details class="today-earlier" ${State._todayEarlierOpen ? 'open' : ''}><summary>${t('Незавершённые дела')} · ${overdue.length}</summary>${overdueCard}</details>` : '';
@@ -24268,7 +24356,7 @@ function observeGuideV3BlockingSurfaces() {
 }
 function closeAccountDialog(id, { restoreFocus = true } = {}) {
   const overlay = document.getElementById(id); if (!overlay) return false;
-  if (['economy-confirm-modal', 'loot-modal', 'task-actual-modal'].includes(id) && overlay._saving) return false;
+  if (['economy-confirm-modal', 'loot-modal', 'task-actual-modal', 'overdue-bulk-modal'].includes(id) && overlay._saving) return false;
   const preferred = restoreFocus && _accountDialogReturnFocus && _accountDialogReturnFocus.isConnected ? _accountDialogReturnFocus : null;
   const target = preferred || (restoreFocus ? document.querySelector('[data-action="mobile-nav-more"], [data-action="show-guide"], [data-action="open-helper"]') : null);
   const app = document.getElementById('app'); if (app) app.inert = false;
@@ -33698,6 +33786,8 @@ async function onClick(e) {
     const a = (State.antihabits || []).find((x) => x.id === id); if (!a || !confirm(`${t('Удалить')} «${a.title}»?`)) return;
     const next = State.antihabits.filter((x) => x.id !== id);
     transactAntihabits(next, `anti:${id}`, '#habits-title');
+  } else if (action === 'overdue-bulk-open') {
+    openOverdueBulkDialog();
   } else if (action === 'move-overdue') {
     if (currentPath() !== 'trust') return;
     const overdueIds = (State.tasks || []).filter((task) => taskOverdue(task, today)).map((task) => task.id);
@@ -36003,7 +36093,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v330';
+const PWA_CACHE_VERSION = 'satoru-v331';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

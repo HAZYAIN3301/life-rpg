@@ -22763,3 +22763,17 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .chat-tools-details > summary { cursor: pointer; min-height: var(--touch-min); display: flex; align-items: center; color: var(--text-soft); }
 .chat-wake-status:empty { display: none; }
 .chat-request-error { margin-block: var(--sp-2); padding: var(--sp-2); color: var(--text-soft); font-size: var(--type-meta); }
+/* Bulk review: one scrollable list; actions remain reachable on a phone. */
+.overdue-bulk-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); display: flex; flex-direction: column; gap: 12px; text-align: left; overflow: hidden; }
+.overdue-bulk-dialog h3 { margin: 0; padding-inline-end: 32px; }
+.overdue-bulk-list { min-height: 60px; overflow-y: auto; overscroll-behavior: contain; }
+.overdue-bulk-all, .overdue-bulk-row { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
+.overdue-bulk-row { padding-block: 6px; }
+.overdue-bulk-row span { min-width: 0; overflow-wrap: anywhere; }
+.overdue-bulk-row small { display: block; color: var(--muted); }
+.overdue-bulk-dialog input[type="checkbox"] { width: 20px; height: 20px; min-width: 20px; flex: 0 0 20px; accent-color: var(--accent); }
+.overdue-bulk-date { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.overdue-bulk-date input { min-height: 44px; min-width: 0; max-width: 100%; flex: 1; }
+.overdue-bulk-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.overdue-bulk-actions .btn { min-height: 44px; }
+.overdue-bulk-error { margin: 0; color: var(--text); font-size: 14px; }
