@@ -22233,14 +22233,27 @@ details.pet-summary > :not(summary) {
 /* Дедлайны целей в календаре. Кнопка выбора дня несёт только пометку — ссылку внутрь
    кнопки вкладывать нельзя, — а сама цель открывается из шапки выбранного дня. */
 .cal-goal-mark {
-  position: absolute;
-  inset-block-start: 2px;
-  inset-inline-end: 3px;
+  position: static;
+  flex-shrink: 0;
   font-size: var(--type-floor);
   line-height: 1;
   pointer-events: none;
 }
 .calv-day, .cm-cell { position: relative; }
+.chat-thread-bar { display:flex; gap:var(--sp-2); align-items:center; min-width:0; }
+.chat-thread-bar select { flex:1; min-width:0; height:42px; appearance:none; padding-inline:var(--sp-2); border:1px solid var(--line); border-radius:var(--radius-sm,8px); background:var(--panel2); color:var(--text); }
+.chat-tools-details[open] { max-block-size:40dvh; overflow-y:auto; flex-shrink:0; }
+.chat-thread-bar button { flex-shrink:0; min-height:42px; }
+.chat-thread-status { margin:0; color:var(--warn); font-size:var(--type-meta); }
+.chat-thread-status:empty { display:none; }
+.chat-context-label { display:grid; gap:var(--sp-1); margin-block:var(--sp-2); font-size:var(--type-meta); }
+.chat-context-label input, .chat-context-label textarea { width:100%; }
+.habits-attention { padding:var(--sp-3); margin-block:var(--sp-3); border:1px solid var(--line-soft); border-radius:var(--radius); }
+.habits-attention > div { display:flex; align-items:center; gap:var(--sp-2); }
+.habits-attention h3 { margin:0; font:600 var(--type-heading)/var(--leading-ui) var(--font-ui); }
+.habits-attention p { margin-block:var(--sp-2); color:var(--muted); }
+.calv-day .cal-goal-mark, .cm-cell .cal-goal-mark { align-self: center; min-block-size: var(--type-meta); }
+.calv-day:not(.has-goal-deadline)::after, .cm-cell:not(.has-goal-deadline)::after { content:''; display:block; min-block-size:var(--type-meta); }
 .calv-day.has-goal-deadline, .cm-cell.has-goal-deadline { border-color: color-mix(in srgb, var(--accent) 46%, var(--line-soft)); }
 .cal-goal-deadlines {
   display: flex;

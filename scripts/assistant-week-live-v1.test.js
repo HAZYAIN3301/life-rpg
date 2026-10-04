@@ -17,6 +17,7 @@ test('failed retry keeps one question and excludes transport errors from provide
  const input={value:'',focus(){}},payloads=[];
  let attempt=0;
  const c={State:{me:{id:'a'},chatLog:[]},Store:{_writeEpoch:1},canUseAi:()=>true,guideV3ContextActive:()=>false,
+  chatThreadSession:()=>({current:{id:'test-chat'}}),chatThreadBoot:async()=>{},chatThreadSave:async()=>{},chatThreadPaint(){},
   renderChatMessages(){},document:{getElementById:()=>input},CHAT_TIMEOUT_MS:1000,GOJO_MANUAL:'manual',
   lang:()=> 'ru',aiAnswerLangLine:()=>'',chatUserContext:()=> 'fresh context',aiProvider:()=> 'test',t:s=>s,aiHandleErr:()=>false,
   track(){},parseChatActions:text=>({clean:text,actions:[]}),window:{ShadowPersonaV1:{systemInstruction:()=> 'persona'},AiRequestV1:require('../public/ai-request-v1'),AiMemoryPolicyV1:require('../public/ai-memory-policy-v1')},

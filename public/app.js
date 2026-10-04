@@ -1517,6 +1517,7 @@ const I18N_EXTRA = {
   'Завершить вечер': { en: 'Close the evening', de: 'Den Abend abschließen', uk: 'Завершити вечір', es: 'Cerrar la noche' },
   'Настроить границу входа': { en: 'Set an entry boundary', de: 'Einstiegsgrenze einrichten', uk: 'Налаштувати межу входу', es: 'Configurar el límite de entrada' },
   'рабочий день закончен. Сохрани незавершённое и убери устройства.': { en: 'the workday is over. Save unfinished work and put devices away.', de: 'der Arbeitstag ist beendet. Sichere Unerledigtes und lege die Geräte weg.', uk: 'робочий день завершено. Збережи незавершене й прибери пристрої.', es: 'la jornada ha terminado. Guarda lo pendiente y aparta los dispositivos.' },
+  'Сохрани незавершённое на завтра. На сегодня можно остановиться.': { en:'Save unfinished work for tomorrow. You can stop for today.', de:'Halte offene Aufgaben für morgen fest. Für heute darfst du aufhören.', uk:'Збережи незавершене на завтра. На сьогодні можна зупинитися.', es:'Guarda lo pendiente para mañana. Puedes parar por hoy.' },
   'Сон сейчас защищает твои цели': { en: 'Sleep protects your goals now', de: 'Schlaf schützt jetzt deine Ziele', uk: 'Сон зараз захищає твої цілі', es: 'Dormir protege ahora tus metas' },
   'Первый шаг на завтра уже виден': { en: 'The first step for tomorrow is already clear', de: 'Der erste Schritt für morgen ist schon klar', uk: 'Перший крок на завтра вже видно', es: 'El primer paso de mañana ya está claro' },
   'Не удалось подготовить границу отдыха.': { en: 'Could not prepare the rest boundary.', de: 'Die Erholungsgrenze konnte nicht vorbereitet werden.', uk: 'Не вдалося підготувати межу відпочинку.', es: 'No se pudo preparar el límite de descanso.' },
@@ -12826,7 +12827,7 @@ function phoneCopy(key) {
   };
   return copy[key]?.[['ru', 'en', 'de', 'uk', 'es'].indexOf(lang())] || copy[key]?.[1] || key;
 }
-function openContextHelp(mode, opener) {
+async function openContextHelp(mode, opener) {
   if (State._chatBusy) { openHelperChat(opener); return; }
   const ws = State.weekStart || weekStart(todayStr());
   const context = mode === 'entry'
@@ -12838,7 +12839,10 @@ function openContextHelp(mode, opener) {
     ? 'Короткий Заход в выбранное дело. Если препятствие ещё неизвестно, весь ответ — один короткий вопрос о нём: без советов, вариантов и второго вопроса. Когда человек уже объяснил препятствие, не переспрашивай: предложи ровно один физический шаг до 10 минут, максимум двумя короткими предложениями. Не перечисляй варианты и весь план, не добавляй вопрос «попробуем?». Новую задачу не создавай: уже выбрано дело. Карточка создания допустима только после отдельной явной просьбы человека.'
     : mode === 'review' ? 'Разбираем только указанный период. Сопоставь выполненные и открытые дела; причины пропуска неизвестны — спроси, не выдумывай. Один вопрос или один следующий шаг за сообщение.'
     : 'Планируем указанную неделю. Сначала уточни главный результат и постоянные занятия, затем оценки времени. Не обещай сохранение времени или регулярного расписания без доступного действия. Изменения только через подтверждаемые действия.';
-  State._phoneHelp = { mode, owner: State.me?.id, epoch: Store._writeEpoch, context, instruction };
+  const route = { mode, context, instruction };
+  try { await chatThreadBoot(); await chatThreadSwitch('', route); }
+  catch { toast(chatCopy('saveError')); return; }
+  State._phoneHelp = { ...route, owner: State.me?.id, epoch: Store._writeEpoch };
   if (document.getElementById('entry-modal')) closeLegacyDialog('entry-modal');
   openHelperChat(opener);
   sendChat(phoneCopy(mode === 'entry' ? 'entry' : mode === 'review' ? 'review' : 'plan'));
@@ -15731,7 +15735,13 @@ function renderHabitsView() {
     <button role="tab" aria-selected="${tab === 'break'}" tabindex="${tab === 'break' ? '0' : '-1'}" class="navsubtab ${tab === 'break' ? 'active' : ''}" data-action="habits-tab" data-tab="break">${satoruIconHTML('difficulty.protected', 'tab-emblem', '🛡')} ${t('🛡 Срывы').replace(/^🛡\s*/, '')}</button>
     <button role="tab" aria-selected="${tab === 'method'}" tabindex="${tab === 'method' ? '0' : '-1'}" class="navsubtab ${tab === 'method' ? 'active' : ''}" data-action="habits-tab" data-tab="method">${satoruIconHTML('nav.skills', 'tab-glyph', '📖')} ${t('📖 Метод').replace(/^📖\s*/, '')}</button></div>`;
   const body = tab === 'method' ? atomicMethodHTML() : tab === 'break' ? habitsBreakHTML() : habitsBuildHTML();
-  return `<section class="habits-shell" aria-labelledby="habits-title">${title}${habitsTodayHTML()}${habitUndoHTML()}${State._habitError ? `<p class="habits-error" role="alert">${esc(State._habitError)}</p>` : ''}${tabs}${body}</section>`;
+  return `<section class="habits-shell" aria-labelledby="habits-title">${title}${habitsAttentionHTML()}${habitsTodayHTML()}${habitUndoHTML()}${State._habitError ? `<p class="habits-error" role="alert">${esc(State._habitError)}</p>` : ''}${tabs}${body}</section>`;
+}
+function habitsAttentionHTML() {
+  const native = window.satoruNativeAttention === true && !!window.webkit?.messageHandlers?.satoruShell?.postMessage;
+  const label = ({ru:'Меньше залипать',en:'Less scrolling',de:'Weniger scrollen',uk:'Менше залипати',es:'Menos scroll'})[lang()] || 'Less scrolling';
+  const detail = native ? ({ru:'Выбери приложения и поставь границу.',en:'Choose apps and set a limit.',de:'Apps auswählen und ein Limit setzen.',uk:'Обери застосунки та встанови межу.',es:'Elige apps y establece un límite.'})[lang()] : ({ru:'Для блокировки приложений нужен Satoru 1.0 (11) на iPhone.',en:'App blocking requires Satoru 1.0 (11) on iPhone.',de:'App-Sperren erfordern Satoru 1.0 (11) auf dem iPhone.',uk:'Для блокування застосунків потрібен Satoru 1.0 (11) на iPhone.',es:'Para bloquear apps necesitas Satoru 1.0 (11) en iPhone.'})[lang()];
+  return `<section class="habits-attention"><div>${satoruIconHTML('difficulty.protected','heading-glyph')}<h3>${esc(label)}</h3></div><p>${esc(detail || '')}</p><button type="button" class="btn ghost" data-action="${native?'habits-native-attention':'open-attention-settings'}">${native?t('Настроить'):t('Правила внимания')}</button></section>`;
 }
 function habitsRecoveryHTML() {
   const invalid = State._habitsLoadError === 'invalid';
@@ -18142,6 +18152,97 @@ function handleHelperKeydown(event) {
   if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
   else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
 }
+function chatCopy(key) {
+  const strings = {
+    chats:['Чаты','Chats','Chats','Чати','Chats'], new:['Новый чат','New chat','Neuer Chat','Новий чат','Nuevo chat'],
+    title:['Название','Title','Titel','Назва','Título'], context:['Контекст этого чата','Context for this chat','Kontext für diesen Chat','Контекст цього чату','Contexto de este chat'],
+    save:['Сохранить','Save','Speichern','Зберегти','Guardar'], saved:['Сохранено','Saved','Gespeichert','Збережено','Guardado'],
+    loading:['Загружаю чаты…','Loading chats…','Chats werden geladen…','Завантажую чати…','Cargando chats…'],
+    saveError:['Чат не сохранён. Повтори сохранение.','Chat not saved. Retry saving.','Chat nicht gespeichert. Erneut speichern.','Чат не збережено. Повтори збереження.','Chat no guardado. Vuelve a guardarlo.'],
+    conflict:['Чат изменён на другом устройстве. Сохрани копию.','Chat changed on another device. Save a copy.','Chat auf anderem Gerät geändert. Kopie speichern.','Чат змінено на іншому пристрої. Збережи копію.','Chat modificado en otro dispositivo. Guarda una copia.'],
+    copy:['Сохранить копию','Save a copy','Kopie speichern','Зберегти копію','Guardar una copia'],
+    scope:['Переписка отдельная; память и актуальные дела общие.','Separate conversation; shared memory and current tasks.','Eigener Verlauf; gemeinsame Erinnerung und aktuelle Aufgaben.','Окрема розмова; спільна пам’ять і актуальні справи.','Conversación separada; memoria y tareas actuales compartidas.'],
+    history:['Старые предложения действий нужно запросить заново.','Request past action proposals again.','Frühere Aktionsvorschläge erneut anfordern.','Старі пропозиції дій потрібно запросити знову.','Solicita de nuevo las propuestas de acciones anteriores.'],
+  };
+  return strings[key]?.[['ru','en','de','uk','es'].indexOf(lang())] || strings[key]?.[1] || key;
+}
+let _chatThreadSession = null;
+function chatThreadSession() {
+  if (!_chatThreadSession || _chatThreadSession.owner !== State.me?.id || _chatThreadSession.epoch !== Store._writeEpoch)
+    _chatThreadSession = { owner:State.me?.id, epoch:Store._writeEpoch, rows:[], current:null, drafts:{}, ready:false, error:'' };
+  return _chatThreadSession;
+}
+function chatThreadCurrent(s) { return s === _chatThreadSession && s.owner === State.me?.id && s.epoch === Store._writeEpoch; }
+async function chatThreadFetch(url, options) {
+  const r = await fetch(url, { cache:'no-store', ...options });
+  const d = await r.json(); if (!r.ok) throw Object.assign(new Error(d.error), { status:r.status }); return d;
+}
+function chatThreadInstall(s, row) {
+  s.current = row; State.chatLog = row?.messages || [];
+  if (row?.route) State._phoneHelp = { ...row.route, owner:s.owner, epoch:s.epoch };
+  else delete State._phoneHelp;
+  delete State._chatPlanAttachment; s.error = '';
+}
+async function chatThreadBoot() {
+  const s = chatThreadSession(); if (s.ready) return s;
+  if (s.loading) return s.loading;
+  s.loading = (async () => {
+    const d = await chatThreadFetch('/api/ai/threads');
+    if (!chatThreadCurrent(s)) throw new Error('stale_chat');
+    s.rows = d.threads;
+    const latest = s.rows.find(r => !r.archived);
+    if (latest && !State.chatLog.length && !s.current) {
+      const row = await chatThreadFetch('/api/ai/threads/' + latest.id);
+      if (!chatThreadCurrent(s)) throw new Error('stale_chat');
+      chatThreadInstall(s, row);
+    }
+    s.ready = true; s.error = ''; return s;
+  })().catch(e => { if (chatThreadCurrent(s)) s.error = chatCopy('saveError'); throw e; })
+    .finally(() => { s.loading = null; });
+  return s.loading;
+}
+function chatThreadPayload(s) {
+  const row = s.current;
+  return { ...row, messages:State.chatLog.filter(m => !m.transient).map(m => {
+    if (!m.id) m.id = 'message_' + uid();
+    return { id:m.id, role:m.role, content:m.content, ...(m.failed ? {failed:true} : {}) };
+  }) };
+}
+async function chatThreadSave() {
+  const s = await chatThreadBoot();
+  if (!chatThreadCurrent(s)) throw new Error('stale_chat');
+  if (!s.current) s.current = { id:'chat_' + uid(), revision:0, title:State.chatLog.find(m=>m.role==='user')?.content.slice(0,100) || chatCopy('new'), context:'', route:null, messages:[] };
+  if (s.current.revision === 0 && s.current.title === chatCopy('new') && State.chatLog.length) s.current.title = State.chatLog.find(m=>m.role==='user')?.content.slice(0,100) || s.current.title;
+  const payload = chatThreadPayload(s), id = s.current.id;
+  try {
+    const row = await chatThreadFetch('/api/ai/threads/' + id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+    if (!chatThreadCurrent(s) || s.current?.id !== id) throw new Error('stale_chat');
+    s.current = row; s.rows = [{...row, messages:undefined}, ...s.rows.filter(r=>r.id!==id)]; s.error = ''; s.conflict = false;
+    chatThreadPaint(); return row;
+  } catch (e) { if (chatThreadCurrent(s)) { s.conflict = e.status === 409; s.error = chatCopy(s.conflict ? 'conflict' : 'saveError'); chatThreadPaint(); } throw e; }
+}
+async function chatThreadSwitch(id, route = null) {
+  if (State._chatBusy || State.chatLog.some(m=>m.actionBusy)) return;
+  const s = await chatThreadBoot();
+  if (s.switching) return;
+  s.switching = true;
+  try {
+  s.drafts[s.current?.id || 'new'] = document.getElementById('chat-input')?.value || '';
+  if (s.current?.revision || State.chatLog.length || s.current?.context) await chatThreadSave();
+  const row = id ? await chatThreadFetch('/api/ai/threads/' + id) : { id:'chat_' + uid(), revision:0, title:chatCopy('new'), context:'', route, messages:[] };
+  if (!chatThreadCurrent(s)) return;
+  chatThreadInstall(s, row);
+  if (document.getElementById('helper-modal')) { openHelperChat(); document.getElementById('chat-input').value = s.drafts[row.id] || ''; }
+  } finally { s.switching = false; }
+}
+function chatThreadPaint() {
+  const node = document.getElementById('chat-thread-bar'); if (!node) return;
+  const s = chatThreadSession(), row = s.current;
+  node.innerHTML = `<label class="sr-only" for="chat-thread-select">${chatCopy('chats')}</label><select id="chat-thread-select" ${State._chatBusy?'disabled':''}><option value="">${chatCopy('new')}</option>${s.rows.map(r=>`<option value="${esc(r.id)}" ${row?.id===r.id?'selected':''}>${esc(r.title)}</option>`).join('')}</select><button type="button" class="btn ghost sm" data-action="chat-thread-new" ${State._chatBusy?'disabled':''}>${chatCopy('new')}</button>`;
+  node.querySelector('select').onchange = event => { chatThreadSwitch(event.target.value).catch(()=>chatThreadPaint()); };
+  const status = document.getElementById('chat-thread-status');
+  if (status) status.innerHTML = s.error ? `${esc(s.error)} <button type="button" class="link-btn" data-action="${s.conflict?'chat-thread-copy':'chat-thread-save'}">${chatCopy(s.conflict?'copy':'save')}</button>` : !s.ready ? chatCopy('loading') : '';
+}
 function openHelperChat(opener = document.activeElement) {
   // The outgoing More sheet must release focus before the next modal owns it.
   // Its closing animation otherwise consumes Escape and can unset helper inert.
@@ -18161,6 +18262,8 @@ function openHelperChat(opener = document.activeElement) {
     ov.addEventListener('click', (event) => { if (event.target === ov) closeHelperChat(); });
     document.getElementById('app')?.setAttribute('inert', ''); document.body.appendChild(ov); lockHelperDialogScroll();
   }
+  const chatSession = chatThreadSession();
+  if (!State._phoneHelp && chatSession.current?.route) State._phoneHelp = {...chatSession.current.route, owner:chatSession.owner, epoch:chatSession.epoch};
   const noKey = !canUseAi();
   const proHint = (State.aiKeys && State.aiKeys.houseAvailable && !isPro());
   const companion = ensureCompanion(), shadowTier = compTierIdx(companion.bond);
@@ -18168,22 +18271,26 @@ function openHelperChat(opener = document.activeElement) {
   ov.innerHTML = `<section class="ai-box chat-box" role="dialog" aria-modal="true" aria-labelledby="helper-title" aria-describedby="helper-capabilities"><button type="button" class="modal-x" data-action="helper-close" aria-label="${t('Закрыть')}">✕</button>
     <div class="shadow-chat-head">
       <div class="shadow-chat-head-art">${shadowVideo(shadowTier, State._chatBusy ? 'thinking' : 'listening', 'helper')}</div>
-      <div><h2 id="helper-title" tabindex="-1">${esc(companion.name)}</h2><p id="helper-capabilities" class="muted">${t('Секретарь Satoru · видит состояние, объясняет и помогает действовать')}</p></div>
+      <div><h2 id="helper-title" tabindex="-1">${esc(companion.name)}</h2><p id="helper-capabilities" class="muted">${chatCopy('chats')}</p></div>
     </div>
     ${noKey ? `<p class="muted">${esc(t(proHint ? 'Тень доступна с Pro или с твоим ключом ИИ.' : 'Подключи ИИ, чтобы обсуждать планы и действовать вместе с Тенью.'))}<br>${proHint ? `<button class="btn pro-cta" data-action="show-paywall" data-feature="ИИ-ассистент" style="margin-top:10px">💎 ${t('Оформить Pro')}</button> ` : ''}<button class="btn ${proHint ? 'ghost' : ''}" data-action="helper-to-settings" style="margin-top:10px">⚙️ ${t('Подключить ИИ')}</button></p>`
-      : `<div id="chat-msgs" class="chat-msgs" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="${State._chatBusy ? 'true' : 'false'}"></div>
+      : `<div id="chat-thread-bar" class="chat-thread-bar"></div><p id="chat-thread-status" class="chat-thread-status" role="status"></p><div id="chat-msgs" class="chat-msgs" role="log" aria-live="polite" aria-relevant="additions text" aria-busy="${State._chatBusy ? 'true' : 'false'}"></div>
          <details class="chat-tools-details"><summary>${esc(t('Ещё'))}</summary><div class="chat-context-tools" role="group" aria-label="${t('Контекст помощника')}">
            <button type="button" class="btn ghost sm" data-action="chat-plan-file">${satoruIconHTML('action.import', 'button-glyph', '📎')} ${t('План из файла')}</button>
            <button type="button" class="btn ghost sm" data-action="helper-memory">${satoruIconHTML('nav.shadow', 'button-glyph')} ${esc(actionableTranslate('Память помощника'))}</button>
            <input id="chat-plan-file" type="file" multiple accept=".txt,.md,.markdown,.json,.csv,text/plain,text/markdown,application/json,text/csv" hidden />
            ${assistantWakeSupported() ? `<button type="button" class="btn ghost sm assistant-wake-toggle" data-action="assistant-wake-toggle" aria-pressed="${_assistantWakeArmed ? 'true' : 'false'}"></button>` : ''}
          </div>
+         <label class="chat-context-label">${chatCopy('title')}<input id="chat-thread-title" maxlength="120" value="${esc(chatSession.current?.title || '')}" /></label>
+         <label class="chat-context-label">${chatCopy('context')}<textarea id="chat-thread-context" maxlength="6000" rows="2">${esc(chatSession.current?.context || '')}</textarea></label>
+         <button type="button" class="btn ghost sm" data-action="chat-thread-settings">${chatCopy('save')}</button>
+         <p class="chat-context-note">${chatCopy('scope')}</p><p class="chat-context-note">${chatCopy('history')}</p>
          <p class="chat-context-note">${t('Вижу цели и задачи Satoru. Файлы компьютера — только после выбора.')} ${assistantWakeSupported() ? t('Голос распознаёт браузер только после твоего разрешения; остановить прослушивание можно этой же кнопкой.') : ''}</p>
          <p class="chat-context-note">${t('До 5 файлов, каждый до 512 КБ. При отправке вопроса модель получит найденные фрагменты и имена файлов.')}</p>
          </details>${attached ? `<div class="chat-file-chip"><span>${satoruIconHTML('action.import', 'button-glyph')} <b>${esc(attached.name)}</b></span><button type="button" class="link-btn" data-action="chat-plan-remove">${t('Убрать файл')}</button></div>` : ''}
          <p id="assistant-wake-status" class="chat-wake-status" role="status" aria-live="polite"></p>
          <form id="chat-form" class="chat-form"><label class="sr-only" for="chat-input">${t('Сообщение помощнику')}</label><input id="chat-input" data-guide-target="helper-input" placeholder="${t('Спроси про любую функцию…')}" autocomplete="off" /><button type="submit" class="cap-add" aria-label="${t('Отправить')}">↵</button></form>`}</section>`;
-  if (!noKey) { if (memoryDraft !== null) document.getElementById('chat-input').value = memoryDraft; renderChatMessages(); assistantWakePaint(); setTimeout(() => { if (!ov.isConnected) return; const i = ov.querySelector('#chat-input'); if (i) { if (State._chatVoiceDraft != null) { i.value = State._chatVoiceDraft; delete State._chatVoiceDraft; } if (!ov.contains(document.activeElement)) i.focus(); } }, 30); }
+  if (!noKey) { chatThreadPaint(); if (!chatSession.ready) chatThreadBoot().then(()=>{ chatThreadPaint(); renderChatMessages(); const title=document.getElementById('chat-thread-title'),context=document.getElementById('chat-thread-context'); if(title)title.value=chatSession.current?.title||''; if(context)context.value=chatSession.current?.context||''; }).catch(()=>chatThreadPaint()); if (memoryDraft !== null) document.getElementById('chat-input').value = memoryDraft; renderChatMessages(); assistantWakePaint(); setTimeout(() => { if (!ov.isConnected) return; const i = ov.querySelector('#chat-input'); if (i) { if (State._chatVoiceDraft != null) { i.value = State._chatVoiceDraft; delete State._chatVoiceDraft; } if (!ov.contains(document.activeElement)) i.focus(); } }, 30); }
   else setTimeout(() => focusPathChoiceTarget(document.getElementById('helper-title')), 30);
 }
 function renderChatMessages() {
@@ -18385,10 +18492,14 @@ const CHAT_TIMEOUT_MS = 90000;
 let _chatRequest = null;
 function stopChatRequest() { if (_chatRequest) _chatRequest.cancel(); }
 async function sendChat(text) {
-  text = String(text || '').trim(); if (!text || State._chatBusy) return;
+  text = String(text || '').trim(); if (!text || State._chatBusy || chatThreadSession().switching) return;
   if (!canUseAi()) { openHelperChat(); return; }
   const accountId = State.me?.id, writeEpoch = Store._writeEpoch;
-  const staleChat = () => accountId !== State.me?.id || writeEpoch !== Store._writeEpoch;
+  let threadId = null;
+  const staleChat = () => accountId !== State.me?.id || writeEpoch !== Store._writeEpoch || (threadId && threadId !== chatThreadSession().current?.id);
+  State._chatBusy = true;
+  try { await chatThreadBoot(); } catch { if (!staleChat()) { State._chatBusy=false; chatThreadPaint(); } return; }
+  if (staleChat()) return;
   const guideRequestId = guideV3ContextActive('jarvis', 'helper-response-seen') ? `guide-ai-${uid()}` : '';
   State._guideV3AssistantRequestId = guideRequestId;
   State._guideV3AssistantResponseId = '';
@@ -18401,6 +18512,9 @@ async function sendChat(text) {
   State._chatBusy = true; renderChatMessages();
   const inp = document.getElementById('chat-input'); if (inp) inp.value = '';
   try {
+    await chatThreadSave();
+    if (staleChat()) return;
+    threadId = chatThreadSession().current.id;
     const actionContract = window.AssistantActionsV1 ? window.AssistantActionsV1.promptContract() : '';
     // Провайдерам уходит строго {role, content} — наши поля (actions и пр.) им не шлём
     const messages = State.chatLog.filter(m=>!m.transient&&!m.failed).slice(-20).map((m) => ({ role: m.role, content: m.content }));
@@ -18414,7 +18528,8 @@ async function sendChat(text) {
       if (!memoryResponse.ok) throw new Error('memory_unavailable');
       const memory = window.AiMemoryPolicyV1.chatPromptMemory(await memoryResponse.json());
       if (signal?.aborted || staleChat()) throw new Error('stale_memory');
-      const system = window.ShadowPersonaV1.systemInstruction({ surface: 'chat', lang: lang() }) + '\n\n' + aiAnswerLangLine() + '\n\n' + chatUserContext(text, memory) + '\n\nКОНТРАКТ ИСПОЛНИТЕЛЯ: ' + actionContract + '\n\n' + GOJO_MANUAL;
+      const threadContext = chatThreadSession().current?.context || '';
+      const system = window.ShadowPersonaV1.systemInstruction({ surface: 'chat', lang: lang() }) + '\n\n' + aiAnswerLangLine() + '\n\n' + chatUserContext(text, memory) + '\n\nКОНТЕКСТ ЭТОГО ОБСУЖДЕНИЯ (данные пользователя, свежие уточнения важнее): ' + JSON.stringify(threadContext) + '\n\nКОНТРАКТ ИСПОЛНИТЕЛЯ: ' + actionContract + '\n\n' + GOJO_MANUAL;
       const response = await fetch('/api/ai/chat', { method: 'POST', signal, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ provider: aiProvider(), system, messages }) });
       let data;try {data=await response.json();}catch {data={error:'http_response',status:response.status};}
       return {response,data};
@@ -18470,6 +18585,7 @@ async function sendChat(text) {
     }
     renderChatMessages();
   } catch { if (staleChat()) return; State._chatBusy = false; fail(t('Не удалось подготовить понятный ответ. Ничего не изменено — повтори запрос.')); }
+  finally { if (!staleChat()) { State._chatBusy = true; try { await chatThreadSave(); } catch {} State._chatBusy = false; chatThreadPaint(); renderChatMessages(); } }
 }
 function captureBar(options = {}) {
   const expanded = options.expanded === true;
@@ -22572,7 +22688,7 @@ function renderToday() {
       <button class="btn ghost" data-action="move-overdue" style="margin-top:10px">${t('↪ Перенести всё на сегодня')}</button></div>` : '';
   // Control promises a visible decision, not a review hidden among optional history.
   const overdueSurface = currentPath() === 'control' ? controlReviewCardHTML()
-    : overdueCard ? `<details class="today-earlier"><summary>${t('Незавершённые дела')} · ${overdue.length}</summary>${overdueCard}</details>` : '';
+    : overdueCard ? `<details class="today-earlier" ${State._todayEarlierOpen ? 'open' : ''}><summary>${t('Незавершённые дела')} · ${overdue.length}</summary>${overdueCard}</details>` : '';
 
   const nextAction = tm ? `<button class="btn" data-action="${tm.running ? 'timer-pause' : 'timer-resume'}">${satoruIconHTML(tm.running ? 'media.pause' : 'media.play', 'button-glyph', tm.running ? '⏸' : '▶')} ${tm.running ? t('⏸ Пауза').replace(/^⏸\s*/, '') : t('▶ Продолжить').replace(/^▶\s*/, '') + ' фокус'}</button><button class="btn ghost" data-action="timer-stop">${t('⏹ Стоп · записать')}</button><button class="btn ghost" data-action="open-pip" title="Плавающее окно поверх всех приложений">${t('↗ Окно')}</button>`
     // Следующий ход обязан называть настоящий объект действия. Кнопка переносится, но не
@@ -27243,13 +27359,7 @@ function openNativeAttention() {
   catch { return false; }
 }
 function eveningCoachLine() {
-  const name = String(State.me?.name || '').trim();
-  const goals = (State.goals || []).filter((goal) => !goal.archived && !goal.completedAt && goal.status !== 'paused').slice(0, 2).map((goal) => goal.title);
-  const next = (State.tasks || []).find((task) => task.date === todayStr() && !task.done);
-  let line = `${name ? `${name}, ` : ''}${t('рабочий день закончен. Сохрани незавершённое и убери устройства.')}`;
-  if (goals.length) line += ` ${t('Сон сейчас защищает твои цели')}: ${goals.join(' · ')}.`;
-  if (next) line += ` ${t('Первый шаг на завтра уже виден')}: ${next.title}.`;
-  return line;
+  return t('Сохрани незавершённое на завтра. На сегодня можно остановиться.');
 }
 function speakEveningCoach() {
   if (ttsOn()) ttsSpeak(eveningCoachLine(), null, 'evening');
@@ -30164,6 +30274,8 @@ function renderCaptureWidget(name) {
   app.innerHTML = `<div class="capture-stage" data-widget="${esc(name)}">${inner}</div>`;
 }
 function render() {
+  const earlier = document.querySelector('.today-earlier');
+  if (earlier) State._todayEarlierOpen = earlier.open;
   syncDeviceAccount();
   const capture = captureWidgetRequested();
   if (capture && State.phase === 'app') { renderCaptureWidget(capture); return; }
@@ -32606,6 +32718,23 @@ async function onClick(e) {
     ttsStop();
     render();
     return;
+  }
+  if (action === 'habits-native-attention') { openNativeAttention(''); return; }
+  if (action === 'chat-thread-new') { try { await chatThreadSwitch(''); } catch {} return; }
+  if (['chat-thread-save','chat-thread-settings','chat-thread-copy'].includes(action)) {
+    if (State._chatBusy || chatThreadSession().switching) return;
+    const s = chatThreadSession(); State._chatBusy = true;
+    try {
+      await chatThreadBoot();
+      if (!chatThreadCurrent(s)) return;
+      if (!s.current) s.current = { id:'chat_' + uid(), revision:0, title:chatCopy('new'), context:'', route:null, messages:[] };
+      if (action === 'chat-thread-copy') s.current = {...s.current, id:'chat_' + uid(), revision:0};
+      if (action === 'chat-thread-settings') {
+        s.current.title = document.getElementById('chat-thread-title')?.value.trim() || chatCopy('new');
+        s.current.context = document.getElementById('chat-thread-context')?.value || '';
+      }
+      await chatThreadSave(); if (chatThreadCurrent(s)) toast(chatCopy('saved'));
+    } catch {} finally { if (chatThreadCurrent(s)) { State._chatBusy = false; chatThreadPaint(); } } return;
   }
   if (action === 'chat-actions-apply') {
     const mi = Number(el.dataset.mi), msg = State.chatLog[mi];
@@ -35874,7 +36003,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v329';
+const PWA_CACHE_VERSION = 'satoru-v330';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

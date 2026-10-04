@@ -12,6 +12,7 @@ test('chat memory filters scopes, sensitive and dismissed records, preserves pro
 });
 function harness(read){
  const payloads=[],input={value:'',focus(){}},c={State:{me:{id:'a'},chatLog:[],profile:{text:'STALE'}},Store:{_writeEpoch:1},canUseAi:()=>true,guideV3ContextActive:()=>false,
+ chatThreadSession:()=>({current:{id:'test-chat'}}),chatThreadBoot:async()=>{},chatThreadSave:async()=>{},chatThreadPaint(){},
  renderChatMessages(){},document:{getElementById:()=>input},CHAT_TIMEOUT_MS:1000,GOJO_MANUAL:'manual',lang:()=> 'ru',aiAnswerLangLine:()=>'',chatUserContext:(_,m)=>m.legacyText+m.structuredText,aiProvider:()=> 'test',t:s=>s,aiHandleErr:()=>false,track(){},parseChatActions:text=>({clean:text,actions:[]}),
  window:{ShadowPersonaV1:{systemInstruction:()=> 'persona'},AiRequestV1:R,AiMemoryPolicyV1:M},
  fetch:async(url,options)=>{if(url==='/api/ai/memory')return read(options);payloads.push(JSON.parse(options.body));return {ok:true,json:async()=>({text:'answer'})};}};
@@ -30,6 +31,8 @@ test('failed or partial memory prevents AI transmission and retains question for
 test('late memory after account switch or cancellation is never transmitted',async()=>{
  for(const action of ['account','epoch','cancel']){
   let release;const h=harness(()=>new Promise(resolve=>release=resolve));const pending=h.c.sendChat('old account');
+  for(let i=0;i<20&&!release;i++)await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(typeof release,'function','memory request started after durable chat save');
   if(action==='account')h.c.State.me.id='b';else if(action==='epoch')h.c.Store._writeEpoch++;else h.c.stopChatRequest();
   release({ok:true,json:async()=>view([entry('a','old private context')])});await pending;assert.equal(h.payloads.length,0);
  }

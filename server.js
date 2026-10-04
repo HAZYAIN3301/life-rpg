@@ -42,6 +42,7 @@ const SettingsInventoryPolicyV1 = require('./public/settings-inventory-policy-v1
 const INVENTORY_REPLACEMENT = Symbol('inventory replacement');
 const ShadowPersonaV1 = require('./public/shadow-persona-v1.js');
 const AiMemoryPolicyV1 = require('./public/ai-memory-policy-v1.js');
+const ChatThreadsV1 = require('./server-chat-threads-v1.js');
 const TelemetryConsentV1 = require('./public/telemetry-consent-v1.js');
 const PartySessionV1 = require('./public/party-session-v1.js');
 const PartyDenV1 = require('./server-party-den-v1.js');
@@ -6153,6 +6154,21 @@ const server = http.createServer(async (req, res) => {
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
     return sendJson(res, 200, Object.assign({ houseAvailable: houseAvailable() }, aiQuota(user)));
   }
+  // Conversations belong to the signed-in account, never to a client-supplied owner.
+  if (u.split('?')[0] === '/api/ai/threads' || u.split('?')[0].startsWith('/api/ai/threads/')) {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const chats = ChatThreadsV1.createService({ userDir: userDataDir, write: writeJsonAtomic });
+    const id = u.split('?')[0].slice('/api/ai/threads/'.length);
+    try {
+      if (u.split('?')[0] === '/api/ai/threads' && req.method === 'GET') return sendJson(res, 200, { threads: chats.list(uid) });
+      if (id && req.method === 'GET') { const chat = chats.read(uid, id); return sendJson(res, chat ? 200 : 404, chat || { error: 'chat_not_found' }); }
+      if (id && req.method === 'PUT') {
+        const payload = JSON.parse(await readBody(req, 600 * 1024));
+        return sendJson(res, 200, chats.save(uid, id, payload));
+      }
+      return sendJson(res, 405, { error: 'method_not_allowed' });
+    } catch (e) { return sendJson(res, e.status || (e instanceof SyntaxError ? 400 : 500), { error: e.code || 'chat_save_failed' }); }
+  }
   // ---- Память ассистента: объяснимая, редактируемая, переносимая (AG-35) ----
   // Структурные записи живут в том же profile.json, что и существующий свободный
   // профиль. Из этого блока меняются только schemaVersion и entries.
@@ -6933,7 +6949,7 @@ const server = http.createServer(async (req, res) => {
       format: 'satoru-account', version: 1, exportedAt: new Date().toISOString(),
       account: { id: user.id, name: user.name, email: user.email || null },
       data: readPortableAccountData(uid),
-      serverOwned: { partyRewards: partyRewards.snapshot(uid), secretary: secretaryArchive }, // evidence, never importable authority
+      serverOwned: { partyRewards: partyRewards.snapshot(uid), secretary: secretaryArchive, chats: ChatThreadsV1.createService({ userDir: userDataDir, write: writeJsonAtomic }).all(uid) }, // evidence, never importable authority
       excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'senkuBridge', 'pushSubscription', 'noteMedia'],
     };
     const filename = `satoru-account-${new Date().toISOString().slice(0, 10)}.json`;
