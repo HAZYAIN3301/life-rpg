@@ -12853,7 +12853,7 @@ function phoneCopy(key) {
     found: ['Добавлено', 'Added', 'Hinzugefügt', 'Додано', 'Añadido'],
     nothing: ['Ничего не нашёл — уточни текст.', 'Nothing found — add details.', 'Nichts gefunden — genauer beschreiben.', 'Нічого не знайшов — уточни текст.', 'No encontré nada — añade detalles.'],
     source: ['Источник', 'Source', 'Quelle', 'Джерело', 'Fuente'],
-    visionOff: ['Фото читает только облачный ИИ.', 'Photos need a cloud AI.', 'Fotos braucht eine Cloud-KI.', 'Фото читає лише хмарний ШІ.', 'Las fotos requieren una IA en la nube.'],
+    visionOff: ['Эта модель не читает фото — выбери другую.', 'This model cannot read photos — choose another.', 'Dieses Modell liest keine Fotos — wähle ein anderes.', 'Ця модель не читає фото — обери іншу.', 'Este modelo no lee fotos — elige otro.'],
     min: ['мин', 'min', 'Min.', 'хв', 'min'],
     noSphere: ['Без сферы', 'No sphere', 'Ohne Sphäre', 'Без сфери', 'Sin esfera'],
     flex: ['Можно перенести', 'Movable', 'Verschiebbar', 'Можна перенести', 'Movible'],
@@ -12995,12 +12995,12 @@ async function routineAiRead(w, payload) {
   const out=await request.run(async signal=>{
     const r=await fetch('/api/ai/routine',{method:'POST',signal,headers:{'Content-Type':'application/json'},body:JSON.stringify({provider:aiProvider(),lang:lang(),today:todayStr(),spheres,...payload})});
     const data=await r.json().catch(()=>({}));
-    if(!r.ok)throw Object.assign(Error('routine_ai'),{code:data.error||'provider'});
+    if(!r.ok)throw Object.assign(Error('routine_ai'),{code:data.error||'provider',reason:data.reason,message:data.message});
     return data;
   });
   if(!weekWorkshopCurrent(w))return;
   w.busy=false;w.request=null;
-  if(out.status!=='done'){w.notice=out.error?.code==='vision_unavailable'?phoneCopy('visionOff'):t('Не удалось выполнить запрос. Попробуй ещё раз.');paintWeekWorkshop();return;}
+  if(out.status!=='done'){w.notice=out.error?.code==='vision_unavailable'?phoneCopy('visionOff'):out.error?.code==='local'?localAiErrorText(out.error):t('Не удалось выполнить запрос. Попробуй ещё раз.');paintWeekWorkshop();return;}
   let drafts=[];try{drafts=window.RoutineV2.blocks(Array.isArray(out.value.blocks)?out.value.blocks:[]);}catch{}
   // ИИ считает недели от текущей; у сохранённого расписания может быть свой отсчёт.
   const anchor=w.cycleStart||(drafts.some(b=>b.every>1)?window.RoutineV2.monday(todayStr()):null);
@@ -16295,7 +16295,7 @@ function aiProvider() {
   if (pref && k[pref]) return pref;
   return AI_ORDER.find((id) => k[id]) || null;
 }
-function aiProviderLabel(id) { if (id === 'ollama') return 'Ollama'; const p = AI_PROVIDERS.find((x) => x.id === id); return p ? p.label : id; }
+function aiProviderLabel(id) { if (id === 'ollama') return `${localAiCopy('title')} (Ollama)`; const p = AI_PROVIDERS.find((x) => x.id === id); return p ? p.label : id; }
 // ⚠️ Гонка, из-за которой ИИ просил «подключить ключ» у того, у кого ключ уже
 // подключён (fb_msi18cbi65qh). Прежняя версия ставила `State.aiKeys = {}`
 // СИНХРОННО, до ответа сервера, — а пустой объект неотличим от «ключей нет».
@@ -16345,6 +16345,7 @@ function aiHandleErr(d) {
   if (!d || !d.error) return false;
   if (d.error === 'not_pro') { showPaywall('ИИ-ассистент'); return true; }
   if (d.error === 'quota') { toast(t('🤖 Лимит ИИ на месяц исчерпан — добавь свой ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return true; }
+  if (d.error === 'local') { toast(localAiErrorText(d)); return true; }
   if (d.error === 'no_key') { toast(t('Добавь ИИ-ключ в Настройках')); State.view = 'settings'; State.settingsSection = 'connections'; State._settingsFocusAfterCommit='.connections-ai'; render(); return true; }
   // Лимит провайдера — это «подожди», а не «сломалось». Сервер уже подождал и повторил
   // сам; сюда доходит только то, что не уложилось в его бюджет ожидания.
@@ -16536,7 +16537,7 @@ function profileCard() {
 function aiKeysCard() {
   const k = State.aiKeys || {};
   const keyed = AI_PROVIDERS.filter((p) => k[p.id]);
-  if (k.ollama || State.settings?.aiPref === 'ollama') keyed.push({ id: 'ollama', label: 'Ollama' });
+  if (k.ollama || State.settings?.aiPref === 'ollama') keyed.push({ id: 'ollama', label: aiProviderLabel('ollama') });
   const rows = AI_PROVIDERS.map((p) => {
     const saved = k[p.id];
     return `<div class="aikey-row ${saved ? 'has' : ''}">
@@ -16565,7 +16566,7 @@ function aiKeysCard() {
     }
   }
   return `<div class="card"><h3>${satoruIconHTML('nav.shadow', 'heading-glyph', '🤖')} ${esc(emojiFree(t('🤖 ИИ-ассистент (свой ключ)')))}</h3>
-    ${k.ollama || State.settings?.aiPref === 'ollama' ? `<p class="muted">${esc(t(k.ollama ? 'Ollama: локальная модель, без перехода в облако.' : 'Ollama недоступна для этого аккаунта на этом сервере.'))} ${esc(k.ollamaStatus?.model || '')}</p>` : ''}
+    ${k.ollama || State.settings?.aiPref === 'ollama' ? `<p class="muted">${esc(k.ollama ? t('Ollama: локальная модель, без перехода в облако.') : localAiCopy('pairFirst'))} ${esc(k.ollamaStatus?.model || '')}</p>` : ''}
     ${houseBlock}
     <p class="muted">${t('Добавь ключ выбранного сервиса. Пустые поля оставляют сохранённые ключи без изменений.')}</p>
     <div class="aikey-tip">${t('«Получить ключ» открывает сайт сервиса. Его условия и лимиты могут отличаться.')}</div>
@@ -16575,6 +16576,145 @@ function aiKeysCard() {
       <div class="aikey-actions"><button type="submit" class="btn">Сохранить</button><span id="ai-keys-msg" class="muted"></span></div>
     </form>
     <p class="muted">${t('Сохранённый ключ не показывается в интерфейсе.')}</p></div>`;
+}
+// ── Локальная модель для всех (владелец 05.10): компьютер с Ollama привязывается к аккаунту и
+// отвечает своей моделью. Без облака в цепочке и без открытого наружу Ollama. ──
+function localAiCopy(key) {
+  const copy = {
+    title: ['Локальная модель', 'Local model', 'Lokales Modell', 'Локальна модель', 'Modelo local'],
+    intro: ['ИИ на твоём компьютере через Ollama: запросы не уходят в облачный ИИ, ответ — от твоей модели.', 'AI on your own computer via Ollama: requests never go to a cloud AI; your model answers.', 'KI auf deinem Computer über Ollama: Anfragen gehen an keine Cloud-KI, es antwortet dein Modell.', 'ШІ на твоєму комп’ютері через Ollama: запити не йдуть у хмарний ШІ, відповідає твоя модель.', 'IA en tu ordenador con Ollama: las peticiones no van a una IA en la nube; responde tu modelo.'],
+    step1: ['1. Установи Ollama и скачай модель, например: ollama pull qwen3.5:9b', '1. Install Ollama and pull a model, for example: ollama pull qwen3.5:9b', '1. Installiere Ollama und lade ein Modell, z. B.: ollama pull qwen3.5:9b', '1. Встанови Ollama і завантаж модель, наприклад: ollama pull qwen3.5:9b', '1. Instala Ollama y descarga un modelo, por ejemplo: ollama pull qwen3.5:9b'],
+    step2: ['2. Вставь команду в Терминал этого компьютера:', '2. Paste the command into the Terminal on that computer:', '2. Füge den Befehl im Terminal dieses Computers ein:', '2. Встав команду в Термінал цього комп’ютера:', '2. Pega el comando en el Terminal de ese ordenador:'],
+    connect: ['Подключить компьютер', 'Connect a computer', 'Computer verbinden', 'Підключити комп’ютер', 'Conectar un ordenador'],
+    more: ['Подключить ещё компьютер', 'Connect another computer', 'Weiteren Computer verbinden', 'Підключити ще комп’ютер', 'Conectar otro ordenador'],
+    copy: ['Скопировать', 'Copy', 'Kopieren', 'Скопіювати', 'Copiar'],
+    copied: ['Скопировано', 'Copied', 'Kopiert', 'Скопійовано', 'Copiado'],
+    expires: ['Код одноразовый, действует 10 минут. macOS и Linux; Windows — позже.', 'One-time code, valid for 10 minutes. macOS and Linux; Windows later.', 'Einmaliger Code, 10 Minuten gültig. macOS und Linux; Windows später.', 'Код одноразовий, діє 10 хвилин. macOS і Linux; Windows — пізніше.', 'Código de un solo uso, válido 10 minutos. macOS y Linux; Windows más adelante.'],
+    waiting: ['Жду компьютер…', 'Waiting for the computer…', 'Warte auf den Computer…', 'Чекаю на комп’ютер…', 'Esperando el ordenador…'],
+    connected: ['Подключено', 'Connected', 'Verbunden', 'Підключено', 'Conectado'],
+    online: ['в сети', 'online', 'online', 'у мережі', 'en línea'],
+    offline: ['спит', 'asleep', 'schläft', 'спить', 'en reposo'],
+    model: ['Модель', 'Model', 'Modell', 'Модель', 'Modelo'],
+    sees: ['читает фото', 'reads photos', 'liest Fotos', 'читає фото', 'lee fotos'],
+    noModels: ['Нет моделей — скачай: ollama pull qwen3.5:9b', 'No models — pull one: ollama pull qwen3.5:9b', 'Keine Modelle — lade eins: ollama pull qwen3.5:9b', 'Немає моделей — завантаж: ollama pull qwen3.5:9b', 'Sin modelos — descarga uno: ollama pull qwen3.5:9b'],
+    primary: ['Сначала этот', 'Use first', 'Zuerst diesen', 'Спершу цей', 'Usar primero'],
+    order: ['Отвечает первый компьютер в сети — сверху вниз.', 'The first computer online answers, top to bottom.', 'Es antwortet der erste Computer online, von oben nach unten.', 'Відповідає перший комп’ютер у мережі — згори донизу.', 'Responde el primer ordenador en línea, de arriba abajo.'],
+    disconnect: ['Отключить', 'Disconnect', 'Trennen', 'Відключити', 'Desconectar'],
+    confirm: ['Отключить этот компьютер? Коннектор на нём удалит себя сам.', 'Disconnect this computer? Its connector removes itself.', 'Diesen Computer trennen? Der Connector entfernt sich selbst.', 'Відключити цей комп’ютер? Конектор на ньому видалить себе сам.', '¿Desconectar este ordenador? Su conector se elimina solo.'],
+    test: ['Проверить', 'Test', 'Testen', 'Перевірити', 'Probar'],
+    answered: ['Ответила за', 'Answered in', 'Antwort in', 'Відповіла за', 'Respondió en'],
+    use: ['Использовать по умолчанию', 'Use by default', 'Standardmäßig verwenden', 'Використовувати за замовчуванням', 'Usar por defecto'],
+    inUse: ['Используется по умолчанию', 'Used by default', 'Wird standardmäßig verwendet', 'Використовується за замовчуванням', 'Se usa por defecto'],
+    pairFirst: ['Локальная модель: подключи компьютер в блоке «Локальная модель».', 'Local model: connect a computer under “Local model”.', 'Lokales Modell: verbinde einen Computer unter „Lokales Modell“.', 'Локальна модель: підключи комп’ютер у блоці «Локальна модель».', 'Modelo local: conecta un ordenador en «Modelo local».'],
+    offlineErr: ['Компьютер с локальной моделью сейчас не в сети (спит или выключен).', 'The computer with the local model is offline (asleep or off).', 'Der Computer mit dem lokalen Modell ist offline (schläft oder aus).', 'Комп’ютер із локальною моделлю зараз не в мережі (спить або вимкнений).', 'El ordenador con el modelo local está desconectado (en reposo o apagado).'],
+    busyErr: ['Локальная модель занята — повтори через минуту.', 'The local model is busy — try again in a minute.', 'Das lokale Modell ist beschäftigt — in einer Minute erneut.', 'Локальна модель зайнята — повтори за хвилину.', 'El modelo local está ocupado — reintenta en un minuto.'],
+    timeoutErr: ['Локальная модель не ответила за 3 минуты.', 'The local model did not answer within 3 minutes.', 'Das lokale Modell hat nicht innerhalb von 3 Minuten geantwortet.', 'Локальна модель не відповіла за 3 хвилини.', 'El modelo local no respondió en 3 minutos.'],
+    missingErr: ['Для компьютера не выбрана модель — выбери в Настройках.', 'No model is chosen for the computer — pick one in Settings.', 'Für den Computer ist kein Modell gewählt — wähle es in den Einstellungen.', 'Для комп’ютера не обрано модель — обери в Налаштуваннях.', 'No hay modelo elegido para el ordenador — elígelo en Ajustes.'],
+    notPairedErr: ['Подключи компьютер с Ollama в Настройках → Локальная модель.', 'Connect a computer with Ollama in Settings → Local model.', 'Verbinde einen Computer mit Ollama in Einstellungen → Lokales Modell.', 'Підключи комп’ютер з Ollama в Налаштуваннях → Локальна модель.', 'Conecta un ordenador con Ollama en Ajustes → Modelo local.'],
+    largeErr: ['Запрос слишком длинный для локальной модели.', 'The request is too long for the local model.', 'Die Anfrage ist zu lang für das lokale Modell.', 'Запит задовгий для локальної моделі.', 'La petición es demasiado larga para el modelo local.'],
+    modelErr: ['Ошибка локальной модели', 'Local model error', 'Fehler des lokalen Modells', 'Помилка локальної моделі', 'Error del modelo local'],
+  };
+  return copy[key]?.[Math.max(0, ['ru', 'en', 'de', 'uk', 'es'].indexOf(lang()))] || copy[key]?.[1] || key;
+}
+function localAiErrorText(d) {
+  const r = String(d?.reason || '');
+  if (r === 'offline' || r === 'interrupted') return localAiCopy('offlineErr');
+  if (r === 'busy') return localAiCopy('busyErr');
+  if (r === 'timeout') return localAiCopy('timeoutErr');
+  if (r === 'model_missing') return localAiCopy('missingErr');
+  if (r === 'not_paired' || r === 'revoked') return localAiCopy('notPairedErr');
+  if (r === 'context_too_large') return localAiCopy('largeErr');
+  return `${localAiCopy('modelErr')}${d?.message ? `: ${d.message}` : ''}.`;
+}
+function ensureLocalAiStatus(force = false) {
+  const now = Date.now();
+  if (State._localAiBusy || (!force && State.localAi && now - (State._localAiAt || 0) < 15000)) return;
+  State._localAiBusy = true; State._localAiAt = now;
+  const accountId = String(State.me?.id || ''), epoch = Store._writeEpoch;
+  fetch('/api/local-ai/status').then((r) => (r.ok ? r.json() : null)).catch(() => null).then((data) => {
+    State._localAiBusy = false;
+    if (!data || accountId !== String(State.me?.id || '') || epoch !== Store._writeEpoch) return;
+    const before = JSON.stringify(State.localAi);
+    const grew = State.localAi && data.devices.length > State.localAi.devices.length;
+    State.localAi = data;
+    if (grew) localAiConnected(data.devices[data.devices.length - 1]);
+    if (before !== JSON.stringify(data) && State.view === 'settings') render();
+  });
+}
+// Первый компьютер подключён. Если другого ИИ нет — сразу пользоваться им; иначе решает человек.
+function localAiConnected(device) {
+  State._localAiPairing = null;
+  toast(`${localAiCopy('connected')}: ${device.name}`);
+  State.aiKeys = null; ensureAiKeys();
+  if (!State.settings.aiPref && !aiProvider() && !aiHouseOK()) { State.settings.aiPref = 'ollama'; autosaveSettings(); }
+}
+function localAiCardHTML() {
+  ensureLocalAiStatus();
+  const s = State.localAi, pairing = State._localAiPairing;
+  const devices = s?.devices || [], inUse = State.settings?.aiPref === 'ollama';
+  const rows = devices.map((d, i) => `<li class="local-ai-device" data-local-ai-device="${esc(d.id)}">
+    <div class="local-ai-device-head"><b data-noi18n>${esc(d.name)}</b><span class="local-ai-state ${d.online ? 'is-online' : ''}">${esc(localAiCopy(d.online ? 'online' : 'offline'))}</span></div>
+    ${d.models.length ? `<label class="local-ai-model"><span>${esc(localAiCopy('model'))}</span><select data-action="local-ai-model" data-id="${esc(d.id)}">${d.models.map((m) => `<option value="${esc(m.name)}" ${m.name === d.model ? 'selected' : ''}>${esc(m.name)}${m.params ? ` · ${esc(m.params)}` : ''}${m.vision ? ` · ${esc(localAiCopy('sees'))}` : ''}</option>`).join('')}</select></label>`
+      : `<p class="muted local-ai-note">${esc(localAiCopy('noModels'))}</p>`}
+    <div class="local-ai-device-actions">${i > 0 ? `<button type="button" class="btn ghost sm" data-action="local-ai-primary" data-id="${esc(d.id)}">${esc(localAiCopy('primary'))}</button>` : ''}<button type="button" class="btn ghost sm" data-action="local-ai-revoke" data-id="${esc(d.id)}">${esc(localAiCopy('disconnect'))}</button></div></li>`).join('');
+  const test = State._localAiTest;
+  return `<div class="local-ai-card">
+    <p class="muted">${esc(localAiCopy('intro'))}</p>
+    ${devices.length ? `<ul class="local-ai-devices">${rows}</ul>${devices.length > 1 ? `<p class="muted local-ai-note">${esc(localAiCopy('order'))}</p>` : ''}
+      <div class="local-ai-actions"><button type="button" class="btn ghost" data-action="local-ai-test" ${State._localAiTesting ? 'disabled' : ''}>${esc(localAiCopy('test'))}</button>${inUse ? `<span class="local-ai-inuse">${esc(localAiCopy('inUse'))}</span>` : `<button type="button" class="btn" data-action="local-ai-use">${esc(localAiCopy('use'))}</button>`}</div>
+      ${test ? `<p class="local-ai-test ${test.ok ? 'is-ok' : 'is-error'}" role="status" data-noi18n>${esc(test.ok ? `${localAiCopy('answered')} ${(test.ms / 1000).toFixed(1)} ${['ru', 'uk'].includes(lang()) ? 'с' : 's'} · ${test.device} · «${test.text}»` : localAiErrorText(test))}</p>` : ''}` : ''}
+    ${pairing ? `<div class="local-ai-pairing"><p class="local-ai-step">${esc(localAiCopy('step1'))}</p><p class="local-ai-step">${esc(localAiCopy('step2'))}</p>
+      <pre class="local-ai-command" data-noi18n tabindex="0">${esc(pairing.command)}</pre>
+      <div class="local-ai-actions"><button type="button" class="btn" data-action="local-ai-copy">${esc(localAiCopy(State._localAiCopied ? 'copied' : 'copy'))}</button><span class="muted local-ai-note" role="status">${esc(localAiCopy('waiting'))}</span></div>
+      <p class="muted local-ai-note">${esc(localAiCopy('expires'))}</p></div>`
+      : (!s || devices.length < (s.maxDevices || 5)) ? `<button type="button" class="btn ${devices.length ? 'ghost' : ''}" data-action="local-ai-pair">${esc(localAiCopy(devices.length ? 'more' : 'connect'))}</button>` : ''}
+  </div>`;
+}
+let _localAiPoll = null;
+function localAiWatchPairing() {
+  clearInterval(_localAiPoll);
+  _localAiPoll = setInterval(() => {
+    const p = State._localAiPairing;
+    if (!p || State.view !== 'settings' || Date.parse(p.expiresAt) < Date.now()) { clearInterval(_localAiPoll); _localAiPoll = null; if (p && Date.parse(p.expiresAt) < Date.now()) { State._localAiPairing = null; render(); } return; }
+    ensureLocalAiStatus(true);
+  }, 3000);
+}
+async function localAiAction(action, el) {
+  const post = async (url, body) => { const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) }); return { ok: r.ok, data: await r.json().catch(() => ({})) }; };
+  if (action === 'local-ai-pair') {
+    const r = await post('/api/local-ai/pairing');
+    if (!r.ok) { toast(t('Не удалось выполнить запрос. Попробуй ещё раз.')); return; }
+    State._localAiPairing = { command: r.data.command, expiresAt: r.data.expiresAt }; State._localAiCopied = false;
+    if (!State.localAi) State.localAi = { devices: [], maxDevices: 5 };
+    localAiWatchPairing(); render(); return;
+  }
+  if (action === 'local-ai-copy') {
+    const text = State._localAiPairing?.command || '';
+    try { await navigator.clipboard.writeText(text); State._localAiCopied = true; }
+    catch { const pre = document.querySelector('.local-ai-command'); if (pre) { const range = document.createRange(); range.selectNodeContents(pre); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range); } }
+    render(); return;
+  }
+  if (action === 'local-ai-use') { State.settings.aiPref = 'ollama'; autosaveSettings(); toast(`${t('ИИ по умолчанию')}: ${aiProviderLabel('ollama')}`); render(); return; }
+  if (action === 'local-ai-test') {
+    if (State._localAiTesting) return;
+    State._localAiTesting = true; State._localAiTest = null; render();
+    let r; try { r = await post('/api/local-ai/test'); } catch { r = { ok: false, data: { reason: 'offline' } }; }
+    State._localAiTesting = false; State._localAiTest = r.ok ? r.data : { ok: false, reason: r.data.reason, message: r.data.message };
+    ensureLocalAiStatus(true); render(); return;
+  }
+  if (action === 'local-ai-primary' || action === 'local-ai-revoke') {
+    if (action === 'local-ai-revoke' && !confirm(localAiCopy('confirm'))) return;
+    const r = await post(action === 'local-ai-revoke' ? '/api/local-ai/revoke' : '/api/local-ai/device', action === 'local-ai-revoke' ? { id: el.dataset.id } : { id: el.dataset.id, primary: true });
+    if (!r.ok) { toast(t('Не удалось сохранить')); return; }
+    State.localAi = r.data; State._localAiTest = null;
+    if (!r.data.devices.length && State.settings.aiPref === 'ollama') { State.settings.aiPref = ''; autosaveSettings(); }
+    State.aiKeys = null; ensureAiKeys(); render();
+  }
+}
+async function localAiSetModel(id, model) {
+  const r = await fetch('/api/local-ai/device', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, model }) }).catch(() => null);
+  if (!r || !r.ok) { toast(t('Не удалось сохранить')); ensureLocalAiStatus(true); return; }
+  State.localAi = await r.json(); State._localAiTest = null; render();
 }
 // ============================================================
 //  Strava — авто-импорт тренировок (OAuth2). Токены живут на сервере;
@@ -19087,6 +19227,13 @@ async function sendChat(text) {
       fail(sec
         ? `${t('🤖 Модель занята лимитом. Повтори через')} ${sec} ${t('сек — ничего не потеряно')}`
         : t('🤖 Модель занята лимитом. Повтори через минуту — ничего не потеряно'));
+      renderChatMessages();
+      const back = document.getElementById('chat-input'); if (back) { back.value = text; back.focus(); }
+      return;
+    }
+    // Локальная модель: вопрос остаётся, причина — в разговоре (компьютер спит, модель не выбрана…).
+    if (d.error === 'local') {
+      fail(localAiErrorText(d));
       renderChatMessages();
       const back = document.getElementById('chat-input'); if (back) { back.value = text; back.focus(); }
       return;
@@ -29574,6 +29721,7 @@ function renderSettings() {
     ${aiMemoryCard()}
     <details class="card settings-disclosure connections-memory"><summary>${t('Контекст для разговоров')}</summary><div class="settings-disclosure-body">${profileCard()}</div></details>
     <details class="card settings-disclosure connections-ai"><summary>${t('Подключение ИИ')}</summary><div class="settings-disclosure-body">${aiKeysCard()}</div></details>
+    <details class="card settings-disclosure connections-local-ai"><summary>${esc(localAiCopy('title'))}</summary><div class="settings-disclosure-body">${localAiCardHTML()}</div></details>
     ${stravaCard()}
     ${senkuCard()}
     ${fileImportCard()}
@@ -32928,6 +33076,7 @@ async function onClick(e) {
   if (action.startsWith('routine-')) { await weekWorkshopAction(action, el); return; }
   if (action.startsWith('rocc-')) { await routineOccurrenceAction(action, el); return; }
   if (action.startsWith('rwx-')) { await routineWeatherAction(action, el); return; }
+  if (action.startsWith('local-ai-') && action !== 'local-ai-model') { await localAiAction(action, el); return; }
   if (action === 'secretary-next-accept') { await secretaryNextRuntime()?.respond('accepted'); return; }
   if (action === 'secretary-next-dismiss') { await secretaryNextRuntime()?.respond('dismissed'); return; }
   if (action.startsWith('secretary-evening-')) { secretaryEveningRespond(action.slice('secretary-evening-'.length)); return; }
@@ -36204,6 +36353,7 @@ function onChange(e) {
   }
   if (a === 'set-import') { applyImport(el.dataset.skill, Number(el.value)); return; }
   if (a === 'set-ai-pref') { State.settings.aiPref = el.value; autosaveSettings(); toast(`🤖 ${t('ИИ по умолчанию')}: ${aiProviderLabel(el.value)}`); return; }
+  if (a === 'local-ai-model') { localAiSetModel(el.dataset.id, el.value); return; }
   if (a === 'set-strava-skill') { State.settings.stravaSkillId = el.value; autosaveSettings(); return; }
   if (a === 'senku-ai-spheres') { const on = !!el.checked; senkuSaveSettings((senku) => Object.assign(senku, { aiSpheres: on, setup: true })).then((ok) => { if (!ok) toast(t('Не удалось сохранить. Ничего не изменено — повтори попытку.')); render(); }); return; }
   if (a === 'senku-mode') {
@@ -36668,7 +36818,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v338';
+const PWA_CACHE_VERSION = 'satoru-v339';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

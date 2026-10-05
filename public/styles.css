@@ -22938,14 +22938,36 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .routine-place .btn, .routine-place-choices .btn { min-height: var(--touch-min); }
 .routine-place-choices { display: flex; flex-wrap: wrap; gap: var(--sp-2); flex-basis: 100%; }
 /* Списки в окнах расписания — той же высоты, что поля (палец на iPhone). */
-.week-workshop select, .routine-occ-box select {
+.week-workshop select, .routine-occ-box select, .local-ai-card select {
   -webkit-appearance: none; appearance: none; min-height: var(--touch-min); padding: 0 2.1em 0 .8em;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%238a8f98' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right .75em center; background-size: 11px 8px;
 }
 /* Дизайн next задаёт фону всех полей сокращённое свойство с высокой специфичностью — стрелка списка без этого пропадала. */
-:root[data-design] :is(.week-workshop, .routine-occ-box) select:not([multiple]):not([size]):not([hidden]) {
+:root[data-design] :is(.week-workshop, .routine-occ-box, .local-ai-card) select:not([multiple]):not([size]):not([hidden]) {
   padding: 0 2.1em 0 .8em;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%238a8f98' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right .75em center; background-size: 11px 8px;
 }
+/* Локальная модель: компьютеры списком, команда — моноширинно, переносится, выделяется целиком. */
+.local-ai-card { display: grid; gap: var(--sp-3); }
+.local-ai-card > p { margin: 0; }
+.local-ai-devices { display: grid; gap: var(--sp-2); margin: 0; padding: 0; list-style: none; }
+.local-ai-device { display: grid; gap: var(--sp-2); padding: var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-md, 12px); }
+.local-ai-device-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--sp-2); overflow-wrap: anywhere; }
+.local-ai-state { color: var(--muted); font-size: var(--type-meta); }
+.local-ai-state.is-online { color: var(--ok, #3fb37f); }
+.local-ai-state.is-online::before { content: ''; display: inline-block; width: 8px; height: 8px; margin-inline-end: 6px; border-radius: 50%; background: currentColor; }
+.local-ai-model { display: grid; gap: var(--sp-1); }
+.local-ai-model span { color: var(--muted); font-size: var(--type-meta); }
+.local-ai-model select { width: 100%; min-width: 0; min-height: var(--touch-min); }
+.local-ai-device-actions, .local-ai-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.local-ai-device-actions .btn, .local-ai-actions .btn, .local-ai-card > .btn { min-height: var(--touch-min); }
+.local-ai-card > .btn { justify-self: start; }
+.local-ai-note, .local-ai-step { margin: 0; font-size: var(--type-meta); overflow-wrap: anywhere; }
+.local-ai-inuse { color: var(--muted); font-size: var(--type-meta); }
+.local-ai-pairing { display: grid; gap: var(--sp-2); }
+.local-ai-command { margin: 0; padding: var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-sm, 8px); background: color-mix(in srgb, var(--surface-2, var(--panel2)) 80%, transparent); font: 13px/1.5 ui-monospace, Menlo, Consolas, monospace; white-space: pre-wrap; word-break: break-all; user-select: all; -webkit-user-select: all; }
+.local-ai-test { margin: 0; font-size: var(--type-meta); overflow-wrap: anywhere; }
+.local-ai-test.is-ok { color: var(--ok, #3fb37f); }
+.local-ai-test.is-error { color: var(--bad, #e05d5d); }

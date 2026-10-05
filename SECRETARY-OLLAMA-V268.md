@@ -1,5 +1,9 @@
 # Secretary: optional local Ollama and selected files — v268
 
+> **v339 (05.10):** item 2 of «Next increments» is done — any account can pair its own computer
+> with Ollama; production reaches it through the computer's outgoing connection. See
+> [LOCAL-AI-V339.md](./LOCAL-AI-V339.md). The server-local mode below remains for self-hosting.
+
 Implemented 2026-09-21. This is a server-local provider and an ephemeral text-file
 index, not a shared ecosystem database or a remote bridge to the owner's Mac.
 

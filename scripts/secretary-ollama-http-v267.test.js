@@ -36,7 +36,8 @@ test('real HTTP boundary isolates local inference by account, ignores client des
   const otherStatus=(await request('/api/ai/keys',undefined,outsider.cookie)).data;
   assert.equal(otherStatus.ollama,false);assert.equal(otherStatus.ollamaStatus.model,null);
   const payload={provider:'ollama',host:'https://evil.invalid',model:'fake:cloud',system:'Use supplied facts.',messages:[{role:'user',content:'Когда встреча?'}]};
-  assert.equal((await request('/api/ai/chat',payload,outsider.cookie)).status,502);assert.equal(seen.length,0);
+  // v339: an account without its own computer gets a clear reason (not paired), still without reaching any model.
+  const outsiderChat=await request('/api/ai/chat',payload,outsider.cookie);assert.equal(outsiderChat.status,400);assert.equal(outsiderChat.data.reason,'not_paired');assert.equal(seen.length,0);
   const answer=await request('/api/ai/chat',payload,owner.cookie);
   assert.equal(answer.status,200,JSON.stringify(answer.data));assert.equal(answer.data.source,'local');
   assert.ok(seen.some(row=>row.path==='/api/chat'&&row.body.model==='fixture:9b'));

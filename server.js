@@ -12,6 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const OllamaV1 = require('./server-ollama-v1.js');
+const LocalAiV1 = require('./server-local-ai-v1.js');
 const BoardV2BraveAdapter = require('./server-board-v2-discovery-v1.js');
 const BoardV2PageVerifier = require('./server-board-v2-page-verifier-v1.js');
 const BoardV2AccountService = require('./server-board-v2-service-v1.js');
@@ -187,7 +188,7 @@ const ACCOUNT_PORTABLE_TYPES = AccountImportV1.TYPES;
 // Секреты и серверные счётчики в папке пользователя. Общий /api/data и админские
 // бэкапы их не отдают и не принимают: ключи ИИ, токены Strava, сессии устройств и
 // расход ИИ-квоты меняются только своими маршрутами (/api/ai/keys, /api/strava/*, ...).
-const SERVER_SECRET_DATA_NAMES = Object.freeze(['ai-keys', 'strava', 'devices', 'ai-usage']);
+const SERVER_SECRET_DATA_NAMES = Object.freeze(['ai-keys', 'strava', 'devices', 'ai-usage', 'local-ai']);
 const PASSWORD_MIN = 8;
 
 // ============================================================
@@ -1402,6 +1403,18 @@ function httpsPostJson(host, pathName, headers, bodyObj) {
 // НАЛИЧИЕ ключа). Поэтому каждая модель переопределяется переменной окружения: сменить её можно
 // на Railway за минуту, без правки кода и деплоя.
 const localOllama = OllamaV1.create();
+// Локальная модель для всех (владелец 05.10): привязанный компьютер с Ollama сам забирает задания.
+const localAiFile = (uid) => path.join(userDataDir(uid), `${LocalAiV1.FILE}.json`);
+const localAi = LocalAiV1.create({
+  readStore: (uid) => { try { return JSON.parse(fs.readFileSync(localAiFile(uid), 'utf8')); } catch { return null; } },
+  writeStore: (uid, value) => { fs.mkdirSync(userDataDir(uid), { recursive: true }); writeJsonAtomic(localAiFile(uid), value); },
+});
+// Адрес, который попадает в скрипт установки: только схема, хост и порт — заголовки запроса не
+// должны протащить в shell ничего лишнего.
+function localAiBase(req) {
+  const base = publicBaseUrl(req);
+  return /^https?:\/\/[A-Za-z0-9.-]+(?::\d{1,5})?$/.test(base) ? base : 'https://satoruapp.com';
+}
 const AI_PROVIDERS = {
   gemini: { shape: 'gemini', host: 'generativelanguage.googleapis.com', model: process.env.AI_MODEL_GEMINI || 'gemini-3.6-flash' },
   groq: { shape: 'openai', host: 'api.groq.com', path: '/openai/v1/chat/completions', model: process.env.AI_MODEL_GROQ || 'llama-3.3-70b-versatile' },
@@ -1499,7 +1512,9 @@ function aiRateLimited(r) {
 async function aiCallForUser(user, requestedProvider, system, messages, maxTokens, purpose = '', options = {}) {
   // Local inference is explicit and never enters a cloud fallback chain.
   if (requestedProvider === 'ollama') {
-    if (options.providers && !options.providers.includes('ollama')) return { error: 'vision_unavailable' };
+    // Привязанный компьютер — путь для всех; Ollama рядом с сервером (v268) — для своей установки.
+    if (localAi.available(user.id) || !localOllama.status(user.id).configured) return localAi.complete(user.id, system, messages, maxTokens, { images: options.images || null });
+    if (options.images) return { error: 'vision_unavailable' };
     return localOllama.complete(user.id, system, messages, maxTokens);
   }
   const userKeys = loadAiKeys(user.id);
@@ -1572,6 +1587,8 @@ function redactSkillTreeForCrash(value, isNode = false) {
 function aiErr(res, r) {
   if (r.error === 'no_key') { sendJson(res, 400, { error: 'no_key' }); return true; }
   if (r.error === 'vision_unavailable') { sendJson(res, 400, { error: 'vision_unavailable' }); return true; }
+  // Локальная модель: понятная причина (компьютер спит, модель не выбрана…), без отката в облако.
+  if (!r.ok && r.source === 'local' && r.reason) { sendJson(res, r.status || 502, { error: 'local', reason: r.reason, message: r.message || '' }); return true; }
   if (r.error === 'not_pro') { sendJson(res, 402, { error: 'not_pro' }); return true; }
   if (r.error === 'quota') { sendJson(res, 402, { error: 'quota', quota: r.quota }); return true; }
   if (!r.ok) {
@@ -6184,12 +6201,12 @@ const server = http.createServer(async (req, res) => {
       if (typeof b[id] === 'string') { const v = b[id].trim(); if (v) cur[id] = v; else delete cur[id]; }
     }
     try { fs.mkdirSync(userDataDir(uid), { recursive: true }); fs.writeFileSync(aiKeysFile(uid), JSON.stringify(cur)); } catch { return sendJson(res, 500, { error: 'save failed' }); }
-    const out = { ok: true, ollama: localOllama.status(uid).configured, ollamaStatus: localOllama.status(uid) }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!cur[id]; return sendJson(res, 200, out);
+    const out = { ok: true, ollama: localAi.available(uid) || localOllama.status(uid).configured, ollamaStatus: localAi.available(uid) ? localAi.summary(uid) : localOllama.status(uid) }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!cur[id]; return sendJson(res, 200, out);
   }
   if (u === '/api/ai/keys' && req.method === 'GET') {
     const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
     const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
-    const k = loadAiKeys(uid); const out = { houseAvailable: houseAvailable(), ollama: localOllama.status(uid).configured, ollamaStatus: localOllama.status(uid) }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!k[id];
+    const k = loadAiKeys(uid); const out = { houseAvailable: houseAvailable(), ollama: localAi.available(uid) || localOllama.status(uid).configured, ollamaStatus: localAi.available(uid) ? localAi.summary(uid) : localOllama.status(uid) }; for (const id of Object.keys(AI_PROVIDERS)) out[id] = !!k[id];
     out.quota = aiQuota(user); // { tier, used, limit, remaining, ... }
     return sendJson(res, 200, out);
   }
@@ -6448,7 +6465,7 @@ const server = http.createServer(async (req, res) => {
     const provider = b.provider === 'ollama' || AI_PROVIDERS[b.provider] ? b.provider : null;
     try {
       const r = await aiCallForUser(user, provider, RoutineAiV1.system(input.lang), [{ role: 'user', content: RoutineAiV1.userText(input) }], 3000, '',
-        { complete: routineAiCompleter(input), providers: input.image ? RoutineAiV1.VISION : null });
+        { complete: routineAiCompleter(input), providers: input.image ? RoutineAiV1.VISION : null, images: input.image ? [input.image.data] : null });
       if (aiErr(res, r)) return;
       const out = RoutineAiV1.result(r, input);
       return sendJson(res, 200, out.error ? { error: 'parse' } : out);
@@ -6466,6 +6483,74 @@ const server = http.createServer(async (req, res) => {
     }
     const r = await weatherService.forecast(q.get('lat'), q.get('lon'));
     return sendJson(res, r.error ? (r.error === 'bad_place' ? 400 : 502) : 200, r);
+  }
+
+  // ---- Локальная модель для всех (владелец 05.10): компьютер с Ollama привязан к аккаунту ----
+  // Скрипты установки и коннектора — с адресом этого сервера внутри; читаемые, без бинарников.
+  if ((u === '/local-ai/install.sh' || u === '/local-ai/connector.sh') && req.method === 'GET') {
+    let body = '';
+    try { body = fs.readFileSync(path.join(ROOT, 'local-ai', path.basename(u)), 'utf8').replace(/__SATORU_URL__/g, localAiBase(req)); }
+    catch { return sendJson(res, 404, { error: 'not found' }); }
+    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+    return res.end(body);
+  }
+  if (u.startsWith('/api/local-ai/')) {
+    const route = u.split('?')[0];
+    if (route === '/api/local-ai/pair' && req.method === 'POST') {
+      let raw = ''; try { raw = String(await readBody(req, 8 * 1024)); } catch { return sendJson(res, 400, { error: 'bad request' }); }
+      const form = new URLSearchParams(raw);
+      const r = localAi.pair(form.get('code'), { name: form.get('name'), platform: form.get('platform') });
+      res.writeHead(r.error ? 400 : 200, { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' });
+      return res.end(r.error || r.token);
+    }
+    // Коннектор: ключ компьютера вместо сессии. Неизвестный или отозванный ключ — 410, и коннектор удаляет себя.
+    if (route === '/api/local-ai/hello' || route === '/api/local-ai/next' || route === '/api/local-ai/ack' || route === '/api/local-ai/result') {
+      const auth = localAi.authenticate(String(req.headers.authorization || '').replace(/^Bearer\s+/i, ''));
+      if (!auth) return sendJson(res, 410, { error: 'revoked' });
+      if (route === '/api/local-ai/hello' && req.method === 'POST') {
+        let tags = null; try { tags = JSON.parse(await readBody(req, 512 * 1024)); } catch { tags = null; }
+        return sendJson(res, 200, localAi.hello(auth, tags));
+      }
+      if (route === '/api/local-ai/next' && req.method === 'GET') {
+        let sent = false;
+        const reply = (status, payload, jobId) => {
+          if (sent || res.writableEnded) return; sent = true;
+          if (status === 200) { res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Satoru-Job': jobId }); return res.end(JSON.stringify(payload)); }
+          res.writeHead(status, { 'Cache-Control': 'no-store' }); return res.end();
+        };
+        return localAi.next(auth, reply, (fn) => req.on('close', fn));
+      }
+      if (route === '/api/local-ai/ack' && req.method === 'POST') {
+        res.writeHead(localAi.ack(auth, req.headers['x-satoru-job']) ? 204 : 409, { 'Cache-Control': 'no-store' }); return res.end();
+      }
+      if (route === '/api/local-ai/result' && req.method === 'POST') {
+        let body = ''; try { body = String(await readBody(req, 3 * 1024 * 1024)); } catch { return sendJson(res, 413, { error: 'too_large' }); }
+        const taken = localAi.result(auth, req.headers['x-satoru-job'], Number(req.headers['x-ollama-status']) || 0, body);
+        res.writeHead(taken ? 204 : 410, { 'Cache-Control': 'no-store' }); return res.end();
+      }
+      return sendJson(res, 405, { error: 'method' });
+    }
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    if (route === '/api/local-ai/status' && req.method === 'GET') return sendJson(res, 200, localAi.status(uid));
+    if (route === '/api/local-ai/pairing' && req.method === 'POST') {
+      const r = localAi.startPairing(uid);
+      if (r.error) return sendJson(res, 409, r);
+      const base = localAiBase(req);
+      return sendJson(res, 200, Object.assign(r, { command: `curl -fsSL ${base}/local-ai/install.sh -o satoru-local-ai.sh && sh satoru-local-ai.sh ${r.code}` }));
+    }
+    if ((route === '/api/local-ai/device' || route === '/api/local-ai/revoke') && req.method === 'POST') {
+      let b = {}; try { b = JSON.parse(await readBody(req, 8 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+      const r = route === '/api/local-ai/revoke' ? localAi.revoke(uid, String(b.id || ''))
+        : localAi.update(uid, { id: String(b.id || ''), model: typeof b.model === 'string' ? b.model : undefined, primary: b.primary === true });
+      return sendJson(res, r.error ? 400 : 200, r);
+    }
+    if (route === '/api/local-ai/test' && req.method === 'POST') {
+      const started = Date.now();
+      const r = await localAi.complete(uid, 'Reply with one short friendly word.', [{ role: 'user', content: 'Hello!' }], 64);
+      return sendJson(res, r.ok ? 200 : (r.status || 502), r.ok ? { ok: true, ms: Date.now() - started, text: r.text.slice(0, 80), device: r.device, model: r.model }
+        : { error: 'local', reason: r.reason, message: r.message || '' });
+    }
+    return sendJson(res, 404, { error: 'not found' });
   }
 
   // ---- Strava (OAuth2 — авто-импорт тренировок) ----
@@ -7062,7 +7147,7 @@ const server = http.createServer(async (req, res) => {
       account: { id: user.id, name: user.name, email: user.email || null },
       data: readPortableAccountData(uid),
       serverOwned: { partyRewards: partyRewards.snapshot(uid), secretary: secretaryArchive, chats: ChatThreadsV1.createService({ userDir: userDataDir, write: writeJsonAtomic }).all(uid) }, // evidence, never importable authority
-      excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'senkuBridge', 'pushSubscription', 'noteMedia'],
+      excludedSecrets: ['password', 'recoveryCode', 'resetToken', 'session', 'aiKeys', 'stravaTokens', 'senkuBridge', 'localAiDevices', 'pushSubscription', 'noteMedia'],
     };
     const filename = `satoru-account-${new Date().toISOString().slice(0, 10)}.json`;
     res.writeHead(200, { 'Content-Type': MIME['.json'], 'Content-Disposition': `attachment; filename="${filename}"`, 'Cache-Control': 'no-store' });
