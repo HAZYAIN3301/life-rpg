@@ -63,6 +63,9 @@ const InspirationProfileOwnerV1 = require('./server-inspiration-profile-v1.js');
 const InspirationDiscoveryV1 = require('./server-inspiration-discovery-v1.js');
 const InspirationMediaV1 = require('./server-inspiration-media-v1.js');
 const SenkuBridgeV1 = require('./server-senku-bridge-v1.js');
+const RoutineAiV1 = require('./server-routine-ai-v1.js');
+const WeatherV1 = require('./server-weather-v1.js');
+const weatherService = WeatherV1.create();
 
 const ROOT = __dirname;
 // Local development secrets live outside Git. Production providers inject the
@@ -1491,9 +1494,14 @@ function aiRateLimited(r) {
   if (status === 429 || status === 503) return true;
   return /quota|rate.?limit|too many requests|exceeded|resource_exhausted/i.test(String(r.detail || ''));
 }
-async function aiCallForUser(user, requestedProvider, system, messages, maxTokens, purpose = '') {
+// options.providers — только эти поставщики (фото читают не все модели); options.complete —
+// свой запрос вместо обычного чата (картинка, поиск), с той же цепочкой ключей, квотой и паузами.
+async function aiCallForUser(user, requestedProvider, system, messages, maxTokens, purpose = '', options = {}) {
   // Local inference is explicit and never enters a cloud fallback chain.
-  if (requestedProvider === 'ollama') return localOllama.complete(user.id, system, messages, maxTokens);
+  if (requestedProvider === 'ollama') {
+    if (options.providers && !options.providers.includes('ollama')) return { error: 'vision_unavailable' };
+    return localOllama.complete(user.id, system, messages, maxTokens);
+  }
   const userKeys = loadAiKeys(user.id);
   const res = resolveAiCall(user, requestedProvider, userKeys, purpose);
   if (res.error) return res;
@@ -1505,15 +1513,17 @@ async function aiCallForUser(user, requestedProvider, system, messages, maxToken
   for (const provider of chain) {
     const key = res.source === 'byok' ? userKeys[provider] : houseKeyFor(provider);
     if (!key) continue;
+    if (options.providers && !options.providers.includes(provider)) continue;
     tried.push(provider);
-    let r = await aiCompleteMessages(provider, { [provider]: key }, system, messages, maxTokens);
+    const complete = options.complete || aiCompleteMessages;
+    let r = await complete(provider, { [provider]: key }, system, messages, maxTokens);
     // Поминутный лимит: подождать и повторить у ТОГО ЖЕ поставщика, пока укладываемся в бюджет.
     let waited = 0;
     while (aiRateLimited(r)) {
       const hint = aiRetryHintMs(r) || 1500;
       if (waited + hint > AI_RETRY_MAX_MS) break;
       await aiSleep(hint); waited += hint;
-      r = await aiCompleteMessages(provider, { [provider]: key }, system, messages, maxTokens);
+      r = await complete(provider, { [provider]: key }, system, messages, maxTokens);
     }
     last = Object.assign({}, r, { source: res.source, provider, tried: tried.slice(), waitedMs: waited });
     if (r.ok) {
@@ -1522,6 +1532,7 @@ async function aiCallForUser(user, requestedProvider, system, messages, maxToken
     }
     if (!aiRateLimited(r)) return last;   // не лимит — честно отдаём ошибку, не жжём остальных
   }
+  if (!last && options.providers) return { error: 'vision_unavailable' };
   return last || { error: 'no_key' };
 }
 // Ключи в тексте ошибок. Провайдеры любят возвращать «Incorrect API key provided: sk-...XYZ»,
@@ -1560,6 +1571,7 @@ function redactSkillTreeForCrash(value, isNode = false) {
 // Маппинг ошибок aiCallForUser → HTTP-ответ. true = ошибка обработана (вызывающий должен return), false = всё ок.
 function aiErr(res, r) {
   if (r.error === 'no_key') { sendJson(res, 400, { error: 'no_key' }); return true; }
+  if (r.error === 'vision_unavailable') { sendJson(res, 400, { error: 'vision_unavailable' }); return true; }
   if (r.error === 'not_pro') { sendJson(res, 402, { error: 'not_pro' }); return true; }
   if (r.error === 'quota') { sendJson(res, 402, { error: 'quota', quota: r.quota }); return true; }
   if (!r.ok) {
@@ -1625,6 +1637,33 @@ async function aiCompleteMessages(provider, keys, system, messages, maxTokens) {
   if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
   const us = r.json.usage || {}, choice = r.json.choices && r.json.choices[0], finishReason = String((choice && choice.finish_reason) || '');
   return { ok: true, text: (choice && choice.message && choice.message.content) || '', tokens: Number(us.total_tokens) || ((Number(us.prompt_tokens) || 0) + (Number(us.completion_tokens) || 0)), finishReason, truncated: finishReason === 'length' };
+}
+// Постоянное расписание: фото и поиск идут своим запросом (у чата их нет). Если поиск у этого
+// ключа недоступен (инструмент выключен, модель не умеет), тот же поставщик читает без поиска.
+async function routineAiRequest(provider, key, input, search) {
+  const P = AI_PROVIDERS[provider];
+  const req = RoutineAiV1.buildRequest(P.shape, { model: P.model, searchModel: process.env.AI_MODEL_OPENAI_SEARCH || 'gpt-4o-search-preview',
+    system: RoutineAiV1.system(input.lang), text: RoutineAiV1.userText(input), image: input.image, search });
+  const r = P.shape === 'gemini'
+    ? await httpsPostJson(P.host, `${req.path}?key=${encodeURIComponent(key)}`, {}, req.body)
+    : P.shape === 'anthropic'
+      ? await httpsPostJson(P.host, req.path, { 'x-api-key': key, 'anthropic-version': '2023-06-01' }, req.body)
+      : await httpsPostJson(P.host, P.path, { 'Authorization': 'Bearer ' + key }, req.body);
+  if (r.status !== 200) return { ok: false, status: r.status, detail: (r.json.error && r.json.error.message) || '' };
+  const answer = RoutineAiV1.parseResponse(P.shape, r.json);
+  if (!answer.text) return { ok: false, status: 200, detail: `empty: ${answer.finishReason}` };
+  return { ok: true, text: answer.text, sources: search ? answer.sources : [], tokens: answer.tokens, truncated: answer.incomplete, searched: search };
+}
+function routineAiCompleter(input) {
+  return async (provider, keys) => {
+    const key = keys[provider];
+    if (input.search && RoutineAiV1.SEARCH.includes(provider)) {
+      const found = await routineAiRequest(provider, key, input, true);
+      if ((found.ok && !found.truncated) || aiRateLimited(found)) return found;
+      console.error('[routine-ai] search unavailable', provider, found.status || '', scrubSecrets(found.detail || ''));
+    }
+    return routineAiRequest(provider, key, input, false);
+  };
 }
 // Провайдер иногда помечает ответ STOP, хотя наружу пришёл явно оборванный Markdown.
 // Это не литературный анализ, а узкий fail-closed gate для следов, которые невозможно
@@ -6396,6 +6435,37 @@ const server = http.createServer(async (req, res) => {
       if (aiErr(res, r)) return;
       return sendJson(res, 200, { text: r.text, source: r.source });
     } catch (e) { console.error('[ai]', scrubSecrets(e && e.message)); return sendJson(res, 502, { error: 'provider_unavailable' }); }
+  }
+
+  // Постоянное расписание 2.0 (владелец 05.10): текст или фото/скриншот расписания → черновик
+  // занятий со сферами. Ничего не сохраняет: человек проверяет строки и сохраняет сам.
+  if (u === '/api/ai/routine' && req.method === 'POST') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const user = loadUsers().find(x => x.id === uid); if (!user) return sendJson(res, 401, { error: 'user not found' });
+    let b = {}; try { b = JSON.parse(await readBody(req, 6 * 1024 * 1024)); } catch { return sendJson(res, 400, { error: 'bad json' }); }
+    const input = RoutineAiV1.readInput(b, new Date().toISOString().slice(0, 10));
+    if (input.error) return sendJson(res, 400, { error: input.error });
+    const provider = b.provider === 'ollama' || AI_PROVIDERS[b.provider] ? b.provider : null;
+    try {
+      const r = await aiCallForUser(user, provider, RoutineAiV1.system(input.lang), [{ role: 'user', content: RoutineAiV1.userText(input) }], 3000, '',
+        { complete: routineAiCompleter(input), providers: input.image ? RoutineAiV1.VISION : null });
+      if (aiErr(res, r)) return;
+      const out = RoutineAiV1.result(r, input);
+      return sendJson(res, 200, out.error ? { error: 'parse' } : out);
+    } catch (e) { console.error('[ai]', scrubSecrets(e && e.message)); return sendJson(res, 502, { error: 'provider_unavailable' }); }
+  }
+
+  // Погода для занятий на улице (владелец 05.10): прогноз и поиск города только через наш сервер
+  // с кэшем — браузер не ходит к MET Norway и OpenStreetMap напрямую.
+  if ((u === '/api/weather' || u.startsWith('/api/weather?') || u.startsWith('/api/weather/place')) && req.method === 'GET') {
+    const uid = sessionUserId(req); if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+    const q = new URL(u, 'http://x').searchParams;
+    if (u.split('?')[0] === '/api/weather/place') {
+      const found = await weatherService.place(q.get('q'), q.get('lang'));
+      return sendJson(res, found.error ? (found.error === 'bad_query' ? 400 : 502) : 200, found);
+    }
+    const r = await weatherService.forecast(q.get('lat'), q.get('lon'));
+    return sendJson(res, r.error ? (r.error === 'bad_place' ? 400 : 502) : 200, r);
   }
 
   // ---- Strava (OAuth2 — авто-импорт тренировок) ----

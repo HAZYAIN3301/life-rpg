@@ -47,7 +47,7 @@ test('every chat receives fresh local today, tomorrow and clock independent of s
  assert(c.assistantClockContext().includes('"tomorrow":"2026-10-05"'));today='2026-12-31';assert(c.assistantClockContext().includes('"tomorrow":"2027-01-01"'));assert(c.assistantClockContext().includes('"timezone":'));
 });
 function harness(){
- const c={structuredClone,Date,State:{tasks:[{...task}],settings:{},me:{id:'a'},timer:null,chatLog:[]},Store:{_writeEpoch:1},window:{AssistantScheduleV1:S,StuckTaskV1:require('../public/stuck-task-v1')},todayStr:()=> '2026-10-04',pad2:x=>String(x).padStart(2,'0'),questCommitment:()=>null};
+ const c={structuredClone,Date,State:{tasks:[{...task}],settings:{},me:{id:'a'},timer:null,chatLog:[]},Store:{_writeEpoch:1},window:{AssistantScheduleV1:S,StuckTaskV1:require('../public/stuck-task-v1'),RoutineV2:require('../public/routine-v2')},todayStr:()=> '2026-10-04',pad2:x=>String(x).padStart(2,'0'),questCommitment:()=>null};
  c.commitmentDataCommit=async build=>{const result=build(structuredClone({tasks:c.State.tasks,settings:c.State.settings}));if(!result)return false;c.writes++;c.State.tasks=result.tasks;return true;};c.writes=0;
  vm.createContext(c);vm.runInContext(app.slice(app.indexOf('function captureChatSchedule('),app.indexOf('function chatActionLabel(')),c);
  c.action={...command};c.captureChatSchedule(c.action);return c;
@@ -76,4 +76,16 @@ test('proposal baseline comes from the request, not changed state when response 
 test('editing after an uncertain receipt cannot claim the older schedule as the edited result',()=>{
  const c=harness();c.lang=()=> 'en';c.dmShort=x=>x;c.State.chatLog=[{actions:[c.action]}];c.action._scheduleExpectedResult='old';const status={textContent:''};const row={dataset:{scheduleIndex:'0'},querySelector:()=>status},wrap={dataset:{mi:'0'}};
  c.editChatSchedule({dataset:{chatSchedule:'startTime'},value:'11:00',closest:s=>s==='.chat-actions'?wrap:row});assert.equal(c.action._scheduleExpectedResult,undefined);assert.equal(c.action.startTime,'11:00');
+});
+test('routine 2.0: the command week decides — a rotated-out week or an acted-on occurrence leaves the slot free',()=>{
+ const c=harness();
+ c.State.settings={weeklyRoutineV1:{cycleStart:'2026-10-05',blocks:[{id:'r-class1',day:1,start:'10:00',end:'11:00',title:'Class',every:2,week:1}]}};
+ assert.equal(c.checkChatSchedule(c.action).reason,'routine');
+ c.State.settings.weeklyRoutineV1.blocks[0].week=2;
+ assert.equal(c.checkChatSchedule(c.action).ok,true);
+ c.State.settings.weeklyRoutineV1.blocks[0].week=1;
+ c.State.tasks.push({id:'moved',title:'Class',date:'2026-10-06',startTime:'10:00',estimateMin:60,routineKey:'r-class1|2026-10-05'});
+ assert.equal(c.checkChatSchedule(c.action).ok,true);
+ c.State.settings.weeklyRoutineV1.blocks.push({id:'r-run001',day:1,title:'Run',minutes:40});
+ assert.equal(c.checkChatSchedule(c.action).ok,true,'an activity without an hour holds no time');
 });

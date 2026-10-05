@@ -22733,15 +22733,43 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .week-agenda-day { border-bottom: 1px solid var(--line); padding-block: var(--sp-3); }
 .week-agenda-day h4 { margin: 0 0 var(--sp-2); font-size: var(--type-heading); }
 .week-agenda-day .wk-add-btn { margin-top: var(--sp-2); }
-.week-workshop { display: grid; gap: var(--sp-3); }
+.week-workshop { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-3); }
 .week-workshop label { display: grid; gap: var(--sp-2); }
 .week-workshop textarea { width: 100%; }
 .routine-rows { display: grid; gap: var(--sp-3); }
 .routine-settings > summary { min-height: var(--touch-min); padding-block: var(--sp-3); cursor: pointer; }
 .routine-settings > :not(summary) { margin-block-start: var(--sp-3); }
-[data-routine-row] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: var(--sp-2); }
-[data-routine-row] [data-title] { grid-column: 2 / -1; }
-[data-routine-row] input, [data-routine-row] select { width: 100%; min-width: 0; min-height: var(--touch-min); }
+/* Постоянное расписание 2.0: строка — день, название, время (или длительность), сфера и признаки. */
+.routine-rows { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--line-soft); }
+.routine-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--sp-2); min-width: 0; padding-block: var(--sp-3); border-bottom: 1px solid var(--line-soft); }
+.routine-line { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; min-width: 0; }
+.routine-row input, .routine-row select { min-width: 0; min-height: var(--touch-min); }
+.routine-line [data-day] { flex: 0 0 5.5em; width: 5.5em; }
+.routine-line [data-title] { flex: 1 1 9em; width: auto; }
+.week-workshop .routine-time { display: inline-flex; align-items: center; gap: 4px; min-width: 0; }
+.routine-time input { width: 6.4em; }
+.week-workshop .routine-minutes { display: none; align-items: center; gap: 4px; }
+.routine-row.is-untimed .routine-minutes { display: inline-flex; }
+.routine-row.is-untimed .routine-time input { width: 5.4em; }
+.routine-minutes input { width: 4.6em; }
+.routine-minutes span { color: var(--muted); font-size: var(--type-meta); }
+.routine-line [data-action="routine-remove"] { flex: none; margin-inline-start: auto; }
+.routine-meta { display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center; }
+.routine-meta select { width: auto; min-width: 0; max-width: 100%; font-size: var(--type-meta); }
+.routine-meta [data-skill] { flex: 1 1 12em; text-overflow: ellipsis; }
+.week-workshop .routine-chip { display: inline-flex; align-items: center; gap: 6px; min-height: var(--touch-min); padding: 0 var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-pill); font-size: var(--type-meta); cursor: pointer; }
+.routine-chip input { width: auto; min-height: 0; margin: 0; }
+.routine-chip:has(input:checked) { border-color: var(--accent); color: var(--text); }
+.week-workshop .routine-row.is-untimed .routine-flex { display: none; }
+.routine-ai-actions .satoru-icon { width: 18px; height: 18px; }
+.routine-ai-note, .routine-sources { margin: 0; color: var(--muted); font-size: var(--type-meta); overflow-wrap: anywhere; }
+.routine-sources a { color: inherit; text-decoration: underline; }
+@media (max-width: 600px) {
+  .routine-line [data-day] { flex-basis: 4.6em; width: 4.6em; }
+  .routine-line [data-action="routine-remove"] { order: 3; }
+  .routine-line .routine-time { order: 4; }
+  .routine-line .routine-minutes { order: 5; }
+}
 .routine-hours { display: flex; gap: var(--sp-2); padding: var(--sp-2) 0; border: 0; }
 .routine-hours input { min-width: 0; width: 45%; min-height: var(--touch-min); }
 .routine-preview { padding: 0; list-style: none; }
@@ -22861,4 +22889,63 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
   :root[data-design=next] :is(input[type=time],input[type=date]) { min-height: var(--touch-min); font-size: 16px; padding: 8px; line-height: 1.35; }
   :root[data-design=next] .dur-input { gap: 4px; flex-wrap: nowrap; }
   :root[data-design=next] .dur-input input { min-width: 0; min-height: var(--touch-min); font-size: 16px; }
+}
+
+/* Слой расписания: занятия видны на своих днях, но это не квесты — тише и без перетаскивания. */
+.routine-day { display: flex; flex-direction: column; gap: var(--sp-1); margin-block-start: var(--sp-3); padding-block-start: var(--sp-2); border-block-start: 1px solid var(--line-soft); }
+.routine-day-kicker { color: var(--muted); font: 700 var(--type-micro, 12px)/var(--leading-label, 1.3) var(--font-ui); letter-spacing: var(--tracking-caps); text-transform: uppercase; }
+.routine-day-list { display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.routine-item { display: grid; grid-template-columns: var(--touch-min) minmax(0, 1fr); align-items: center; border-inline-start: 3px solid color-mix(in srgb, var(--c) 55%, transparent); }
+.routine-check, .routine-check-gap { inline-size: var(--touch-min); block-size: var(--touch-min); }
+.routine-check { position: relative; padding: 0; border: 0; background: none; cursor: pointer; }
+.routine-check::before { content: ''; position: absolute; inset-inline-start: 50%; inset-block-start: 50%; inline-size: 20px; block-size: 20px; transform: translate(-50%, -50%); border: 2px dashed var(--c); border-radius: 50%; }
+.routine-check:hover::before, .routine-check:focus-visible::before { border-style: solid; }
+.routine-item-main { display: flex; align-items: baseline; gap: var(--sp-2); min-inline-size: 0; min-block-size: var(--touch-min); padding: 0 var(--sp-2) 0 0; border: 0; background: none; color: var(--text); text-align: start; cursor: pointer; }
+.routine-item-time { flex: none; color: var(--muted); font-size: var(--type-meta); font-variant-numeric: tabular-nums; }
+.routine-item-title { min-inline-size: 0; overflow-wrap: anywhere; }
+.routine-wk { margin-block: 0 var(--sp-1); padding-block-start: 0; border-block-start: 0; }
+.routine-wk .routine-item-main { font-size: var(--type-meta); }
+.routine-aside { padding: var(--sp-3); margin-block-start: 0; }
+@media (max-width: 600px) { .routine-aside { display: none; } }
+@media (min-width: 601px) { .routine-agenda { display: none; } }
+/* В сетке дня занятие — без колонки для галочки, штриховкой отличается от квестов. */
+.calendar-shell .cal-block.calv-routine { grid-template-columns: minmax(0, 1fr); cursor: pointer; border-style: dashed; border-left-style: solid; border-left-color: color-mix(in srgb, var(--c) 55%, transparent); background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--c) 14%, var(--surface-2)) 0 6px, color-mix(in srgb, var(--c) 6%, var(--surface-2)) 6px 12px); }
+.calendar-shell .calv-routine .cal-block-main { inline-size: 100%; padding-inline-start: var(--sp-2); }
+/* Узкие колонки недели: время над названием, галочка компактнее (мышь). */
+.wk-col .routine-item { grid-template-columns: 28px minmax(0, 1fr); }
+.wk-col .routine-check, .wk-col .routine-check-gap { inline-size: 28px; block-size: 36px; }
+.wk-col .routine-item-main { flex-direction: column; align-items: flex-start; gap: 0; min-block-size: 36px; padding-block: 2px; }
+.wk-col .routine-item-time { font-size: var(--type-micro, 12px); }
+.wk-col .routine-item-title { overflow-wrap: break-word; hyphens: auto; }
+.routine-occ-box { display: grid; gap: var(--sp-3); }
+.routine-occ-meta { margin: 0; color: var(--muted); overflow-wrap: anywhere; }
+.routine-occ-sphere { display: grid; gap: var(--sp-2); }
+.routine-occ-sphere select { min-height: var(--touch-min); }
+.routine-occ-edit { justify-self: start; }
+/* Погода: подсказка — одна строка с действием; источник прогноза подписан (CC BY 4.0). */
+.routine-weather-hints { display: grid; gap: var(--sp-2); margin-block-start: var(--sp-3); }
+.routine-weather-hint { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sp-2); margin: 0; padding: var(--sp-2) var(--sp-3); border: 1px solid var(--line-soft); border-radius: var(--radius-md, 12px); }
+.routine-weather-text { display: inline-flex; align-items: flex-start; gap: var(--sp-2); min-width: 0; overflow-wrap: anywhere; }
+.routine-weather-text .satoru-icon { flex: none; width: 18px; height: 18px; margin-top: 2px; }
+.routine-weather-actions { display: inline-flex; flex-wrap: wrap; gap: var(--sp-2); }
+.routine-weather-actions .btn { min-height: var(--touch-min); }
+.routine-weather-source { margin: 0; color: var(--muted); font-size: var(--type-micro, 12px); }
+.routine-place { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
+.routine-place-label { flex-basis: 100%; color: var(--muted); font-size: var(--type-meta); }
+.routine-place-find { display: flex; flex-wrap: wrap; gap: var(--sp-2); flex: 1 1 16em; }
+.routine-place-find input { flex: 1 1 10em; min-width: 0; min-height: var(--touch-min); }
+.routine-place-name { font-weight: 600; }
+.routine-place .btn, .routine-place-choices .btn { min-height: var(--touch-min); }
+.routine-place-choices { display: flex; flex-wrap: wrap; gap: var(--sp-2); flex-basis: 100%; }
+/* Списки в окнах расписания — той же высоты, что поля (палец на iPhone). */
+.week-workshop select, .routine-occ-box select {
+  -webkit-appearance: none; appearance: none; min-height: var(--touch-min); padding: 0 2.1em 0 .8em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%238a8f98' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .75em center; background-size: 11px 8px;
+}
+/* Дизайн next задаёт фону всех полей сокращённое свойство с высокой специфичностью — стрелка списка без этого пропадала. */
+:root[data-design] :is(.week-workshop, .routine-occ-box) select:not([multiple]):not([size]):not([hidden]) {
+  padding: 0 2.1em 0 .8em;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%238a8f98' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .75em center; background-size: 11px 8px;
 }
