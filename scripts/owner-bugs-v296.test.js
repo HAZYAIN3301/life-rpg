@@ -21,10 +21,12 @@ const i18n = () => {
 test('inside the app shell the extension package opens in the default browser instead of the web view', () => {
   const installer = fnSource('openBrowserCompanionInstaller');
   assert.match(installer, /const downloadLink = inAppShell\(\)/);
-  const shellLink = installer.slice(installer.indexOf('? `<a class="btn" href="${esc(appShellExternalUrl(BROWSER_COMPANION_DOWNLOAD))}"'), installer.indexOf(': `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>'));
+  const shellLink = installer.slice(installer.indexOf('? `<a class="btn" href="${esc(appShellExternalUrl(BROWSER_COMPANION_DOWNLOAD))}"'), installer.indexOf(': `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" target="_blank" rel="noopener">'));
   assert.ok(shellLink.length > 20, 'shell branch links to the other host');
   assert.doesNotMatch(shellLink, /\sdownload[\s>]|target=/, 'a plain link to another host is what the native shell sends to the system browser');
   assert.match(installer, /<li><span>1<\/span><div><b>\$\{t\('Скачать пакет'\)\}<\/b>\$\{downloadLink\}<\/div><\/li>/);
+  // 05.10: an unrecognised shell still hands a new-window link to the system browser.
+  assert.match(installer, /: `<a class="btn" href="\$\{BROWSER_COMPANION_DOWNLOAD\}" target="_blank" rel="noopener">/);
   const I18N = i18n();
   for (const l of ['en', 'de', 'uk', 'es']) assert.ok(I18N[l]['Откроется в браузере по умолчанию — там же устанавливается расширение.'], l);
 });
@@ -50,6 +52,16 @@ test('v298: every same-origin download in the app shell is rewritten to the othe
   const page = link('settings.html'); click(page); assert.deepEqual(page.attrs, { href: 'settings.html' }, 'ordinary links untouched');
   const external = link('https://example.com/file.zip', { download: '' }); click(external); assert.equal(external.attrs.href, 'https://example.com/file.zip');
   assert.match(fnSource('init'), /if \(inAppShell\(\)\) document\.addEventListener\('click', appShellDownloadLink, true\);/);
+});
+
+test('05.10: the app is recognised by its own page flags even when the bridge is not visible', () => {
+  const detect = new Function('window', `${fnSource('inAppShell')}\nreturn inAppShell();`);
+  assert.equal(detect({}), false, 'a browser');
+  assert.equal(detect({ webkit: { messageHandlers: { satoruShell: {} } } }), true);
+  for (const flag of ['satoruNativeSpeech', 'satoruNativeOCR', 'satoruNativeAttention']) assert.equal(detect({ [flag]: true }), true, flag);
+  const I18N = i18n();
+  for (const l of ['en', 'de', 'uk', 'es']) assert.ok(I18N[l]['В магазине расширения пока нет — установка тестовая, в три шага.'], l);
+  assert.doesNotMatch(APP, /проходит публикацию в магазине/, 'no claim that the extension is in store review');
 });
 
 test('a rejected proposal commit says which link failed', () => {

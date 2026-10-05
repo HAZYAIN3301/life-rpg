@@ -70,5 +70,5 @@ test('новая строка переведена на все пять язык
 });
 
 test('обновлённый offline shell', () => {
-  assert.match(sw, /const CACHE = 'satoru-v339'/);
+  assert.match(sw, /const CACHE = 'satoru-v340'/);
 });

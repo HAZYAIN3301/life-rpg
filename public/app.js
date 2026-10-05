@@ -1567,7 +1567,7 @@ const I18N_EXTRA = {
   'Завершить установку': { en: 'Finish installation', de: 'Installation abschließen', uk: 'Завершити встановлення', es: 'Terminar instalación' },
   'Не удалось сохранить выбор. Ничего не скрыто — повтори попытку.': { en: 'Could not save your choice. Nothing was hidden — try again.', de: 'Deine Auswahl konnte nicht gespeichert werden. Nichts wurde ausgeblendet — versuche es erneut.', uk: 'Не вдалося зберегти вибір. Нічого не приховано — повтори спробу.', es: 'No se pudo guardar tu elección. No se ocultó nada; inténtalo de nuevo.' },
   'Установка Satoru Attention': { en: 'Install Satoru Attention', de: 'Satoru Attention installieren', uk: 'Встановлення Satoru Attention', es: 'Instalar Satoru Attention' },
-  'Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.': { en: 'While the extension is being published in the store, the test installation takes three clear steps.', de: 'Während die Erweiterung im Store veröffentlicht wird, braucht die Testinstallation drei klare Schritte.', uk: 'Поки розширення публікується в магазині, тестове встановлення займає три зрозумілі кроки.', es: 'Mientras se publica la extensión en la tienda, la instalación de prueba requiere tres pasos claros.' },
+  'В магазине расширения пока нет — установка тестовая, в три шага.': { en: 'The extension is not in the store yet — this is a test installation in three steps.', de: 'Die Erweiterung ist noch nicht im Store — Testinstallation in drei Schritten.', uk: 'У магазині розширення поки немає — встановлення тестове, у три кроки.', es: 'La extensión aún no está en la tienda: instalación de prueba en tres pasos.' },
   'Скачать пакет': { en: 'Download package', de: 'Paket herunterladen', uk: 'Завантажити пакет', es: 'Descargar paquete' },
   'Откроется в браузере по умолчанию — там же устанавливается расширение.': { en: 'Opens in your default browser — the extension is installed there.', de: 'Öffnet sich in deinem Standardbrowser — dort wird die Erweiterung installiert.', uk: 'Відкриється в браузері за замовчуванням — там і встановлюється розширення.', es: 'Se abre en tu navegador predeterminado: la extensión se instala allí.' },
   'Открой страницу расширений': { en: 'Open the extensions page', de: 'Öffne die Erweiterungsseite', uk: 'Відкрий сторінку розширень', es: 'Abre la página de extensiones' },
@@ -26792,7 +26792,10 @@ const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v322.zip
 // rendered as text). The native shell hands every main-frame link to another host to the system
 // browser, so shell downloads point at our second domain, which serves the same files.
 const APP_SHELL_HOSTS = ['satoruapp.com', 'life-rpg-production-416a.up.railway.app'];
-function inAppShell() { return !!window.webkit?.messageHandlers?.satoruShell; }
+// The bridge alone was not enough: in the iPhone build running on a Mac (05.10) the page did not see
+// it, took the browser branch and showed the ZIP as text. The shell also marks the page with its
+// own flags at document start; any of them means "inside the app".
+function inAppShell() { return !!(window.webkit?.messageHandlers?.satoruShell || window.satoruNativeSpeech || window.satoruNativeOCR || window.satoruNativeAttention); }
 function appShellExternalUrl(href) {
   const url = new URL(href, location.href);
   const other = APP_SHELL_HOSTS.find((host) => host !== url.host) || APP_SHELL_HOSTS[0];
@@ -27061,14 +27064,17 @@ function openBrowserCompanionInstaller(opener) {
   closeBrowserCompanionInstaller({ restoreFocus: false });
   // v296/v298: the Mac/iPhone app's web view cannot save files and showed the ZIP as text.
   // Inside the app the package opens in the default browser, where the extension lives.
+  // The browser link opens a new window without `download`: the server already sends the ZIP as an
+  // attachment, and an unrecognised app shell hands a new-window click to the system browser
+  // (a `download` click stayed in the web view and showed the ZIP as text, 05.10).
   const downloadLink = inAppShell()
     ? `<a class="btn" href="${esc(appShellExternalUrl(BROWSER_COMPANION_DOWNLOAD))}">${t('Скачать пакет')}</a><p>${t('Откроется в браузере по умолчанию — там же устанавливается расширение.')}</p>`
-    : `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" download>${t('Скачать пакет')}</a>`;
+    : `<a class="btn" href="${BROWSER_COMPANION_DOWNLOAD}" target="_blank" rel="noopener">${t('Скачать пакет')}</a>`;
   const overlay = document.createElement('div'); overlay.id = 'browser-companion-installer'; overlay.className = 'attention-overlay browser-companion-installer-overlay';
   overlay.innerHTML = `<section class="browser-companion-installer" role="dialog" aria-modal="true" aria-labelledby="browser-companion-installer-title" aria-describedby="browser-companion-installer-description">
     <button type="button" class="modal-x" data-action="browser-companion-close-installer" aria-label="${t('Закрыть')}">✕</button>
     <span class="browser-companion-installer-kicker">Satoru Attention</span><h2 id="browser-companion-installer-title" tabindex="-1">${t('Установка Satoru Attention')}</h2>
-    <p id="browser-companion-installer-description">${t('Пока расширение проходит публикацию в магазине, тестовая установка занимает три понятных шага.')}</p>
+    <p id="browser-companion-installer-description">${t('В магазине расширения пока нет — установка тестовая, в три шага.')}</p>
     <ol class="browser-companion-install-steps">
       <li><span>1</span><div><b>${t('Скачать пакет')}</b>${downloadLink}</div></li>
       <li><span>2</span><div><b>${t('Открой страницу расширений')}</b><code>brave://extensions</code><button type="button" class="btn ghost" data-action="browser-companion-copy-address" data-address="brave://extensions">${t('Скопировать адрес')}</button></div></li>
@@ -36818,7 +36824,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v339';
+const PWA_CACHE_VERSION = 'satoru-v340';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
