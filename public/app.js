@@ -26787,7 +26787,7 @@ let _attentionEmergencyTimer = null;
 // policies, spend an emergency exit or mark an outcome through postMessage.
 const BROWSER_COMPANION_ORIGIN = 'https://life-rpg-production-416a.up.railway.app';
 const BROWSER_COMPANION_STATUS_TTL_MS = 25000;
-const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v322.zip';
+const BROWSER_COMPANION_DOWNLOAD = 'downloads/satoru-attention-chromium-v341.zip';
 // v298: inside the Mac/iPhone app shell a same-origin download navigates the web view (the ZIP
 // rendered as text). The native shell hands every main-frame link to another host to the system
 // browser, so shell downloads point at our second domain, which serves the same files.
@@ -36824,7 +36824,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v340';
+const PWA_CACHE_VERSION = 'satoru-v341';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

@@ -90,6 +90,8 @@
     }
   }
   function pieceAt(name) { return position.board[8 - Number(name[1])]['abcdefgh'.indexOf(name[0])]; }
+  // The motif comes only after the puzzle ends — before, it would be a hint.
+  function motifText(motif) { return motif && /^[a-zA-Z]+$/.test(motif) && t(`motif_${motif}`) !== `motif_${motif}` ? ` ${t('puzzleMotif', { motif: t(`motif_${motif}`) })}` : ''; }
   function applyShown(uci) { position = PuzzleCore.applyMove(position, uci); lastMove = uci.slice(0, 4); }
 
   async function newPuzzle() {
@@ -99,7 +101,9 @@
     if (!result || !result.ok) { puzzleStatus.textContent = errorText(result && result.error); puzzleStatus.className = 'status error'; return; }
     puzzle = result.puzzle; selectedSquare = '';
     position = PuzzleCore.parseFen(puzzle.fen); applyShown(puzzle.opening);
-    puzzleLead.textContent = t('puzzleLead', { rating: puzzle.rating, color: t(puzzle.player === 'w' ? 'puzzleWhite' : 'puzzleBlack'), moves: puzzle.playerMoves });
+    // 07.10: the goal is said up front — most Lichess puzzles win material, they are not mates.
+    const goal = t(`puzzleGoal_${/^m\d$/.test(puzzle.goal) ? 'm' : ['win', 'adv', 'eq'].includes(puzzle.goal) ? puzzle.goal : 'none'}`);
+    puzzleLead.textContent = t('puzzleLeadGoal', { rating: puzzle.rating, color: t(puzzle.player === 'w' ? 'puzzleWhite' : 'puzzleBlack'), goal, moves: puzzle.playerMoves });
     puzzleBoard.hidden = false; puzzleStart.hidden = true;
     renderBoard();
     puzzleBoard.querySelector('button')?.focus();
@@ -111,14 +115,16 @@
     if (!result || !result.ok) { puzzleBusy = false; puzzleStatus.textContent = errorText(result && result.error); puzzleStatus.className = 'status error'; return; }
     selectedSquare = '';
     if (!result.correct) {
+      const mover = position.board[8 - Number(result.expected[1])]['abcdefgh'.indexOf(result.expected[0])];
       applyShown(result.expected); renderBoard();
-      puzzleStatus.textContent = t('puzzleWrong', { move: `${result.expected.slice(0, 2)}–${result.expected.slice(2, 4)}${result.expected[4] ? `=${result.expected[4].toUpperCase()}` : ''}` }); puzzleStatus.className = 'status error';
+      const move = `${mover ? `${t(`piece_${mover.toLowerCase()}`)} ` : ''}${result.expected.slice(0, 2)}–${result.expected.slice(2, 4)}${result.expected[4] ? `=${result.expected[4].toUpperCase()}` : ''}`;
+      puzzleStatus.textContent = `${t('puzzleWrong', { move })}${motifText(result.motif)}`; puzzleStatus.className = 'status error';
       puzzleStart.textContent = t('puzzleAnother'); puzzleStart.hidden = false; puzzleBusy = false; puzzleStart.focus();
       return;
     }
     applyShown(uci); renderBoard();
     if (result.solved) {
-      puzzleStatus.textContent = t('puzzleSolved', { minutes: result.grantedMinutes }); puzzleStatus.className = 'status success';
+      puzzleStatus.textContent = `${t('puzzleSolved', { minutes: result.grantedMinutes })}${motifText(result.motif)}`; puzzleStatus.className = 'status success';
       setTimeout(() => location.assign(result.targetUrl), 1200);
       return;
     }

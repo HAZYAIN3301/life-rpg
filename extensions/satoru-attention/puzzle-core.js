@@ -1,4 +1,4 @@
-/* Satoru Attention 0.10.0 — pure chess-puzzle logic for the doomscroll boundary.
+/* Satoru Attention 0.10.0 (goals 0.10.3) — pure chess-puzzle logic for the doomscroll boundary.
  * No legality engine is needed: a puzzle is solved only by the exact Lichess solution moves, so
  * the board only has to show positions and apply known moves (castling, en passant, promotion).
  * Contract shared with native: PUZZLES-CONTRACT.md.
@@ -11,6 +11,7 @@
   'use strict';
 
   const TIERS = Object.freeze(['normal', 'hard', 'brutal']);
+  const GOALS = Object.freeze(['m1', 'm2', 'm3', 'm4', 'm5', 'win', 'adv', 'eq']);
   const FILES = 'abcdefgh';
   const UCI = /^[a-h][1-8][a-h][1-8][qrbn]?$/;
 
@@ -61,16 +62,18 @@
   function pick(dataset, tier, random = Math.random) {
     const list = dataset && dataset.puzzles && dataset.puzzles[TIERS.includes(tier) ? tier : 'hard'];
     if (!Array.isArray(list) || !list.length) return null;
-    const [id, fen, moves, rating] = list[Math.floor(random() * list.length) % list.length];
-    return { id, fen, moves: moves.split(' '), rating };
+    const [id, fen, moves, rating, goal = '', motif = ''] = list[Math.floor(random() * list.length) % list.length];
+    return { id, fen, moves: moves.split(' '), rating, goal, motif };
   }
 
   // What the page may know: the start position after the opponent's first move, whose turn it is
   // and the rating — never the remaining solution.
   function publicStart(puzzle) {
     const start = applyMove(parseFen(puzzle.fen), puzzle.moves[0]);
+    // The goal (mate in N, decisive gain, advantage, save the game) is known before the first move;
+    // the tactical motif is not — it would be a hint, so the worker reveals it only at the end.
     return { id: puzzle.id, fen: puzzle.fen, opening: puzzle.moves[0], player: start.side, rating: puzzle.rating,
-      playerMoves: (puzzle.moves.length - 1 + 1) >> 1 };
+      playerMoves: (puzzle.moves.length - 1 + 1) >> 1, goal: GOALS.includes(puzzle.goal) ? puzzle.goal : '' };
   }
 
   // ply is the index in moves of the move the player must make now (1, 3, 5 …).
@@ -85,5 +88,5 @@
     return { ok: true, correct: true, reply, nextPly: reply ? ply + 2 : null, solved: !reply };
   }
 
-  return Object.freeze({ TIERS, parseFen, applyMove, pick, publicStart, checkMove, colorOf });
+  return Object.freeze({ TIERS, GOALS, parseFen, applyMove, pick, publicStart, checkMove, colorOf });
 });

@@ -559,7 +559,7 @@ async function handleExtensionMessage(message, sender) {
       if (!verdict.correct) {
         // One wrong move ends this puzzle; the next one is a different position.
         await chrome.storage.session.remove(PUZZLE_KEY);
-        return { ok: true, correct: false, expected: verdict.expected };
+        return { ok: true, correct: false, expected: verdict.expected, motif: pending.puzzle.motif || '' };
       }
       if (!verdict.solved) {
         await chrome.storage.session.set({ [PUZZLE_KEY]: { ...pending, ply: verdict.nextPly } });
@@ -571,7 +571,7 @@ async function handleExtensionMessage(message, sender) {
       const commit = await commitWithEnforcement(state, result.state, { redirectTabs: false });
       if (!commit.ok) return commit;
       const policy = Core.policyById(commit.state, result.session.policyId);
-      return { ok: true, correct: true, solved: true, grantedMinutes: result.grantedMinutes, targetUrl: policy && policy.homeUrl };
+      return { ok: true, correct: true, solved: true, grantedMinutes: result.grantedMinutes, targetUrl: policy && policy.homeUrl, motif: pending.puzzle.motif || '' };
     });
   }
   if (type === 'FINISH_SESSION') {

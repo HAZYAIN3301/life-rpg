@@ -119,7 +119,7 @@ test('bundled rulesets (0.7.0+): manifest, rule shape, allowlist precedence and 
   const fs = require('node:fs');
   const path = require('node:path');
   const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, 'manifest.json'), 'utf8'));
-  assert.ok(['0.8.0', '0.9.0', '0.10.0', '0.10.1', '0.10.2'].includes(manifest.version), manifest.version);
+  assert.ok(['0.8.0', '0.9.0', '0.10.0', '0.10.1', '0.10.2', '0.10.3'].includes(manifest.version), manifest.version);
   assert.deepEqual(manifest.declarative_net_request.rule_resources, [
     { id: 'adult_redirect', enabled: false, path: 'rules/adult-redirect.json' },
     { id: 'adult_block', enabled: false, path: 'rules/adult-block.json' },
@@ -313,4 +313,34 @@ test('0.10.0 puzzle boundary: opens N minutes within the daily budget; weakening
   assert.match(worker, /Protection\.lockActive\(lockedProtection\) && existing && Core\.policyLoosens\(existing, candidate\)/);
   const gate = fs.readFileSync(path.join(__dirname, 'gate.js'), 'utf8');
   assert.doesNotMatch(gate, /puzzle\.moves|storage\.session/, 'the gate never sees the solution');
+});
+
+test('0.10.3 puzzles say their goal up front and the motif only at the end (owner 07.10)', () => {
+  const PuzzleCore = require('./puzzle-core.js');
+  const Puzzles = require('./puzzles.js');
+  const I18n = require('./i18n.js');
+  let named = 0;
+  for (const tier of PuzzleCore.TIERS) for (const row of Puzzles.puzzles[tier]) {
+    assert.equal(row.length, 6, row[0]);
+    assert.ok(row[4] === '' || PuzzleCore.GOALS.includes(row[4]), `${row[0]} goal ${row[4]}`);
+    assert.match(row[5], /^[a-zA-Z]*$/);
+    if (row[4]) named += 1;
+  }
+  assert.ok(named >= 2390, `goals known for ${named} of 2400`);
+  const owner = Puzzles.puzzles.hard.find((row) => row[0] === '0DjI8');
+  assert.deepEqual(owner.slice(4), ['win', 'pin'], 'the reported puzzle wins material through a pin — it is not a mate');
+  const picked = PuzzleCore.pick({ puzzles: { hard: [owner] } }, 'hard', () => 0);
+  const pub = PuzzleCore.publicStart(picked);
+  assert.equal(pub.goal, 'win');
+  assert.equal(JSON.stringify(pub).includes('pin'), false, 'the motif would be a hint');
+  assert.equal(PuzzleCore.publicStart({ ...picked, goal: 'odd' }).goal, '');
+  const used = new Set(['m', 'win', 'adv', 'eq', 'none']);
+  for (const language of ['en', 'ru', 'de', 'uk', 'es']) {
+    for (const goal of used) assert.notEqual(I18n.translate(language, `puzzleGoal_${goal}`), `puzzleGoal_${goal}`, `${language} ${goal}`);
+    const motifs = new Set(PuzzleCore.TIERS.flatMap((tier) => Puzzles.puzzles[tier].map((row) => row[5]).filter(Boolean)));
+    for (const motif of motifs) assert.notEqual(I18n.translate(language, `motif_${motif}`), `motif_${motif}`, `${language} ${motif}`);
+    assert.match(I18n.translate(language, 'puzzleLeadGoal', { rating: 1, color: 'x', goal: 'G', moves: 2 }), /G/);
+  }
+  const ru = I18n.translate('ru', 'puzzleLeadGoal', { rating: 2089, color: I18n.translate('ru', 'puzzleWhite'), goal: I18n.translate('ru', 'puzzleGoal_win'), moves: 2 });
+  assert.equal(ru, 'Рейтинг 2089. Ты играешь белыми. Цель — решающий выигрыш: забрать фигуру или больше; мат не нужен. Ходов найти: 2. Ответы соперника делаются сами; одна ошибка — и это уже другая задача.');
 });
