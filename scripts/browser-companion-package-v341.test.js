@@ -46,6 +46,9 @@ test('the site offers the v341 package and no longer precaches the ZIP', () => {
   assert.equal((landing.match(/downloads\/satoru-attention-chromium-v341\.zip/g) || []).length, 5);
   assert.doesNotMatch(landing, /v(260|297|299|300|304|305|322)\.zip/);
   assert.doesNotMatch(fs.readFileSync(path.join(root, 'public/sw.js'), 'utf8'), /downloads\//);
+  // The landing and privacy scripts are cache-pinned to this release, or browsers keep the 0.10.2 link and date.
+  for (const page of ['browser-companion.html', 'browser-companion-privacy.html'])
+    assert.match(fs.readFileSync(path.join(root, 'public', page), 'utf8'), /-v1\.js\?v=20261007-puzzles-v341-1"/, page);
   assert.match(fs.readFileSync(path.join(root, 'public/browser-companion-privacy-v1.js'), 'utf8'), /Extension 0\.10\.3/);
   assert.match(fs.readFileSync(path.join(root, 'public/browser-companion-privacy-v1.js'), 'utf8'), /about\.json whether a community or profile/);
 });
