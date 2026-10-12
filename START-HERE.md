@@ -1,3 +1,5 @@
+Перед планированием прочитай STRATEGY-DECISIONS.md (`~/Projects/satoru-release-plan-20260924/`).
+
 **Claude 07.10 — v341 опубликован:** runtime `81e6de7b`; оба домена `satoru-v341` с 19:46 UTC;
 SHA-256 17/18 (privacy-страница отличается только защитой email Cloudflare); production без входа —
 Chromium и WebKit iPhone без ошибок страницы. 3384/3384, расширение 55/55. Следом — метки кэша
