@@ -15181,14 +15181,22 @@ function questGoalChipHTML(q, links) {
 }
 // Повторяющееся дело копится в «Незавершённых» копиями за разные дни (опись 14.10: «Прочитать главу
 // учебника» — три строки подряд). Свежая копия видна, остальные — под одной строкой, со всеми кнопками.
+function overdueCopyKey(task) {
+  const skills = Array.isArray(task.skillIds) && task.skillIds.length ? task.skillIds.map(String).sort().join(',') : String(task.skillId || '');
+  return `${String(task.title || '').trim().toLowerCase()}|${skills}`;
+}
 function groupOverdueCopies(tasks) {
   const groups = new Map();
-  for (const task of tasks) {
-    const key = `${String(task.title || '').trim().toLowerCase()}|${task.skillId || (Array.isArray(task.skillIds) && task.skillIds[0]) || ''}`;
+  tasks.forEach((task, index) => {
+    const key = overdueCopyKey(task);
     if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(task);
-  }
-  return [...groups.values()].map((list) => list.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))));
+    groups.get(key).push({ task, index });
+  });
+  // Группа стоит там, где стояла бы её свежая копия, — иначе дело за вчера уезжает к делам месячной давности.
+  return [...groups.values()]
+    .map((list) => list.slice().sort((a, b) => String(b.task.date || '').localeCompare(String(a.task.date || '')) || b.index - a.index))
+    .sort((a, b) => a[0].index - b[0].index)
+    .map((list) => list.map((x) => x.task));
 }
 function questRow(q, links) {
   const estMin = Number(q.estimateMin) || 0;
@@ -23380,7 +23388,7 @@ function renderToday() {
   State._todaySelectedNudge = selectedNudge;
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${satoruIconHTML('status.warning', 'heading-glyph', '⏳')} ${t('⏳ Просрочено').replace(/^⏳\s*/, '')} (${overdue.length})</h3>
-      <ul class="tasks">${groupOverdueCopies(overdue).map((list) => questRow(list[0], questGoalLinks) + (list.length > 1 ? `<li class="overdue-copies"><details><summary>${t('Ещё копии этого дела за прошлые дни')}: ${list.length - 1}</summary><ul class="tasks">${list.slice(1).map((task) => questRow(task, questGoalLinks)).join('')}</ul></details></li>` : '')).join('')}</ul>
+      <ul class="tasks">${groupOverdueCopies(overdue).map((list) => questRow(list[0], questGoalLinks) + (list.length > 1 ? `<li class="overdue-copies"><details data-overdue-copies="${esc(overdueCopyKey(list[0]))}" ${State._overdueCopiesOpen?.has(overdueCopyKey(list[0])) || list.slice(1).some((task) => guideV3TaskTarget(task.id)) ? 'open' : ''}><summary>${t('Ещё копии этого дела за прошлые дни')}: ${list.length - 1}</summary><ul class="tasks">${list.slice(1).map((task) => questRow(task, questGoalLinks)).join('')}</ul></details></li>` : '')).join('')}</ul>
       <div class="overdue-bulk-actions"><button class="btn ghost" data-action="overdue-bulk-open" data-noi18n>${esc(overdueBulkCopy('open'))}</button><button class="btn ghost" data-action="move-overdue">${t('↪ Перенести всё на сегодня')}</button></div></div>` : '';
   // Control promises a visible decision, not a review hidden among optional history.
   const overdueSurface = currentPath() === 'control' ? controlReviewCardHTML()
@@ -31053,6 +31061,8 @@ function renderCaptureWidget(name) {
 function render() {
   const earlier = document.querySelector('.today-earlier');
   if (earlier) State._todayEarlierOpen = earlier.open;
+  const copies = document.querySelectorAll('.overdue-copies > details[data-overdue-copies]');
+  if (copies.length) State._overdueCopiesOpen = new Set([...copies].filter((d) => d.open).map((d) => d.dataset.overdueCopies));
   syncDeviceAccount();
   const capture = captureWidgetRequested();
   if (capture && State.phase === 'app') { renderCaptureWidget(capture); return; }
