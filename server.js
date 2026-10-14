@@ -1285,7 +1285,9 @@ async function pushTick() {
     // Ход секретаря и вечерний контур, настроенный человеком, сюда не входят.
     const pace = (k) => {
       const awayDays = daysBetween((comp && comp.lastSeen) || date, date);
-      return NudgePacing.decide({ away: awayDays, today: date, lastSent: user.push.lastNudge || null, log, kind: k, slot: user.push.slot });
+      // Настройка и дата последнего напоминания живут вне подписки: истёкшая подписка их не стирает.
+      const prefs = user.nudgePrefs || {};
+      return NudgePacing.decide({ away: awayDays, today: date, lastSent: prefs.last || null, log, kind: k, slot: prefs.slot });
     };
     let payload = null;
     let delivery = null;
@@ -1332,7 +1334,7 @@ async function pushTick() {
       if (pet) {
         const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'p'), vIdx.p);
         const chromeCopy = PUSH_CHROME_COPY[lang] || PUSH_CHROME_COPY.en;
-        payload = { title: `🐾 ${pet} ${chromeCopy.pet}`, body: text.replace(/\{pet\}/g, pet).replace(/\{sphere\}/g, lonely.sphere), url: './?view=pets', tag: 'satoru-pet', lang };
+        payload = { title: `🐾 ${pet} ${chromeCopy.pet}`, body: text.replace(/\{pet\}/g, () => pet).replace(/\{sphere\}/g, () => lonely.sphere), url: './?view=pets', tag: 'satoru-pet', lang };
         delivery = { logKey: 'p', variantKind: 'p', variantIdx: idx, petAt: date };
       }
     }
@@ -1364,10 +1366,10 @@ async function pushTick() {
     }
     if (outcome === 'gone') { delete user.push; changed = true; continue; }
     if (outcome !== 'delivered') continue;
-    if (move) { user.push.log = log; changed = true; continue; }
+    if (move) { user.push.log = log; log.mv = true; user.nudgePrefs = { ...(user.nudgePrefs || {}), last: date }; changed = true; continue; }
     if (delivery) {
       log[delivery.logKey] = true;
-      if (['m', 'e', 'p', 'q'].includes(delivery.logKey)) user.push.lastNudge = date;
+      if (['m', 'e', 'p', 'q'].includes(delivery.logKey)) user.nudgePrefs = { ...(user.nudgePrefs || {}), last: date };
       if (delivery.variantKind) user.push.variantIdx = { ...(user.push.variantIdx || {}), [delivery.variantKind]: delivery.variantIdx };
       if (delivery.petAt) user.push.petAt = delivery.petAt;
       if (delivery.quietAskAt) user.push.quietAskAt = delivery.quietAskAt;
@@ -7084,7 +7086,7 @@ const server = http.createServer(async (req, res) => {
     if (!s || !s.endpoint || !s.keys) return sendJson(res, 400, { error: 'bad_subscription' });
     const users = loadUsers(); const user = users.find((x) => x.id === me); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const tz = (typeof b.tz === 'string' && b.tz.length < 64) ? b.tz : (user.push && user.push.tz) || 'Europe/Berlin';
-    user.push = { endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth, at: new Date().toISOString(), tz, nudges: user.push ? user.push.nudges !== false : true, ...(user.push && user.push.slot ? { slot: user.push.slot } : {}) };
+    user.push = { endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth, at: new Date().toISOString(), tz, nudges: user.push ? user.push.nudges !== false : true };
     saveUsers(users); return sendJson(res, 200, { ok: true });
   }
   if (u === '/api/push/unsubscribe' && req.method === 'POST') {
@@ -7100,15 +7102,16 @@ const server = http.createServer(async (req, res) => {
     if (!user || !user.push) return sendJson(res, 400, { error: 'no_subscription' });
     if (b.slot !== undefined && !NudgePacing.SLOTS.includes(b.slot)) return sendJson(res, 400, { error: 'bad_slot' });
     user.push.nudges = b.on !== false;
-    if (b.slot !== undefined) user.push.slot = b.slot;
+    if (b.slot !== undefined) user.nudgePrefs = { ...(user.nudgePrefs || {}), slot: b.slot };
     saveUsers(users);
-    return sendJson(res, 200, { ok: true, nudges: user.push.nudges, slot: NudgePacing.normalizeSlot(user.push.slot) });
+    return sendJson(res, 200, { ok: true, nudges: user.push.nudges, slot: NudgePacing.normalizeSlot((user.nudgePrefs || {}).slot) });
   }
   if (u === '/api/push/nudges' && req.method === 'GET') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
     const user = loadUsers().find((x) => x.id === me);
-    if (!user || !user.push) return sendJson(res, 200, { nudges: null, slot: NudgePacing.DEFAULT_SLOT });
-    return sendJson(res, 200, { nudges: user.push.nudges !== false, slot: NudgePacing.normalizeSlot(user.push.slot) });
+    const slot = NudgePacing.normalizeSlot(user && (user.nudgePrefs || {}).slot);
+    if (!user || !user.push) return sendJson(res, 200, { nudges: null, slot });
+    return sendJson(res, 200, { nudges: user.push.nudges !== false, slot });
   }
   if (u === '/api/push/test' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });

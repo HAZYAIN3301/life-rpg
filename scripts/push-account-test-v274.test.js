@@ -19,7 +19,8 @@ test('account push test remains reachable without enrolling this browser', () =>
       _pwaRegistration: 'ready', _deferredInstall: null, _pwaInstallBusy: false, _pushBusy: false };
     vm.createContext(context); vm.runInContext(card, context);
     assert.equal((context.pwaCard().match(/data-action="push-test"/g) || []).length, 1);
-    assert.equal(/data-nudge-slot/.test(context.pwaCard()), pushOn, 'выбор частоты — только при включённых уведомлениях');
+    assert.equal(/data-nudge-slot|Загружаю…/.test(context.pwaCard()), pushOn, 'выбор частоты — только при включённых уведомлениях');
+    if (pushOn) { context.State.nudgePref = 'evening'; assert.match(context.pwaCard(), /<option value="evening" selected>/); context.State.nudgePref = undefined; }
     context._pushBusy = true;
     assert.match(context.pwaCard(), /data-action="push-test" disabled/);
   }

@@ -36782,19 +36782,22 @@ function pwaCard() {
 }
 // Когда Тень напоминает (ночная ветка 14.10): утро / вечер / оба / не напоминать. Хранится на сервере.
 function ensureNudgePref() {
-  if (State.nudgePref !== undefined || !State.pushOn) return;
+  if (State.nudgePref !== undefined || !State.pushOn || Date.now() - (State._nudgePrefFailedAt || 0) < 60000) return;
   State.nudgePref = null;
+  const failed = () => { State.nudgePref = undefined; State._nudgePrefFailedAt = Date.now(); };
   fetch('/api/push/nudges').then((r) => (r.ok ? r.json() : null)).then((d) => {
-    if (!d || d.nudges === null) return;
+    if (!d) return failed();
+    if (d.nudges === null) return;
     State.nudgePref = d.nudges === false ? 'off' : (d.slot || 'morning');
     if (State.view === 'settings') render();
-  }).catch(() => {});
+  }).catch(failed);
 }
 async function saveNudgePref(value) {
   const before = State.nudgePref;
   State.nudgePref = value;
   try {
-    const body = value === 'off' ? { on: false } : { on: true, slot: value };
+    // «Не напоминать» глушит только напоминания Тени; ход секретаря и свой вечерний контур остаются.
+    const body = { on: true, slot: value };
     const { response } = await accountJson('/api/push/nudges', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     if (!response.ok) throw new Error('server');
   } catch { State.nudgePref = before; toast(t('Не удалось сохранить настройку напоминаний')); render(); }
@@ -36802,6 +36805,7 @@ async function saveNudgePref(value) {
 function nudgePrefRow() {
   if (!State.pushOn) return '';
   ensureNudgePref();
+  if (State.nudgePref === null) return `<p class="muted" style="font-size:12px;margin:10px 0 0">${esc(t('Загружаю…'))}</p>`;
   const cur = State.nudgePref || 'morning';
   const options = [['morning', 'утром'], ['evening', 'вечером'], ['both', 'утром и вечером'], ['off', 'не напоминать']]
     .map(([v, l]) => `<option value="${v}"${cur === v ? ' selected' : ''}>${esc(t(l))}</option>`).join('');
