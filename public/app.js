@@ -1626,6 +1626,8 @@ const I18N_EXTRA = {
   'Искать сферу': { en: 'Search sphere', de: 'Bereich suchen', uk: 'Шукати сферу', es: 'Buscar ámbito' },
   'Искать сферу…': { en: 'Search sphere…', de: 'Bereich suchen…', uk: 'Шукати сферу…', es: 'Buscar ámbito…' },
   'Выбрать': { en: 'Select', de: 'Auswählen', uk: 'Обрати', es: 'Elegir' },
+  'Найти в заметках': { en: 'Find in notes', de: 'In Notizen suchen', uk: 'Знайти в нотатках', es: 'Buscar en las notas' },
+  'Найдено заметок': { en: 'Notes found', de: 'Gefundene Notizen', uk: 'Знайдено нотаток', es: 'Notas encontradas' },
   'Ничего не нашлось': { en: 'Nothing found', de: 'Nichts gefunden', uk: 'Нічого не знайдено', es: 'No se encontró nada' },
   'Сложность — можно поменять сегодня': { en: 'Difficulty — changeable today', de: 'Schwierigkeit — heute noch änderbar', uk: 'Складність — можна змінити сьогодні', es: 'Dificultad — se puede cambiar hoy' },
   'Соседние дни': { en: 'Nearby days', de: 'Nachbartage', uk: 'Сусідні дні', es: 'Días cercanos' },
@@ -19494,13 +19496,36 @@ function noteTitle(it) {
   return raw ? raw.slice(0, 72) : t(it.kind === 'voice' ? 'Голосовая заметка' : it.kind === 'video' ? 'Видео-заметка' : 'Заметка');
 }
 // Карточка-заметка: редактируемый текст + плеер (если медиа) + действия
-function noteCard(it) {
+// Поиск по заметкам (проверка 14.10: 29 заметок — 5 экранов телефона, найти старую можно было только прокруткой).
+// Поле появляется с восьми заметок и фильтрует карточки на месте, без перерисовки и без запросов.
+const NOTES_FILTER_MIN = 8;
+function notesFilterQuery(notes = State.inbox || []) { return notes.length >= NOTES_FILTER_MIN ? String(State._notesFilter || '').trim().toLowerCase() : ''; }
+function noteMatchesFilter(it, query) { return !query || String(it.text || '').toLowerCase().includes(query) || noteTitle(it).toLowerCase().includes(query); }
+function notesFilterStatus(notes, query) {
+  if (!query) return '';
+  const found = notes.filter((it) => noteMatchesFilter(it, query)).length;
+  return found ? `${t('Найдено заметок')}: ${found}` : t('Ничего не нашлось');
+}
+function notesFilterHTML(notes) {
+  if (notes.length < NOTES_FILTER_MIN) return '';
+  const query = notesFilterQuery(notes);
+  return `<div class="notes-filter"><label for="notes-filter">${t('Найти в заметках')}</label><input id="notes-filter" type="search" autocomplete="off" enterkeyhint="search" value="${esc(State._notesFilter || '')}"><p class="notes-filter-status muted" role="status" aria-live="polite">${esc(notesFilterStatus(notes, query))}</p></div>`;
+}
+function applyNotesFilter() {
+  const notes = State.inbox || [], query = notesFilterQuery(notes);
+  for (const card of document.querySelectorAll('.notes-list > .note-card')) {
+    const it = notes.find((note) => note.id === card.dataset.id);
+    card.hidden = !!it && !noteMatchesFilter(it, query);
+  }
+  const status = document.querySelector('.notes-filter-status'); if (status) status.textContent = notesFilterStatus(notes, query);
+}
+function noteCard(it, { hidden = false } = {}) {
   const media = it.file ? (it.kind === 'video'
     ? `<video class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></video>`
     : `<audio class="note-media" controls preload="metadata" src="/api/inbox/media/${esc(it.file)}"></audio>`) : '';
   const icon = it.kind === 'voice' ? satoruIconHTML('media.microphone', 'note-kind-icon', '🎤') : it.kind === 'video' ? satoruIconHTML('media.video', 'note-kind-icon', '🎥') : satoruIconHTML('media.notes', 'note-kind-icon', '📝');
   const when = it.at && Number.isFinite(Date.parse(it.at)) ? new Intl.DateTimeFormat(lang(), { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }).format(new Date(it.at)) : '';
-  return `<article class="card note-card" data-guide-target="note-created" data-id="${esc(it.id)}" tabindex="-1" aria-labelledby="note-${esc(it.id)}-title">
+  return `<article class="card note-card" data-guide-target="note-created" data-id="${esc(it.id)}" tabindex="-1" aria-labelledby="note-${esc(it.id)}-title"${hidden ? ' hidden' : ''}>
     <details class="note-disclosure"><summary class="note-preview"><h3 id="note-${esc(it.id)}-title" tabindex="-1" data-noi18n>${esc(it.text?.trim() || noteTitle(it))}</h3><span class="note-when muted">${icon}<time datetime="${esc(it.at || '')}">${esc(when)}</time></span></summary><div class="note-editor">
     ${media}
     <label class="sr-only" for="note-${esc(it.id)}-text">${t('Текст заметки')}</label><textarea id="note-${esc(it.id)}-text" class="note-text" data-action="note-edit" data-id="${it.id}" rows="4" maxlength="1000" placeholder="${t(it.file ? 'Подпиши заметку…' : 'Текст заметки…')}">${esc(it.text || '')}</textarea><p class="note-save-status" data-note-status="${it.id}" role="status"></p>
@@ -19514,7 +19539,7 @@ function renderNotes() {
   const notes = State.inbox || [];
   if (State._inboxLoadError) return notesRecoveryCard();
   return `<section class="notes-screen" data-guide-target="notes-overview" aria-labelledby="notes-title"><header class="notes-header"><button type="button" class="btn ghost notes-back" data-action="notes-back">${satoruIconHTML('action.back', 'button-glyph', '')} ${esc(t('Сегодня'))}</button><h2 id="notes-title" tabindex="-1">${t('Заметки')}</h2><span class="notes-count muted">${notes.length}</span></header>${captureBar({ expanded: true })}
-    <section class="notes-list" aria-label="${t('Заметки')}">${notes.length ? notes.map(noteCard).join('') : `<div class="card notes-empty"><p>${t('Текст заметки…')}</p></div>`}</section></section>`;
+    ${notesFilterHTML(notes)}<section class="notes-list" aria-label="${t('Заметки')}">${notes.length ? notes.map((it) => noteCard(it, { hidden: !noteMatchesFilter(it, notesFilterQuery(notes)) })).join('') : `<div class="card notes-empty"><p>${t('Текст заметки…')}</p></div>`}</section></section>`;
 }
 function closeNoteDeleteDialog({ restoreFocus = true } = {}) {
   const overlay = document.getElementById('note-delete-dialog'); if (!overlay) return;
@@ -36419,6 +36444,7 @@ function onChange(e) {
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
+  if (e.target.id === 'notes-filter') { State._notesFilter = e.target.value; applyNotesFilter(); return; }
   if(e.target.matches?.('[data-chat-schedule]')){editChatSchedule(e.target);return;}
   if (e.target.dataset.field === 'color' && e.target.closest('#skills-list')) {
     const row = e.target.closest('.skill-edit'), auto = row.querySelector('[data-field="colorMode"]');

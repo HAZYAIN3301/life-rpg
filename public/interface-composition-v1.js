@@ -114,7 +114,7 @@
       const shell = q('.notes-screen'), capture = q('.capture-card'), list = q('.notes-list');
       if (shell && list) {
         const composer = capture || q('[data-capture-owner]') || q('form.capture');
-        if (composer) region(shell, 'notes-workspace', [composer, list]);
+        if (composer) region(shell, 'notes-workspace', [composer, q('.notes-filter'), list]);
         list.classList.add('notes-gallery');
       }
     }
