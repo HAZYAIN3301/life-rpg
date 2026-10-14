@@ -3,6 +3,7 @@
 const test = require('node:test'), assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), vm = require('node:vm');
 const APP = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
+const CSS = fs.readFileSync(path.join(__dirname, '..', 'public/styles.css'), 'utf8');
 
 test('копии одного дела группируются, свежая — первой; разные сферы не смешиваются', () => {
   const code = APP.slice(APP.indexOf('function overdueCopyKey('), APP.indexOf('function questRow(q, links) {'));
@@ -41,4 +42,9 @@ test('в «Незавершённых» видна свежая копия, ос
   const at = APP.indexOf("  'Ещё копии этого дела за прошлые дни':"); assert.ok(at > 0);
   const line = APP.slice(at, APP.indexOf('\n', at)); for (const l of ['en:', 'de:', 'uk:', 'es:']) assert.ok(line.includes(l), l);
   assert.match(APP, /\$\{t\('Незавершённые дела'\)\} · \$\{overdue\.length\}/, 'счётчик по-прежнему считает все дела');
+});
+
+test('у строки копий виден знак раскрытия: flex на summary убирает родной треугольник', () => {
+  assert.match(CSS, /\.overdue \.overdue-copies > details > summary::before \{ content: '▸';/);
+  assert.match(CSS, /\.overdue \.overdue-copies > details\[open\] > summary::before \{ content: '▾'; \}/);
 });
