@@ -31,7 +31,22 @@ test('новому человеку — нейтральный пример, п�
 });
 
 test('выбор аватара читается экранным диктором; перечёркнуто только название дела', () => {
-  assert.match(APP, /data-action="pick-avatar" data-av="\$\{a\}" aria-label="\$\{esc\(t\('Аватар'\)\)\} \$\{i \+ 1\}" aria-pressed=/);
-  assert.match(CSS, /\.task\.done \.t-title \{ color: var\(--muted\); \}\n\.task\.done \.t-title \.t-title-copy \{ text-decoration: line-through; \}/);
+  assert.match(APP, /data-action="pick-avatar" data-av="\$\{a\}" aria-label="\$\{esc\(t\('Аватар'\)\)\} \$\{a\}" aria-pressed=/);
+  assert.match(CSS, /\.task\.done \.t-title \{ color: var\(--muted\); \}\n\.task\.done \.t-title \.t-title-copy, \.task\.habit\.done \.t-title \{ text-decoration: line-through; \}/, 'дела и привычки по-прежнему зачёркнуты');
   assert.equal(/\.task\.done \.t-title \{ text-decoration: line-through/.test(CSS), false, 'чип цели и сферы не зачёркиваются');
+});
+
+test('ревью 14.10: смена ответа обновляет подстановку, стёртое поле остаётся пустым, числа не режутся', () => {
+  const code = APP.slice(APP.indexOf('function questionnaireManualSeed('), APP.indexOf('function questionnaireManualFromDOM() {'));
+  let raw = 'Хочу пробежать 5.5 км к весне. Сегодня начну с 15 минут.';
+  const ctx = { State: { _questionnaireManual: {} }, questionnaireCurrent: () => ({ rawAnswer: raw }) };
+  vm.createContext(ctx); vm.runInContext(code, ctx);
+  ctx.questionnaireManualSeedFromAnswer();
+  assert.equal(ctx.State._questionnaireManual.result, 'Хочу пробежать 5.5 км к весне.');
+  raw = 'Хочу сдать B2. Сегодня выучу 20 слов.'; ctx.questionnaireManualSeedFromAnswer();
+  assert.equal(ctx.State._questionnaireManual.result, 'Хочу сдать B2.', 'свою подстановку обновляем при новом ответе');
+  ctx.State._questionnaireManual = { ...ctx.State._questionnaireManual, why: 'моё' }; raw = 'Другое. Сегодня шаг.'; ctx.questionnaireManualSeedFromAnswer();
+  assert.equal(ctx.State._questionnaireManual.why, 'моё', 'правку человека не перетираем');
+  assert.equal(JSON.stringify(ctx.questionnaireManualSeed('Сегодня выучу 20 слов.')), JSON.stringify({ result: '', step: 'Сегодня выучу 20 слов.', why: '' }));
+  assert.match(APP, /result: String\(pick\('result'\) \? pick\('result'\)\.value : State\._questionnaireManual\.result \|\| ''\)/);
 });

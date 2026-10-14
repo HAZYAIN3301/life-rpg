@@ -14499,7 +14499,7 @@ function renderRegistrationLanguageScreen() {
 }
 
 function renderRegisterScreen() {
-  const avatarPicker = AVATARS.map((a, i) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}" aria-label="${esc(t('Аватар'))} ${i + 1}" aria-pressed="${a === State.regAvatar}">${avatarOriginIconHTML(a, 'avatar-origin-icon')}</button>`).join('');
+  const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}" aria-label="${esc(t('Аватар'))} ${a}" aria-pressed="${a === State.regAvatar}">${avatarOriginIconHTML(a, 'avatar-origin-icon')}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
       <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Создай аккаунт')}</p></div>
@@ -14672,9 +14672,11 @@ function questionnaireSourceFromDOM() {
 // Без ИИ ответ первого шага раньше пропадал: человек писал абзац и заполнял форму заново.
 // Теперь первое предложение — результат, предложение со «сегодня» — шаг, остальное — «почему».
 function questionnaireManualSeed(text) {
-  const sentences = (String(text || '').match(/[^.!?…]+[.!?…]*/g) || []).map((x) => x.trim()).filter(Boolean);
+  // Точка внутри числа или сокращения («5.5 км», «9.30») предложение не заканчивает.
+  const sentences = (String(text || '').match(/(?:[^.!?…]|[.!?…](?=\S))+[.!?…]*/g) || []).map((x) => x.trim()).filter(Boolean);
   if (!sentences.length) return null;
   const today = /(сегодня|today|heute|сьогодні|hoy)/i;
+  if (sentences.length === 1 && today.test(sentences[0])) return { result: '', step: sentences[0].slice(0, 160), why: '' };
   const stepAt = sentences.findIndex((x, i) => i > 0 && today.test(x));
   return {
     result: sentences[0].slice(0, 160),
@@ -14684,16 +14686,23 @@ function questionnaireManualSeed(text) {
 }
 function questionnaireManualSeedFromAnswer() {
   const draft = State._questionnaireManual || {};
-  if (draft.result || draft.step || draft.why) return; // человек уже начал форму — не трогаем
+  const last = State._questionnaireManualSeed;
+  // Форму, которую человек начал сам, не трогаем; свою прошлую подстановку обновляем, если ответ изменился.
+  const untouched = !draft.result && !draft.step && !draft.why;
+  const stillOurSeed = last && ['result', 'step', 'why'].every((k) => (draft[k] || '') === (last[k] || ''));
+  if (!untouched && !stillOurSeed) return;
   const seed = questionnaireManualSeed(questionnaireCurrent().rawAnswer);
-  if (seed) State._questionnaireManual = { ...draft, ...seed };
+  if (!seed) return;
+  State._questionnaireManual = { ...draft, ...seed };
+  State._questionnaireManualSeed = seed;
 }
 function questionnaireManualFromDOM() {
   const pick = (name) => document.querySelector(`[data-questionnaire-manual="${name}"]${name === 'estimateMin' ? ':checked' : ''}`);
   State._questionnaireManual = {
-    result: String(pick('result')?.value || State._questionnaireManual.result || '').slice(0, 160),
-    why: String(pick('why')?.value || State._questionnaireManual.why || '').slice(0, 800),
-    step: String(pick('step')?.value || State._questionnaireManual.step || '').slice(0, 160),
+    // Поле есть на экране — берём его как есть, даже пустое: человек мог стереть подставленный текст.
+    result: String(pick('result') ? pick('result').value : State._questionnaireManual.result || '').slice(0, 160),
+    why: String(pick('why') ? pick('why').value : State._questionnaireManual.why || '').slice(0, 800),
+    step: String(pick('step') ? pick('step').value : State._questionnaireManual.step || '').slice(0, 160),
     sphere: String(pick('sphere')?.value || State._questionnaireManual.sphere || '').slice(0, 40),
     estimateMin: Math.max(5, Math.min(60, Math.round(Number(pick('estimateMin')?.value || State._questionnaireManual.estimateMin || 15)))),
   };
@@ -14746,7 +14755,8 @@ async function questionnaireAnalyze() {
     const next = out.status === 'done' && out.value.ok && !data.error ? questionnaireProposal(data, raw) : null;
     if (!next) {
       q.status = 'draft'; questionnaireRemember(q); State._questionnaireStage = 'manual';
-      State._questionnaireManual = { ...State._questionnaireManual, result: State._questionnaireManual.result || raw.slice(0, 160) };
+      questionnaireManualSeedFromAnswer();
+      if (!State._questionnaireManual.result && !State._questionnaireManual.step) State._questionnaireManual = { ...State._questionnaireManual, result: raw.slice(0, 160) };
       State._questionnaireError = t(out.status === 'timeout'
         ? 'Тень не ответила за полторы минуты. Текст сохранён — можно повторить или продолжить вручную.'
         : 'Не получилось разобрать ответ. Текст сохранён — можно повторить или продолжить вручную.');

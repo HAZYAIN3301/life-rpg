@@ -1503,7 +1503,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 }
 .task.done .check { background: var(--good); border-color: var(--good); }
 .task.done .t-title { color: var(--muted); }
-.task.done .t-title .t-title-copy { text-decoration: line-through; }
+.task.done .t-title .t-title-copy, .task.habit.done .t-title { text-decoration: line-through; }
 .t-title { font-weight: 500; }
 .t-skill {
   font-size: 11px; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
