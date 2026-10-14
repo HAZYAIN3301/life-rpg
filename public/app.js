@@ -26334,7 +26334,7 @@ function showFurniturePreview(id, returnFocus) {
 }
 let _rewardLifeUI;
 function rewardLifeUI() {
-  if (!_rewardLifeUI) _rewardLifeUI = window.RewardLifeV1.create({ state: () => State, lang, escape: esc, today: todayStr,
+  if (!_rewardLifeUI) _rewardLifeUI = window.RewardLifeV1.create({ state: () => State, lang, escape: esc, translate: t, today: todayStr,
     identity: () => `${State.me?.id || ''}:${Store._writeEpoch}`, commit: economyCommit,
     open: () => { State.view = 'rewards'; State._rewardsFocusAfterCommit = '.reward-life'; render(); },
     render: () => { State._rewardsFocusAfterCommit = '.reward-life'; render(); },

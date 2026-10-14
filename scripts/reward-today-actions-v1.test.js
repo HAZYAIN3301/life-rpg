@@ -42,3 +42,13 @@ test('метка версии модуля поднята — телефоны �
   const html = fs.readFileSync(path.join(__dirname, '..', 'public/index.html'), 'utf8');
   assert.match(html, /reward-life-v1\.js\?v=20261014-reward-today-1/);
 });
+
+test('название награды из каталога переводится, своё название остаётся', () => {
+  const state = { purchases: [{ id: 'p1', rewardId: 'coffee', name: 'Кофе в любимой кофейне' }, { id: 'p2', rewardId: 'own', name: 'Мой поход' }], settings: { rewardLifeV1: { p1: { status: 'planned', date: '2026-10-14', updatedAt: '2026-10-14T08:00:00Z' } } } };
+  const dict = { 'Кофе в любимой кофейне': 'Coffee at your favorite café' };
+  const ui = P.create({ state: () => state, lang: () => 'en', escape: (x) => String(x), translate: (k) => dict[k] || k, today: () => '2026-10-14', identity: () => 'u', commit: async () => true, open() {}, render() {} });
+  assert.match(ui.today(), /Coffee at your favorite café/);
+  const body = ui.body(); assert.match(body, /Coffee at your favorite café/); assert.match(body, /Мой поход/);
+  const app = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
+  assert.match(app, /window\.RewardLifeV1\.create\(\{ state: \(\) => State, lang, escape: esc, translate: t,/);
+});

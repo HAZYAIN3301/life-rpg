@@ -35,6 +35,8 @@
   }
   function create(d) {
     const t = k => text(k,d.lang()), e = d.escape;
+    // Название из каталога сохраняется в покупке по-русски; переводим его, своё название человека остаётся как есть.
+    const name = p => typeof d.translate === 'function' ? d.translate(p.name) : p.name;
     let busy = false, attempt = null, message = '', identity = '';
     function scope() { const id = d.identity(); if (id !== identity) { identity=id; attempt=null; message=''; busy=false; } return id; }
     function items() { return (d.state().purchases || []).filter(personal).slice().reverse(); }
@@ -45,14 +47,14 @@
       // Отметить можно прямо здесь: раньше карточка только вела в «Награды», и звено «использую»
       // требовало лишнего перехода (аудит золота 14.10). Статусы те же, золото не меняется.
       const disabled = busy ? 'disabled' : '';
-      return p ? `<div class="duo-today reward-life-today" data-reward-id="${e(p.id)}"><span><b>${t('due')}</b><small data-noi18n>${e(p.name)}</small>${message === t('error') ? `<small role="alert">${e(message)}</small>` : ''}</span><span class="reward-life-today-actions"><button type="button" class="btn" data-reward-life="used" ${disabled}>${t('use')}</button><button type="button" class="btn ghost" data-reward-life="deferred" ${disabled}>${t('defer')}</button><button type="button" class="btn ghost" data-reward-life="open">${t('open')}</button></span></div>` : '';
+      return p ? `<div class="duo-today reward-life-today" data-reward-id="${e(p.id)}"><span><b>${t('due')}</b><small data-noi18n>${e(name(p))}</small>${message === t('error') ? `<small role="alert">${e(message)}</small>` : ''}</span><span class="reward-life-today-actions"><button type="button" class="btn" data-reward-life="used" ${disabled}>${t('use')}</button><button type="button" class="btn ghost" data-reward-life="deferred" ${disabled}>${t('defer')}</button><button type="button" class="btn ghost" data-reward-life="open">${t('open')}</button></span></div>` : '';
     }
     function body() {
       scope(); if (!items().length) return '';
       const life = d.state().settings?.rewardLifeV1;
       if (!valid(life)) return `<section class="card"><p role="alert">${t('error')}</p></section>`;
       const card = p => { const r = life && Object.hasOwn(life,p.id) ? life[p.id] : {status:'received'}, disabled = busy ? 'disabled' : '';
-        return `<article class="reward-life-item" data-reward-id="${e(p.id)}"><h4 data-noi18n>${e(p.name)}</h4><p>${t(r.status)}${r.date ? ' · '+e(r.date) : ''}</p>
+        return `<article class="reward-life-item" data-reward-id="${e(p.id)}"><h4 data-noi18n>${e(name(p))}</h4><p>${t(r.status)}${r.date ? ' · '+e(r.date) : ''}</p>
         ${r.status === 'used' || r.status === 'deferred' ? `<button class="btn ghost" data-reward-life="received" ${disabled}>${t('restore')}</button>` : `<label>${t('date')}<input type="date" data-reward-date value="${e(attempt?.id === p.id && attempt.status === 'planned' ? attempt.day : r.date || d.today())}" ${disabled}></label><div class="reward-life-actions"><button class="btn ghost" data-reward-life="planned" ${disabled}>${t('plan')}</button><button class="btn" data-reward-life="used" ${disabled}>${t('use')}</button><button class="btn ghost" data-reward-life="deferred" ${disabled}>${t('defer')}</button></div>`}</article>`; };
       const rows = items();
       return `<section class="card reward-life" tabindex="-1"><h3>${t('title')}</h3><p class="muted">${t('note')}</p><p role="status" aria-live="polite">${e(message)}</p><div class="reward-life-grid">${rows.slice(0,6).map(card).join('')}</div>${rows.length>6?`<details><summary>${t('more')} · ${rows.length-6}</summary><div class="reward-life-grid">${rows.slice(6).map(card).join('')}</div></details>`:''}</section>`;
