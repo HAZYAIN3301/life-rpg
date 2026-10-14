@@ -6151,6 +6151,24 @@ const server = http.createServer(async (req, res) => {
       fs.readFile(fp, (err, buf) => err ? send(res, 404, 'Not found') : send(res, 200, buf, { 'Content-Type': INBOX_MIME[ext] || 'application/octet-stream' }));
       return;
     }
+    // Окно удаления заметки обещает, что запись исчезнет. Сохранение заметок — «последний прав»,
+    // поэтому файл не чистится по разнице списков (устаревшее устройство стёрло бы чужую запись);
+    // клиент просит удалить конкретный файл после явного удаления, а сервер удаляет его, только
+    // если ни одна сохранённая заметка на него больше не ссылается.
+    if (im && req.method === 'DELETE') {
+      const uid = sessionUserId(req);
+      if (!uid) return sendJson(res, 401, { error: 'not logged in' });
+      const name = im[1];
+      if (name.includes('..')) return sendJson(res, 400, { error: 'bad name' });
+      const dir = path.join(userDataDir(uid), 'inbox');
+      let inbox = [];
+      try { inbox = JSON.parse(fs.readFileSync(path.join(userDataDir(uid), 'inbox.json'), 'utf8')); }
+      catch (error) { if (error.code !== 'ENOENT') return sendJson(res, 409, { error: 'inbox_unreadable' }); }
+      if (Array.isArray(inbox) && inbox.some((note) => note && note.file === name)) return sendJson(res, 409, { error: 'still_referenced' });
+      try { fs.unlinkSync(path.join(dir, name)); }
+      catch (error) { if (error.code === 'ENOENT') return sendJson(res, 200, { ok: true, deleted: false }); return sendJson(res, 500, { error: 'delete_failed' }); }
+      return sendJson(res, 200, { ok: true, deleted: true });
+    }
   }
 
   // ---- Голос Тени v2: Piper/OpenAI за авторизованным same-origin API. ----

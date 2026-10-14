@@ -19543,8 +19543,11 @@ function openNoteDeleteDialog(id, opener) {
 async function confirmNoteDelete() {
   const overlay = document.getElementById('note-delete-dialog'); if (!overlay || State._inboxBusy) return;
   const id = overlay.dataset.id; const next = (State.inbox || []).filter((note) => note.id !== id);
+  const removed = (State.inbox || []).find((note) => note.id === id);
   const saved = await commitInbox(next);
   if (!saved) { const desc = overlay.querySelector('#note-delete-desc'); if (desc) { desc.textContent = t('Не удалось удалить заметку. Она осталась на месте.'); desc.setAttribute('role', 'alert'); } return; }
+  // Окно обещает, что медиа исчезнет: файл записи удаляется отдельно, сервер проверяет, что на него больше никто не ссылается.
+  if (removed?.file) fetch(`/api/inbox/media/${encodeURIComponent(removed.file)}`, { method: 'DELETE' }).catch(() => {});
   closeNoteDeleteDialog({ restoreFocus: false }); State._inboxFocusAfterCommit = '#notes-title'; render();
 }
 async function noteToQuest(id) {
