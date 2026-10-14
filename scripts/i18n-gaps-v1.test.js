@@ -13,3 +13,8 @@ test('название личной награды без ключа катал�
   assert.equal((APP.match(/\$\{esc\(t\(r\.catalogNameKey \|\| r\.name\)\)\}/g) || []).length, 2);
   assert.ok(!APP.includes('${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}'));
 });
+
+test('выбор облика питомца не обрезает «Автоматически»: ширина по содержимому', () => {
+  const css = fs.readFileSync(path.join(__dirname, '..', 'public/styles.css'), 'utf8');
+  assert.match(css, /\.pet-species-picker select \{ min-width: 0; width: auto; max-width: 62%;/);
+});
