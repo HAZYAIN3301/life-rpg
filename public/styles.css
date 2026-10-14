@@ -4758,6 +4758,9 @@ button.sphere-row:hover, button.sphere-row:focus-visible { background: var(--sur
   flex-direction: column;
   gap: 2px;
 }
+/* Пустые места под пати на «Сегодня» (испытание, вылазка, проект) не занимают отступ сетки:
+   у человека без пати иначе 64px пустоты над делами (замер 14.10); то же — пустое место синхронизации фокуса. duo-host так уже спрятан. */
+[data-focus-sync-host]:empty, [data-trial-today-host]:empty, [data-adventure-today-host]:empty, [data-project-today-host]:empty { display: none; }
 
 .day-nav { display: flex; gap: var(--sp-2); margin-bottom: var(--sp-2); }
 .day-nav-btn {
@@ -22971,7 +22974,3 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .local-ai-test { margin: 0; font-size: var(--type-meta); overflow-wrap: anywhere; }
 .local-ai-test.is-ok { color: var(--ok, #3fb37f); }
 .local-ai-test.is-error { color: var(--bad, #e05d5d); }
-
-/* Пустые места под пати на «Сегодня» (испытание, вылазка, проект) не занимают отступ сетки:
-   у человека без пати иначе 64px пустоты над делами (замер 14.10); то же — пустое место синхронизации фокуса. duo-host так уже спрятан. */
-[data-focus-sync-host]:empty, [data-trial-today-host]:empty, [data-adventure-today-host]:empty, [data-project-today-host]:empty { display: none; }
