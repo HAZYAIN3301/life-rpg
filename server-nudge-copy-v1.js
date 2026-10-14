@@ -34,7 +34,7 @@ const COPY = {
       mid: ['Несколько дней тишины. Как ты?', 'Вечер — хороший момент вернуться, без спешки.', 'Если было тяжело — можно просто написать «тяжело». Списка дел не будет.'],
       far: ['Вечер. Здесь всё так же спокойно ждут — без вины за паузу.', 'Сколько бы дней ни прошло, дверь открыта в любое время.', 'Не срочно и без давления — просто напоминаю, что жду.', 'Я тут, без счёта дней. Захочешь вернуться — дверь открыта.'],
     },
-    p: ['Загляни к {pet} — тут давно ничего не происходило.', '{pet} нашёл в этой сфере старое дело и разглядывает его. Посмотрите вместе?', 'В этой сфере тихо. Если это осознанно — всё в порядке, {pet} просто спит.'],
+    p: ['Загляни к {pet} — тут давно ничего не происходило.', '{pet} нашёл в сфере «{sphere}» старое дело и разглядывает его. Посмотрите вместе?', 'В сфере «{sphere}» тихо. Если это осознанно — всё в порядке, {pet} просто спит.'],
     q: ['Давно тебя не видел. Это был отдых, занятость или что-то тяжёлое?', 'Тебя не было пару дней. Как оно — по-хорошему тихо или наоборот?', 'Если было тяжело, хватит одного слова. Как ты?'],
   },
   en: {
@@ -48,7 +48,7 @@ const COPY = {
       mid: ['A few quiet days. How are you?', 'Evening is a good moment to come back, no rush.', 'If it\'s been hard, you can just write "hard". No to-do list will follow.'],
       far: ['Evening. You are still quietly expected here — no guilt for the pause.', 'However many days have passed, the door is open any time.', 'Not urgent and no pressure — just letting you know I am here.', 'I\'m here, not counting days. If you want to come back, the door\'s open.'],
     },
-    p: ['Look in on {pet} — nothing has happened here in a long time.', '{pet} found an old task in this sphere and is studying it. Take a look together?', 'It\'s quiet in this sphere. If that\'s on purpose, all good — {pet} is just napping.'],
+    p: ['Look in on {pet} — nothing has happened here in a long time.', '{pet} found an old task in "{sphere}" and is studying it. Take a look together?', 'It\'s quiet in "{sphere}". If that\'s on purpose, all good — {pet} is just napping.'],
     q: ['Have not seen you in a while. Was that rest, being busy, or something heavy?', 'You were away a couple of days. How was it — quiet in a good way, or not?', 'If it\'s been hard, one word is enough. How are you?'],
   },
   de: {
@@ -62,7 +62,7 @@ const COPY = {
       mid: ['Ein paar stille Tage. Wie geht es dir?', 'Der Abend ist ein guter Moment zurückzukommen, ohne Eile.', 'Wenn es schwer war, schreib einfach „schwer". Eine To-do-Liste kommt nicht.'],
       far: ['Abend. Hier wartet man weiter in Ruhe — ohne schlechtes Gewissen für die Pause.', 'Wie viele Tage auch vergangen sind, die Tür steht jederzeit offen.', 'Nicht dringend und ohne Druck — ich sage nur, dass ich da bin.', 'Ich bin da und zähle keine Tage. Wenn du zurückwillst — die Tür ist offen.'],
     },
-    p: ['Schau bei {pet} vorbei — hier ist lange nichts passiert.', '{pet} hat in diesem Bereich eine alte Aufgabe gefunden und mustert sie. Schaut ihr gemeinsam?', 'In diesem Bereich ist es ruhig. Wenn das so gewollt ist, alles gut — {pet} schläft nur.'],
+    p: ['Schau bei {pet} vorbei — hier ist lange nichts passiert.', '{pet} hat in „{sphere}" eine alte Aufgabe gefunden und mustert sie. Schaut ihr gemeinsam?', 'In „{sphere}" ist es ruhig. Wenn das so gewollt ist, alles gut — {pet} schläft nur.'],
     q: ['Habe dich lange nicht gesehen. War das Erholung, viel zu tun, oder etwas Schweres?', 'Du warst ein paar Tage weg. Wie war es — angenehm still oder eher nicht?', 'Wenn es schwer war, reicht ein Wort. Wie geht es dir?'],
   },
   uk: {
@@ -76,7 +76,7 @@ const COPY = {
       mid: ['Кілька днів тиші. Як ти?', 'Вечір — гарний момент повернутися, без поспіху.', 'Якщо було важко — можна просто написати «важко». Списку справ не буде.'],
       far: ['Вечір. Тут так само спокійно чекають — без провини за паузу.', 'Скільки б днів не минуло, двері відчинені будь-коли.', 'Не терміново і без тиску — просто нагадую, що чекаю.', 'Я тут, без лічби днів. Захочеш повернутися — двері відчинені.'],
     },
-    p: ['Зазирни до {pet} — тут давно нічого не відбувалося.', '{pet} знайшов у цій сфері стару справу й розглядає її. Подивитеся разом?', 'У цій сфері тихо. Якщо це свідомо — усе гаразд, {pet} просто спить.'],
+    p: ['Зазирни до {pet} — тут давно нічого не відбувалося.', '{pet} знайшов у сфері «{sphere}» стару справу й розглядає її. Подивитеся разом?', 'У сфері «{sphere}» тихо. Якщо це свідомо — усе гаразд, {pet} просто спить.'],
     q: ['Давно тебе не бачив. Це був відпочинок, зайнятість чи щось важке?', 'Тебе не було пару днів. Як воно — по-доброму тихо чи навпаки?', 'Якщо було важко, вистачить одного слова. Як ти?'],
   },
   es: {
@@ -90,7 +90,7 @@ const COPY = {
       mid: ['Unos días de silencio. ¿Cómo estás?', 'La tarde es buen momento para volver, sin prisa.', 'Si ha sido duro, puedes escribir solo «duro». No vendrá ninguna lista.'],
       far: ['Tarde. Aquí se te sigue esperando con calma — sin culpa por la pausa.', 'Hayan pasado los días que sea, la puerta está abierta en cualquier momento.', 'Nada urgente y sin presión — solo te recuerdo que estoy aquí.', 'Aquí estoy, sin contar días. Si quieres volver, la puerta está abierta.'],
     },
-    p: ['Pásate a ver a {pet} — hace mucho que no pasa nada por aquí.', '{pet} encontró una tarea vieja en esta área y la está examinando. ¿La miráis juntos?', 'Hay calma en esta área. Si es a propósito, todo bien: {pet} solo duerme.'],
+    p: ['Pásate a ver a {pet} — hace mucho que no pasa nada por aquí.', '{pet} encontró una tarea vieja en «{sphere}» y la está examinando. ¿La miráis juntos?', 'Hay calma en «{sphere}». Si es a propósito, todo bien: {pet} solo duerme.'],
     q: ['Hace tiempo que no te veo. ¿Fue descanso, estar ocupado, o algo difícil?', 'Estuviste fuera un par de días. ¿Cómo fue — silencio del bueno, o no?', 'Si ha sido duro, basta una palabra. ¿Cómo estás?'],
   },
 };

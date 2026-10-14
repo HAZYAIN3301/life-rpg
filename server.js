@@ -1186,7 +1186,9 @@ function readUserCommitments(uid) {
 }
 // «Одинокий питомец»: активный юзер, но какая-то основная сфера давно заброшена → имя того питомца.
 // Лёгкая эвристика из tasks.json + settings.json (без полной репликации xpEvents). Не нашли — null.
-function lonelyPet(uid) {
+// Питомец и сфера, которая давно без дел: имя сферы нужно тексту «в сфере «{sphere}»» (ночная ветка 14.10).
+function lonelyPet(uid) { const info = lonelyPetInfo(uid); return info ? info.pet : null; }
+function lonelyPetInfo(uid) {
   const settings = readUserJson(uid, 'settings'), tasks = readUserJson(uid, 'tasks');
   if (!settings || !Array.isArray(settings.skills) || !Array.isArray(tasks)) return null;
   const skills = settings.skills, tops = skills.filter((s) => !s.parentId);
@@ -1206,7 +1208,7 @@ function lonelyPet(uid) {
   let worst = null, worstGap = 5; // нудж только при простое сферы ≥ 6 дней
   for (const s of tops) { const gap = lastByTop[s.id] ? (now - lastByTop[s.id]) / DAY : 99; if (gap > worstGap) { worstGap = gap; worst = s; } }
   if (!worst) return null;
-  return (settings.petNames && settings.petNames[worst.id]) || worst.name;
+  return { pet: (settings.petNames && settings.petNames[worst.id]) || worst.name, sphere: worst.name };
 }
 // Чистое решение «слать ли и какой чек-ин» — вынесено, чтобы юнит-тестить без отправки.
 function pushDecision(hour, log, checked) {
@@ -1326,11 +1328,11 @@ async function pushTick() {
     }
     // Днём (13–17): «питомец заскучал» — максимум раз в 2 дня, только если есть заброшенная сфера
     else if (!payload && pace('p').ok && hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
-      const pet = lonelyPet(user.id);
+      const lonely = lonelyPetInfo(user.id); const pet = lonely && lonely.pet;
       if (pet) {
         const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'p'), vIdx.p);
         const chromeCopy = PUSH_CHROME_COPY[lang] || PUSH_CHROME_COPY.en;
-        payload = { title: `🐾 ${pet} ${chromeCopy.pet}`, body: text.replace(/\{pet\}/g, pet), url: './?view=pets', tag: 'satoru-pet', lang };
+        payload = { title: `🐾 ${pet} ${chromeCopy.pet}`, body: text.replace(/\{pet\}/g, pet).replace(/\{sphere\}/g, lonely.sphere), url: './?view=pets', tag: 'satoru-pet', lang };
         delivery = { logKey: 'p', variantKind: 'p', variantIdx: idx, petAt: date };
       }
     }

@@ -73,3 +73,14 @@ test('планировщик идёт через правила частоты �
   assert.match(app, /data-nudge-slot/);
   assert.match(app, /accountJson\('\/api\/push\/nudges'/);
 });
+
+test('питомец называет сферу: {sphere} подставляется вместе с {pet}', () => {
+  const src = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
+  assert.match(src, /function lonelyPetInfo\(uid\)/);
+  assert.match(src, /return \{ pet: \(settings\.petNames && settings\.petNames\[worst\.id\]\) \|\| worst\.name, sphere: worst\.name \};/);
+  assert.match(src, /\.replace\(\/\\\{pet\\\}\/g, pet\)\.replace\(\/\\\{sphere\\\}\/g, lonely\.sphere\)/);
+  for (const lang of Copy.LOCALES) {
+    const withSphere = Copy.pool(lang, 'p').filter((line) => line.includes('{sphere}'));
+    assert.equal(withSphere.length, 2, `${lang}: две строки со сферой`);
+  }
+});
