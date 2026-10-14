@@ -2589,6 +2589,8 @@ const I18N_EXTRA = {
   'Квест на сегодня': { en: 'Quest for today', de: 'Quest für heute', uk: 'Квест на сьогодні', es: 'Misión para hoy' },
   'Создать квест': { en: 'Create quest', de: 'Quest erstellen', uk: 'Створити квест', es: 'Crear misión' },
   'В день': { en: 'Into the day', de: 'In den Tag', uk: 'У день', es: 'Al día' },
+  '→ В квестах на сегодня. Заметка осталась: в ней полный текст или запись.': { en: '→ In today’s quests. The note stays: it holds the full text or the recording.', de: '→ In den heutigen Quests. Die Notiz bleibt: Sie enthält den vollständigen Text oder die Aufnahme.', uk: '→ У квестах на сьогодні. Нотатка лишилася: у ній повний текст або запис.', es: '→ En las misiones de hoy. La nota se queda: guarda el texto completo o la grabación.' },
+  '✓ Квест создан': { en: '✓ Quest created', de: '✓ Quest erstellt', uk: '✓ Квест створено', es: '✓ Misión creada' },
   'Ради цели': { en: 'Serves the goal', de: 'Für das Ziel', uk: 'Заради цілі', es: 'Para la meta' },
   'Дедлайн цели': { en: 'Goal deadline', de: 'Ziel-Deadline', uk: 'Дедлайн цілі', es: 'Fecha límite de la meta' },
   'Вчера ты отметил, что тебя унесло.': { en: 'Yesterday you marked that it carried you away.', de: 'Gestern hast du notiert, dass es dich mitgerissen hat.', uk: 'Учора ти зазначив, що тебе понесло.', es: 'Ayer anotaste que te arrastró.' },
@@ -19504,7 +19506,7 @@ function noteCard(it) {
     <details class="note-disclosure"><summary class="note-preview"><h3 id="note-${esc(it.id)}-title" tabindex="-1" data-noi18n>${esc(it.text?.trim() || noteTitle(it))}</h3><span class="note-when muted">${icon}<time datetime="${esc(it.at || '')}">${esc(when)}</time></span></summary><div class="note-editor">
     ${media}
     <label class="sr-only" for="note-${esc(it.id)}-text">${t('Текст заметки')}</label><textarea id="note-${esc(it.id)}-text" class="note-text" data-action="note-edit" data-id="${it.id}" rows="4" maxlength="1000" placeholder="${t(it.file ? 'Подпиши заметку…' : 'Текст заметки…')}">${esc(it.text || '')}</textarea><p class="note-save-status" data-note-status="${it.id}" role="status"></p>
-    <div class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">${satoruIconHTML('nav.shadow', 'inline-glyph')} ${t('Цель')}</button>` : ''}<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button><button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">${satoruIconHTML('action.delete', 'button-glyph')}</button></div></div></details></article>`;
+    <div class="note-acts">${(it.text || '').trim() ? `<button class="btn ghost sm" data-action="note-to-goal" data-id="${it.id}">${satoruIconHTML('nav.shadow', 'inline-glyph')} ${t('Цель')}</button>` : ''}${noteQuestTask(it.id) ? `<span class="note-quest-done muted">${t('✓ Квест создан')}</span>` : `<button class="btn ghost sm" data-action="note-quest" data-id="${it.id}">${t('→ Квест')}</button>`}<button class="del" data-action="note-del" data-id="${it.id}" aria-label="${t('Удалить заметку?')}">${satoruIconHTML('action.delete', 'button-glyph')}</button></div></div></details></article>`;
 }
 function notesPeekToday() {
   const n = (State.inbox || []).length; if (!n) return '';
@@ -19547,6 +19549,8 @@ async function confirmNoteDelete() {
   if (!saved) { const desc = overlay.querySelector('#note-delete-desc'); if (desc) { desc.textContent = t('Не удалось удалить заметку. Она осталась на месте.'); desc.setAttribute('role', 'alert'); } return; }
   closeNoteDeleteDialog({ restoreFocus: false }); State._inboxFocusAfterCommit = '#notes-title'; render();
 }
+function noteKeptAfterQuest(note) { return !!note && (String(note.text || '').length > 120 || !!note.file); }
+function noteQuestTask(noteId) { return (State.tasks || []).find((task) => task.noteSourceId === noteId) || null; }
 async function noteToQuest(id) {
   const note = (State.inbox || []).find((item) => item.id === id); if (!note || State._inboxBusy || State._tasksLoadError) return false;
   // A failed second write never creates a second quest: the durable task carries
@@ -19554,11 +19558,17 @@ async function noteToQuest(id) {
   let task = (State.tasks || []).find((item) => item.noteSourceId === id);
   if (!task) {
     const sid = State.settings.skills[0] && State.settings.skills[0].id;
-    const title = (note.text || (note.kind === 'voice' ? t('Голосовая заметка') : note.kind === 'video' ? t('Видео-заметка') : t('Заметка'))).slice(0, 120);
+    const full = note.text || (note.kind === 'voice' ? t('Голосовая заметка') : note.kind === 'video' ? t('Видео-заметка') : t('Заметка'));
+    const title = full.length > 120 ? `${full.slice(0, 119)}…` : full;
     task = { id: uid(), noteSourceId: id, title, skillId: sid, skillIds: sid ? [sid] : [], estimateMin: 30, difficulty: 'normal', date: todayStr(), done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, startTime: null, createdAt: new Date().toISOString() };
     const savedTask = await Store.saveNow('tasks', [...State.tasks, task]);
     if (!savedTask) { toast(t('Не удалось сохранить квест')); return false; }
     State.tasks = [...State.tasks, task];
+  }
+  // У квеста есть только название (120 знаков). Если в заметке больше текста или запись голоса/видео,
+  // заметка остаётся рядом с квестом — иначе остаток текста и доступ к записи пропадали (проверка 14.10).
+  if (noteKeptAfterQuest(note)) {
+    State._tasksFocusAfterCommit = '#main h2'; State.view = 'today'; toast(t('→ В квестах на сегодня. Заметка осталась: в ней полный текст или запись.')); render(); return true;
   }
   const savedInbox = await commitInbox((State.inbox || []).filter((item) => item.id !== id));
   if (!savedInbox) {
