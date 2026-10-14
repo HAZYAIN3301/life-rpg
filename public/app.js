@@ -1079,6 +1079,7 @@ const I18N_EXTRA = {
   'Данные внимания повреждены': { en: 'Attention data is corrupted', de: 'Aufmerksamkeitsdaten sind beschädigt', uk: 'Дані уваги пошкоджено', es: 'Los datos de atención están dañados' },
   'Не удалось загрузить правила внимания': { en: 'Could not load attention rules', de: 'Aufmerksamkeitsregeln konnten nicht geladen werden', uk: 'Не вдалося завантажити правила уваги', es: 'No se pudieron cargar las reglas de atención' },
   'Это не пустой список. Мы не будем ничего перезаписывать, пока данные не восстановлены.': { en: 'This is not an empty list. Nothing will be overwritten until the data is restored.', de: 'Das ist keine leere Liste. Nichts wird überschrieben, bis die Daten wiederhergestellt sind.', uk: 'Це не порожній список. Ми нічого не перезаписуватимемо, доки дані не відновлено.', es: 'No es una lista vacía. No sobrescribiremos nada hasta que se restauren los datos.' },
+  'Правила внимания': { en: 'Attention rules', de: 'Aufmerksamkeitsregeln', uk: 'Правила уваги', es: 'Reglas de atención' },
   'Внимание и границы': { en: 'Attention and boundaries', de: 'Aufmerksamkeit und Grenzen', uk: 'Увага й межі', es: 'Atención y límites' },
   'Заранее реши, зачем входишь и где остановишься. Satoru не меняет правило без тебя.': { en: 'Decide in advance why you are entering and where you will stop. Satoru never changes the rule without you.', de: 'Entscheide vorher, warum du hineingehst und wo du aufhörst. Satoru ändert die Regel nie ohne dich.', uk: 'Заздалегідь виріши, навіщо входиш і де зупинишся. Satoru не змінює правило без тебе.', es: 'Decide de antemano por qué entras y dónde te detendrás. Satoru nunca cambia la regla sin ti.' },
   'Добавить одно правило': { en: 'Add one rule', de: 'Eine Regel hinzufügen', uk: 'Додати одне правило', es: 'Añadir una regla' },
@@ -26361,10 +26362,10 @@ function renderRewards() {
       </div>
     </section>`;
   const cards = State.rewards.map((r) => `<div class="reward">
-      <div class="rw-icon">${rewardIconHTML(r, 'reward-content-icon')}</div><div class="rw-name">${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}</div>
+      <div class="rw-icon">${rewardIconHTML(r, 'reward-content-icon')}</div><div class="rw-name">${esc(t(r.catalogNameKey || r.name))}</div>
       <div class="rw-cost">${satoruIconHTML('status.gold', 'cost-emblem', '🪙')} ${r.cost}</div>
       <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-guide-target="reward-buy" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>${t('Купить')}</button>
-      <button class="del" data-action="delete-reward" data-id="${r.id}" aria-label="${esc(t('Удалить'))}: ${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}">✕</button></div>`).join('');
+      <button class="del" data-action="delete-reward" data-id="${r.id}" aria-label="${esc(t('Удалить'))}: ${esc(t(r.catalogNameKey || r.name))}">✕</button></div>`).join('');
   const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => {
     const purchaseName = p.denNameKey ? `${t('Логово')}: ${t(p.denNameKey)}` : p.name;
     return `<li data-guide-target="reward-purchase" data-id="${esc(p.id || '')}" tabindex="-1"><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(purchaseName)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`;
