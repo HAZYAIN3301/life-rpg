@@ -13,6 +13,7 @@
  * Использование:
  *   node scripts/seed-demo.mjs --base http://localhost:4317 --email demo@example.test --password demo-pass-1234
  *   node scripts/seed-demo.mjs --wipe    # только очистить, ничего не засевать
+ *   node scripts/seed-demo.mjs --seed 42 # воспроизводимые данные (одинаковые при одном зерне в тот же день)
  *
  * ⚠️ Пишет в аккаунт ЦЕЛИКОМ, перезаписывая файлы. Никогда не наводить на живой аккаунт —
  * скрипт проверяет, что email содержит 'demo' или 'test', и иначе отказывается работать.
@@ -29,6 +30,11 @@ const EMAIL = arg('email', 'demo@example.test');
 const PASSWORD = arg('password', 'demo-pass-1234');
 const NAME = arg('name', 'Демо');
 const WIPE = args.includes('--wipe');
+// --seed N: одинаковое зерно — одинаковые данные (в тот же день), чтобы сравнивать экраны «до/после».
+// Без зерна — как раньше, случайно.
+const SEED = arg('seed', '');
+function mulberry32(a) { return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const rand = SEED ? mulberry32([...String(SEED)].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) | 0, 7)) : Math.random;
 
 if (!/demo|test|qa/i.test(EMAIL)) {
   console.error('Отказ: email должен содержать demo/test/qa. Это защита от засева живого аккаунта.');
@@ -42,7 +48,7 @@ const iso = (d) => new Date(d).toISOString().slice(0, 10);
 const back = (n) => iso(today.getTime() - n * DAY);
 const at = (n, h, m = 0) => new Date(new Date(back(n) + 'T00:00:00').getTime() + (h * 60 + m) * 60000).toISOString();
 let seq = 0;
-const uid = () => `seed${(seq += 1).toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+const uid = () => `seed${(seq += 1).toString(36)}${rand().toString(36).slice(2, 6)}`;
 
 // ── скелет: сферы те же, что в DEFAULT_SETTINGS, плюс вложенность ────────────
 const SKILLS = [
@@ -85,12 +91,12 @@ function buildTasks() {
     const load = d >= 18 && d <= 22 ? 1 : weekday === 0 || weekday === 6 ? 2 : 3;
     for (let i = 0; i < load; i += 1) {
       const [title, skillId, estimateMin, difficulty] = TASK_POOL[(d * 3 + i) % TASK_POOL.length];
-      const done = d > 0 ? Math.random() > 0.18 : Math.random() > 0.5;
+      const done = d > 0 ? rand() > 0.18 : rand() > 0.5;
       const xp = Math.round(estimateMin * ({ easy: 1, normal: 1.5, hard: 2.2 }[difficulty]));
       out.push({
         id: uid(), title, skillId, skillIds: [skillId], date,
         estimateMin, difficulty, done,
-        actualMin: done ? Math.max(5, estimateMin + Math.round((Math.random() - 0.4) * 15)) : null,
+        actualMin: done ? Math.max(5, estimateMin + Math.round((rand() - 0.4) * 15)) : null,
         completedAt: done ? at(d, 9 + (i * 4), 20) : null,
         xpAwarded: done ? xp : 0, goldAwarded: done ? Math.round(xp * 0.35) : 0,
         startTime: i === 0 ? '09:00' : i === 1 ? '14:30' : null,
@@ -139,7 +145,7 @@ function buildHabitLog() {
       if (h.archived) continue;
       if (!h.days.includes(wd)) continue;
       if (d === 12 || d === 11) continue;                 // те же дырки
-      if (Math.random() > (d >= 18 && d <= 22 ? 0.5 : 0.85)) continue;
+      if (rand() > (d >= 18 && d <= 22 ? 0.5 : 0.85)) continue;
       const reward = HABIT_LOG_REWARD[h.title] || { xp: 10, gold: 4 };
       rec[h.id] = { xp: reward.xp, gold: reward.gold, min: h.estimateMin, at: at(d, 8, 30) };
     }
