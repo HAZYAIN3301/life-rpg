@@ -14,9 +14,12 @@ test('account push test remains reachable without enrolling this browser', () =>
       esc: x => String(x), emojiFree: x => String(x).replace(/^[\p{Extended_Pictographic}\uFE0F\s]+/u, ''), satoruIconHTML: () => '',
       // R13: the card checks the platform for the iOS push hint and the APK offer.
       isIOS: () => false,
+      // Ночная ветка 14.10: выбор «когда Тень напоминает» читает настройку с сервера.
+      fetch: () => new Promise(() => {}),
       _pwaRegistration: 'ready', _deferredInstall: null, _pwaInstallBusy: false, _pushBusy: false };
     vm.createContext(context); vm.runInContext(card, context);
     assert.equal((context.pwaCard().match(/data-action="push-test"/g) || []).length, 1);
+    assert.equal(/data-nudge-slot/.test(context.pwaCard()), pushOn, 'выбор частоты — только при включённых уведомлениях');
     context._pushBusy = true;
     assert.match(context.pwaCard(), /data-action="push-test" disabled/);
   }

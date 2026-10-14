@@ -2165,6 +2165,13 @@ const I18N_EXTRA = {
   '📲 Установить приложение': { en: '📲 Install app', de: '📲 App installieren', uk: '📲 Встановити застосунок', es: '📲 Instalar app' },
   'Уведомления недоступны в этом браузере.': { en: 'Notifications are not available in this browser.', de: 'Benachrichtigungen sind in diesem Browser nicht verfügbar.', uk: 'Сповіщення недоступні в цьому браузері.', es: 'Las notificaciones no están disponibles en este navegador.' },
   '🔕 Выключить уведомления': { en: '🔕 Disable notifications', de: '🔕 Benachrichtigungen deaktivieren', uk: '🔕 Вимкнути сповіщення', es: '🔕 Desactivar notificaciones' },
+  'Тень напоминает': { en: 'Shadow checks in', de: 'Schatten meldet sich', uk: 'Тінь нагадує', es: 'Sombra te recuerda' },
+  'утром': { en: 'in the morning', de: 'morgens', uk: 'вранці', es: 'por la mañana' },
+  'вечером': { en: 'in the evening', de: 'abends', uk: 'увечері', es: 'por la tarde' },
+  'утром и вечером': { en: 'morning and evening', de: 'morgens und abends', uk: 'вранці й увечері', es: 'mañana y tarde' },
+  'не напоминать': { en: "don't remind me", de: 'nicht erinnern', uk: 'не нагадувати', es: 'no recordar' },
+  'Не чаще раза в день; если тебя долго нет — реже, а через месяц Тень замолкает.': { en: "At most once a day; the longer you're away, the rarer — after a month Shadow goes quiet.", de: 'Höchstens einmal am Tag; je länger du weg bist, desto seltener — nach einem Monat wird Schatten still.', uk: 'Не частіше разу на день; що довше тебе немає — то рідше, а за місяць Тінь замовкає.', es: 'Como mucho una vez al día; cuanto más tiempo fuera, menos a menudo, y al mes Sombra se calla.' },
+  'Не удалось сохранить настройку напоминаний': { en: 'Could not save the reminder setting', de: 'Erinnerungseinstellung konnte nicht gespeichert werden', uk: 'Не вдалося зберегти налаштування нагадувань', es: 'No se pudo guardar el ajuste de recordatorios' },
   'Проверить': { en: 'Test', de: 'Testen', uk: 'Перевірити', es: 'Probar' },
   '✓ компаньон зовёт 🌅 утром и 🌙 вечером': { en: '✓ companion calls 🌅 morning and 🌙 evening', de: '✓ Begleiter ruft 🌅 morgens und 🌙 abends', uk: '✓ супутник кличе 🌅 вранці й 🌙 ввечері', es: '✓ el compañero llama 🌅 por la mañana y 🌙 por la noche' },
   '✓ компаньон зовёт утром и вечером': { en: '✓ companion calls in the morning and evening', de: '✓ Begleiter ruft morgens und abends', uk: '✓ супутник кличе вранці й ввечері', es: '✓ el compañero llama por la mañana y por la noche' },
@@ -36145,6 +36152,7 @@ function publishLeaderboard() {
 
 // Делегированный обработчик change (для select-ов вне форм — напр. импорт достижений)
 function onChange(e) {
+  if (e.target.matches?.('[data-nudge-slot]')) { saveNudgePref(e.target.value); return; }
   if(e.target.matches?.('[data-chat-schedule]')){editChatSchedule(e.target);return;}
   if (e.target.matches?.('[data-experiment-feedback]')) {
     const field = e.target.dataset.experimentFeedback;
@@ -36770,7 +36778,34 @@ function pwaCard() {
   return `<div class="card pwa-card" aria-busy="${_pwaInstallBusy || _pushBusy}"><h3>${esc(emojiFree(t('📲 Приложение')))}</h3>
     <p class="muted" style="font-size:12.5px;margin:0 0 6px">${t('Установи Satoru как приложение: иконка на телефоне и офлайн-режим. Уведомления — только по отдельному согласию ниже.')}</p>
     <p class="muted pwa-status" role="status">${offline} ${t('Установка и уведомления включаются отдельно.')}</p>
-    <div class="pwa-row">${install}</div>${apk}${push}${!canPush || Notification.permission === 'denied' || !State.pushOn ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить уведомление аккаунта')}</button></div>` : ''}</div>`;
+    <div class="pwa-row">${install}</div>${apk}${push}${nudgePrefRow()}${!canPush || Notification.permission === 'denied' || !State.pushOn ? `<div class="pwa-row" style="margin-top:10px"><button class="btn ghost" data-action="push-test" ${_pushBusy ? 'disabled' : ''}>${t('Проверить уведомление аккаунта')}</button></div>` : ''}</div>`;
+}
+// Когда Тень напоминает (ночная ветка 14.10): утро / вечер / оба / не напоминать. Хранится на сервере.
+function ensureNudgePref() {
+  if (State.nudgePref !== undefined || !State.pushOn) return;
+  State.nudgePref = null;
+  fetch('/api/push/nudges').then((r) => (r.ok ? r.json() : null)).then((d) => {
+    if (!d || d.nudges === null) return;
+    State.nudgePref = d.nudges === false ? 'off' : (d.slot || 'morning');
+    if (State.view === 'settings') render();
+  }).catch(() => {});
+}
+async function saveNudgePref(value) {
+  const before = State.nudgePref;
+  State.nudgePref = value;
+  try {
+    const body = value === 'off' ? { on: false } : { on: true, slot: value };
+    const { response } = await accountJson('/api/push/nudges', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (!response.ok) throw new Error('server');
+  } catch { State.nudgePref = before; toast(t('Не удалось сохранить настройку напоминаний')); render(); }
+}
+function nudgePrefRow() {
+  if (!State.pushOn) return '';
+  ensureNudgePref();
+  const cur = State.nudgePref || 'morning';
+  const options = [['morning', 'утром'], ['evening', 'вечером'], ['both', 'утром и вечером'], ['off', 'не напоминать']]
+    .map(([v, l]) => `<option value="${v}"${cur === v ? ' selected' : ''}>${esc(t(l))}</option>`).join('');
+  return `<div class="pwa-row" style="margin-top:10px"><label for="nudge-slot" class="muted" style="font-size:12.5px">${esc(t('Тень напоминает'))}</label><select id="nudge-slot" data-nudge-slot ${_pushBusy ? 'disabled' : ''}>${options}</select></div><p class="muted" style="font-size:12px;margin:6px 0 0">${esc(t('Не чаще раза в день; если тебя долго нет — реже, а через месяц Тень замолкает.'))}</p>`;
 }
 async function pushEnable() {
   if (_pushBusy) return;

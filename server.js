@@ -1243,6 +1243,7 @@ function daysBetween(a, b) { const x = Date.parse(a), y = Date.parse(b); if (Num
 // Тексты пушей на пяти языках вынесены в отдельный модуль: 150 строк копирайта в
 // server.js делали нечитаемым сам планировщик. Тон там важнее буквальности — см. шапку.
 const NudgeCopy = require('./server-nudge-copy-v1.js');
+const NudgePacing = require('./server-nudge-pacing-v1.js');
 
 // Ротация без повторов подряд: индекс последнего варианта persist-ится в user.push.variantIdx.
 function pickVariant(pool, lastIdx) {
@@ -1278,6 +1279,12 @@ async function pushTick() {
       if (evening.due) { kind = 'e'; secretaryEvening = true; }
     } else if (days[date] && days[date].closed && kind === 'e') kind = null;
     const vIdx = user.push.variantIdx || {};
+    // Частота (ночная ветка 14.10): одно напоминание в день, затухание по дням без визита.
+    // Ход секретаря и вечерний контур, настроенный человеком, сюда не входят.
+    const pace = (k) => {
+      const awayDays = daysBetween((comp && comp.lastSeen) || date, date);
+      return NudgePacing.decide({ away: awayDays, today: date, lastSent: user.push.lastNudge || null, log, kind: k, slot: user.push.slot });
+    };
     let payload = null;
     let delivery = null;
 
@@ -1307,6 +1314,7 @@ async function pushTick() {
       payload = { title: copy.title, body: copy.body, url: './?view=today', tag: 'satoru-evening', lang };
       delivery = { logKey: 'e' };
     }
+    if (!payload && kind && !pace(kind).ok) kind = null;
     if (!payload && (kind === 'm' || kind === 'e')) {
       const away = daysBetween((comp && comp.lastSeen) || date, date);
       const bucket = away <= 1 ? 'near' : (away <= 3 ? 'mid' : 'far');
@@ -1317,7 +1325,7 @@ async function pushTick() {
       delivery = { logKey: kind, variantKind: kind, variantIdx: idx };
     }
     // Днём (13–17): «питомец заскучал» — максимум раз в 2 дня, только если есть заброшенная сфера
-    else if (!payload && hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
+    else if (!payload && pace('p').ok && hour >= 13 && hour < 17 && !log.p && (!user.push.petAt || (Date.parse(date) - Date.parse(user.push.petAt)) / 86400000 >= 2)) {
       const pet = lonelyPet(user.id);
       if (pet) {
         const { text, idx } = pickVariant(NudgeCopy.pool(lang, 'p'), vIdx.p);
@@ -1328,7 +1336,7 @@ async function pushTick() {
     }
     // Тихий вопрос — последним по приоритету: он уместен только когда сказать больше
     // нечего. Перебивать им утренний чек-ин значило бы менять тёплое на тревожное.
-    if (!payload) {
+    if (!payload && pace('q').ok) {
       const away = daysBetween((comp && comp.lastSeen) || date, date);
       const verdict = attentionQuietAsk.decide({
         quietDays: away, hour, today: date,
@@ -1357,6 +1365,7 @@ async function pushTick() {
     if (move) { user.push.log = log; changed = true; continue; }
     if (delivery) {
       log[delivery.logKey] = true;
+      if (['m', 'e', 'p', 'q'].includes(delivery.logKey)) user.push.lastNudge = date;
       if (delivery.variantKind) user.push.variantIdx = { ...(user.push.variantIdx || {}), [delivery.variantKind]: delivery.variantIdx };
       if (delivery.petAt) user.push.petAt = delivery.petAt;
       if (delivery.quietAskAt) user.push.quietAskAt = delivery.quietAskAt;
@@ -7073,7 +7082,7 @@ const server = http.createServer(async (req, res) => {
     if (!s || !s.endpoint || !s.keys) return sendJson(res, 400, { error: 'bad_subscription' });
     const users = loadUsers(); const user = users.find((x) => x.id === me); if (!user) return sendJson(res, 401, { error: 'user not found' });
     const tz = (typeof b.tz === 'string' && b.tz.length < 64) ? b.tz : (user.push && user.push.tz) || 'Europe/Berlin';
-    user.push = { endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth, at: new Date().toISOString(), tz, nudges: user.push ? user.push.nudges !== false : true };
+    user.push = { endpoint: s.endpoint, p256dh: s.keys.p256dh, auth: s.keys.auth, at: new Date().toISOString(), tz, nudges: user.push ? user.push.nudges !== false : true, ...(user.push && user.push.slot ? { slot: user.push.slot } : {}) };
     saveUsers(users); return sendJson(res, 200, { ok: true });
   }
   if (u === '/api/push/unsubscribe' && req.method === 'POST') {
@@ -7087,8 +7096,17 @@ const server = http.createServer(async (req, res) => {
     let b = {}; try { b = JSON.parse(await readBody(req)); } catch {}
     const users = loadUsers(); const user = users.find((x) => x.id === me);
     if (!user || !user.push) return sendJson(res, 400, { error: 'no_subscription' });
-    user.push.nudges = b.on !== false; saveUsers(users);
-    return sendJson(res, 200, { ok: true, nudges: user.push.nudges });
+    if (b.slot !== undefined && !NudgePacing.SLOTS.includes(b.slot)) return sendJson(res, 400, { error: 'bad_slot' });
+    user.push.nudges = b.on !== false;
+    if (b.slot !== undefined) user.push.slot = b.slot;
+    saveUsers(users);
+    return sendJson(res, 200, { ok: true, nudges: user.push.nudges, slot: NudgePacing.normalizeSlot(user.push.slot) });
+  }
+  if (u === '/api/push/nudges' && req.method === 'GET') {
+    const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
+    const user = loadUsers().find((x) => x.id === me);
+    if (!user || !user.push) return sendJson(res, 200, { nudges: null, slot: NudgePacing.DEFAULT_SLOT });
+    return sendJson(res, 200, { nudges: user.push.nudges !== false, slot: NudgePacing.normalizeSlot(user.push.slot) });
   }
   if (u === '/api/push/test' && req.method === 'POST') {
     const me = sessionUserId(req); if (!me) return sendJson(res, 401, { error: 'not logged in' });
