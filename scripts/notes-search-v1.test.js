@@ -33,3 +33,8 @@ test('поиск подключён к вводу, карточки прячут
   assert.match(composition, /region\(shell, 'notes-workspace', \[composer, q\('\.notes-filter'\), list\]\)/, 'поиск стоит между формой и списком');
   for (const key of ["'Найти в заметках':", "'Найдено заметок':"]) { const i = APP.indexOf(key); assert.ok(i > 0); const line = APP.slice(i, APP.indexOf('\n', i)); for (const l of ['en:', 'de:', 'uk:', 'es:']) assert.ok(line.includes(l), key + l); }
 });
+
+test('метка версии изменённого модуля раскладки поднята', () => {
+  const html = fs.readFileSync(path.join(__dirname, '..', 'public/index.html'), 'utf8');
+  assert.match(html, /interface-composition-v1\.js\?v=20261014-notes-search-1/);
+});
