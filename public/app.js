@@ -2139,7 +2139,7 @@ const I18N_EXTRA = {
   '🔑 Сохрани код восстановления': { en: '🔑 Save your recovery code', de: '🔑 Wiederherstellungscode speichern', uk: '🔑 Збережи код відновлення', es: '🔑 Guarda tu código de recuperación' },
   'Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.': { en: 'This is the only way to get back in if you forget your password. Write it down somewhere safe — we only show this code now.', de: 'Das ist die einzige Möglichkeit, den Zugang wiederherzustellen, wenn du dein Passwort vergisst. Bewahre ihn sicher auf — wir zeigen diesen Code nur jetzt.', uk: 'Це єдиний спосіб повернути доступ, якщо забудеш пароль. Запиши його в надійному місці — ми показуємо код лише зараз.', es: 'Es la única forma de recuperar el acceso si olvidas la contraseña. Guárdalo en un lugar seguro — solo mostramos este código ahora.' },
   '📋 Скопировать': { en: '📋 Copy', de: '📋 Kopieren', uk: '📋 Скопіювати', es: '📋 Copiar' },
-  'Я сохранил → продолжить': { en: 'I saved it → continue', de: 'Gespeichert → weiter', uk: 'Я зберіг → продовжити', es: 'Lo guardé → continuar' },
+  'Код сохранён → продолжить': { en: 'Saved it → continue', de: 'Gespeichert → weiter', uk: 'Код збережено → продовжити', es: 'Guardado → continuar' },
   'Скопируй вручную': { en: 'Copy it manually', de: 'Bitte manuell kopieren', uk: 'Скопіюй вручну', es: 'Cópialo manualmente' },
   'Рекорд:': { en: 'Record:', de: 'Rekord:', uk: 'Рекорд:', es: 'Récord:' },
   'Как играть': { en: 'How to play', de: 'Spielanleitung', uk: 'Як грати', es: 'Cómo jugar' },
@@ -4810,7 +4810,7 @@ const I18N_EXTRA = {
   'Предложенные сферы': { en: 'Suggested areas', de: 'Vorgeschlagene Bereiche', uk: 'Запропоновані сфери', es: 'Áreas sugeridas' },
   'Сферу можно добавить позже — это не мешает создать цель и первый шаг.': { en: 'You can add an area later — it does not prevent creating the goal and first step.', de: 'Du kannst später einen Bereich hinzufügen — Ziel und erster Schritt lassen sich trotzdem erstellen.', uk: 'Сферу можна додати пізніше — це не заважає створити ціль і перший крок.', es: 'Puedes añadir un área más adelante; no impide crear la meta y el primer paso.' },
   'Помочь Тени помнить подтверждённое': { en: 'Let Shadow remember what I confirmed', de: 'Schatten darf sich Bestätigtes merken', uk: 'Допомогти Тіні пам’ятати підтверджене', es: 'Permitir que Sombra recuerde lo confirmado' },
-  'Только цель и первый шаг попадут в личный контекст Assistant и Guide. Исходный текст не сохраняется.': { en: 'Only the goal and first step enter the personal context for Assistant and Guide. The original text is not saved.', de: 'Nur Ziel und erster Schritt gelangen in den persönlichen Kontext von Assistent und Guide. Der ursprüngliche Text wird nicht gespeichert.', uk: 'Лише ціль і перший крок потраплять до особистого контексту Assistant і Guide. Початковий текст не зберігається.', es: 'Solo la meta y el primer paso entrarán en el contexto personal de Assistant y Guide. El texto original no se guarda.' },
+  'Только цель и первый шаг попадут в личный контекст Тени и гида. Исходный текст не сохраняется.': { en: 'Only the goal and first step enter the personal context for Shadow and the guide. The original text is not saved.', de: 'Nur Ziel und erster Schritt gelangen in den persönlichen Kontext von Schatten und Leitfaden. Der ursprüngliche Text wird nicht gespeichert.', uk: 'Лише ціль і перший крок потраплять до особистого контексту Тіні та гіда. Початковий текст не зберігається.', es: 'Solo la meta y el primer paso entrarán en el contexto personal de Sombra y la guía. El texto original no se guarda.' },
   '← Назад': { en: '← Back', de: '← Zurück', uk: '← Назад', es: '← Atrás' },
   'Создать и перейти к первому шагу': { en: 'Create and open the first step', de: 'Erstellen und zum ersten Schritt gehen', uk: 'Створити й перейти до першого кроку', es: 'Crear e ir al primer paso' },
   'Соберём один понятный старт': { en: 'Let’s build one clear start', de: 'Bauen wir einen klaren Start', uk: 'Зберімо один зрозумілий старт', es: 'Preparemos un inicio claro' },
@@ -4824,7 +4824,7 @@ const I18N_EXTRA = {
   'Что тебе сейчас важнее всего сдвинуть с места?': { en: 'What matters most for you to move forward right now?', de: 'Was möchtest du gerade am dringendsten voranbringen?', uk: 'Що тобі зараз найважливіше зрушити з місця?', es: '¿Qué es lo que más te importa poner en marcha ahora?' },
   'Какой результат ты хочешь увидеть, почему он важен — и какой небольшой шаг готов сделать уже сегодня?': { en: 'What result do you want to see, why does it matter, and what small step are you ready to take today?', de: 'Welches Ergebnis möchtest du sehen, warum ist es wichtig und welchen kleinen Schritt kannst du schon heute machen?', uk: 'Який результат ти хочеш побачити, чому він важливий — і який невеликий крок готовий зробити вже сьогодні?', es: '¿Qué resultado quieres ver, por qué importa y qué pequeño paso estás dispuesto a dar hoy?' },
   'Твой ответ': { en: 'Your answer', de: 'Deine Antwort', uk: 'Твоя відповідь', es: 'Tu respuesta' },
-  'Например: хочу выпустить первое видео о Satoru, чтобы начать продвижение. Сегодня открою сценарий, выберу одну сцену и запишу черновой дубль.': { en: 'For example: I want to publish the first Satoru video to start promoting it. Today I will open the script, choose one scene and record a rough take.', de: 'Zum Beispiel: Ich möchte das erste Video über Satoru veröffentlichen, um mit der Vermarktung zu beginnen. Heute öffne ich das Skript, wähle eine Szene und nehme einen Rohentwurf auf.', uk: 'Наприклад: хочу випустити перше відео про Satoru, щоб почати просування. Сьогодні відкрию сценарій, виберу одну сцену й запишу чорновий дубль.', es: 'Por ejemplo: quiero publicar el primer vídeo sobre Satoru para empezar a promocionarlo. Hoy abriré el guion, elegiré una escena y grabaré una toma de prueba.' },
+  'Например: хочу к весне пробежать 5 км без остановки, чтобы снова чувствовать себя в форме. Сегодня выйду на 15 минут ходьбы с бегом.': { en: "For example: by spring I want to run 5 km without stopping, to feel fit again. Today I'll go out for 15 minutes of walking and running.", de: 'Zum Beispiel: Bis zum Frühling möchte ich 5 km am Stück laufen, um mich wieder fit zu fühlen. Heute gehe ich 15 Minuten raus — gehen und laufen im Wechsel.', uk: 'Наприклад: до весни хочу пробігти 5 км без зупинки, щоб знову відчувати себе у формі. Сьогодні вийду на 15 хвилин ходьби з бігом.', es: 'Por ejemplo: para la primavera quiero correr 5 km sin parar, para volver a sentirme en forma. Hoy saldré 15 minutos a caminar y trotar.' },
   'Ответить голосом': { en: 'Answer by voice', de: 'Per Sprache antworten', uk: 'Відповісти голосом', es: 'Responder por voz' },
   'Один ответ — не анкета на час.': { en: 'One answer, not an hour-long questionnaire.', de: 'Eine Antwort, kein einstündiger Fragebogen.', uk: 'Одна відповідь — не анкета на годину.', es: 'Una respuesta, no un cuestionario de una hora.' },
   'Разрешить разобрать этот ответ с помощью ИИ': { en: 'Allow AI to interpret this answer', de: 'KI darf diese Antwort auswerten', uk: 'Дозволити розібрати цю відповідь за допомогою ШІ', es: 'Permitir que la IA interprete esta respuesta' },
@@ -14499,7 +14499,7 @@ function renderRegistrationLanguageScreen() {
 }
 
 function renderRegisterScreen() {
-  const avatarPicker = AVATARS.map((a) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}">${avatarOriginIconHTML(a, 'avatar-origin-icon')}</button>`).join('');
+  const avatarPicker = AVATARS.map((a, i) => `<button type="button" class="av-btn ${a === State.regAvatar ? 'sel' : ''}" data-action="pick-avatar" data-av="${a}" aria-label="${esc(t('Аватар'))} ${i + 1}" aria-pressed="${a === State.regAvatar}">${avatarOriginIconHTML(a, 'avatar-origin-icon')}</button>`).join('');
   document.getElementById('app').innerHTML = `
     <div class="auth-screen">
       <div class="auth-logo"><span class="auth-brand-mark">${brandMarkHTML()}</span><h1>Satoru</h1><p>${t('Создай аккаунт')}</p></div>
@@ -14591,7 +14591,7 @@ function showRecoveryModal(code, onClose) {
     <p id="recovery-copy-note" class="muted">${t('Это единственный способ вернуть доступ, если забудешь пароль. Запиши его в надёжное место — мы показываем код только сейчас.')}</p>
     <div class="recovery-code" id="recovery-code">${esc(code)}</div>
     <button class="btn ghost" id="recovery-copy">${esc(emojiFree(t('📋 Скопировать')))}</button>
-    <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">${t('Я сохранил → продолжить')}</button>
+    <button class="btn" id="recovery-ok" style="width:100%;margin-top:10px">${t('Код сохранён → продолжить')}</button>
   </div>`;
   mountAccountDialog(ov, { initial: '#recovery-title', dismissible: false });
   ov.querySelector('#recovery-copy').addEventListener('click', () => { try { navigator.clipboard.writeText(code); toast(t('✓ Скопировано')); } catch { toast(t('Скопируй вручную')); } });
@@ -14668,6 +14668,25 @@ function questionnaireSourceFromDOM() {
   q.rawAnswer = String(ta ? ta.value : q.rawAnswer || '').slice(0, 4000);
   q.consents = { ...(q.consents || {}), sendRawTextToAiProvider: !!(consent && consent.checked) };
   return questionnaireRemember(q);
+}
+// Без ИИ ответ первого шага раньше пропадал: человек писал абзац и заполнял форму заново.
+// Теперь первое предложение — результат, предложение со «сегодня» — шаг, остальное — «почему».
+function questionnaireManualSeed(text) {
+  const sentences = (String(text || '').match(/[^.!?…]+[.!?…]*/g) || []).map((x) => x.trim()).filter(Boolean);
+  if (!sentences.length) return null;
+  const today = /(сегодня|today|heute|сьогодні|hoy)/i;
+  const stepAt = sentences.findIndex((x, i) => i > 0 && today.test(x));
+  return {
+    result: sentences[0].slice(0, 160),
+    step: stepAt > 0 ? sentences[stepAt].slice(0, 160) : '',
+    why: sentences.filter((_, i) => i !== 0 && i !== stepAt).join(' ').slice(0, 800),
+  };
+}
+function questionnaireManualSeedFromAnswer() {
+  const draft = State._questionnaireManual || {};
+  if (draft.result || draft.step || draft.why) return; // человек уже начал форму — не трогаем
+  const seed = questionnaireManualSeed(questionnaireCurrent().rawAnswer);
+  if (seed) State._questionnaireManual = { ...draft, ...seed };
 }
 function questionnaireManualFromDOM() {
   const pick = (name) => document.querySelector(`[data-questionnaire-manual="${name}"]${name === 'estimateMin' ? ':checked' : ''}`);
@@ -14907,7 +14926,7 @@ function renderOnboardingScreen() {
         <section class="questionnaire-review-block"><span class="questionnaire-source-badge">${first.source === 'user_explicit' ? t('Твои слова') : t('Предложено Тенью')}</span><label for="questionnaire-step">${t('Первый шаг на сегодня')}</label><input id="questionnaire-step" maxlength="160" value="${esc(first.title || '')}" data-noi18n /><label for="questionnaire-minutes">${t('Сколько времени')}</label><select id="questionnaire-minutes">${[5, 15, 30, 60].map((minutes) => `<option value="${minutes}" ${Number(first.estimateMin) === minutes ? 'selected' : ''}>${minutes} ${t('мин')}</option>`).join('')}</select></section>
         <details class="questionnaire-review-block questionnaire-spheres" ${sphereChoices ? '' : 'open'}><summary>${t('Где это в жизни')} <span>${(q.seeds.spheres || []).length}</span></summary><p>${t('Сферы нужны для связи цели, первого шага, прогресса и питомцев. Их можно изменить позже.')}</p><fieldset><legend class="sr-only">${t('Предложенные сферы')}</legend>${sphereChoices || `<label for="questionnaire-sphere-new">${t('Назови одну основную сферу')}</label><input id="questionnaire-sphere-new" maxlength="40" value="${esc(State._questionnaireManual?.sphere || '')}" data-noi18n required />`}</fieldset></details>
       </div>
-      <label class="questionnaire-memory-choice"><input id="questionnaire-memory" type="checkbox" ${q.consents && q.consents.useConfirmedFactsForAssistant ? 'checked' : ''}/><span><b>${t('Помочь Тени помнить подтверждённое')}</b><small>${t('Только цель и первый шаг попадут в личный контекст Assistant и Guide. Исходный текст не сохраняется.')}</small></span></label>
+      <label class="questionnaire-memory-choice"><input id="questionnaire-memory" type="checkbox" ${q.consents && q.consents.useConfirmedFactsForAssistant ? 'checked' : ''}/><span><b>${t('Помочь Тени помнить подтверждённое')}</b><small>${t('Только цель и первый шаг попадут в личный контекст Тени и гида. Исходный текст не сохраняется.')}</small></span></label>
       <div class="questionnaire-actions"><button type="button" class="btn ghost" data-action="questionnaire-back" ${busy ? 'disabled' : ''}>${t('← Назад')}</button><button type="button" class="btn questionnaire-primary" data-action="questionnaire-commit" ${busy ? 'disabled' : ''}>${busy ? t('Сохраняю…') : t('Создать и перейти к первому шагу')}</button></div>`;
   } else if (manual) {
     const draft = State._questionnaireManual || {};
@@ -14918,7 +14937,7 @@ function renderOnboardingScreen() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     const provider = aiProvider() ? aiProviderLabel(aiProvider()) : aiHouseOK() ? t('ИИ Satoru') : '';
     body = `<header class="questionnaire-head"><span class="questionnaire-step">${stepLabel}</span><h1 id="questionnaire-title" tabindex="-1">${t('Что тебе сейчас важнее всего сдвинуть с места?')}</h1><p>${t('Какой результат ты хочешь увидеть, почему он важен — и какой небольшой шаг готов сделать уже сегодня?')}</p></header>
-      <label class="sr-only" for="questionnaire-answer">${t('Твой ответ')}</label><textarea id="questionnaire-answer" rows="7" maxlength="4000" data-noi18n placeholder="${esc(t('Например: хочу выпустить первое видео о Satoru, чтобы начать продвижение. Сегодня открою сценарий, выберу одну сцену и запишу черновой дубль.'))}">${esc(q.rawAnswer || '')}</textarea>
+      <label class="sr-only" for="questionnaire-answer">${t('Твой ответ')}</label><textarea id="questionnaire-answer" rows="7" maxlength="4000" data-noi18n placeholder="${esc(t('Например: хочу к весне пробежать 5 км без остановки, чтобы снова чувствовать себя в форме. Сегодня выйду на 15 минут ходьбы с бегом.'))}">${esc(q.rawAnswer || '')}</textarea>
       <div class="questionnaire-input-tools">${SR ? `<button type="button" class="btn ghost" data-action="questionnaire-voice">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Ответить голосом')}</button>` : ''}<span class="muted">${t('Один ответ — не анкета на час.')}</span></div>
       ${aiReady ? `<label class="questionnaire-ai-consent"><input id="questionnaire-ai-consent" type="checkbox" ${q.consents && q.consents.sendRawTextToAiProvider ? 'checked' : ''}/><span><b>${t('Разрешить разобрать этот ответ с помощью ИИ')}</b><small>${t('Текст будет отправлен выбранному провайдеру')}: ${esc(provider)}. ${t('Перед записью ты увидишь и исправишь результат.')}</small></span></label>` : `<p class="questionnaire-ai-unavailable">${esc(t(aiKeysKnown() ? 'ИИ сейчас не подключён — ручной путь работает полностью.' : 'Проверяю подключение ИИ…'))}</p>`}
       <details class="questionnaire-plan-import"><summary>${t('У меня уже есть план')}</summary><p>${t('Вставь его в поле выше или выбери текстовый файл. Satoru видит только явно выбранный файл.')}</p><label class="btn ghost questionnaire-file"><span>${t('Выбрать файл')}</span><input id="questionnaire-plan-file" type="file" accept=".txt,.md,text/plain,text/markdown" /></label></details>
@@ -33432,7 +33451,7 @@ async function onClick(e) {
 
   // --- Onboarding actions ---
   if (action === 'questionnaire-analyze') { questionnaireAnalyze(); return; }
-  if (action === 'questionnaire-manual') { questionnaireSourceFromDOM(); State._questionnaireStage = 'manual'; State._questionnaireError = ''; renderOnboardingScreen(); return; }
+  if (action === 'questionnaire-manual') { questionnaireSourceFromDOM(); questionnaireManualSeedFromAnswer(); State._questionnaireStage = 'manual'; State._questionnaireError = ''; renderOnboardingScreen(); return; }
   if (action === 'questionnaire-manual-review') { questionnaireBuildManualReview(); return; }
   if (action === 'questionnaire-back') {
     if (State._questionnaireStage === 'review' || questionnaireCurrent().status === 'review') {
