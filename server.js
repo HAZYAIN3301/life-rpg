@@ -3726,11 +3726,34 @@ for (const user of loadUsers()) {
 // ============================================================
 //  GitHub Issues integration — forward feedback to issues tracker
 // ============================================================
+// Отзыв содержит текст человека и его id. Публичный репозиторий сделал бы его открытым issue в
+// интернете (14.10: в HAZYAIN3301/life-rpg так оказалось 72 отзыва). Поэтому issue создаётся только
+// в приватном репозитории; неизвестно или публично — отзыв остаётся только в feedback.json.
+let _githubRepoPrivacy = { key: '', private: false, at: 0 };
+function githubRepoIsPrivate(owner, repoName, token, now = Date.now()) {
+  const key = `${owner}/${repoName}`;
+  if (_githubRepoPrivacy.key === key && now - _githubRepoPrivacy.at < 10 * 60 * 1000) return Promise.resolve(_githubRepoPrivacy.private);
+  return new Promise((resolve) => {
+    const done = (value) => { _githubRepoPrivacy = { key, private: value, at: now }; resolve(value); };
+    const req = https.request({
+      hostname: 'api.github.com', method: 'GET', path: `/repos/${owner}/${repoName}`,
+      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'User-Agent': 'gojo-app' },
+    }, (r) => {
+      let body = ''; r.setEncoding('utf8');
+      r.on('data', (chunk) => { if (body.length < 200000) body += chunk; });
+      r.on('end', () => { try { done(r.statusCode === 200 && JSON.parse(body).private === true); } catch { done(false); } });
+    });
+    req.setTimeout(10000, () => req.destroy(new Error('github repo timeout')));
+    req.on('error', () => resolve(false));
+    req.end();
+  });
+}
 async function createGithubIssue(entry) {
   const token = process.env.GITHUB_TOKEN;
   if (!token) return; // молча пропускаем если не настроен
   const repo = process.env.GITHUB_REPO || 'HAZYAIN3301/life-rpg';
   const [owner, repoName] = repo.split('/');
+  if (!(await githubRepoIsPrivate(owner, repoName, token))) { console.warn('[github-issue] skipped: repository is not private'); return; }
   const KIND_EMOJI = { bug: '🐛', idea: '💡', praise: '💛', other: '📝' };
   const KIND_LABEL = { bug: 'bug', idea: 'enhancement', praise: 'praise', other: 'feedback' };
   const short = entry.text.slice(0, 70) + (entry.text.length > 70 ? '…' : '');
