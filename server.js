@@ -5984,10 +5984,17 @@ const server = http.createServer(async (req, res) => {
     const boardCounts = Object.fromEntries(boardSteps.map(k => [k, 0]));
     let boardOwn = 0;
     const listLen = (v) => (Array.isArray(v) ? v.length : 0);
+    // «Позвал друга» (стратегия 12.10, воронка на одном экране): человек в пати хотя бы с одним
+    // другим участником. Отдельным числом, а не шагом: друг может прийти раньше первого дела,
+    // и сужающаяся воронка от этого начала бы врать.
+    const withFriend = new Set();
+    try { for (const party of loadParties()) if (party.members.length >= 2) for (const member of party.members) withFriend.add(member); } catch { /* реестр пати не читается — число не выдаём */ }
+    let friendCount = 0;
 
     for (const user of loadUsers()) {
       const uid = user.id;
       counts.registered += 1;
+      if (withFriend.has(uid)) friendCount += 1;
       const born = user.createdAt ? new Date(user.createdAt) : null;
       const week = born ? new Date(born.getTime() - ((born.getUTCDay() + 6) % 7) * 86400000).toISOString().slice(0, 10) : 'unknown';
       const row = cohorts[week] || (cohorts[week] = Object.fromEntries(steps.map(k => [k, 0])));
@@ -6067,6 +6074,7 @@ const server = http.createServer(async (req, res) => {
       generatedAt: new Date().toISOString(),
       steps: steps.map((key) => ({ key, count: counts[key], pctOfRegistered: pct(counts[key]) })),
       cohortsByWeek: Object.fromEntries(Object.entries(cohorts).sort(([a], [b]) => a < b ? 1 : -1).slice(0, 12)),
+      social: { withFriend: friendCount, pctOfRegistered: pct(friendCount) },
       boardFunnel: {
         steps: boardSteps.map((key) => ({ key, count: boardCounts[key], pctOfSaw: boardPct(boardCounts[key]) })),
         wroteOwnOrder: boardOwn,

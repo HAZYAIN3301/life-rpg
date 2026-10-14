@@ -3378,6 +3378,21 @@ const I18N_EXTRA = {
   'Открыть': { en: 'Open', de: 'Öffnen', uk: 'Відкрити', es: 'Abrir' },
   'Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).': { en: 'View current data and restore from an auto-snapshot (backups are made before every write).', de: 'Aktuelle Daten ansehen und aus einem Auto-Snapshot wiederherstellen (Backups vor jedem Schreibvorgang).', uk: 'Переглянути поточні дані та відновити з автознімка (бекапи робляться перед кожним записом).', es: 'Ver datos actuales y restaurar desde una instantánea automática (las copias se hacen antes de cada escritura).' },
   '📊 Активность (аналитика)': { en: '📊 Activity (analytics)', de: '📊 Aktivität (Analytik)', uk: '📊 Активність (аналітика)', es: '📊 Actividad (analítica)' },
+  '📈 Воронка первого пути': { en: '📈 First-path funnel', de: '📈 Trichter des ersten Wegs', uk: '📈 Лійка першого шляху', es: '📈 Embudo del primer camino' },
+  'Загружаю воронку…': { en: 'Loading the funnel…', de: 'Trichter wird geladen…', uk: 'Завантажую лійку…', es: 'Cargando el embudo…' },
+  'Воронка недоступна.': { en: 'The funnel is unavailable.', de: 'Der Trichter ist nicht verfügbar.', uk: 'Лійка недоступна.', es: 'El embudo no está disponible.' },
+  'Зарегистрировались': { en: 'Registered', de: 'Registriert', uk: 'Зареєструвалися', es: 'Se registraron' },
+  'Настроили сферы': { en: 'Set up spheres', de: 'Bereiche eingerichtet', uk: 'Налаштували сфери', es: 'Configuraron áreas' },
+  'Создали первое дело': { en: 'Created a first task', de: 'Erste Aufgabe angelegt', uk: 'Створили першу справу', es: 'Crearon una primera tarea' },
+  'Выполнили первое дело': { en: 'Completed a first task', de: 'Erste Aufgabe erledigt', uk: 'Виконали першу справу', es: 'Completaron una primera tarea' },
+  'Получили первую награду': { en: 'Got a first reward', de: 'Erste Belohnung erhalten', uk: 'Отримали першу нагороду', es: 'Recibieron una primera recompensa' },
+  'Вернулись (2+ дня с делами)': { en: 'Came back (2+ days with tasks)', de: 'Zurückgekommen (2+ Tage mit Aufgaben)', uk: 'Повернулися (2+ дні зі справами)', es: 'Volvieron (2+ días con tareas)' },
+  'Активны через неделю': { en: 'Active a week later', de: 'Eine Woche später aktiv', uk: 'Активні через тиждень', es: 'Activos una semana después' },
+  'В пати хотя бы с одним другом': { en: 'In a party with at least one friend', de: 'In einer Party mit mindestens einem Freund', uk: 'У паті хоча б з одним другом', es: 'En una party con al menos un amigo' },
+  'Доска: увидели (оценка) → взяли → выполнили → с фото': { en: 'Board: saw (estimate) → took → completed → with photo', de: 'Board: gesehen (Schätzung) → genommen → erledigt → mit Foto', uk: 'Дошка: побачили (оцінка) → взяли → виконали → з фото', es: 'Tablón: vieron (estimación) → tomaron → completaron → con foto' },
+  'Когорты по неделе регистрации': { en: 'Cohorts by registration week', de: 'Kohorten nach Registrierungswoche', uk: 'Когорти за тижнем реєстрації', es: 'Cohortes por semana de registro' },
+  'неделя': { en: 'week', de: 'Woche', uk: 'тиждень', es: 'semana' },
+  'Только количества по данным аккаунтов — без имён и email.': { en: 'Counts only, from account data — no names or emails.', de: 'Nur Anzahlen aus Kontodaten — ohne Namen und E-Mails.', uk: 'Лише кількості за даними акаунтів — без імен та email.', es: 'Solo recuentos a partir de los datos de las cuentas, sin nombres ni correos.' },
   'Загружаю…': { en: 'Loading…', de: 'Lädt…', uk: 'Завантажую…', es: 'Cargando…' },
   'Только агрегат: какие вкладки/действия используются и сколько активных в день. Без личного контента.': { en: 'Aggregate only: which tabs/actions are used and how many are active per day. No personal content.', de: 'Nur Aggregat: welche Tabs/Aktionen genutzt werden und wie viele pro Tag aktiv sind. Keine persönlichen Inhalte.', uk: 'Лише агрегат: які вкладки/дії використовуються та скільки активних на день. Без особистого контенту.', es: 'Solo agregado: qué pestañas/acciones se usan y cuántos activos por día. Sin contenido personal.' },
   // Settings — ambient / PWA
@@ -25781,6 +25796,8 @@ function adminCard() {
       <button type="button" class="btn ghost" data-action="crash-export">${t('Выгрузить для разбора сбоя')}</button></form>
     <p class="muted" style="font-size:12px">${t('Выгрузка содержит только механику: сферы, квесты, привычки, цели. Заметки, рефлексии и записи дня в неё намеренно не входят.')}</p>
     <p class="muted" style="font-size:12px">${t('Посмотреть текущие данные и восстановить из автоснимка (бэкапы делаются перед каждой записью).')}</p>
+    <h3 style="margin-top:16px">${t('📈 Воронка первого пути')}</h3>
+    ${funnelHTML()}
     <h3 style="margin-top:16px">${t('📊 Активность (аналитика)')}</h3>
     ${analyticsHTML()}
     <p class="muted" style="font-size:12px">${t('Только агрегат: какие вкладки/действия используются и сколько активных в день. Без личного контента.')}</p></div>`;
@@ -25825,6 +25842,26 @@ const FEATURE_REGISTRY = [
   { ev: 'view:character', label: 'Герой' },
   { ev: 'view:notes', label: 'Заметки' },
 ];
+// Воронка на одном экране (стратегия 12.10): пришёл → первое дело → вернулся → неделя → позвал друга.
+// Данные считает сервер из уже лежащих аккаунтов (`/api/admin/funnel`), здесь — только показ.
+const FUNNEL_LABELS = { registered: 'Зарегистрировались', setup: 'Настроили сферы', firstTask: 'Создали первое дело', firstDone: 'Выполнили первое дело', firstReward: 'Получили первую награду', returned: 'Вернулись (2+ дня с делами)', day7: 'Активны через неделю' };
+function funnelHTML() {
+  if (State.funnel === undefined) {
+    State.funnel = null;
+    fetch('/api/admin/funnel').then((r) => (r.ok ? r.json() : {})).then((d) => { State.funnel = d || {}; if (State.view === 'settings') render(); }).catch(() => { State.funnel = {}; });
+    return `<p class="muted">${t('Загружаю воронку…')}</p>`;
+  }
+  const f = State.funnel;
+  if (!f || !Array.isArray(f.steps)) return `<p class="muted">${t('Воронка недоступна.')}</p>`;
+  const top = Math.max(1, ...f.steps.map((s) => s.count || 0));
+  const bar = (n) => `<span class="funnel-bar" style="display:inline-block;height:8px;border-radius:4px;background:var(--accent,#6c8cff);width:${Math.round(100 * (n || 0) / top)}%;max-width:100%"></span>`;
+  const rows = f.steps.map((s) => `<tr><td>${esc(t(FUNNEL_LABELS[s.key] || s.key))}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${s.count}</td><td style="text-align:right;font-variant-numeric:tabular-nums">${s.pctOfRegistered}%</td><td style="width:40%">${bar(s.count)}</td></tr>`).join('');
+  const social = f.social ? `<tr><td>${esc(t('В пати хотя бы с одним другом'))}</td><td style="text-align:right">${f.social.withFriend}</td><td style="text-align:right">${f.social.pctOfRegistered}%</td><td></td></tr>` : '';
+  const board = f.boardFunnel && Array.isArray(f.boardFunnel.steps) ? `<p class="muted" style="font-size:12px;margin:8px 0 2px">${esc(t('Доска: увидели (оценка) → взяли → выполнили → с фото'))}</p><p style="font-variant-numeric:tabular-nums">${f.boardFunnel.steps.map((s) => `${s.count} (${s.pctOfSaw}%)`).join(' → ')}</p>` : '';
+  const weeks = Object.entries(f.cohortsByWeek || {}).slice(0, 6);
+  const cohort = weeks.length ? `<p class="muted" style="font-size:12px;margin:8px 0 2px">${esc(t('Когорты по неделе регистрации'))}</p><div style="overflow-x:auto"><table class="funnel-cohorts" style="font-size:12px;font-variant-numeric:tabular-nums"><tr><th>${esc(t('неделя'))}</th>${f.steps.map((s) => `<th title="${esc(t(FUNNEL_LABELS[s.key] || s.key))}">${esc(s.key)}</th>`).join('')}</tr>${weeks.map(([w, row]) => `<tr><td>${esc(w)}</td>${f.steps.map((s) => `<td style="text-align:right">${row[s.key] || 0}</td>`).join('')}</tr>`).join('')}</table></div>` : '';
+  return `<div class="funnel-card"><table style="width:100%;font-size:13px">${rows}${social}</table>${board}${cohort}<p class="muted" style="font-size:12px">${esc(t('Только количества по данным аккаунтов — без имён и email.'))}</p></div>`;
+}
 function analyticsHTML() {
   if (State.analytics === undefined) {
     State.analytics = null;
