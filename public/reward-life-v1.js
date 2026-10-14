@@ -42,7 +42,10 @@
       scope(); const life = d.state().settings?.rewardLifeV1;
       if (!valid(life)) return '';
       const p = items().find(p => life?.[p.id]?.status === 'planned' && life[p.id].date <= d.today());
-      return p ? `<button class="duo-today" data-reward-life="open"><span><b>${t('due')}</b><small data-noi18n>${e(p.name)}</small></span><span>${t('open')}</span></button>` : '';
+      // Отметить можно прямо здесь: раньше карточка только вела в «Награды», и звено «использую»
+      // требовало лишнего перехода (аудит золота 14.10). Статусы те же, золото не меняется.
+      const disabled = busy ? 'disabled' : '';
+      return p ? `<div class="duo-today reward-life-today" data-reward-id="${e(p.id)}"><span><b>${t('due')}</b><small data-noi18n>${e(p.name)}</small>${message === t('error') ? `<small role="alert">${e(message)}</small>` : ''}</span><span class="reward-life-today-actions"><button type="button" class="btn" data-reward-life="used" ${disabled}>${t('use')}</button><button type="button" class="btn ghost" data-reward-life="deferred" ${disabled}>${t('defer')}</button><button type="button" class="btn ghost" data-reward-life="open">${t('open')}</button></span></div>` : '';
     }
     function body() {
       scope(); if (!items().length) return '';

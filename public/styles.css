@@ -16046,6 +16046,9 @@ html.calendar-task-open body {
 .notes-header h2 { margin: 0; font-size: var(--type-title, clamp(20px,3vw,34px)); line-height: var(--leading-display, 1.12); }
 .notes-header p { margin: var(--sp-1) 0 0; font-size: var(--type-body, 15px); line-height: var(--leading-prose, 1.5); color: var(--muted); }
 .notes-list { display: grid; gap: var(--sp-2); }
+.duo-today.reward-life-today { flex-direction: column; align-items: stretch; }
+.duo-today.reward-life-today > .reward-life-today-actions { display: flex; flex-wrap: wrap; gap: var(--sp-2, 8px); flex: none; }
+.reward-life-today-actions .btn { flex: 1 1 auto; min-block-size: var(--touch-min, 42px); white-space: normal; }
 .note-card { display: grid; gap: var(--sp-2); }
 .note-top { align-items: flex-start; }
 .note-top h3 { margin: 0; color: var(--text-strong); font-size: var(--type-heading, 16px); line-height: var(--leading-ui, 1.35); overflow-wrap: anywhere; }
