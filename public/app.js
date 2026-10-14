@@ -26366,7 +26366,7 @@ function renderRewards() {
       <button class="btn ${bal >= r.cost ? '' : 'disabled'}" data-action="buy-reward" data-guide-target="reward-buy" data-id="${r.id}" ${bal >= r.cost ? '' : 'disabled'}>${t('Купить')}</button>
       <button class="del" data-action="delete-reward" data-id="${r.id}" aria-label="${esc(t('Удалить'))}: ${esc(r.catalogNameKey ? t(r.catalogNameKey) : r.name)}">✕</button></div>`).join('');
   const history = (State.purchases || []).slice().reverse().slice(0, 8).map((p) => {
-    const purchaseName = p.denNameKey ? `${t('Логово')}: ${t(p.denNameKey)}` : p.name;
+    const purchaseName = p.denNameKey ? `${t('Логово')}: ${t(p.denNameKey)}` : t(p.name);
     return `<li data-guide-target="reward-purchase" data-id="${esc(p.id || '')}" tabindex="-1"><span class="muted">${(p.at || '').slice(0, 10)}</span> ${esc(purchaseName)} — ${satoruIconHTML('status.gold', 'inline-emblem', '◇')} ${p.cost}</li>`;
   }).join('');
   const achs = ACHIEVEMENTS.map((a) => {

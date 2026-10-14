@@ -51,4 +51,5 @@ test('название награды из каталога переводитс
   const body = ui.body(); assert.match(body, /Coffee at your favorite café/); assert.match(body, /Мой поход/);
   const app = fs.readFileSync(path.join(__dirname, '..', 'public/app.js'), 'utf8');
   assert.match(app, /window\.RewardLifeV1\.create\(\{ state: \(\) => State, lang, escape: esc, translate: t,/);
+  assert.match(app, /const purchaseName = p\.denNameKey \? `\$\{t\('Логово'\)\}: \$\{t\(p\.denNameKey\)\}` : t\(p\.name\);/, 'история покупок тоже на языке человека');
 });
