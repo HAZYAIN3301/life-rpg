@@ -2590,6 +2590,7 @@ const I18N_EXTRA = {
   'Создать квест': { en: 'Create quest', de: 'Quest erstellen', uk: 'Створити квест', es: 'Crear misión' },
   'В день': { en: 'Into the day', de: 'In den Tag', uk: 'У день', es: 'Al día' },
   'Ради цели': { en: 'Serves the goal', de: 'Für das Ziel', uk: 'Заради цілі', es: 'Para la meta' },
+  'Ещё копии этого дела за прошлые дни': { en: 'More copies of this task from earlier days', de: 'Weitere Kopien dieser Aufgabe aus früheren Tagen', uk: 'Ще копії цієї справи за минулі дні', es: 'Más copias de esta tarea de días anteriores' },
   'Дедлайн цели': { en: 'Goal deadline', de: 'Ziel-Deadline', uk: 'Дедлайн цілі', es: 'Fecha límite de la meta' },
   'Вчера ты отметил, что тебя унесло.': { en: 'Yesterday you marked that it carried you away.', de: 'Gestern hast du notiert, dass es dich mitgerissen hat.', uk: 'Учора ти зазначив, що тебе понесло.', es: 'Ayer anotaste que te arrastró.' },
   'Вчера окно вышло за свою границу.': { en: 'Yesterday the window ran past its own boundary.', de: 'Gestern lief das Fenster über seine eigene Grenze.', uk: 'Учора вікно вийшло за свою межу.', es: 'Ayer la ventana pasó de su propio límite.' },
@@ -15178,6 +15179,17 @@ function questGoalChipHTML(q, links) {
   const label = `${t('Ради цели')}: ${link.title}${stateCopy ? ` · ${stateCopy}` : ''}`;
   return `<a class="task-goal-chip is-${esc(link.state)}" href="${esc(goalDeepLinkHref(link.goalId))}" data-action="goto-goal" data-id="${esc(link.goalId)}" aria-label="${esc(label)}" title="${esc(label)}"><span class="task-goal-chip-mark" aria-hidden="true">${satoruIconHTML('nav.today', 'inline-glyph')}</span><span class="task-goal-chip-title" data-noi18n>${esc(link.title)}</span>${stateCopy ? `<span class="task-goal-chip-state">${esc(stateCopy)}</span>` : ''}</a>`;
 }
+// Повторяющееся дело копится в «Незавершённых» копиями за разные дни (опись 14.10: «Прочитать главу
+// учебника» — три строки подряд). Свежая копия видна, остальные — под одной строкой, со всеми кнопками.
+function groupOverdueCopies(tasks) {
+  const groups = new Map();
+  for (const task of tasks) {
+    const key = `${String(task.title || '').trim().toLowerCase()}|${task.skillId || (Array.isArray(task.skillIds) && task.skillIds[0]) || ''}`;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(task);
+  }
+  return [...groups.values()].map((list) => list.slice().sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))));
+}
 function questRow(q, links) {
   const estMin = Number(q.estimateMin) || 0;
   const time = q.actualMin ? `${fmtDur(q.actualMin)} / ${fmtDur(estMin)}` : fmtDur(estMin);
@@ -23368,7 +23380,7 @@ function renderToday() {
   State._todaySelectedNudge = selectedNudge;
 
   const overdueCard = overdue.length ? `<div class="card overdue"><h3>${satoruIconHTML('status.warning', 'heading-glyph', '⏳')} ${t('⏳ Просрочено').replace(/^⏳\s*/, '')} (${overdue.length})</h3>
-      <ul class="tasks">${overdue.map((task) => questRow(task, questGoalLinks)).join('')}</ul>
+      <ul class="tasks">${groupOverdueCopies(overdue).map((list) => questRow(list[0], questGoalLinks) + (list.length > 1 ? `<li class="overdue-copies"><details><summary>${t('Ещё копии этого дела за прошлые дни')}: ${list.length - 1}</summary><ul class="tasks">${list.slice(1).map((task) => questRow(task, questGoalLinks)).join('')}</ul></details></li>` : '')).join('')}</ul>
       <div class="overdue-bulk-actions"><button class="btn ghost" data-action="overdue-bulk-open" data-noi18n>${esc(overdueBulkCopy('open'))}</button><button class="btn ghost" data-action="move-overdue">${t('↪ Перенести всё на сегодня')}</button></div></div>` : '';
   // Control promises a visible decision, not a review hidden among optional history.
   const overdueSurface = currentPath() === 'control' ? controlReviewCardHTML()

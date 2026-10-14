@@ -22971,3 +22971,8 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .local-ai-test { margin: 0; font-size: var(--type-meta); overflow-wrap: anywhere; }
 .local-ai-test.is-ok { color: var(--ok, #3fb37f); }
 .local-ai-test.is-error { color: var(--bad, #e05d5d); }
+
+/* Копии повторяющегося дела в «Незавершённых» (ночная ветка 14.10). */
+.overdue .overdue-copies { list-style: none; padding-inline-start: var(--sp-6, 24px); }
+.overdue .overdue-copies > details > summary { cursor: pointer; color: var(--muted); font-size: var(--type-floor, 13px); min-block-size: 32px; display: flex; align-items: center; }
+.overdue .overdue-copies .tasks { margin: 0; padding: 0; }
