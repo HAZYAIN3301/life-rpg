@@ -25848,7 +25848,7 @@ const FUNNEL_LABELS = { registered: 'Зарегистрировались', setu
 function funnelHTML() {
   if (State.funnel === undefined) {
     State.funnel = null;
-    fetch('/api/admin/funnel').then((r) => (r.ok ? r.json() : {})).then((d) => { State.funnel = d || {}; if (State.view === 'settings') render(); }).catch(() => { State.funnel = {}; });
+    fetch('/api/admin/funnel').then((r) => (r.ok ? r.json() : {})).then((d) => { State.funnel = d || {}; if (State.view === 'settings') render(); }).catch(() => { State.funnel = {}; if (State.view === 'settings') render(); });
     return `<p class="muted">${t('Загружаю воронку…')}</p>`;
   }
   const f = State.funnel;
@@ -33071,7 +33071,7 @@ async function onClick(e) {
     if (vm?.targetKey === guideTarget.dataset.guideTarget && await guideV3OpenContextChapter()) return;
   }
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; State.funnel = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
@@ -33400,7 +33400,7 @@ async function onClick(e) {
   if (action === 'mobile-nav-more') { sfx('open'); showMobileNavSheet(); return; }
   if (action === 'mobile-nav-close') { sfx('close'); closeMobileNavSheet(); return; }
   if (action === 'mobile-go-settings') {
-    flushSettingsForm(); State.view = 'settings'; State._mobileNavFocusAfterCommit = '#settings-title, #main h2'; State.adminUsers = null; State.analytics = undefined; track('view:settings'); render(); return;
+    flushSettingsForm(); State.view = 'settings'; State._mobileNavFocusAfterCommit = '#settings-title, #main h2'; State.adminUsers = null; State.analytics = undefined; State.funnel = undefined; track('view:settings'); render(); return;
   }
   if (action === 'focus-add-task') {
     State._todayTaskOpen = true;

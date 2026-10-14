@@ -5988,7 +5988,8 @@ const server = http.createServer(async (req, res) => {
     // другим участником. Отдельным числом, а не шагом: друг может прийти раньше первого дела,
     // и сужающаяся воронка от этого начала бы врать.
     const withFriend = new Set();
-    try { for (const party of loadParties()) if (party.members.length >= 2) for (const member of party.members) withFriend.add(member); } catch { /* реестр пати не читается — число не выдаём */ }
+    let friendsKnown = true;
+    try { for (const party of loadParties()) if (party.members.length >= 2) for (const member of party.members) withFriend.add(member); } catch { friendsKnown = false; /* реестр пати не читается — число не выдаём */ }
     let friendCount = 0;
 
     for (const user of loadUsers()) {
@@ -6073,8 +6074,8 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, 200, {
       generatedAt: new Date().toISOString(),
       steps: steps.map((key) => ({ key, count: counts[key], pctOfRegistered: pct(counts[key]) })),
-      cohortsByWeek: Object.fromEntries(Object.entries(cohorts).sort(([a], [b]) => a < b ? 1 : -1).slice(0, 12)),
-      social: { withFriend: friendCount, pctOfRegistered: pct(friendCount) },
+      cohortsByWeek: Object.fromEntries(Object.entries(cohorts).sort(([a], [b]) => (a === 'unknown') - (b === 'unknown') || (a < b ? 1 : -1)).slice(0, 12)),
+      social: friendsKnown ? { withFriend: friendCount, pctOfRegistered: pct(friendCount) } : null,
       boardFunnel: {
         steps: boardSteps.map((key) => ({ key, count: boardCounts[key], pctOfSaw: boardPct(boardCounts[key]) })),
         wroteOwnOrder: boardOwn,

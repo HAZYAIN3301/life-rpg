@@ -45,3 +45,16 @@ test('экран воронки показывает шаги, друга и д�
   context.State.funnel = {}; assert.match(context.funnelHTML(), /Воронка недоступна/);
   assert.match(app, /\$\{funnelHTML\(\)\}/, 'воронка подключена в админский раздел');
 });
+
+test('воронка не выдаёт ложный ноль, обновляется при входе в Настройки и ставит неизвестную неделю в конец', () => {
+  const server = fs.readFileSync(path.join(ROOT, 'server.js'), 'utf8');
+  const app = fs.readFileSync(path.join(ROOT, 'public/app.js'), 'utf8');
+  assert.match(server, /catch \{ friendsKnown = false;/, 'реестр пати не прочитан — числа нет');
+  assert.match(server, /social: friendsKnown \? \{ withFriend: friendCount, pctOfRegistered: pct\(friendCount\) \} : null,/);
+  const sort = server.match(/Object\.entries\(cohorts\)\.sort\((\(\[a\], \[b\]\) => [^\n]+?)\)\.slice\(0, 12\)/);
+  assert.ok(sort, 'сортировка когорт найдена');
+  const order = Object.entries({ unknown: 1, '2026-10-05': 1, '2026-10-12': 1 }).sort(vm.runInNewContext(sort[1])).map(([k]) => k);
+  assert.deepEqual(order, ['2026-10-12', '2026-10-05', 'unknown']);
+  assert.equal((app.match(/State\.analytics = undefined; State\.funnel = undefined;/g) || []).length, 2, 'оба входа в Настройки сбрасывают воронку');
+  assert.match(app, /\.catch\(\(\) => \{ State\.funnel = \{\}; if \(State\.view === 'settings'\) render\(\); \}\)/, 'ошибка сети не оставляет «Загружаю»');
+});
