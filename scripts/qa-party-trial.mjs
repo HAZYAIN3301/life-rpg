@@ -40,7 +40,7 @@ for(const engine of [chromium,webkit]){
  const[a,b]=pages;
  const party=await(await a.request.post(base+'/api/party/create',{data:{name:'Друзья в долине',shareProgress:true,acknowledgedVisibility:true}})).json();assert(party.party);
  assert((await b.request.post(base+'/api/party/join',{data:{code:party.party.code,shareProgress:true,acknowledgedVisibility:true}})).ok());
- const nav=async(p,view='party')=>{await p.evaluate(async view=>{await refreshPartyAuthority();State.view=view;render();},view);await p.waitForFunction(view=>_renderedMainView===view&&!document.querySelector('#main').classList.contains('is-view-pending'),view);};
+ const nav=async(p,view='party')=>{await p.evaluate(async view=>{await refreshPartyAuthority();State.view=view;if(view==='party'&&partyWorldUI().location()==='map')partyWorldUI().go('forest',false);else render();},view);await p.waitForFunction(view=>_renderedMainView===view&&!document.querySelector('#main').classList.contains('is-view-pending'),view);};
  const refresh=async p=>{await p.evaluate(()=>partyAdventureUI().refresh(true));};
  for(const p of pages){await nav(p);await refresh(p);}
  await a.locator('.adventure-shell').screenshot({path:path.join(out,`${engine.name()}-choose.png`)});
@@ -86,7 +86,7 @@ for(const engine of [chromium,webkit]){
  for(let tier=0;tier<3;tier++){
   if(tier)await a.locator('[data-trial="next"]').click();
   await a.locator('[data-trial="pick"][data-role="spark"]').click();await a.locator('[data-trial="start"]').click();await a.waitForFunction(n=>State.party.trial.trials.length===n,tier+1);
-  await nav(b);if(!await b.locator('.trial-shell').count())await b.locator('[data-trial="open"]').click();await refreshTrial(b);
+  await nav(b);if(!await b.locator('.trial-shell').count())await b.evaluate(()=>partyWorldUI().go('cave'));await refreshTrial(b);
   if(tier)await b.locator('.trial-role-change summary').click();
   await b.locator(`[data-trial="pick"][data-role="${tier?'leaf':'stone'}"]`).click();await b.locator('[data-trial="role"]').click();await b.waitForFunction(role=>State.party.trial.roles.some(r=>r.memberId===State.party.members.find(m=>m.me).id&&r.role===role),tier?'leaf':'stone');
   await nav(a,'today');await a.locator('[data-trial="open"]').click();await a.locator('.trial-shell').waitFor();
@@ -104,12 +104,12 @@ for(const engine of [chromium,webkit]){
   assert(!(await b.locator('.trial-shell').innerText()).includes('PRIVATE_0'));
  }
  assert(snapshots.rest,'real second-tier counterattack must produce a breather');
- for(const p of pages){await p.reload();await p.waitForFunction(()=>State.phase==='app');await nav(p);await p.locator('[data-trial="open"]').click();await refreshTrial(p);assert.equal(await p.evaluate(()=>State.party.trial.trials.filter(r=>r.completedAt).length),3);}
+ for(const p of pages){await p.reload();await p.waitForFunction(()=>State.phase==='app');await nav(p);await p.evaluate(()=>partyWorldUI().go('cave'));await refreshTrial(p);assert.equal(await p.evaluate(()=>State.party.trial.trials.filter(r=>r.completedAt).length),3);}
  snapshots.complete=await a.evaluate(()=>structuredClone(State.party.trial));
  await a.screenshot({path:path.join(out,`${engine.name()}-win.png`)});
  await a.locator('[data-trial="room"]').click();await a.locator('.adventure-den-trophy[data-trial-rank="3"]').waitFor();assert((await a.locator('.trial-trophy-rank').innerText()).includes('3/3'));
- await a.locator('.shared-den-scene').screenshot({path:path.join(out,`${engine.name()}-trophy.png`)});
- await a.locator('[data-trial="open"]').click();
+ await a.screenshot({path:path.join(out,`${engine.name()}-trophy.png`)});
+ await a.locator('[data-world="map"]').click();await a.locator('[data-world-walk="cave"]').click();
  // Freeze network only for rendering fixtures; all paths above used the real server.
  await a.emulateMedia({reducedMotion:'reduce'});
  await a.route('**/api/party/trial',async route=>route.fulfill({json:await a.evaluate(()=>({partyId:State.party.id,trial:State.party.trial,eligible:[{kind:'task',id:'layout-only',title:'Мой сохранённый шаг — длинное название для проверки карточки'}]}))}));
@@ -121,7 +121,7 @@ for(const engine of [chromium,webkit]){
  }
  await a.setViewportSize({width:375,height:812});await a.evaluate(snapshot=>{State.settings.lang='ru';State.settings.theme='dark';State.party.trial=snapshot;render();},snapshots.active);await refreshTrial(a);await a.locator('.trial-shell').scrollIntoViewIfNeeded();await a.screenshot({path:path.join(out,`${engine.name()}-mobile.png`),fullPage:true});
  await a.evaluate(()=>{for(let n=2;n<6;n++){State.party.members.push({id:'dense'+n,name:'Длинное имя участника '+n});State.party.trial.roles.push({memberId:'dense'+n,role:['spark','stone','leaf'][n%3]});}render();});assert.equal(await a.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
- await a.locator('[data-trial="back"]').focus();await a.keyboard.press('Tab');assert(await a.evaluate(()=>document.querySelector('.trial-shell').contains(document.activeElement)));
+ await a.locator('.world-interior-header [data-world="map"]').focus();await a.keyboard.press('Tab');assert(await a.evaluate(()=>document.querySelector('.world-interior').contains(document.activeElement)));
  await a.evaluate(()=>{for(const el of document.querySelectorAll('.trial-shell h2,.trial-shell h3,.trial-shell p,.trial-shell button,.trial-shell small,.trial-shell label'))el.style.fontSize=parseFloat(getComputedStyle(el).fontSize)*2+'px';});assert.equal(await a.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false);
  report.engines.push(engine.name()+': real expedition unlock, three trials, all roles/actions, task/habit/focus, lost receipt/retry, rest, shared trophy and reload');
  }finally{await browser.close();await writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2));}
