@@ -55,13 +55,13 @@
       return `<section class="card shared-den" aria-labelledby="shared-den-title">
         <header><div><h3 id="shared-den-title" tabindex="-1">${tr('title')}</h3><p class="muted">${tr('intro')}</p></div><button class="btn ghost" data-party-den="refresh" ${busy ? 'disabled' : ''}>${tr('refresh')}</button></header>
         ${d.scene(room)}
-        <div data-party-project-host>${d.project ? d.project() : ''}</div>
-        ${rows ? `<ul class="shared-den-items">${rows}</ul>` : `<p class="muted">${tr('empty')}</p>`}
         <div class="shared-den-editor"><label for="shared-den-item">${tr('choose')}</label><div class="shared-den-controls"><select id="shared-den-item" ${busy || pending ? 'disabled' : ''}>${owned.map(x => `<option value="${x.id}" ${x.id === selected ? 'selected' : ''}>${safe(d.translate(x.name))}</option>`).join('')}</select>
         <button class="btn" data-party-den="place" ${busy || pending || blocked || same || !choice ? 'disabled' : ''}>${busy ? tr('busy') : same ? tr('placed') : tr('place')}</button></div>
-        ${blocked ? `<p>${tr('occupied')}</p>` : ''}<p class="muted shared-den-privacy">${tr('privacy')}</p>
+        ${blocked ? `<p>${tr('occupied')}</p>` : ''}<details class="shared-den-privacy"><summary>${window.PartyWorldUIV1.text('details',d.lang())}</summary><p class="muted">${tr('privacy')}</p></details>
         <p class="shared-den-status" role="status" aria-live="polite">${safe(message)}</p>
         ${pending && !busy ? `<button class="btn" data-party-den="retry">${tr('retry')}</button>` : ''}</div>
+        <details class="world-building"><summary>${window.PartyWorldUIV1.text('building',d.lang())}</summary><div data-party-project-host>${d.project ? d.project() : ''}</div></details>
+        ${rows ? `<ul class="shared-den-items">${rows}</ul>` : `<p class="muted">${tr('empty')}</p>`}
         <footer><button class="btn ghost" data-action="goto-rewards">${tr('shop')}</button><button class="btn ghost" data-party-den="personal">${tr('personal')}</button></footer>
       </section>`;
     }
@@ -74,7 +74,9 @@
         if (active.matches('input,select')) return;
         if (active.dataset.partyDen) focus = `[data-party-den="${active.dataset.partyDen}"]${active.dataset.slot ? `[data-slot="${active.dataset.slot}"]` : ''}`;
       }
+      const buildingOpen=host.querySelector('.world-building')?.open;
       host.innerHTML = body();
+      if(buildingOpen)host.querySelector('.world-building')?.setAttribute('open','');
       if (focus) host.querySelector(focus)?.focus();
     }
     async function refresh(explicit = false) {

@@ -1,0 +1,1821 @@
+{
+ "date": "2026-10-20",
+ "spineFollowup": {
+  "details": "SPINE-PRACTICE.md",
+  "writtenSources": "SP01-SP27; SP19/SP22 completed; SP28 partial",
+  "videoTranscriptsReadInFull": ["d30iRb6ZvQw", "d-YeActEi38"],
+  "videoVisualReview": "d30iRb6ZvQw: selected states only, not continuous viewing",
+  "longMixAndMatchStreamsWatchedInFull": false,
+  "exampleDataAudit": "mix-and-match-audit.json",
+  "editorExercisesCompleted": false
+ },
+ "kind": "research-not-runtime-acceptance",
+ "book": {
+  "source": "owner-provided PDF, not distributed",
+  "sha256": "724add7ae5656e4ce2c06236524a6c23e69ecbbff65378163d620f0949a08fcf",
+  "pages": 346,
+  "metadata": {
+   "format": "PDF 1.5",
+   "title": "",
+   "author": "",
+   "subject": "",
+   "keywords": "",
+   "creator": "Adobe Acrobat 6.0",
+   "producer": "Adobe Acrobat 6.0 Image Conversion Plug-in",
+   "creationDate": "D:20030822102318+04'00'",
+   "modDate": "D:20030822102329+04'00'",
+   "trapped": "",
+   "encryption": null
+  },
+  "textLayer": false,
+  "bytes": 36690686
+ },
+ "extractionRoot": "local-only; not distributed",
+ "coverage": {
+  "pdfPages": 346,
+  "ocrPagesRead": 346,
+  "visuallyReviewedPages": 43,
+  "ocrWords": 59133,
+  "limitations": [
+   "OCR can misread handwritten captions and reading order.",
+   "Visual review covers selected diagrams, not every illustration.",
+   "Source book edition/ISBN not established.",
+   "No runtime fixes or artistic acceptance in this package.",
+   "Spine follow-up coverage: SPINE-PRACTICE.md; editor not run."
+  ]
+ },
+ "pages": [
+  {
+   "pdfPage": 1,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 2,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 3,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 4,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 5,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 6,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 7,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 8,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 9,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 10,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 11,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 12,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 13,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 14,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 15,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 16,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 17,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 18,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 19,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 20,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 21,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 22,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 23,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 24,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 25,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 26,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 27,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 28,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 29,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 30,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 31,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 32,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 33,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 34,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 35,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 36,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 37,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 38,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 39,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 40,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 41,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 42,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 43,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 44,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 45,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 46,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 47,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 48,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 49,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 50,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 51,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 52,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 53,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 54,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 55,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 56,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 57,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 58,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 59,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 60,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 61,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 62,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 63,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 64,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 65,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 66,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 67,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 68,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 69,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 70,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 71,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 72,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 73,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 74,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 75,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 76,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 77,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 78,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 79,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 80,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 81,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 82,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 83,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 84,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 85,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 86,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 87,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 88,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 89,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 90,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 91,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 92,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 93,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 94,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 95,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 96,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 97,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 98,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 99,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 100,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 101,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 102,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 103,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 104,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 105,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 106,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 107,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 108,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 109,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 110,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 111,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 112,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 113,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 114,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 115,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 116,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 117,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 118,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 119,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 120,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 121,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 122,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 123,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 124,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 125,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 126,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 127,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 128,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 129,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 130,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 131,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 132,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 133,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 134,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 135,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 136,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 137,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 138,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 139,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 140,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 141,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 142,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 143,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 144,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 145,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 146,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 147,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 148,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 149,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 150,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 151,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 152,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 153,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 154,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 155,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 156,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 157,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 158,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 159,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 160,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 161,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 162,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 163,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 164,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 165,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 166,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 167,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 168,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 169,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 170,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 171,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 172,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 173,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 174,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 175,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 176,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 177,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 178,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 179,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 180,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 181,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 182,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 183,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 184,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 185,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 186,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 187,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 188,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 189,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 190,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 191,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 192,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 193,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 194,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 195,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 196,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 197,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 198,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 199,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 200,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 201,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 202,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 203,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 204,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 205,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 206,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 207,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 208,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 209,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 210,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 211,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 212,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 213,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 214,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 215,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 216,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 217,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 218,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 219,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 220,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 221,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 222,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 223,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 224,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 225,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 226,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 227,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 228,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 229,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 230,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 231,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 232,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 233,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 234,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 235,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 236,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 237,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 238,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 239,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 240,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 241,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 242,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 243,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 244,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 245,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 246,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 247,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 248,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 249,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 250,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 251,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 252,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 253,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 254,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 255,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 256,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 257,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 258,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 259,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 260,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 261,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 262,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 263,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 264,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 265,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 266,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 267,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 268,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 269,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 270,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 271,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 272,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 273,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 274,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 275,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 276,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 277,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 278,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 279,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 280,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 281,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 282,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 283,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 284,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 285,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 286,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 287,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 288,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 289,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 290,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 291,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 292,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 293,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 294,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 295,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 296,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 297,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 298,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 299,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 300,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 301,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 302,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 303,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 304,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 305,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 306,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 307,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 308,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 309,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 310,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 311,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 312,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 313,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 314,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 315,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 316,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 317,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 318,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 319,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 320,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 321,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 322,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 323,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 324,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 325,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 326,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 327,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 328,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 329,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 330,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 331,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 332,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 333,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 334,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 335,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 336,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 337,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 338,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 339,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 340,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 341,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 342,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 343,
+   "visuallyReviewed": true,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 344,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 345,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  },
+  {
+   "pdfPage": 346,
+   "visuallyReviewed": false,
+   "ocrRead": true
+  }
+ ],
+ "codeSnapshots": [
+  {
+   "path": "external-prototype/shared-rig/bench-action.js",
+   "bytes": 3478,
+   "sha256": "2f65579834cdb22d5121dc5bc6e05c2f715df9c152921a7f9ca5ed59088a5466"
+  },
+  {
+   "path": "external-prototype/shared-rig/renderer.js",
+   "bytes": 3709,
+   "sha256": "9b6280845ab7e63aa8b3ff61d6fa521e9a25f4fd413325504836fb2de8eed4e1"
+  },
+  {
+   "path": "external-prototype/shared-rig/limb-surface.js",
+   "bytes": 1892,
+   "sha256": "0a5d1658f08233097a34a2eb735a8808f631ddd308f5fccf55fd95264bbf550b"
+  },
+  {
+   "path": "external-prototype/shared-rig/head-surface.js",
+   "bytes": 1787,
+   "sha256": "0e708b5a54c99a4fae879df60a90f8f20268b20de55043ca8e56b5f990a7747a"
+  },
+  {
+   "path": "external-prototype/shared-rig/wrist-surface.js",
+   "bytes": 923,
+   "sha256": "209e4f2780fd3afd8e863c9c90144737f891060afc16243b1eae2fd8f488ca22"
+  },
+  {
+   "path": "external-prototype/shared-rig/qa-v2.mjs",
+   "bytes": 5406,
+   "sha256": "76e1cff2f2234f298da41fca2da092488dce17f53210d1487c93a00b51916112"
+  },
+  {
+   "path": "external-prototype/shared-rig/seated-assets.js",
+   "bytes": 10325,
+   "sha256": "1a61d7d3f2be1ce8351a2aba2be9222ec84403380b8030648ee470d5ffe3ad94"
+  },
+  {
+   "path": "external-prototype/shared-rig/deformation.js",
+   "bytes": 1640,
+   "sha256": "3e77e1aacb447be184cf538ca9f6a725e79dd7501e008fd519e72a3dbcca6e51"
+  }
+ ]
+}

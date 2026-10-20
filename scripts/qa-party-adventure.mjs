@@ -40,7 +40,7 @@ for(const engine of [chromium,webkit]){
  const[a,b]=pages;
  const party=await(await a.request.post(base+'/api/party/create',{data:{name:'Друзья в долине',shareProgress:true,acknowledgedVisibility:true}})).json();assert(party.party);
  assert((await b.request.post(base+'/api/party/join',{data:{code:party.party.code,shareProgress:true,acknowledgedVisibility:true}})).ok());
- const nav=async(p,view='party')=>{await p.evaluate(async view=>{await refreshPartyAuthority();State.view=view;render();},view);await p.waitForFunction(view=>_renderedMainView===view&&!document.querySelector('#main').classList.contains('is-view-pending'),view);};
+ const nav=async(p,view='party')=>{await p.evaluate(async view=>{await refreshPartyAuthority();State.view=view;if(view==='party'&&partyWorldUI().location()==='map')partyWorldUI().go('forest',false);else render();},view);await p.waitForFunction(view=>_renderedMainView===view&&!document.querySelector('#main').classList.contains('is-view-pending'),view);};
  const refresh=async p=>{await p.evaluate(()=>partyAdventureUI().refresh(true));};
  for(const p of pages){await nav(p);await refresh(p);}
  await a.locator('.adventure-shell').screenshot({path:path.join(out,`${engine.name()}-choose.png`)});
@@ -57,7 +57,7 @@ for(const engine of [chromium,webkit]){
   await refresh(p);await p.locator('#adventure-source').selectOption(JSON.stringify([kind,id]));
   const before=await p.evaluate(()=>({gold:goldBalance(),run:State.party.adventure.runs.find(r=>!r.completedAt)}));
   if(lose)await p.route('**/api/party/expedition',async route=>{if(route.request().method()==='POST'){await route.fetch();await route.abort();}else await route.continue();},{times:1});
-  await p.locator('[data-adventure="contribute"]').click();if(lose){await p.locator('[data-adventure="retry"]').click();}
+  await p.locator('[data-adventure="contribute"]').click();if(lose){await p.locator('[data-adventure="retry"]').waitFor();await p.locator('[data-world="map"]').click();await p.locator('[data-world-walk="forest"]').click();await p.locator('[data-adventure="retry"]').click();}
   await p.waitForFunction(({run})=>State.party.adventure.runs.find(r=>r.id===run.id).progress===run.progress+1,before);
   assert.equal(await p.evaluate(()=>goldBalance()),before.gold);
  }
@@ -66,15 +66,17 @@ for(const engine of [chromium,webkit]){
  await a.evaluate(id=>completeTask(State.tasks.find(q=>q.id===id),null,todayStr()),`qa-0-${counters[0]++}`);await refresh(a);await a.locator('[data-adventure="contribute"]').click();await a.getByText('Для финала нужен хотя бы один шаг друга.',{exact:true}).waitFor();
  await move(b,'ruins');await step(b,1);await refresh(a);assert((await a.evaluate(()=>State.party.adventure.runs[0])).completedAt);
  await a.locator('.adventure-shell').screenshot({path:path.join(out,`${engine.name()}-finale.png`)});
- await b.locator('[data-adventure="room"]').click();await b.locator('#party-world-room[open] .adventure-memento').waitFor();await b.locator('#party-world-room').screenshot({path:path.join(out,`${engine.name()}-memento.png`)});
+ await b.locator('[data-adventure="room"]').click();await b.locator('#party-world-room .adventure-memento').waitFor();await b.screenshot({path:path.join(out,`${engine.name()}-memento.png`)});
+ await b.locator('[data-world="map"]').click();await b.locator('[data-world-walk="forest"]').click();
  assert.equal((await b.locator('.adventure-shell').innerText()).includes('PRIVATE_0'),false);
  await b.locator('[data-adventure="select"][data-node="camp"]').first().click();await b.locator('[data-adventure="start"][data-route="workshop"]').click();await b.waitForFunction(()=>State.party.adventure.runs.length===2);
  for(const[node,count]of[['workshop',2],['bridge',3],['ruins',4]]){await move(b,node);for(let i=0;i<count;i++){if(node==='ruins'&&i===3){await move(a,node);await step(a,0);}else await step(b,1);}}
  for(const p of pages){await p.reload();await p.waitForFunction(()=>State.phase==='app');await nav(p);await refresh(p);assert.equal(await p.evaluate(()=>State.party.adventure.runs.filter(r=>r.completedAt).length),2);}
- await nav(b,'today');await b.evaluate(()=>openPartyRoom());await b.locator('#party-world-room[open] .adventure-den-trophy').waitFor();
+ await nav(b,'today');await b.evaluate(()=>openPartyRoom());await b.locator('#party-world-room .adventure-den-trophy').waitFor();await b.locator('.world-building > summary').click();
  await b.locator('[data-project="start"][data-id="hearth"]').click();await b.waitForFunction(()=>State.party.projects.chapters.length===1);
- await nav(b,'today');await b.locator('[data-project="open"]').click();await b.locator('#party-world-room[open] .shared-project').waitFor();
- await nav(b,'today');await b.evaluate(()=>{const button=document.createElement('button');button.dataset.duo='open-party';return partyDuoUI().handle({target:button,preventDefault(){}});});await b.locator('#party-world-sessions[open]').waitFor();await b.evaluate(()=>render());await b.locator('#party-world-sessions[open]').waitFor();
+ await nav(b,'today');await b.locator('[data-project="open"]').click();await b.locator('.world-building[open] .shared-project').waitFor();
+ await nav(b,'today');await b.evaluate(()=>{const button=document.createElement('button');button.dataset.duo='open-party';return partyDuoUI().handle({target:button,preventDefault(){}});});await b.locator('#party-world-sessions').waitFor();await b.evaluate(()=>render());await b.locator('#party-world-sessions').waitFor();
+ await b.locator('[data-world="map"]').click();await b.locator('[data-world-walk="forest"]').click();
  await move(b,'camp');await b.emulateMedia({reducedMotion:'no-preference'});
  await b.locator('[data-adventure="select"][data-node="ruins"]').first().click();await b.locator('[data-adventure="move"]').click();await b.locator('.is-walking').waitFor();await b.locator('.is-walking').waitFor({state:'detached'});await b.emulateMedia({reducedMotion:'reduce'});
  const persisted=await b.evaluate(()=>structuredClone(State.party.adventure));

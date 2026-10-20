@@ -30055,13 +30055,23 @@ async function setSocialConsent(channel, value, returnSelector) {
     State._socialBusy = ''; render();
   }
 }
+let _partyWorldUI = null;
+function partyWorldUI() {
+  if (!_partyWorldUI) _partyWorldUI = window.PartyWorldUIV1.createUI({
+    state:()=>State, lang, escape:esc, epoch:()=>Store._writeEpoch,
+    gender:avatarCoreGender,
+    navigate:id=>{State._partyTrialOpen=id==='cave';State._partyWorldReturn=id==='den';State.view=id==='den'?'den':'party';render();},
+  });
+  return _partyWorldUI;
+}
 function renderParty() {
-  if (State.party === null) {
-    if (State._partyError) return socialErrorCard('party', State._partyError);
-    if (!State._partyLoading) loadPartySocial();
-    return `<section class="card social-state" role="status" aria-live="polite"><h2>${t('Пати')}</h2><p class="muted">${t('Загрузка пати…')}</p></section>`;
-  }
-  return State.party ? partyHTML(State.party) : partyEmptyHTML();
+  const world=partyWorldUI(),place=world.location();
+  if (State.party===null&&!State._partyError&&!State._partyLoading) loadPartySocial();
+  if(place==='map')return world.map();
+  const content=State.party===null
+    ? (State._partyError?socialErrorCard('party',State._partyError):`<section class="card" role="status">${world.text('loading')}</section>`)
+    : State.party?partyHTML(State.party):partyEmptyHTML();
+  return world.panel(content);
 }
 function partyEmptyHTML() {
   const busy = State._socialBusy === 'party';
@@ -30073,8 +30083,8 @@ function partyEmptyHTML() {
       ? `<form id="party-join" class="social-party-form"><label><span>${t('Код пати')}</span><input name="code" autocomplete="off" maxlength="5" style="text-transform:uppercase" required /></label><label class="social-consent-check"><input type="checkbox" name="shareProgress" required /> <span>${t('Разрешаю участникам видеть мой недельный вклад')}</span></label><button type="submit" ${busy ? 'disabled' : ''}>${t('Войти в пати')}</button><p class="social-form-status" role="status" aria-live="polite"></p></form>`
       : '';
   return `<section class="card party-empty-hero">
-    <div class="party-empty-copy"><span class="event-kicker">${t('КОМАНДНАЯ ГЛАВА')}</span><h2 id="party-title" tabindex="-1">${t('Собери пати для следующего рейда.')}</h2>
-      <p class="muted">${t('Дуо или группа до 6 человек. Недельный вклад складывается в общего босса, а поддержка команды не превращает пропуск в вину.')}</p></div>
+    <div class="party-empty-copy"><span class="event-kicker">${t('КОМАНДНАЯ ГЛАВА')}</span><h2 id="party-title" tabindex="-1">${partyWorldUI().text('invite')}</h2>
+      <p class="muted">${partyWorldUI().text('company')}</p></div>
     <div class="party-empty-mark" aria-hidden="true"><span>${satoruIconHTML('nav.tribe', 'party-empty-emblem', '◇')}</span><i></i><b>✦</b></div>
     <div class="party-entry-choice" role="group" aria-label="${esc(t('Как войти в пати'))}"><button type="button" class="btn ${mode === 'create' ? '' : 'ghost'}" data-action="party-entry-create" aria-pressed="${mode === 'create'}" aria-expanded="${mode === 'create'}">${t('Создать пати')}</button><button type="button" class="btn ${mode === 'join' ? '' : 'ghost'}" data-action="party-entry-join" aria-pressed="${mode === 'join'}" aria-expanded="${mode === 'join'}">${t('Войти по коду')}</button></div>
     ${form ? `<div class="party-empty-actions">${form}</div>` : ''}
@@ -30090,22 +30100,22 @@ let _partyTrialUI = null;
 function partyTrialUI() {
   if(!_partyTrialUI)_partyTrialUI=window.PartyTrialUIV1.createUI({state:()=>State,lang,escape:esc,epoch:()=>Store._writeEpoch,sound:sfx,
     isOpen:()=>!!State._partyTrialOpen,
-    open:()=>{State._partyTrialOpen=true;State.view='party';render();},
-    close:()=>{State._partyTrialOpen=false;State.view='party';render();},
+    open:()=>partyWorldUI().go('cave'),
+    close:()=>partyWorldUI().go('map'),
     room:()=>{State._partyTrialOpen=false;openPartyRoom();},
     tasks:()=>{State.view='today';render();},
   });return _partyTrialUI;
 }
 function partyTrialRank(){return State.party?.trial?.trials.filter(r=>r.completedAt).length||0;}
 function openPartyRoom(section='party-world-room') {
-  State._partyRoomAfterCommit=section; State.view='party'; render();
+  partyWorldUI().go(section==='party-world-sessions'?'sessions':'room');
 }
 function partyAdventureUI() {
   if (!_partyAdventureUI) _partyAdventureUI = window.PartyAdventureUIV1.createUI({ state:()=>State, lang, escape:esc, epoch:()=>Store._writeEpoch, gender:avatarCoreGender, sound:sfx,
     sprite:(gender,pose)=>pose==='idle'?avatarCorePoseSrc('idle',gender):window.TravellerAppearanceV1.assetPath(gender,'motion','walk-a.png'),
-    navigate:view=>{State.view=view;render();},
+    navigate:view=>{if(view==='party')partyWorldUI().go('forest');else{State.view=view;render();}},
     room:openPartyRoom,
-    trial:()=>{State._partyTrialOpen=true;State.view='party';render();},
+    trial:()=>partyWorldUI().go('cave'),
     shop:()=>{State.view='rewards';render();},
   });
   return _partyAdventureUI;
@@ -30124,7 +30134,7 @@ function partyRoomSceneHTML(room) {
 }
 function partyProjectUI() {
   if (!_partyProjectUI) _partyProjectUI = window.PartyProjectUIV1.createUI({ state: () => State, lang, escape: esc, notice: focusSyncNotice,
-    navigate: view => { if(view==='party')openPartyRoom();else{State.view = view; render();} },
+    navigate: view => { if(view==='party'){State._partyProjectOpen=true;openPartyRoom();}else{State.view = view; render();} },
     scene: () => { const scene = document.querySelector('.shared-den-scene'); if (scene && State.party?.sharedDen) scene.outerHTML = partyRoomSceneHTML(State.party.sharedDen); },
   });
   return _partyProjectUI;
@@ -30204,16 +30214,17 @@ async function claimPartyReward(button) {
   } finally { if (State.me?.id === owner) State._partyClaimBusy = false; button.disabled = false; button.removeAttribute('aria-busy'); }
 }
 function partyHTML(p) {
+  const place=partyWorldUI().location();
   const r = p.raid || { total: 0, target: 1, won: false, iClaimed: false, claimedCount: 0 };
   const pct = r.target ? Math.min(100, Math.round(r.total / r.target * 100)) : 0;
   const won = r.won, hp = Math.max(0, r.target - r.total), boss = bossForWeek(p.ws);
   // Кинематографичная победа — один раз за сессию на эту неделю
   // Победу показываем ОДИН раз за неделю (персист в localStorage; раньше флаг жил в памяти → играло каждый заход). fb_mqlz0f2htjfe
   const _raidSeenKey = 'liferpg_raidwin_' + p.ws;
-  if (won && State._raidShownFor !== p.ws) {
+  if (place==='arena' && won && State._raidShownFor !== p.ws) {
     State._raidShownFor = p.ws;
     let seen = false; try { seen = !!localStorage.getItem(_raidSeenKey); } catch {}
-    if (!seen) { try { localStorage.setItem(_raidSeenKey, '1'); } catch {} setTimeout(() => showRaidWin(p, boss), 220); }
+    if (!seen) setTimeout(() => { if(State.view!=='party'||State.party?.id!==p.id||partyWorldUI().location()!=='arena')return;try { localStorage.setItem(_raidSeenKey, '1'); } catch {} showRaidWin(p, boss); }, 220);
   }
   if (!won) State._raidShownFor = null;
   const si = seasonInfo(p.season);
@@ -30242,7 +30253,7 @@ function partyHTML(p) {
   const activeReward = rewardPolicy && partyRewardSnapshot().receipts.find((receipt) => receipt.boost && rewardPolicy.boostPct({ version: 1, receipts: [receipt] }, new Date().toISOString()) > 0);
   const rewardInfo = won && rewardPolicy ? `<p class="muted party-reward-info">${activeReward
     ? `+${activeReward.boost.pct}% · ${partyRewardText('active')} ${new Date(activeReward.boost.until).toLocaleTimeString(lang(), { hour: '2-digit', minute: '2-digit' })}`
-    : !r.iClaimed ? `${rewardPolicy.GOLD} 🪙 · +${rewardPolicy.BOOST_PCT}% ${partyRewardText('boost')}` : ''}</p>` : '';
+    : !r.iClaimed ? `${rewardPolicy.GOLD} ${t('золота')} · +${rewardPolicy.BOOST_PCT}% ${partyRewardText('boost')}` : ''}</p>` : '';
   const raidDetails = `<details class="card party-progress-details"><summary><span>${t('Рейд и сезон')}</span><b>${pct}% · ${si.prog}/${si.goal}</b></summary><div class="party-progress-body">
       <section class="party-progress-section" aria-labelledby="party-raid-details"><h3 id="party-raid-details">${won ? t('Босс повержен!') : esc(t(boss.name))}</h3>
         <p class="muted">${won ? `${t('Пати справилась')} — ${r.claimedCount}/${p.members.length} ${t('забрали награду')}` : `${t('Осталось')} ${hp} XP · ${t('цель')} ${r.target}`}</p>
@@ -30255,17 +30266,17 @@ function partyHTML(p) {
         <div class="season-bar"><span style="width:${seasonPct}%"></span></div>
         <p class="muted">${si.prog === si.goal - 1 ? t('Ещё одна победа — и глава сезона взята.') : t('Побеждайте недельного босса, чтобы открывать следующую главу сезона.')}</p></section>
     </div></details>`;
-  return `<div class="party-shell">
-    <section class="card event-hero duo-hero">
-      <header class="duo-header"><div>${satoruIconHTML('nav.tribe', 'duo-emblem', '◇')}<h2 id="party-title" tabindex="-1">${esc(p.name)}</h2></div><span class="party-code">${t('код')} <strong>${esc(p.code)}</strong></span></header>
-    </section>
-    <div data-adventure-host ${State._partyTrialOpen?'hidden':''}>${partyAdventureUI().body()}</div>
-    <div data-trial-host>${partyTrialUI().body()}</div>
-    <details id="party-world-room" class="card party-world-details"><summary>${window.PartyAdventureUIV1.text('room',lang())}</summary>${partyAdventureMementoHTML()}<div data-party-den-host>${partyDenUI().body()}</div></details>
-    <details id="party-world-sessions" class="card party-world-details"><summary>${window.PartyAdventureUIV1.text('together',lang())}</summary><div data-duo-host>${partyDuoUI()?.body() || ''}</div></details>
+  if(place==='forest')return `<div data-adventure-host>${partyAdventureUI().body()}</div>`;
+  if(place==='cave')return p.adventure?.runs.some(run=>run.completedAt)
+    ? `<div data-trial-host>${partyTrialUI().body()}</div>`
+    : `<section class="card world-locked"><img src="/art/party-adventure-v1/guardian.png" alt="" width="96" height="96"><p>${partyWorldUI().text('locked')}</p><button class="btn" data-world="forest">${partyWorldUI().text('toForest')}</button></section>`;
+  if(place==='room')return `<div id="party-world-room"><div data-party-den-host>${partyDenUI().body()}</div>${partyAdventureMementoHTML()}</div>`;
+  if(place==='sessions')return `<div id="party-world-sessions" data-duo-host>${partyDuoUI()?.body()||''}</div>`;
+  if(place==='arena')return `<div class="party-shell">${raidDetails.replace('<details ', '<details open ')}<button class="btn ghost" data-view="leaderboard">${t('Рейтинг')}</button></div>`;
+  return `<div class="party-shell"><span class="party-code">${esc(p.name)} · ${t('код')} <strong>${esc(p.code)}</strong></span>
     <section class="card party-members-card"><h3>${t('Состав и права')}</h3><p class="muted">${owner ? t('Ты создатель: можешь удалить пати для всех или передать роль, выйдя из неё.') : t('Ты участник: можешь выйти в любой момент. Только создатель может удалить пати для всех.')}</p><div class="pm-list" role="list" aria-label="${esc(t('Состав и права'))}">${members}</div>
       <div class="party-exit-actions"><button class="btn ghost" data-action="open-party-leave">${owner ? t('Передать роль и выйти') : t('Покинуть пати')}</button>${owner ? `<button class="btn danger" data-action="open-party-delete">${t('Удалить пати для всех')}</button>` : ''}</div></section>
-    ${raidDetails}${privacyCard}</div>`;
+    ${privacyCard}</div>`;
 }
 // Кинематографичная победа над боссом (#22): полноэкранный оверлей + фанфары + конфетти
 function showRaidWin(p, boss) {
@@ -30357,7 +30368,7 @@ const SECTIONS = [
     { view: 'tree', label: 'Навыки', iconId: 'nav.skills' },
     { view: 'stats', label: 'Прогресс', iconId: 'nav.progress' },
   ] },
-  { id: 'tribe', iconId: 'nav.tribe', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Пати' }, { view: 'leaderboard', label: 'Рейтинг' }] },
+  { id: 'tribe', iconId: 'nav.tribe', label: 'Племя', gate: 3, views: [{ view: 'party', label: 'Карта' }, { view: 'leaderboard', label: 'Рейтинг' }] },
 ];
 // Канон mobile navigation: четыре прямых destination и один purpose-grouped More.
 const MOBILE_PRIMARY_SECTION_IDS = Object.freeze(['today', 'plan', 'habits', 'hero']);
@@ -30978,9 +30989,7 @@ function commitMainView(main, staging, view) {
     newComposer.replaceWith(oldComposer);
   }
   const searchFocused = document.activeElement?.matches('.settings-discovery input');
-  if(_renderedMainView===view&&view==='party')for(const id of ['party-world-room','party-world-sessions']){
-    if(main.querySelector('#'+id)?.open)staging.querySelector('#'+id)?.setAttribute('open','');
-  }
+  if(_renderedMainView===view&&view==='party'&&main.querySelector('.world-building')?.open)staging.querySelector('.world-building')?.setAttribute('open','');
   main.replaceChildren(...Array.from(staging.childNodes));
   _renderedMainView = view;
   main.classList.remove('is-view-pending');
@@ -30990,12 +30999,8 @@ function commitMainView(main, staging, view) {
     setTimeout(() => main.classList.remove('is-view-entering'), 260);
   });
   afterMainCommit();
-  if(view==='party'&&State._partyRoomAfterCommit){
-    const target=State._partyRoomAfterCommit;
-    State._partyRoomAfterCommit=false;
-    const room=main.querySelector('#'+CSS.escape(target));
-    if(room){room.open=true;room.scrollIntoView({block:'start'});room.querySelector('summary')?.focus({preventScroll:true});}
-  }
+  if(_partyWorldUI)_partyWorldUI.afterCommit();
+  if(view==='party'&&State._partyProjectOpen){const building=main.querySelector('.world-building');if(building){State._partyProjectOpen=false;building.open=true;building.querySelector('details')?.setAttribute('open','');building.querySelector('summary')?.focus();building.scrollIntoView({block:'start'});}}
   mountSettingsDiscovery();
   if (searchFocused && settingsDiscoveryTarget == null) main.querySelector('.settings-discovery input')?.focus({preventScroll:true});
   if (draftFocus) requestAnimationFrame(() => {
@@ -31006,7 +31011,7 @@ function commitMainView(main, staging, view) {
 }
 function renderMainView(main) {
   const view = State.view;
-  const html = safeViewMarkup(view);
+  const html = (view==='den'&&State._partyWorldReturn?`<div class="world-den-return">${partyWorldUI().backButton()}</div>`:'')+safeViewMarkup(view);
   const firstPaint = !_renderedMainView || !main.childElementCount;
   const sameView = _renderedMainView === view;
   if (firstPaint || (sameView && view !== 'den')) {
@@ -33048,6 +33053,7 @@ async function confirmGoalDelete() {
   await commitGoalMutation('delete', nextGoals, nextTasks, '#goals-title', () => { State._goalOpenId = ''; State._goalDeepLinkId = ''; closeGoalsBulkMode(); syncGoalDeepLink(''); });
 }
 async function onClick(e) {
+  if(e.target.closest('[data-world],[data-world-walk]')&&await partyWorldUI().handle(e))return;
   if (e.target.closest('[data-trial]') && await partyTrialUI().handle(e)) return;
   if (e.target.closest('[data-adventure]') && await partyAdventureUI().handle(e)) return;
   if (e.target.closest('[data-reward-life]') && await rewardLifeUI().handle(e)) return;
@@ -33071,7 +33077,7 @@ async function onClick(e) {
     if (vm?.targetKey === guideTarget.dataset.guideTarget && await guideV3OpenContextChapter()) return;
   }
   const navBtn = e.target.closest('#nav button[data-view]');
-  if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; State.funnel = undefined; } render(); return; }
+  if (navBtn) { flushSettingsForm(); const nextView = navBtn.dataset.view; if (nextView !== State.view) sfx('navigate'); State.view = nextView; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); State._goalDeepLinkId = ''; syncGoalDeepLink('', State.view); } markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') { partyWorldUI().go('map',false); State.party = null; } State._partyWorldReturn=false; if (State.view === 'settings') { State.adminUsers = null; State.analytics = undefined; State.funnel = undefined; } render(); return; }
   const secBtn = e.target.closest('[data-action="go-section"]');
   if (secBtn) {
     const s = SECTIONS.find((x) => x.id === secBtn.dataset.sec); if (!s) return;
@@ -33086,7 +33092,7 @@ async function onClick(e) {
     const fromMobileSheet = !!secBtn.closest('#mobile-nav-sheet');
     if (fromMobileSheet) closeMobileNavSheet({ restoreFocus: false });
     else closeMobileNavSheet();
-    if (sectionOf(State.view) !== s.id) { if (!settingsFlushedForNav) flushSettingsForm(); sfx('navigate'); State.view = s.views[0].view; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') State.party = null; render(); }
+    if (sectionOf(State.view) !== s.id) { if (!settingsFlushedForNav) flushSettingsForm(); sfx('navigate'); State.view = s.views[0].view; if (State.view === 'shelf') State._inspirationRenderedOnce = false; if (State.view !== 'goals') { closeGoalDetailDialog({ restoreFocus: false }); syncGoalDeepLink('', State.view); } if (fromMobileSheet) State._mobileNavFocusAfterCommit = '#main h2'; markDiscovered(State.view); track('view:' + State.view); if (State.view === 'leaderboard') State.leaderboard = null; if (State.view === 'party') { partyWorldUI().go('map',false); State.party = null; } State._partyWorldReturn=false; render(); }
     return;
   }
   if (e.target.id === 'mobile-nav-sheet') { closeMobileNavSheet(); return; }
@@ -36861,7 +36867,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v341';
+const PWA_CACHE_VERSION = 'satoru-v342';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

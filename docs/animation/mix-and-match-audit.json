@@ -1,0 +1,226 @@
+{
+  "source": "https://esotericsoftware.com/spine-examples-mix-and-match",
+  "exportVersion": "4.2.22",
+  "jsonSHA256": "9460fc8b603e2a8ca722f3aa140c3f21c6878194b9424c4f0b22a7758f6cd327",
+  "bones": 143,
+  "slots": 80,
+  "constraints": 23,
+  "skinCount": 34,
+  "skins": [
+    {
+      "name": "default",
+      "attachments": 4,
+      "optionalBones": 0
+    },
+    {
+      "name": "skin-base",
+      "attachments": 9,
+      "optionalBones": 0
+    },
+    {
+      "name": "accessories/backpack",
+      "attachments": 6,
+      "optionalBones": 2
+    },
+    {
+      "name": "accessories/bag",
+      "attachments": 5,
+      "optionalBones": 7
+    },
+    {
+      "name": "accessories/cape-blue",
+      "attachments": 8,
+      "optionalBones": 12
+    },
+    {
+      "name": "accessories/cape-red",
+      "attachments": 4,
+      "optionalBones": 6
+    },
+    {
+      "name": "accessories/hat-pointy-blue-yellow",
+      "attachments": 3,
+      "optionalBones": 4
+    },
+    {
+      "name": "accessories/hat-red-yellow",
+      "attachments": 3,
+      "optionalBones": 4
+    },
+    {
+      "name": "accessories/scarf",
+      "attachments": 3,
+      "optionalBones": 1
+    },
+    {
+      "name": "clothes/dress-blue",
+      "attachments": 8,
+      "optionalBones": 9
+    },
+    {
+      "name": "clothes/dress-green",
+      "attachments": 4,
+      "optionalBones": 7
+    },
+    {
+      "name": "clothes/hoodie-blue-and-scarf",
+      "attachments": 7,
+      "optionalBones": 2
+    },
+    {
+      "name": "clothes/hoodie-orange",
+      "attachments": 6,
+      "optionalBones": 1
+    },
+    {
+      "name": "eyelids/girly",
+      "attachments": 9,
+      "optionalBones": 0
+    },
+    {
+      "name": "eyelids/semiclosed",
+      "attachments": 9,
+      "optionalBones": 0
+    },
+    {
+      "name": "eyes/eyes-blue",
+      "attachments": 5,
+      "optionalBones": 0
+    },
+    {
+      "name": "eyes/green",
+      "attachments": 5,
+      "optionalBones": 0
+    },
+    {
+      "name": "eyes/violet",
+      "attachments": 5,
+      "optionalBones": 0
+    },
+    {
+      "name": "eyes/yellow",
+      "attachments": 5,
+      "optionalBones": 0
+    },
+    {
+      "name": "full-skins/boy",
+      "attachments": 43,
+      "optionalBones": 7
+    },
+    {
+      "name": "full-skins/girl",
+      "attachments": 52,
+      "optionalBones": 22
+    },
+    {
+      "name": "full-skins/girl-blue-cape",
+      "attachments": 44,
+      "optionalBones": 21
+    },
+    {
+      "name": "full-skins/girl-spring-dress",
+      "attachments": 40,
+      "optionalBones": 15
+    },
+    {
+      "name": "hair/blue",
+      "attachments": 12,
+      "optionalBones": 0
+    },
+    {
+      "name": "hair/brown",
+      "attachments": 12,
+      "optionalBones": 0
+    },
+    {
+      "name": "hair/long-blue-with-scarf",
+      "attachments": 21,
+      "optionalBones": 10
+    },
+    {
+      "name": "hair/pink",
+      "attachments": 12,
+      "optionalBones": 0
+    },
+    {
+      "name": "hair/short-red",
+      "attachments": 9,
+      "optionalBones": 0
+    },
+    {
+      "name": "legs/boots-pink",
+      "attachments": 3,
+      "optionalBones": 0
+    },
+    {
+      "name": "legs/boots-red",
+      "attachments": 3,
+      "optionalBones": 0
+    },
+    {
+      "name": "legs/pants-green",
+      "attachments": 5,
+      "optionalBones": 0
+    },
+    {
+      "name": "legs/pants-jeans",
+      "attachments": 5,
+      "optionalBones": 0
+    },
+    {
+      "name": "nose/long",
+      "attachments": 2,
+      "optionalBones": 0
+    },
+    {
+      "name": "nose/short",
+      "attachments": 2,
+      "optionalBones": 0
+    }
+  ],
+  "animations": {
+    "aware": [
+      "bones"
+    ],
+    "blink": [
+      "slots",
+      "bones"
+    ],
+    "dance": [
+      "bones",
+      "transform"
+    ],
+    "dress-up": [
+      "slots",
+      "bones",
+      "transform"
+    ],
+    "idle": [
+      "bones"
+    ],
+    "walk": [
+      "bones",
+      "transform"
+    ]
+  },
+  "attachmentTypes": {
+    "path": 4,
+    "mesh": 219,
+    "region": 144,
+    "linkedmesh": 6
+  },
+  "weightedMeshVerticesAcrossAllSkins": 4886,
+  "influencesAcrossAllSkins": 10363,
+  "maxInfluencesPerVertex": 5,
+  "maxWeightSumError": 1.0000000000065512e-05,
+  "exportBytes": {
+    "export/mix-and-match-pro.json": 658076,
+    "export/mix-and-match.atlas": 8128,
+    "export/mix-and-match-pro.skel": 259912,
+    "export/mix-and-match-pma.atlas": 8143,
+    "export/mix-and-match.png": 349518,
+    "export/mix-and-match-pma.png": 377480
+  },
+  "errors": [],
+  "limits": "Static schema subset only; does not evaluate poses, all constraints, seams, or visual quality."
+}
