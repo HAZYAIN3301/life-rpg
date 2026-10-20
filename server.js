@@ -13,6 +13,7 @@ const path = require('path');
 const crypto = require('crypto');
 const OllamaV1 = require('./server-ollama-v1.js');
 const LocalAiV1 = require('./server-local-ai-v1.js');
+const OwnerBriefV1 = require('./server-owner-brief-v1.js');
 const BoardV2BraveAdapter = require('./server-board-v2-discovery-v1.js');
 const BoardV2PageVerifier = require('./server-board-v2-page-verifier-v1.js');
 const BoardV2AccountService = require('./server-board-v2-service-v1.js');
@@ -5962,6 +5963,17 @@ const server = http.createServer(async (req, res) => {
   // работает другой агент), получить историю задним числом для всех, кто зарегистрировался
   // раньше, и не заводить событий, которые потом придётся поддерживать.
   //
+  // ---- Сводка для владельца: утренний брифинг Jarvis (OWNER-BRIEF-V1.md) ----
+  // Не кука, а токен: сводку забирает программа на Mac владельца. Только числа. Хэш не задан — маршрута нет.
+  if (u === '/api/owner/brief' && req.method === 'GET') {
+    const hash = process.env.OWNER_BRIEF_TOKEN_SHA256 || '';
+    if (!hash) return sendJson(res, 404, { error: 'not found' });
+    if (!OwnerBriefV1.tokenOk(req.headers.authorization, hash)) return sendJson(res, 401, { error: 'bad token' });
+    let feedback = [];
+    try { feedback = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'feedback.json'), 'utf8')); } catch {}
+    return sendJson(res, 200, OwnerBriefV1.brief({ users: loadUsers(), feedback, entitlement }));
+  }
+
   // Наружу уходят ТОЛЬКО количества. Ни имён, ни email, ни идентификаторов.
   if (u === '/api/admin/funnel' && req.method === 'GET') {
     const me = loadUsers().find(x => x.id === sessionUserId(req));
