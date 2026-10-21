@@ -4243,6 +4243,9 @@ const I18N_EXTRA = {
   'Закрыть редактор комнаты': { en: 'Close room editor', de: 'Raumeditor schließen', uk: 'Закрити редактор кімнати', es: 'Cerrar editor de habitación' },
   'Обставить комнату': { en: 'Furnish room', de: 'Zimmer einrichten', uk: 'Обставити кімнату', es: 'Amueblar habitación' },
   'Обставить': { en: 'Furnish', de: 'Einrichten', uk: 'Обставити', es: 'Amueblar' },
+  'дела': { en: 'tasks', de: 'Aufgaben', uk: 'справи', es: 'tareas' },
+  'дн. подряд': { en: 'days in a row', de: 'Tage in Folge', uk: 'дн. поспіль', es: 'días seguidos' },
+  'Форма показывает, давно ли были дела в твоих сферах. Уровень от неё не падает.': { en: 'Form shows how recently your spheres had tasks. Your level never drops because of it.', de: 'Die Form zeigt, wie lange deine Bereiche schon keine Aufgaben hatten. Dein Level sinkt dadurch nie.', uk: 'Форма показує, чи давно були справи у твоїх сферах. Рівень від неї не падає.', es: 'La forma muestra hace cuánto tus áreas tuvieron tareas. Tu nivel nunca baja por ello.' },
   'Дела сегодня': { en: 'Things today', de: 'Heutige Aufgaben', uk: 'Справи сьогодні', es: 'Tareas de hoy' },
   'Выбрать дело на 10 минут': { en: 'Choose something for 10 minutes', de: 'Etwas für 10 Minuten wählen', uk: 'Вибрати справу на 10 хвилин', es: 'Elegir algo para 10 minutos' },
   'Короткая попытка без обязательства. За завершение — связь с Тенью и золото, без XP.': { en: 'A short try with no commitment. Finishing earns bond with Shadow and gold, without XP.', de: 'Ein kurzer Versuch ohne Verpflichtung. Zum Abschluss gibt es Bindung mit Schatten und Gold, ohne XP.', uk: 'Коротка спроба без зобов’язань. За завершення — зв’язок із Тінню та золото, без XP.', es: 'Un intento breve sin compromiso. Al terminar ganas vínculo con Sombra y oro, sin XP.' },
@@ -21509,8 +21512,8 @@ function renderDen() {
     <div class="den-life-strip">
       <div class="den-stats">
         <span title="${t('Нагрузка дня')}">${satoruIconHTML('status.energy', 'den-stat-glyph', '◔')} ${esc(t(eM.text))}</span>
-        <span title="${t('Дела сегодня')}">${satoruIconHTML('system.day-end', 'den-stat-glyph', '◇')} ${p.dayDone}/${p.dayTot || 0}</span>
-        <span title="${t('Серия')}">${satoruIconHTML('status.streak', 'den-stat-glyph', '◇')} ${p.streak}</span>
+        <span title="${t('Дела сегодня')}">${satoruIconHTML('system.day-end', 'den-stat-glyph', '◇')} ${p.dayDone}/${p.dayTot || 0} <small class="den-stat-label">${t('дела')}</small></span>
+        <span title="${t('Серия')}">${satoruIconHTML('status.streak', 'den-stat-glyph', '◇')} ${p.streak} <small class="den-stat-label">${t('дн. подряд')}</small></span>
       </div>
     </div>
     ${focusRow}
@@ -24195,7 +24198,7 @@ function characterWardrobeV1HTML(cr, oi, arch) {
       <div class="character-identity-copy"><p class="character-kicker">Satoru</p><h2 id="character-route-title">${t('Персонаж')}</h2><p class="character-name"${State.me && State.me.name ? ' data-noi18n' : ''}>${State.me && State.me.name ? esc(State.me.name) : t('Герой')}</p>
         <div class="character-identity-chips"><span class="ch-rank" style="--rc:${cr.color}">${rankIconHTML(cr, 'rank-inline-icon')} ${esc(t(cr.name))} · ${t('Уровень')} ${charLevel()}</span><span class="ch-arch">${satoruIconHTML('profile.origin.mask', 'inline-emblem', '◇')} <b>${esc(t(arch.name))}</b></span>${equippedTitle() ? `<span class="ch-title" data-noi18n>${satoruIconHTML('achievement.avatar_custom', 'inline-emblem', '◇')} ${esc(equippedTitle())}</span>` : ''}</div>
       </div>
-      <div class="character-identity-progress"><div class="character-form-line character-xp-line"><span>${t('До уровня')} ${oi.level + 1}</span><b>${oi.into} / ${oi.need} XP</b></div><div class="xp-bar" aria-hidden="true"><span style="width:${oi.pct}%"></span></div><div class="character-form-line"><span>${t('Форма')}</span><b style="--form-color:${fm.color}">${of == null ? '—' : of + '%'} · ${esc(t(fm.text))}</b></div></div>
+      <div class="character-identity-progress"><div class="character-form-line character-xp-line"><span>${t('До уровня')} ${oi.level + 1}</span><b>${oi.into} / ${oi.need} XP</b></div><div class="xp-bar" aria-hidden="true"><span style="width:${oi.pct}%"></span></div><div class="character-form-line"><span>${t('Форма')}</span><b style="--form-color:${fm.color}">${of == null ? '—' : of + '%'} · ${esc(t(fm.text))}</b></div><p class="character-form-hint">${t('Форма показывает, давно ли были дела в твоих сферах. Уровень от неё не падает.')}</p></div>
     </header>
     <div class="character-wardrobe-heading"><div><h3 id="character-wardrobe-title">${t('Гардероб')}</h3></div></div>
     <div class="character-wardrobe-layout">
