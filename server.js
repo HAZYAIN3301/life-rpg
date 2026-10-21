@@ -2371,7 +2371,13 @@ function deleteAccountLifecycle(uid, users) {
     }
 
     let analytics = {}; try { analytics = JSON.parse(fs.readFileSync(analyticsFile, 'utf8')); } catch {}
-    for (const day of Object.values(analytics || {})) if (day && day.users) delete day.users[uid];
+    // Счётчики по целям (byPurpose) и старый карман (legacy) тоже хранят id человека — удаляем везде.
+    for (const day of Object.values(analytics || {})) {
+      if (!day || typeof day !== 'object') continue;
+      if (day.users) delete day.users[uid];
+      if (day.legacy && day.legacy.users) delete day.legacy.users[uid];
+      for (const bucket of Object.values(day.byPurpose && typeof day.byPurpose === 'object' ? day.byPurpose : {})) if (bucket && bucket.users) delete bucket.users[uid];
+    }
     writeJsonAtomic(analyticsFile, analytics || {});
     const adminGold = loadAdminGoldLedger();
     if (Object.prototype.hasOwnProperty.call(adminGold, uid)) {
