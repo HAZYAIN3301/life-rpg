@@ -43,8 +43,10 @@ test('в окне подписки есть смена ссылки с пред�
   assert.match(app, /<details class="cal-sub-rotate"><summary>\$\{esc\(t\('Ссылка попала не туда\?'\)\)\}<\/summary>/);
   assert.match(app, /data-action="cal-sub-rotate"/);
   assert.match(app, /action === 'cal-sub-rotate'[\s\S]{0,200}JSON\.stringify\(\{ rotate: true \}\)/);
+  const extra = app.slice(app.indexOf('const I18N_EXTRA = {'), app.indexOf('const I18N = {'));
   for (const key of ["'Ссылка попала не туда?':", "'Новая ссылка заменит старую: календарь, подписанный на старую, перестанет обновляться.':", "'Сменить ссылку':", "'Ссылка сменена — старая больше не работает':"]) {
     const i = app.indexOf('  ' + key); assert.ok(i > 0, key);
+    assert.ok(extra.includes('  ' + key + ' {'), key + ' лежит в I18N_EXTRA (объект по языкам), а не в строковой таблице');
     const line = app.slice(i, app.indexOf('\n', i)); for (const l of ['en:', 'de:', 'uk:', 'es:']) assert.ok(line.includes(l), key + l);
   }
 });
