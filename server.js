@@ -2342,6 +2342,24 @@ function clearCookieHeader(req) {
     `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookieSuffix(req)}`);
 }
 
+// Журнал доступа оператора к чужим данным (аудит приватности 21.10): кто, когда, что и чей аккаунт открыл.
+// Только факт доступа, без содержимого. Хранится последние ~2000 записей.
+const ADMIN_ACCESS_LOG = () => path.join(DATA_DIR, 'admin-access-log.jsonl');
+function logAdminAccess(adminId, action, targetId, detail = '') {
+  try {
+    const row = JSON.stringify({ at: new Date().toISOString(), admin: String(adminId || ''), action: String(action).slice(0, 40), target: String(targetId || '').slice(0, 32), detail: String(detail || '').slice(0, 80) });
+    fs.appendFileSync(ADMIN_ACCESS_LOG(), row + '\n');
+    const stat = fs.statSync(ADMIN_ACCESS_LOG());
+    if (stat.size > 512 * 1024) {
+      const lines = fs.readFileSync(ADMIN_ACCESS_LOG(), 'utf8').trim().split('\n').slice(-2000);
+      const tmp = ADMIN_ACCESS_LOG() + '.tmp'; fs.writeFileSync(tmp, lines.join('\n') + '\n'); fs.renameSync(tmp, ADMIN_ACCESS_LOG());
+    }
+  } catch (error) { console.error('[admin-access-log]', error && error.message); }
+}
+function readAdminAccessLog(limit = 200) {
+  try { return fs.readFileSync(ADMIN_ACCESS_LOG(), 'utf8').trim().split('\n').filter(Boolean).slice(-limit).reverse().map((line) => { try { return JSON.parse(line); } catch { return null; } }).filter(Boolean); }
+  catch { return []; }
+}
 function deleteAccountLifecycle(uid, users) {
   adventureLifecycle.recover();
   const partiesFile = PARTIES_FILE();
@@ -7525,10 +7543,17 @@ const server = http.createServer(async (req, res) => {
     const isAdmin = me && me.isAdmin;
     const DATA_NAMES = ['settings', 'tasks', 'habits', 'goals', 'goal-groups', 'days', 'habitlog', 'weeks', 'lootbox', 'skilltree', 'purchases', 'achievements', 'boardmedia', 'questionnaire'];
 
+    // GET /api/admin/access-log — последние записи журнала доступа (только админ)
+    if (u === '/api/admin/access-log' && req.method === 'GET') {
+      if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      return sendJson(res, 200, { entries: readAdminAccessLog(200) });
+    }
+
     // GET /api/admin/userdata/<userId> — текущее содержимое всех файлов + список бэкапов
     let am = u.match(/^\/api\/admin\/userdata\/([a-z0-9_-]{1,32})$/);
     if (am && req.method === 'GET') {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      logAdminAccess(me.id, 'userdata', am[1]);
       try { recoverCommitmentJournal(am[1]); }
       catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
       const dir = userDataDir(am[1]);
@@ -7553,6 +7578,7 @@ const server = http.createServer(async (req, res) => {
     am = u.match(/^\/api\/admin\/crash-export\/([a-z0-9_-]{1,32})$/);
     if (am && req.method === 'GET') {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
+      logAdminAccess(me.id, 'crash-export', am[1]);
       try { recoverCommitmentJournal(am[1]); }
       catch (error) { if (sendCommitmentBoundaryError(res, error)) return; throw error; }
       // Белый список, а не чёрный: новый файл с личным содержимым не утечёт по забывчивости.
@@ -7583,6 +7609,7 @@ const server = http.createServer(async (req, res) => {
     if (am && req.method === 'GET') {
       if (!isAdmin) return sendJson(res, 403, { error: 'только админ' });
       if (!safeName(am[2])) return sendJson(res, 400, { error: 'bad name' });
+      logAdminAccess(me.id, 'backup-read', am[1], `${am[2]}/${am[3]}`);
       if (SERVER_SECRET_DATA_NAMES.includes(am[2])) return sendJson(res, 403, { error: 'server_owned_data' });
       const fp = path.join(backupDir(userDataDir(am[1]), am[2]), am[3] + '.json');
       if (!fp.startsWith(DATA_DIR)) return sendJson(res, 400, { error: 'bad path' });
@@ -7618,6 +7645,7 @@ const server = http.createServer(async (req, res) => {
         }
         backupFile(dir, name); // снимок текущего перед откатом
         fs.copyFileSync(bfile, path.join(dir, name + '.json'));
+        logAdminAccess(me.id, 'restore', am[1], `${name}/${String(b.stamp || '')}`);
         return sendJson(res, 200, { ok: true, restored: name, from: b.stamp });
       } catch (e) {
         if (sendCommitmentBoundaryError(res, e)) return;
