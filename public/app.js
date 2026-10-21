@@ -36440,7 +36440,6 @@ function onChange(e) {
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
-  if (e.target.id === 'capture-text') { captureDraftSet(e.target.value); return; }
   if(e.target.matches?.('[data-chat-schedule]')){editChatSchedule(e.target);return;}
   if (e.target.dataset.field === 'color' && e.target.closest('#skills-list')) {
     const row = e.target.closest('.skill-edit'), auto = row.querySelector('[data-field="colorMode"]');
@@ -37042,6 +37041,7 @@ async function init() {
     }
   }, true);
   document.addEventListener('change', onChange);
+  document.addEventListener('input', (e) => { if (e.target && e.target.id === 'capture-text') captureDraftSet(e.target.value); });
   document.addEventListener('input', onSettingsInput);
   document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible' && State.phase === 'app') { requestBrowserCompanionStatus(); scheduleAttentionBoundary(); scheduleEveningReminder(); }

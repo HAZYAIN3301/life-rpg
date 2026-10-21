@@ -23,7 +23,7 @@ test('черновик заметки: по аккаунту, пустой уд�
 
 test('черновик подставляется в поле, очищается при сохранении и выходе', () => {
   assert.match(APP, /<input id="capture-text" name="text" maxlength="1000" value="\$\{esc\(captureDraftGet\(\)\)\}"/);
-  assert.match(APP, /function onSettingsInput\(e\) \{\n(?:  if[^\n]*\n)*  if \(e\.target\.id === 'capture-text'\) \{ captureDraftSet\(e\.target\.value\); return; \}/);
+  assert.match(APP, /document\.addEventListener\('input', \(e\) => \{ if \(e\.target && e\.target\.id === 'capture-text'\) captureDraftSet\(e\.target\.value\); \}\);/);
   assert.match(APP, /captureDraftSet\(''\);\n    f\.dataset\.persisted = 'true';/);
   assert.match(APP, /if \(!response\.ok\) \{ toast\(accountError\(data, 'Сетевая ошибка'\)\); return; \}\n      captureDraftSet\(''\);/);
 });
