@@ -11938,7 +11938,7 @@ html.mobile-nav-open body {
 .character-form-line span { color: var(--muted); }
 .character-form-line b { color: var(--text-strong); }
 .character-form-hint { margin: var(--sp-1, 4px) 0 0; color: var(--muted); font-size: var(--type-meta, 12px); line-height: 1.35; }
-.den-stat-label { font-weight: 500; color: var(--muted); font-size: 0.85em; }
+.den-stat-label { font-weight: 500; color: var(--muted); font-size: max(12px, 0.85em); }
 
 .character-wardrobe-heading { display: flex; justify-content: space-between; gap: var(--sp-4); padding: var(--sp-4) 0 var(--sp-3); }
 .character-wardrobe-heading h3 { font-size: var(--type-brand); line-height: var(--leading-display); }
