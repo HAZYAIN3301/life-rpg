@@ -13341,6 +13341,12 @@ function economySaveUnconfirmed(data) {
   const rejection = request && request.accountId === String(State.me?.id || '') && request.writeEpoch === Store._writeEpoch
     ? window.PurchaseFeedbackV1?.text(request.failure, lang()) : '';
   if (rejection) return rejection;
+  // Без сети «другая вкладка» сбивает с толку (проверка без сети 21.10): называем настоящую причину.
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return ({ ru: 'Нет соединения — повтори, когда появится сеть. Ничего не изменено.',
+    en: 'No connection — try again when you are back online. Nothing was changed.',
+    de: 'Keine Verbindung — versuche es erneut, wenn du wieder online bist. Nichts wurde geändert.',
+    uk: 'Немає з’єднання — повтори, коли з’явиться мережа. Нічого не змінено.',
+    es: 'Sin conexión: vuelve a intentarlo cuando tengas red. No se cambió nada.' })[lang()] || 'No connection — try again later. Nothing was changed.';
   return ({ ru: 'Не удалось подтвердить сохранение. Повтори запрос; если данные изменились в другой вкладке — обнови страницу.',
     en: 'Could not confirm the save. Retry; if another tab changed the data, reload the page.',
     de: 'Speicherung nicht bestätigt. Erneut versuchen; bei Änderungen in einem anderen Tab die Seite neu laden.',
@@ -19266,6 +19272,13 @@ async function sendChat(text) {
   } catch { if (staleChat()) return; State._chatBusy = false; fail(t('Не удалось подготовить понятный ответ. Ничего не изменено — повтори запрос.')); }
   finally { if (!staleChat()) { State._chatBusy = true; try { await chatThreadSave(); } catch {} State._chatBusy = false; chatThreadPaint(); renderChatMessages(); } }
 }
+// Черновик быстрой заметки живёт на этом устройстве до успешного сохранения: без сети или при случайной
+// перезагрузке написанное не пропадает. Ключ — по аккаунту; очищается при сохранении и выходе.
+function captureDraftKey() { return State.me?.id ? `satoru:capture-draft:${State.me.id}` : ''; }
+function captureDraftGet() { try { const key = captureDraftKey(); return key ? (localStorage.getItem(key) || '') : ''; } catch { return ''; } }
+function captureDraftSet(value) {
+  try { const key = captureDraftKey(); if (!key) return; const text = String(value || '').slice(0, 1000); if (text.trim()) localStorage.setItem(key, text); else localStorage.removeItem(key); } catch {}
+}
 function captureBar(options = {}) {
   const expanded = options.expanded === true;
   if (_capturePending && captureOwnerCurrent(_capturePending)) {
@@ -19285,7 +19298,7 @@ function captureBar(options = {}) {
   const secondaryTools = guideTextOnly ? '' : `<button class="dayrec-btn" data-action="day-recap" title="${t('Наговори день — Тень разложит по делам')}">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button><button class="capture-notes-link" data-action="goto-notes" title="${t('Открыть заметки')}" aria-label="${t('Открыть заметки')}: ${noteCount}">${satoruIconHTML('media.notes', 'inline-glyph', '📝')} ${noteCount}</button>`;
   return `<div class="card capture-card ${expanded ? 'is-expanded' : 'is-compact'}">
     <form id="capture-form" class="cap-row" data-guide-target="note-capture">
-      <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" placeholder="${t('Текст заметки…')}" autocomplete="off" />
+      <label class="sr-only" for="capture-text">${t('Текст заметки')}</label><input id="capture-text" name="text" maxlength="1000" value="${esc(captureDraftGet())}" placeholder="${t('Текст заметки…')}" autocomplete="off" />
       <button type="submit" class="cap-add" aria-label="${t('Сохранить заметку')}">${t('Сохранить')}</button>
       <span class="capture-status" role="status" aria-live="polite"></span>
     </form>
@@ -31757,6 +31770,7 @@ async function onSubmit(e) {
       focusPathChoiceTarget(f.text); return;
     }
     if (guideNotes) { State._guideV3NoteDraftId = ''; State._guideNoteAttempt = null; }
+    captureDraftSet('');
     f.dataset.persisted = 'true';
     State._captureReceipt = { id: item.id, accountId: String(State.me?.id || '') };
     State._inboxFocusAfterCommit = `#note-${CSS.escape(item.id)}-title`; track('capture:text'); toast(t('Сохранено')); render();
@@ -33417,6 +33431,7 @@ async function onClick(e) {
     el.disabled = true;
     accountJson('/api/auth/logout', { method: 'POST' }).then(async ({ response, data }) => {
       if (!response.ok) { toast(accountError(data, 'Сетевая ошибка')); return; }
+      captureDraftSet('');
       State.me = null; State.phase = 'login'; stopFocus(false); clearAllData(); State._accountSessionExpired = false;
       try { const profiles = await fetch('/api/auth/profiles'); State.profiles = profiles.ok ? await profiles.json() : []; } catch { State.profiles = []; }
       render();
@@ -36425,6 +36440,7 @@ function onChange(e) {
 }
 // Живой автосейв формы настроек при вводе (текст печатается без blur — 'change' не сработал бы)
 function onSettingsInput(e) {
+  if (e.target.id === 'capture-text') { captureDraftSet(e.target.value); return; }
   if(e.target.matches?.('[data-chat-schedule]')){editChatSchedule(e.target);return;}
   if (e.target.dataset.field === 'color' && e.target.closest('#skills-list')) {
     const row = e.target.closest('.skill-edit'), auto = row.querySelector('[data-field="colorMode"]');
