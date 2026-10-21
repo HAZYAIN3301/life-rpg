@@ -20669,8 +20669,11 @@ function showFortuneEditor(sphereId, activeTab = 'skin') {
   const next = holder.firstElementChild;
   const existing = document.getElementById('fortune-editor');
   if (existing) {
+    // Фокус остаётся на той же кнопке (выбранный окрас, предмет), а не прыгает к началу окна.
+    const active = existing.contains(document.activeElement) ? document.activeElement : null;
+    const selector = active && active.dataset.action ? ['action', 'value', 'slot', 'tab'].filter((key) => active.dataset[key] != null).map((key) => `[data-${key}="${CSS.escape(active.dataset[key])}"]`).join('') : '';
     existing.replaceChildren(...next.childNodes);
-    existing.querySelector(`[data-action="fortune-editor-tab"][data-tab="${CSS.escape(validTab)}"]`)?.focus();
+    (selector && existing.querySelector(selector) || existing.querySelector(`[data-action="fortune-editor-tab"][data-tab="${CSS.escape(validTab)}"]`))?.focus();
     return;
   }
   next.addEventListener('keydown', (event) => {

@@ -10,6 +10,7 @@ test('окно монтируется общим помощником, вкла�
   const at = APP.indexOf('function showFortuneEditor('); const body = APP.slice(at, APP.indexOf('\nfunction closeFortuneEditor()', at));
   assert.match(body, /mountAccountDialog\(next, \{ initial: '#fortune-editor-title', dismissible: false \}\)/);
   assert.match(body, /existing\.replaceChildren\(\.\.\.next\.childNodes\)/, 'вкладка не перемонтирует окно');
+  assert.match(body, /\['action', 'value', 'slot', 'tab'\]/, 'фокус возвращается на ту же кнопку выбора');
   assert.match(body, /if \(event\.key !== 'Escape'\) return;[\s\S]*closeFortuneEditor\(\);/);
   assert.match(APP, /if \(action === 'close-fortune-editor'\) \{ closeFortuneEditor\(\); return; \}/);
   const close = APP.slice(APP.indexOf('function closeFortuneEditor()'), APP.indexOf('function closeFortuneEditor()') + 600);
