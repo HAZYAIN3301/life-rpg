@@ -1941,6 +1941,24 @@ function backupDir(dir, name) { return path.join(dir, '.backups', name); }
 // Дедуп по СОДЕРЖИМОМУ (а не по времени): пропускаем только если оно идентично последнему снимку.
 // Так гарантированно сохраняется каждое уникальное состояние, в т.ч. ДО разрушительной правки.
 const BACKUP_KEEP = 50;
+// Журнал доступа оператора к чужим данным (аудит приватности 21.10): кто, когда, что и чей аккаунт открыл.
+// Только факт доступа, без содержимого. Хранится последние ~2000 записей.
+const ADMIN_ACCESS_LOG = () => path.join(DATA_DIR, 'admin-access-log.jsonl');
+function logAdminAccess(adminId, action, targetId, detail = '') {
+  try {
+    const row = JSON.stringify({ at: new Date().toISOString(), admin: String(adminId || ''), action: String(action).slice(0, 40), target: String(targetId || '').slice(0, 32), detail: String(detail || '').slice(0, 80) });
+    fs.appendFileSync(ADMIN_ACCESS_LOG(), row + '\n');
+    const stat = fs.statSync(ADMIN_ACCESS_LOG());
+    if (stat.size > 512 * 1024) {
+      const lines = fs.readFileSync(ADMIN_ACCESS_LOG(), 'utf8').trim().split('\n').slice(-2000);
+      const tmp = ADMIN_ACCESS_LOG() + '.tmp'; fs.writeFileSync(tmp, lines.join('\n') + '\n'); fs.renameSync(tmp, ADMIN_ACCESS_LOG());
+    }
+  } catch (error) { console.error('[admin-access-log]', error && error.message); }
+}
+function readAdminAccessLog(limit = 200) {
+  try { return fs.readFileSync(ADMIN_ACCESS_LOG(), 'utf8').trim().split('\n').filter(Boolean).slice(-limit).reverse().map((line) => { try { return JSON.parse(line); } catch { return null; } }).filter(Boolean); }
+  catch { return []; }
+}
 function backupFile(dir, name) {
   try {
     const src = path.join(dir, name + '.json');
@@ -2342,24 +2360,6 @@ function clearCookieHeader(req) {
     `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookieSuffix(req)}`);
 }
 
-// Журнал доступа оператора к чужим данным (аудит приватности 21.10): кто, когда, что и чей аккаунт открыл.
-// Только факт доступа, без содержимого. Хранится последние ~2000 записей.
-const ADMIN_ACCESS_LOG = () => path.join(DATA_DIR, 'admin-access-log.jsonl');
-function logAdminAccess(adminId, action, targetId, detail = '') {
-  try {
-    const row = JSON.stringify({ at: new Date().toISOString(), admin: String(adminId || ''), action: String(action).slice(0, 40), target: String(targetId || '').slice(0, 32), detail: String(detail || '').slice(0, 80) });
-    fs.appendFileSync(ADMIN_ACCESS_LOG(), row + '\n');
-    const stat = fs.statSync(ADMIN_ACCESS_LOG());
-    if (stat.size > 512 * 1024) {
-      const lines = fs.readFileSync(ADMIN_ACCESS_LOG(), 'utf8').trim().split('\n').slice(-2000);
-      const tmp = ADMIN_ACCESS_LOG() + '.tmp'; fs.writeFileSync(tmp, lines.join('\n') + '\n'); fs.renameSync(tmp, ADMIN_ACCESS_LOG());
-    }
-  } catch (error) { console.error('[admin-access-log]', error && error.message); }
-}
-function readAdminAccessLog(limit = 200) {
-  try { return fs.readFileSync(ADMIN_ACCESS_LOG(), 'utf8').trim().split('\n').filter(Boolean).slice(-limit).reverse().map((line) => { try { return JSON.parse(line); } catch { return null; } }).filter(Boolean); }
-  catch { return []; }
-}
 function deleteAccountLifecycle(uid, users) {
   adventureLifecycle.recover();
   const partiesFile = PARTIES_FILE();
