@@ -1119,6 +1119,8 @@ a.account-profile-link:hover { border-color: var(--accent); color: var(--accent)
   --on-accent: #090d17;
   --on-bad: #090d17;
   --focus-ring: 0 0 0 2px var(--surface-0), 0 0 0 4px var(--text-strong);
+  /* --focus-ring — значение для box-shadow; для outline нужен свой токен (проверка фокуса 21.10). */
+  --focus-outline: 2px solid var(--accent-2, var(--accent));
   --font-ui: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: "Satoru Display", Georgia, serif;
   --font-number: "Satoru Display", Georgia, serif;
@@ -21802,7 +21804,7 @@ details.shutdown > summary:focus-visible {
 #nav :is(.navsec, .navgear, .navsubtab):focus-visible,
 .mobile-nav-sheet :is(button, .mobile-sheet-entry):focus-visible,
 :is(.help-btn, .logout-btn):focus-visible {
-  outline: var(--focus-ring, 2px solid var(--accent-2, var(--accent)));
+  outline: var(--focus-outline);
   outline-offset: 2px;
 }
 
