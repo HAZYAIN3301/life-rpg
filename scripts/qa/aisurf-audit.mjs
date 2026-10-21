@@ -55,6 +55,11 @@ await run('treemap', () => { State.view = 'tree'; State.treeSkill = State.treeSk
 // category chip
 await page.evaluate(() => { State.view = 'today'; render(); });
 await page.waitForTimeout(400);
+// С v333 поле нового дела на «Сегодня» спрятано за «+ Квест» — открываем его, если оно не видно.
+if (!(await page.locator('#add-task input[name="title"]').first().isVisible().catch(() => false))) {
+  await page.locator('[data-action="focus-add-task"]').first().click().catch(() => {});
+  await page.waitForTimeout(300);
+}
 const ti = page.locator('#add-task input[name="title"]').first();
 if (await ti.count()) { await ti.fill('Qzxv plmrt'); await page.waitForTimeout(300); R.cat = { chip: await audit('#cat-suggest') }; const b = page.locator('#cat-suggest [data-action="ai-cat-suggest"]'); if (await b.count()) { await b.click(); await page.waitForTimeout(600); R.cat.after = await audit('#cat-suggest'); } }
 console.log(JSON.stringify({ R, errors }, null, 1));
