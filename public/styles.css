@@ -3020,6 +3020,7 @@ textarea { width: 100%; min-height: 70px; resize: vertical; }
 .fortune-editor-tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-bottom: 16px; }
 .fortune-editor-tab { min-width: 0; display: grid; justify-items: center; gap: 3px; padding: 9px 4px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel2); color: var(--muted); font: inherit; font-size: 10px; font-weight: 800; cursor: pointer; transition: border-color .16s ease, background .16s ease, transform .16s ease; }
 .fortune-editor-tab span { font-size: 18px; }
+.fortune-editor-tab { font-size: 12px; hyphens: auto; overflow-wrap: anywhere; }
 .fortune-editor-tab:hover { transform: translateY(-1px); border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
 .fortune-editor-tab.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--panel2)); color: var(--text); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 11%, transparent); }
 .fortune-editor-options { min-height: 330px; }

@@ -4243,6 +4243,11 @@ const I18N_EXTRA = {
   'Закрыть редактор комнаты': { en: 'Close room editor', de: 'Raumeditor schließen', uk: 'Закрити редактор кімнати', es: 'Cerrar editor de habitación' },
   'Обставить комнату': { en: 'Furnish room', de: 'Zimmer einrichten', uk: 'Обставити кімнату', es: 'Amueblar habitación' },
   'Обставить': { en: 'Furnish', de: 'Einrichten', uk: 'Обставити', es: 'Amueblar' },
+  'Примерочная': { en: 'Fitting room', de: 'Anprobe', uk: 'Примірочна', es: 'Probador' },
+  'Сохраняется сразу': { en: 'Saved instantly', de: 'Wird sofort gespeichert', uk: 'Зберігається одразу', es: 'Se guarda al instante' },
+  'Окрас': { en: 'Coat', de: 'Fell', uk: 'Забарвлення', es: 'Pelaje' },
+  'Занятие': { en: 'Activity', de: 'Beschäftigung', uk: 'Заняття', es: 'Actividad' },
+  'Категории внешности': { en: 'Appearance categories', de: 'Kategorien des Aussehens', uk: 'Категорії вигляду', es: 'Categorías de aspecto' },
   'Дела сегодня': { en: 'Things today', de: 'Heutige Aufgaben', uk: 'Справи сьогодні', es: 'Tareas de hoy' },
   'Выбрать дело на 10 минут': { en: 'Choose something for 10 minutes', de: 'Etwas für 10 Minuten wählen', uk: 'Вибрати справу на 10 хвилин', es: 'Elegir algo para 10 minutos' },
   'Короткая попытка без обязательства. За завершение — связь с Тенью и золото, без XP.': { en: 'A short try with no commitment. Finishing earns bond with Shadow and gold, without XP.', de: 'Ein kurzer Versuch ohne Verpflichtung. Zum Abschluss gibt es Bindung mit Schatten und Gold, ohne XP.', uk: 'Коротка спроба без зобов’язань. За завершення — зв’язок із Тінню та золото, без XP.', es: 'Un intento breve sin compromiso. Al terminar ganas vínculo con Sombra y oro, sin XP.' },
@@ -20633,11 +20638,11 @@ function fortuneEditorHTML(sphereId, activeTab = 'skin') {
   const traits = petTraits(sphereId), stats = petStats(sphereId);
   const idle = dayPick('petidle' + sphereId, (traits[0] && traits[0].idles) || [(traits[0] && traits[0].idle) || 'отдыхает']);
   const tabs = FORTUNE_EDITOR_TABS.map((tab) => `<button type="button" class="fortune-editor-tab${tab.id === activeTab ? ' active' : ''}" data-action="fortune-editor-tab" data-id="${esc(sphereId)}" data-tab="${tab.id}" aria-selected="${tab.id === activeTab ? 'true' : 'false'}"><span aria-hidden="true">${tab.icon}</span>${t(tab.label)}</button>`).join('');
-  return `<div id="fortune-editor" class="modal-overlay fortune-editor-overlay" role="dialog" aria-modal="true" aria-labelledby="fortune-editor-title">
+  return `<div id="fortune-editor" class="modal-overlay fortune-editor-overlay" role="dialog" aria-modal="true" aria-labelledby="fortune-editor-title" data-sphere="${esc(sphereId)}">
     <section class="fortune-editor-box">
       <button type="button" class="modal-x fortune-editor-x" data-action="close-fortune-editor" aria-label="${t('Закрыть')}">✕</button>
       <header class="fortune-editor-head">
-        <div><span class="fortune-editor-kicker">FORTUNE CAT · ПРИМЕРОЧНАЯ</span><h2 id="fortune-editor-title">${t('Облик')} · ${esc(petName(sphereId))}</h2></div>
+        <div><span class="fortune-editor-kicker">Fortune Cat · ${t('Примерочная')}</span><h2 id="fortune-editor-title" tabindex="-1">${t('Облик')} · ${esc(petName(sphereId))}</h2></div>
         <span class="fortune-editor-saved"><i></i>${t('Сохраняется сразу')}</span>
       </header>
       <div class="fortune-editor-layout">
@@ -20654,11 +20659,32 @@ function fortuneEditorHTML(sphereId, activeTab = 'skin') {
     </section>
   </div>`;
 }
+// Окно монтируется один раз (фокус внутри, Tab не уходит наружу, Esc закрывает, фокус возвращается к
+// кнопке питомца); вкладки и примерка меняют только содержимое. Проверка окон 21.10: раньше фокус
+// оставался на странице, а Esc не закрывал окно.
 function showFortuneEditor(sphereId, activeTab = 'skin') {
   const validTab = FORTUNE_EDITOR_TABS.some((tab) => tab.id === activeTab) ? activeTab : 'skin';
   const html = fortuneEditorHTML(sphereId, validTab); if (!html) return;
-  document.getElementById('fortune-editor')?.remove();
-  document.body.insertAdjacentHTML('beforeend', html);
+  const holder = document.createElement('div'); holder.innerHTML = html;
+  const next = holder.firstElementChild;
+  const existing = document.getElementById('fortune-editor');
+  if (existing) {
+    existing.replaceChildren(...next.childNodes);
+    existing.querySelector(`[data-action="fortune-editor-tab"][data-tab="${CSS.escape(validTab)}"]`)?.focus();
+    return;
+  }
+  next.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault(); event.stopImmediatePropagation(); closeFortuneEditor();
+  });
+  mountAccountDialog(next, { initial: '#fortune-editor-title', dismissible: false });
+}
+function closeFortuneEditor() {
+  const overlay = document.getElementById('fortune-editor'); if (!overlay) return;
+  const sphereId = overlay.dataset.sphere || '';
+  closeAccountDialog('fortune-editor', { restoreFocus: false });
+  render();
+  requestAnimationFrame(() => document.querySelector(`[data-action="open-fortune-editor"][data-id="${CSS.escape(sphereId)}"]`)?.focus());
 }
 function fortuneSourceHref(file) { return `${FORTUNE_SOURCE_ROOT}/${file}?v=${FORTUNE_ART_VERSION}`; }
 function fortuneSkinHref(file, skin) {
@@ -33899,7 +33925,7 @@ async function onClick(e) {
   if (action === 'pet-rename') { State._petRename = id; State._petRenameError = ''; State._petsFocusAfterCommit = `.pet-rename-form[data-id="${CSS.escape(id)}"] input[name="name"]`; render(); return; }
   if (action === 'pet-rename-cancel') { State._petRename = null; State._petRenameError = ''; State._petsFocusAfterCommit = `[data-action="pet-rename"][data-id="${CSS.escape(id)}"]`; render(); return; }
   if (action === 'open-fortune-editor') { showFortuneEditor(id); return; }
-  if (action === 'close-fortune-editor') { document.getElementById('fortune-editor')?.remove(); render(); return; }
+  if (action === 'close-fortune-editor') { closeFortuneEditor(); return; }
   if (action === 'fortune-editor-tab') { showFortuneEditor(id, el.dataset.tab); return; }
   if (action === 'pick-fortune-skin') {
     const skins = ensureFortuneSkins(), skinId = el.dataset.value;
