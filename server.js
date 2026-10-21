@@ -2342,6 +2342,14 @@ function clearCookieHeader(req) {
     `${name}=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secureCookieSuffix(req)}`);
 }
 
+function calSecretMatches(expected, given) {
+  if (typeof expected !== 'string' || !expected || typeof given !== 'string' || given.length !== expected.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(given));
+}
+function forgetCalSecret(uid) {
+  const users = loadUsers(); const user = users.find((item) => item.id === uid);
+  if (user && user.calSecret) { delete user.calSecret; saveUsers(users); }
+}
 function deleteAccountLifecycle(uid, users) {
   adventureLifecycle.recover();
   const partiesFile = PARTIES_FILE();
@@ -4759,9 +4767,11 @@ const server = http.createServer(async (req, res) => {
       if (!uid) return sendJson(res, 401, { error: 'not logged in' });
       const user = loadUsers().find((item) => item.id === uid);
       if (!user) return sendJson(res, 401, { error: 'user not found' });
-      return sendDeviceResult(res, u === '/api/auth/devices/ack'
-        ? deviceSessions.acknowledge(user, body.deviceId)
-        : deviceSessions.revokeAll(user));
+      if (u === '/api/auth/devices/ack') return sendDeviceResult(res, deviceSessions.acknowledge(user, body.deviceId));
+      const revoked = deviceSessions.revokeAll(user);
+      // «Выйти на всех устройствах» отзывает и ссылку подписки на календарь — она тоже чужой доступ к делам.
+      if (revoked && revoked.ok) forgetCalSecret(uid);
+      return sendDeviceResult(res, revoked);
     }
 
     // POST /api/auth/logout
@@ -4813,6 +4823,7 @@ const server = http.createServer(async (req, res) => {
       if (!verifyPw(currentPassword, user.pwSalt, user.pwHash)) return sendJson(res, 401, { error: 'неверный текущий пароль' });
       if (normPw(newPassword).length < PASSWORD_MIN) return sendJson(res, 400, { error: `пароль минимум ${PASSWORD_MIN} символов` });
       const recoveryCode = setEmailPassword(user, user.email, newPassword);
+      delete user.calSecret; // новая ссылка календаря создастся при следующем открытии подписки
       rotateSessionVersion(user); saveUsers(users);
       const token = makeSession(user);
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Set-Cookie': setCookieHeader(req, token), 'Cache-Control': 'no-store' });
@@ -4941,7 +4952,8 @@ const server = http.createServer(async (req, res) => {
       const users = loadUsers();
       const user = users.find(x => x.id === uid);
       if (!user) return sendJson(res, 401, { error: 'not found' });
-      if (!user.calSecret) {
+      // rotate: старая ссылка перестаёт работать (утекла — человек может её сменить; проверка 21.10).
+      if (!user.calSecret || body.rotate === true) {
         user.calSecret = crypto.randomBytes(24).toString('hex');
         saveUsers(users);
       }
@@ -4957,7 +4969,7 @@ const server = http.createServer(async (req, res) => {
     const [, userId, secret] = calMatch;
     const users = loadUsers();
     const user = users.find(x => x.id === userId);
-    if (!user || user.calSecret !== secret) {
+    if (!user || !calSecretMatches(user.calSecret, secret)) {
       res.writeHead(403, { 'Content-Type': 'text/plain' }); return res.end('Forbidden');
     }
     try { recoverCommitmentJournal(userId); }

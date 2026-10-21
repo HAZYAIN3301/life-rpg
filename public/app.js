@@ -197,6 +197,10 @@ const I18N_EN = {
   '🔗 Поделиться': '🔗 Share',
   'Главная сфера недели': 'Top area this week',
   'Живая подписка на квесты': 'Live calendar subscription',
+  'Ссылка попала не туда?': { en: 'Link ended up in the wrong place?', de: 'Link an der falschen Stelle gelandet?', uk: 'Посилання потрапило не туди?', es: '¿El enlace llegó a otro sitio?' },
+  'Новая ссылка заменит старую: календарь, подписанный на старую, перестанет обновляться.': { en: 'A new link replaces the old one: a calendar subscribed to the old link stops updating.', de: 'Ein neuer Link ersetzt den alten: Ein Kalender mit dem alten Link wird nicht mehr aktualisiert.', uk: 'Нове посилання замінить старе: календар, підписаний на старе, перестане оновлюватися.', es: 'Un enlace nuevo sustituye al anterior: el calendario suscrito al anterior dejará de actualizarse.' },
+  'Сменить ссылку': { en: 'Change link', de: 'Link ändern', uk: 'Змінити посилання', es: 'Cambiar enlace' },
+  'Ссылка сменена — старая больше не работает': { en: 'Link changed — the old one no longer works', de: 'Link geändert — der alte funktioniert nicht mehr', uk: 'Посилання змінено — старе більше не працює', es: 'Enlace cambiado: el anterior ya no funciona' },
   'Ссылка для подписки': 'Subscription URL',
   'Открыть в Календаре': 'Open in Calendar',
   // Weekly
@@ -15819,6 +15823,10 @@ async function loadCalSubscribeBody(overlay, { focusAfter = false } = {}) {
       <details class="cal-sub-help"><summary id="cal-sub-help-title">${esc(t('Как подключить календарь'))}</summary>
         <p>${esc(t('Apple Календарь: добавь подписной календарь и вставь ссылку.'))}</p>
         <p>${esc(t('Google Календарь: открой «Другие календари» → «Добавить по URL» и вставь ссылку.'))}</p>
+      </details>
+      <details class="cal-sub-rotate"><summary>${esc(t('Ссылка попала не туда?'))}</summary>
+        <p>${esc(t('Новая ссылка заменит старую: календарь, подписанный на старую, перестанет обновляться.'))}</p>
+        <button type="button" class="btn ghost" data-action="cal-sub-rotate">${esc(t('Сменить ссылку'))}</button>
       </details>`;
     if (focusAfter) requestAnimationFrame(() => focusPathChoiceTarget(document.getElementById('cal-sub-url')));
     return true;
@@ -35464,6 +35472,12 @@ async function onClick(e) {
   } else if (action === 'show-cal-subscribe') { showCalSubscribeModal(el);
   } else if (action === 'close-cal-subscribe') { closeCalSubscribeModal();
   } else if (action === 'cal-sub-retry') { loadCalSubscribeBody(document.getElementById('cal-sub-ov'), { focusAfter: true });
+  } else if (action === 'cal-sub-rotate') {
+    el.disabled = true;
+    fetch('/api/auth/cal-secret', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rotate: true }) })
+      .then((r) => { if (!r.ok) throw new Error('rotate failed'); toast(t('Ссылка сменена — старая больше не работает')); })
+      .catch(() => toast(t('Не удалось создать ссылку. Повтори попытку.')))
+      .finally(() => loadCalSubscribeBody(document.getElementById('cal-sub-ov'), { focusAfter: true }));
   } else if (action === 'copy-cal-url') {
     const url = el.dataset.url;
     navigator.clipboard.writeText(url).then(() => toast(t('✓ Ссылка скопирована'))).catch(() => {
