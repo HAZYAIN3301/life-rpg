@@ -22971,3 +22971,8 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .local-ai-test { margin: 0; font-size: var(--type-meta); overflow-wrap: anywhere; }
 .local-ai-test.is-ok { color: var(--ok, #3fb37f); }
 .local-ai-test.is-error { color: var(--bad, #e05d5d); }
+
+/* Calendar tray: a quest without a time can be ticked right there, like a scheduled one. */
+.calv-chip-row { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; }
+.calv-chip-row > .calv-chip { min-width: 0; }
+.t-backdate { font-size: max(12px, .8125rem); white-space: nowrap; }

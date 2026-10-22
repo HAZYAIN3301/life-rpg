@@ -3790,6 +3790,8 @@ const I18N_EXTRA = {
   // ── Зачёт задним числом ──
   'Сделал в тот день, забыл отметить — засчитать в': { en: 'Did it that day, forgot to log — count it on', de: 'An dem Tag erledigt, nur nicht eingetragen — anrechnen auf den', uk: 'Зробив того дня, забув відмітити — зарахувати в', es: 'Lo hiciste ese día y olvidaste anotarlo — cuéntalo el' },
   'Засчитано в': { en: 'Counted on', de: 'Angerechnet auf', uk: 'Зараховано в', es: 'Contado el' },
+  'за вчера': { en: 'for yesterday', de: 'für gestern', uk: 'за вчора', es: 'para ayer' },
+  'за дату': { en: 'for', de: 'für', uk: 'за', es: 'para' },
   // ── «Итог дня»: выбор дня + нудж «жизнь шла, а записать было некогда» ──
   'Итог дня': { en: 'Day log', de: 'Tagesabschluss', uk: 'Підсумок дня', es: 'Resumen del día' },
   // ── Доска заказов (BOARD-OF-CONTRACTS-PLAN) ──
@@ -15201,7 +15203,7 @@ function questRow(q, links) {
   // о долге. Амнистия снимает долг, но не право сказать «я это всё-таки сделал в тот день».
   const past = !q.done && q.date && q.date < todayStr();
   const backdate = past
-    ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}">✓<sub>${dmShort(q.date)}</sub></button>`
+    ? `<button class="t-backdate" data-action="toggle-task-backdated" data-id="${q.id}" title="${t('Сделал в тот день, забыл отметить — засчитать в')} ${dmShort(q.date)}" aria-label="${esc(t('Сделал в тот день, забыл отметить — засчитать в'))} ${dmShort(q.date)}: ${esc(fullTitle)}">✓ ${q.date === addDays(todayStr(), -1) ? t('за вчера') : `${t('за дату')} ${dmShort(q.date)}`}</button>`
     : '';
   const coreLabel = q.core ? t('Убрать из ядра дня') : t('В ядро дня');
   const linkedGoal = q.goalId ? goalById(q.goalId) : null;
@@ -15993,7 +15995,7 @@ function renderCalendarView() {
     const fullTitle = taskDisplayTitle(task), duration = Number(task.estimateMin) || 30;
     return `<div class="cal-agenda-row ${task.done ? 'done' : ''}" role="listitem" data-calendar-task="${task.id}"><button type="button" class="check cal-agenda-check" data-action="toggle-task" data-id="${task.id}" aria-label="${esc(t(task.done ? 'Снять выполнение' : 'Выполнить'))}: ${esc(fullTitle)}" aria-pressed="${task.done ? 'true' : 'false'}">${task.done ? satoruIconHTML('action.check', 'cal-action-icon', '✓') : ''}</button><button type="button" class="cal-agenda-main" data-action="cal-edit-task" data-id="${task.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}"><span class="cal-agenda-time">${esc(task.startTime)}</span><span class="cal-agenda-title" data-noi18n>${taskContentIconHTML(task, 'activity-inline-icon')}${esc(fullTitle)}</span><span class="cal-agenda-meta"><span class="cal-agenda-duration">${fmtDur(duration)}</span><span class="cal-agenda-disclosure">${esc(t('Расписание'))}</span></span></button></div>`;
   }).join('');
-  const trayTasks = unscheduled.map((task) => `<button type="button" class="calv-chip" draggable="true" data-id="${task.id}" data-calendar-task="${task.id}" data-action="cal-edit-task" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(task.title)}"><span aria-hidden="true">${satoruIconHTML('action.drag', 'cal-action-icon', '⠿')}</span><span class="calv-chip-title" data-noi18n>${esc(task.title)}</span><span class="calv-chip-meta"><span class="calv-chip-duration">${fmtDur(Number(task.estimateMin) || 30)}</span><span class="calv-chip-disclosure">${esc(t('Расписание'))}</span></span></button>`).join('');
+  const trayTasks = unscheduled.map((task) => `<span class="calv-chip-row"><button type="button" class="check sm cal-check" data-action="toggle-task" data-id="${task.id}" aria-label="${esc(t('Выполнить'))}: ${esc(taskDisplayTitle(task))}" aria-pressed="false"></button><button type="button" class="calv-chip" draggable="true" data-id="${task.id}" data-calendar-task="${task.id}" data-action="cal-edit-task" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(task.title)}"><span aria-hidden="true">${satoruIconHTML('action.drag', 'cal-action-icon', '⠿')}</span><span class="calv-chip-title" data-noi18n>${esc(task.title)}</span><span class="calv-chip-meta"><span class="calv-chip-duration">${fmtDur(Number(task.estimateMin) || 30)}</span><span class="calv-chip-disclosure">${esc(t('Расписание'))}</span></span></button></span>`).join('');
   const planned = dayTasks.reduce((s, t) => s + (Number(t.estimateMin) || 0), 0);
   const addOpen = !!State._calendarAddOpen;
   const addButton = `<button type="button" class="btn${scheduled.length ? ' ghost' : ''}" data-action="cal-focus-add">${satoruIconHTML('action.add', 'button-glyph', '+')} ${esc(t('Добавить квест'))}</button>`;
@@ -34128,7 +34130,7 @@ async function onClick(e) {
     const focusPlan = overlay && overlay._completionFocus;
     closeDesirePicker({ restoreFocus: false });
     if (focusPlan) State[focusPlan.stateKey] = focusPlan.selector;
-    await completeTask(task, el.dataset.desire);
+    await completeTask(task, el.dataset.desire, overlay && overlay._onDate);
     return;
   }
   if (action === 'copy-feedback-for-claude') {
@@ -34256,10 +34258,12 @@ async function onClick(e) {
   if (action === 'toggle-task') {
     const q = questById(id); if (!q) return;
     if (!q.done) {
+      // Галочка в Календаре или Неделе на прошедшем дне засчитывает дело в этот день, а не в сегодня.
+      const onDate = (State.view === 'calendar' || State.view === 'weekly') && q.date && q.date < todayStr() ? q.date : undefined;
       // Сложный квест сохраняет контекст выполнения; самооценка не меняет выплату.
-      if (q.difficulty === 'hard') { openDesirePicker(id, el); return; }
+      if (q.difficulty === 'hard') { const pop = openDesirePicker(id, el); if (pop && onDate) pop._onDate = onDate; return; }
       queueTaskCompletionFocus(id, el);
-      await completeTask(q, null);
+      await completeTask(q, null, onDate);
     } else {
       const completedDay = dayOf(q), beforeTask = structuredClone(q), record = questCommitmentRecord(q);
       queueTaskCompletionFocus(id, el);

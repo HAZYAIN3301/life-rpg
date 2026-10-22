@@ -153,8 +153,8 @@ test('normal and hard completion preserve focus; hard choice is a complete modal
   assert.match(close, /overlay\._returnFocus && overlay\._returnFocus\.isConnected/);
   assert.match(close, /focusPathChoiceTarget\(target\)/);
 
-  assert.match(app, /if \(q\.difficulty === 'hard'\) \{ openDesirePicker\(id, el\); return; \}[\s\S]*queueTaskCompletionFocus\(id, el\);[\s\S]*completeTask\(q, null\)/);
-  assert.match(app, /const focusPlan = overlay && overlay\._completionFocus;[\s\S]*closeDesirePicker\(\{ restoreFocus: false \}\);[\s\S]*State\[focusPlan\.stateKey\] = focusPlan\.selector;[\s\S]*completeTask\(task, el\.dataset\.desire\)/);
+  assert.match(app, /if \(q\.difficulty === 'hard'\) \{ const pop = openDesirePicker\(id, el\);[^}]*return; \}[\s\S]*queueTaskCompletionFocus\(id, el\);[\s\S]*completeTask\(q, null, onDate\)/);
+  assert.match(app, /const focusPlan = overlay && overlay\._completionFocus;[\s\S]*closeDesirePicker\(\{ restoreFocus: false \}\);[\s\S]*State\[focusPlan\.stateKey\] = focusPlan\.selector;[\s\S]*completeTask\(task, el\.dataset\.desire, overlay && overlay\._onDate\)/);
 });
 
 test('move is awaitable, rolls back on failure, and offers undo', () => {
