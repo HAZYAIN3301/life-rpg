@@ -22976,3 +22976,5 @@ details.senku-today > summary:focus-visible { outline: 2px solid var(--accent); 
 .calv-chip-row { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; }
 .calv-chip-row > .calv-chip { min-width: 0; }
 .t-backdate { font-size: max(12px, .8125rem); white-space: nowrap; }
+.help-btn { position: relative; }
+.help-btn .navsec-dot { position: absolute; top: 2px; right: 2px; }

@@ -8157,8 +8157,8 @@ async function completeTask(task, desire, onDate) {
     ? `+${task.goldAwarded} ${t('Золото')}${entryBondAdded ? ` · ${t('связь')} +2` : ''} — ${t(dayPick('entrydone', ENTRY_DONE_LINES))}`
     : `+${task.xpAwarded} XP · +${task.goldAwarded} 🪙${sk ? ' · ' + sk.name : ''}`;
   msg += goldGoalReceipt();
-  if (systemMode()) systemNarrate(task.entry ? 'ЗАХОД СОВЕРШЁН' : 'КВЕСТ ВЫПОЛНЕН', task.entry ? msg : `${msg} — ${t(systemVoice('quest'))}`); else toast(msg);
-  if (desire === 'forced' || desire === 'hyped') toast(t('Состояние отмечено. XP, золото и энергия не меняются от самооценки.'));
+  // Награда видна в строке дела; всплывает только у тех, кто сам включил режим «Система» (отзыв 22.10).
+  if (systemMode()) systemNarrate(task.entry ? 'ЗАХОД СОВЕРШЁН' : 'КВЕСТ ВЫПОЛНЕН', task.entry ? msg : `${msg} — ${t(systemVoice('quest'))}`);
   const lvlNow = charLevel();
   if (lvlNow > lvlBefore) {
     const rb = rankFor(lvlBefore), ra = rankFor(lvlNow);
@@ -12337,7 +12337,8 @@ function checkAchievements(silent) {
     if (!saved || !current()) return false;
     if (!silent) for (const a of awarded) {
       const title = t(a.title), detail = a.ttl ? `${title} · ${t(a.ttl)}` : title;
-      announce(t('Достижения'), detail, `${t('Достижения')}: ${detail}`);
+      // Без тоста (отзыв 22.10): объявление остаётся только для режима «Система».
+      announce(t('Достижения'), detail);
     }
     if (!silent && !systemMode()) sfx('achievement');
     if (State.phase === 'app') render();
@@ -15009,7 +15010,7 @@ function renderHeader(force = false) {
       <div class="char-level">Уровень <b>${oi.level}</b></div>
       <div class="xp-bar" data-guide-target="first-level-form" title="${esc(`${t('До уровня')} ${oi.level + 1}: ${oi.into} / ${oi.need} XP`)}"><span style="width:${oi.pct}%"></span><i>${oi.into} / ${oi.need} XP</i></div>
       <button class="gold-pill" data-action="open-gold-goal" aria-label="${esc(t('Награды'))}: ${goldBalance()} ${esc(t('золота'))}">${satoruIconHTML('status.gold', 'header-emblem', '🪙')} ${goldBalance()}</button>
-      <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}">${satoruIconHTML('status.info', 'help-glyph', '?')}</button>
+      <button class="help-btn" data-action="show-guide" data-guide-target="guide-library" title="${t('Как играть')}" aria-label="${t('Как играть')}${State._guideV3Pending ? ` — ${t('новое!')}` : ''}">${satoruIconHTML('status.info', 'help-glyph', '?')}${State._guideV3Pending ? '<span class="navsec-dot"></span>' : ''}</button>
       ${proBadge}
       <button class="btn ghost logout-btn" data-action="logout" title="${t('Сменить профиль')}">${t('⇦ Выйти')}</button>
     </div></details>`;
@@ -15367,7 +15368,6 @@ async function transactHabitCompletion(h, { twoMinute = false } = {}) {
   State._habitsFocusAfterCommit = '[data-action="habit-undo"]';
   if (!wasDone) {
     track('complete:habit'); const hsk = skillById(h.skillId);
-    toast(`+${nextLog[day][h.id].xp} XP · +${nextLog[day][h.id].gold} 🪙 · ${hsk.name}${goldGoalReceipt()}`);
     bossHitFeedback(bossHitCheck('habit', h, { sphereName: hsk ? hsk.name : '' }));
     if (window.ShadowRig) window.ShadowRig.setTransient('happy', 900);
     triggerAvatarReaction('happy', 'Привычка ✓');
@@ -20056,6 +20056,9 @@ function attentionHoldsAttention() {
   return !!State._attentionDeepLink || !!document.getElementById('attention-dialog-overlay');
 }
 function momentCheck() {
+  // Утреннее и вечернее окно Тени больше не открывается само (отзыв 22.10: всплывающее перегружает).
+  // Включается только явным settings.shadowMoments === true; фраза Тени остаётся на «Сегодня».
+  if (State.settings?.shadowMoments !== true) return;
   if (State.view !== 'today' || State.phase !== 'app') return;
   const guide = guideV3State();
   if (guideV3RuntimeAllowed() && guide
@@ -30368,7 +30371,7 @@ function renderNav() {
     }).join('');
     const gear = `<button class="navgear${State.view === 'settings' ? ' active' : ''}" data-view="settings" data-guide-target="settings-nav" title="${t('Настройки')}" aria-label="${t('Настройки')}">${satoruIconHTML('nav.settings', 'navgear-icon', '⚙️')}<span>${t('Настройки')}</span></button>`;
     const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
-    const moreNew = SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
+    const moreNew = !!State._guideV3Pending || SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
     const more = `<button class="navsec mobile-nav-more${moreActive ? ' active' : ''}${moreNew && !moreActive ? ' navsec-new' : ''}" data-action="mobile-nav-more" data-guide-target="guide-library" aria-haspopup="dialog" aria-expanded="false" aria-current="${moreActive ? 'page' : 'false'}" aria-label="${t('Ещё')}"><span class="mobile-more-glyph" aria-hidden="true">•••</span><span class="navsec-l">${t('Ещё')}</span>${moreNew && !moreActive ? '<span class="navsec-dot"></span>' : ''}</button>`;
     if (row) row.remove();
     nav.insertAdjacentHTML('afterbegin', `<div class="navrow">${primary}${more}${gear}</div>`);
@@ -30392,7 +30395,7 @@ function renderNav() {
     if (!isNew && dot) dot.remove();
   }
   const moreActive = MOBILE_MORE_SECTION_IDS.includes(cur) || State.view === 'settings';
-  const moreNew = SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
+  const moreNew = !!State._guideV3Pending || SECTIONS.filter((s) => MOBILE_MORE_SECTION_IDS.includes(s.id)).some((s) => sectionHasNew(s, lvl));
   const moreButton = row && row.querySelector('.mobile-nav-more');
   if (moreButton) {
     moreButton.classList.toggle('active', moreActive);
@@ -32519,7 +32522,11 @@ function guideV3MaybeStart() {
     const releasedRegistry = model.REGISTRY.filter((item) => item.id !== model.FIRST_CHAPTER
       && guideV3ContextRuntimeAllowed(item.chapter) && guideV3ChapterDataReady(item.chapter));
     entry = model.nextContextual(state, guideV3Context(), releasedRegistry);
-    if (!entry) return;
+    // Подсказки Тени о разделах больше не всплывают сами (отзыв 22.10): точка на «Ещё» и «?»
+    // ведёт в «Как играть», где глава начинается по нажатию. Первое путешествие — как раньше.
+    const pending = entry ? entry.chapter : null;
+    if (State._guideV3Pending !== pending) { State._guideV3Pending = pending; try { renderNav(); } catch {} }
+    return;
   }
   State._guideV3StartBusy = true;
   Promise.resolve().then(async () => {
@@ -32749,7 +32756,7 @@ async function guideV3HandleAction(action, el) {
   if (action === 'guide-start') {
     const startChapter = el.dataset.chapter || window.GuideV3.FIRST_CHAPTER;
     if (startChapter !== window.GuideV3.FIRST_CHAPTER && !guideV3ContextRuntimeAllowed(startChapter)) return true;
-    closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; await guideV3Commit({ type: 'guide:start', chapter: startChapter, at: Date.now() }, { repaint: false }); render(); return true;
+    closeAccountDialog('guide', { restoreFocus: false }); State.view = 'today'; State._guideV3Pending = null; await guideV3Commit({ type: 'guide:start', chapter: startChapter, at: Date.now() }, { repaint: false }); render(); return true;
   }
   if (action === 'guide-enable') {
     const enabled = await guideV3Commit({ type: 'guide:enable', at: Date.now() }, { repaint: false });
