@@ -1,3 +1,9 @@
+## Claude 20.10 — сводка для владельца (Jarvis)
+
+- Сделано: `GET /api/owner/brief` по токену, только числа (OWNER-BRIEF-V1.md).
+- Осталось владельцу: слить PR, создать токен на Jarvis и вписать его SHA-256 в Railway →
+  `OWNER_BRIEF_TOKEN_SHA256`. Без переменной маршрут закрыт (404).
+
 ## Codex 20.10 — Traveller / применение базы анимации
 
 - Подготовлена общая база [Williams + Spine](docs/animation/README.md), включая
