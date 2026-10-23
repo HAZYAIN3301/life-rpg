@@ -885,3 +885,34 @@
 :root[data-design=next] .dchart-colval{background:var(--bg);padding:0 2px;border-radius:2px}
 :root[data-design=next] .den-theme-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
 :root[data-design=next] .den-item-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+/* Прототип «Сегодня» v2 (за флажком ?today=v2a|v2b|v2c, 24.10): те же функции, другая подача. */
+:root[data-design=next] .today-v2{display:block;max-width:var(--work-max);margin:0 auto}
+:root[data-design=next] .today-v2 .today-work{display:flex;flex-direction:column;gap:var(--sp-4)}
+:root[data-design=next] .today-v2 .route-date-link{border:0;background:none;padding:0;min-height:32px;color:var(--muted);font:inherit;cursor:pointer;text-align:left}
+:root[data-design=next] .today-v2 .route-date-link:focus-visible{outline:2px solid var(--design-accent);outline-offset:2px}
+:root[data-design=next] .today-v2 .daystat-v2{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);padding:0 0 var(--sp-2);border:0}
+:root[data-design=next] .today-v2 .today-count{display:flex;align-items:center;gap:var(--sp-3);margin:0}
+:root[data-design=next] .today-v2 .today-count b{font:400 40px/1 var(--font-display);font-variant-numeric:tabular-nums}
+:root[data-design=next] .today-v2 .today-count span{color:var(--muted);font-size:14px;line-height:1.35}
+:root[data-design=next] .today-v2 .comp-card{margin:0}
+/* v2a — рабочий: цвет сферы полосой у строки дела */
+:root[data-design=next] .today-v2[data-today=v2a] .card-quests .task{box-shadow:inset 3px 0 0 var(--sphere,transparent);padding-left:10px}
+/* v2b — Тень ведёт: Тень крупно первой, кнопка «выполнить» цвета сферы и нажимается как клавиша */
+:root[data-design=next] .today-v2[data-today=v2b] .comp-card{border-color:var(--design-core-border);background:var(--design-core)}
+:root[data-design=next] .today-v2[data-today=v2b] .comp-card .comp-art{transform:scale(1.25);transform-origin:left center;margin-right:var(--sp-3)}
+:root[data-design=next] .today-v2[data-today=v2b] .comp-card .comp-line{font-size:17px;font-weight:600}
+:root[data-design=next] .today-v2[data-today=v2b] .task .check{border:0;background:var(--sphere,var(--design-accent));color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--sphere,var(--design-accent)) 62%,#000);transition:transform 120ms cubic-bezier(.23,1,.32,1),box-shadow 120ms cubic-bezier(.23,1,.32,1)}
+:root[data-design=next] .today-v2[data-today=v2b] .task .check:active,:root[data-design=next] .today-v2[data-today=v2b] .task.done .check{transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--sphere,var(--design-accent)) 62%,#000)}
+/* v2c — мир дня: Логово сверху, окно по времени суток; события Племени рядом */
+:root[data-design=next] .today-v2 .today-world{padding:0;overflow:hidden}
+:root[data-design=next] .today-v2 .today-world-scene{position:relative;aspect-ratio:16/7;overflow:hidden;background:#2a2018}
+:root[data-design=next] .today-v2 .today-world-scene img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 22%}
+:root[data-design=next] .today-v2 .today-world-scene::after{content:"";position:absolute;inset:0;pointer-events:none}
+:root[data-design=next] .today-v2 .today-world-scene[data-daypart=morning]::after{background:rgba(255,214,160,.12)}
+:root[data-design=next] .today-v2 .today-world-scene[data-daypart=day]::after{background:rgba(255,255,240,.10)}
+:root[data-design=next] .today-v2 .today-world-scene[data-daypart=evening]::after{background:rgba(255,140,80,.16)}
+:root[data-design=next] .today-v2 .today-world-scene[data-daypart=night]::after{background:rgba(10,16,40,.30)}
+:root[data-design=next] .today-v2 .today-world>:not(.today-world-scene){margin:var(--sp-3)}
+:root[data-design=next] .today-v2[data-today=v2c] .task .check{border-color:var(--sphere,var(--line-strong))}
+@media (prefers-reduced-motion:reduce){:root[data-design=next] .today-v2 .task .check{transition:none}}
+:root[data-design=next] .today-v2 .today-support{position:static;grid-column:auto;grid-row:auto;width:auto;max-width:none}

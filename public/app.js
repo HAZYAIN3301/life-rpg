@@ -15223,7 +15223,8 @@ function questRow(q, links) {
       ${!q.done ? `<button data-action="quest-help" data-id="${esc(q.id)}">${satoruIconHTML('nav.shadow', 'task-action-icon')} ${esc(phoneCopy('help'))}</button>` : ''}
       <button class="task-menu-delete" data-action="delete-task" data-id="${q.id}">${satoruIconHTML('action.close', 'task-action-icon', '✕')} ${t('Удалить квест')}</button>
     </div></details>`;
-  return `<li class="task task-entry-layout ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}" data-id="${esc(q.id)}"${guideRowTarget}>
+  const sphereColor = todayV2Variant() ? (skillById(q.skillId) || {}).color || '' : '';
+  return `<li class="task task-entry-layout ${q.done ? 'done' : ''} ${q.core ? 'is-core' : ''}" data-id="${esc(q.id)}"${guideRowTarget}${sphereColor ? ` style="--sphere:${esc(sphereColor)}"` : ''}>
     <button type="button" class="task-schedule" data-action="cal-edit-task" data-id="${q.id}" aria-label="${esc(t('Открыть расписание квеста'))}: ${esc(fullTitle)}">${q.startTime ? esc(q.startTime) : '+ ' + t('Время')}</button>
     <button class="check" data-action="toggle-task" data-id="${q.id}"${guideCompleteTarget} aria-label="${t(q.done ? 'Снять выполнение' : 'Выполнить')}: ${esc(fullTitle)}" aria-pressed="${q.done ? 'true' : 'false'}">${q.done ? '✓' : ''}</button>
     ${titleCell}
@@ -23180,6 +23181,16 @@ function firstValueCard() {
   return `${State._firstValueError === 'stale_reference' ? `<p class="first-value-inline-error" role="alert">${t('Этот шаг уже изменился. Выбери актуальный — прежние данные не затронуты.')}</p>` : ''}${html}`;
 }
 
+// Прототип «Сегодня» v2 (24.10, локально, за флажком ?today=v2a|v2b|v2c). Те же функции и рендереры,
+// другая подача; без флажка экран прежний. Опись функций: docs/research/2026-10-today-inventory.md.
+function todayV2Variant() {
+  if (State._todayV2 === undefined) {
+    let v = '';
+    try { v = new URLSearchParams(location.search).get('today') || ''; } catch {}
+    State._todayV2 = ['v2a', 'v2b', 'v2c'].includes(v) ? v : '';
+  }
+  return State._todayV2;
+}
 function renderToday() {
   const today = todayStr();
   ensureSenkuDay();
@@ -23494,6 +23505,35 @@ function boardTakenLineHTML() {
   const week = weekStart(today);
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
   const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
+  const v2 = todayV2Variant();
+  if (v2) {
+    const dateLabel = esc(new Intl.DateTimeFormat(lang(), { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date()));
+    // Неделя не удалена: дата открывает календарь, а семь дней живут в «Плане» (docs/TASTE.md — полоса недели с датами).
+    const headV2 = `<header class="today-route-head"><div><button type="button" class="route-date route-date-link" data-action="goto-calendar" data-date="${today}">${dateLabel}</button><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
+    const countV2 = `<div class="daystat daystat-v2"><p class="today-count"><b>${doneCount}/${todays.length}</b><span>${t('Квестов:').replace(/:\s*$/, '')}<br>${t('План:')} ${fmtDur(planned)}</span></p><button type="button" class="today-add-link" data-action="focus-add-task" aria-expanded="${!!showTaskComposer}" aria-controls="add-task">${t('+ Квест')}</button></div>`;
+    const boardV2 = questBoard.replace(/<div class="daystat">[\s\S]*?<\/button><\/div>/, countV2);
+    const hosts = [focusSyncNotice(), partyDuoUI()?.today() || '', partyTrialUI().today(), State.party?.trial?.trials.some((r) => !r.completedAt) ? '' : partyAdventureUI().today(), partyProjectUI().today()].filter((html) => html && html.trim());
+    const tribe = hosts.length ? `<div class="today-v2-tribe">${hosts.join('')}</div>` : '';
+    const life = [rewardLifeUI().today(), todayGoldGoalHTML()].filter((html) => html && html.trim()).join('');
+    // Тень и запись — в родной обёртке поддержки, чтобы сцена и раскрытие остались как сейчас.
+    const shadow = `<aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}</aside>`;
+    const capture = `<div class="today-support today-v2-capture">${captureBar()}</div>`;
+    const daypart = (() => { const h = new Date().getHours(); return h < 11 ? 'morning' : h < 17 ? 'day' : h < 21 ? 'evening' : 'night'; })();
+    const world = `<section class="card today-world" aria-label="${esc(t('Племя'))}"><div class="today-world-scene" data-daypart="${daypart}"><img src="/art/party-world-v1/valley.png" alt="" loading="lazy" decoding="async"></div>${life}</section>`;
+    const lead = `${dataDamageNoticeHTML()}${firstValueCard()}${todayHero}${amnestyUndo}`;
+    const extras = `${senkuTodayHTML()}${browserCompanionLaunchHTML()}`;
+    const order = {
+      // Рабочий: дела первыми, игра — ниже одной группой.
+      v2a: [lead, boardV2, overdueSurface, habitsCard, shadow, tribe, life, capture, extras],
+      // Тень ведёт: Тень — первая на экране, как сова у Duolingo; дела сразу под ней.
+      v2b: [lead, shadow, boardV2, overdueSurface, habitsCard, tribe, life, capture, extras],
+      // Мир дня: Логово и события Племени сверху, дела под ними.
+      v2c: [lead, world, tribe, boardV2, overdueSurface, habitsCard, shadow, capture, extras],
+    }[v2];
+    return `<div class="today-shell today-v2" data-today="${v2}">${headV2}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
+      <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${order.join('')}</div>
+      <div class="today-footer">${shutdownCard}</div></div>`;
+  }
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
     <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}<div data-focus-sync-host>${focusSyncNotice()}</div>${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-trial-today-host>${partyTrialUI().today()}</div><div data-adventure-today-host>${State.party?.trial?.trials.some(r=>!r.completedAt)?'':partyAdventureUI().today()}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${rewardLifeUI().today()}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
