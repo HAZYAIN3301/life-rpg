@@ -14333,9 +14333,11 @@ function removePill() { const p = document.getElementById('focus-pill'); if (p) 
 // --- плавающее окно поверх всех приложений (Document Picture-in-Picture) ---
 const PIP_CSS = `body{margin:0;font:14px/1.4 sans-serif;background:var(--bg,#25262f);color:var(--text,#f2eff5);overflow-wrap:anywhere}.pip{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:100vh;box-sizing:border-box}.pip-task{font-size:14px;color:var(--muted,#c2bdcb)}.pip-clock{font-size:32px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}.pip-sub{font-size:12px}.pip-bar{height:4px;background:var(--line,#52505f);border-radius:4px;overflow:hidden}.pip-bar>span{display:block;height:100%;width:0;background:var(--accent,#c6afe9)}.pip-ctrl{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}.pip-ctrl button{flex:1 1 100px;min-height:44px;background:var(--panel,#2e303b);border:1px solid var(--line,#52505f);color:inherit;border-radius:8px;padding:8px;font:inherit;cursor:pointer}.pip-ctrl button:focus-visible{outline:2px solid var(--focus-ring,#c6afe9);outline-offset:2px}`;
 
-async function openFocusWidget() {
+// Без Document PiP (Safari, iPhone) плашка фокуса уже на экране. Объясняем это только тому, кто сам нажал «Окно»:
+// при каждом старте фокуса та же фраза была всплывашкой, которую владелец просил убрать (22.10).
+async function openFocusWidget(options = {}) {
   if (!State.timer) return;
-  if (!('documentPictureInPicture' in window)) { toast(t('Плавающее окно недоступно в этом браузере — показываю плашку')); return; }
+  if (!('documentPictureInPicture' in window)) { if (options.explicit) toast(t('Плавающее окно недоступно в этом браузере — показываю плашку')); return; }
   if (pipWindow) { try { pipWindow.focus(); } catch {} return; }
   try {
     pipWindow = await documentPictureInPicture.requestWindow({ width: 300, height: 220 });
@@ -23180,6 +23182,24 @@ function firstValueCard() {
   return `${State._firstValueError === 'stale_reference' ? `<p class="first-value-inline-error" role="alert">${t('Этот шаг уже изменился. Выбери актуальный — прежние данные не затронуты.')}</p>` : ''}${html}`;
 }
 
+// Доводка «Сегодня» на телефоне (24.10): тот же экран, меньше преград до первого дела и один
+// громкий призыв. Шаги включаются по одному, чтобы сравнить «было/стало»: ?refine=gap,week,
+// quiet,head — выбранные, ?today=refine — все. Без флажка экран прежний.
+const TODAY_REFINE_STEPS = ['gap', 'week', 'quiet', 'head'];
+function todayRefineSteps() {
+  if (State._todayRefine === undefined) {
+    let all = false, picked = [];
+    try {
+      const q = new URLSearchParams(location.search);
+      all = q.get('today') === 'refine';
+      picked = String(q.get('refine') || '').split(',').map((s) => s.trim());
+    } catch {}
+    State._todayRefine = TODAY_REFINE_STEPS.filter((s) => all || picked.includes(s));
+    // Метка на корне, а не на .today-shell: без флажка разметка экрана остаётся байт в байт прежней.
+    if (State._todayRefine.length) document.documentElement.dataset.todayRefine = State._todayRefine.join(' ');
+  }
+  return State._todayRefine;
+}
 function renderToday() {
   const today = todayStr();
   ensureSenkuDay();
@@ -23493,7 +23513,21 @@ function boardTakenLineHTML() {
   if (tab === 'board') return `<div class="today-shell board-shell">${tabs}<section id="today-panel-day" role="tabpanel" aria-labelledby="today-tab-day" hidden></section><section id="today-panel-board" class="today-board-panel" role="tabpanel" aria-labelledby="today-tab-board">${boardScreenHTML()}</section></div>`;
   const week = weekStart(today);
   const weekStrip = `<nav class="today-week" aria-label="${esc(t('Дни выбранной недели'))}">${Array.from({length:7},(_,i)=>{const date=addDays(week,i);return `<button type="button" data-action="goto-calendar" data-date="${date}" ${date===today?'aria-current="date"':''}><span>${esc(new Intl.DateTimeFormat(lang(),{weekday:'short'}).format(parseDate(date)))}</span><b>${parseDate(date).getDate()}</b></button>`;}).join('')}</nav>`;
-  const routeHead = `<header class="today-route-head"><div><p class="route-date">${esc(new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date()))}</p><h2>${t('Сегодня')}</h2></div><button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
+  const refine = todayRefineSteps();
+  // week: на телефоне полоса недели уходит (CSS), неделя открывается датой — календарь в одно нажатие.
+  // head: дата встаёт в строку заголовка коротко, «Сегодня» уже подписано в нижнем меню.
+  const dateLong = new Intl.DateTimeFormat(lang(), {weekday:'long',day:'numeric',month:'long'}).format(new Date());
+  // CSS capitalize писал «24 Октября»; в доводке заглавная только первая буква, остальное — как отдаёт Intl.
+  const dateShort = new Intl.DateTimeFormat(lang(), {weekday:'short',day:'numeric',month:'short'}).format(new Date());
+  const sentence = (s) => s.charAt(0).toLocaleUpperCase(lang()) + s.slice(1);
+  // head: на телефоне короткая дата в строке заголовка, на десктопе — прежняя полная.
+  const dateText = refine.includes('head') ? `<span class="route-date-long">${esc(sentence(dateLong))}</span><span class="route-date-short">${esc(sentence(dateShort))}</span>`
+    : esc(refine.includes('week') ? sentence(dateLong) : dateLong);
+  const routeDate = refine.includes('week')
+    ? `<button type="button" class="route-date route-date-link" data-action="goto-calendar" data-date="${today}" aria-label="${esc(`${t('Календарь')}: ${dateLong}`)}">${dateText}</button>`
+    : `<p class="route-date${refine.includes('head') ? ' is-sentence' : ''}">${dateText}</p>`;
+  const routeTitle = refine.includes('head') ? `<div class="route-title-row"><h2>${t('Сегодня')}</h2>${routeDate}</div>` : `<div>${routeDate}<h2>${t('Сегодня')}</h2></div>`;
+  const routeHead = `<header class="today-route-head">${routeTitle}<button type="button" class="btn ghost day-recap-direct" data-action="day-recap">${satoruIconHTML('media.microphone', 'button-glyph', '🎤')} ${t('Итог дня')}</button></header>`;
   return `<div class="today-shell">${routeHead}${tabs}<section id="today-panel-board" role="tabpanel" aria-labelledby="today-tab-board" hidden></section>
     <div id="today-panel-day" class="today-work" role="tabpanel" aria-labelledby="today-tab-day">${dataDamageNoticeHTML()}<div data-focus-sync-host>${focusSyncNotice()}</div>${weekStrip}<div data-duo-today-host>${partyDuoUI()?.today() || ''}</div><div data-trial-today-host>${partyTrialUI().today()}</div><div data-adventure-today-host>${State.party?.trial?.trials.some(r=>!r.completedAt)?'':partyAdventureUI().today()}</div><div data-project-today-host>${partyProjectUI().today()}</div>${firstValueCard()}${todayHero}${rewardLifeUI().today()}${todayGoldGoalHTML()}${amnestyUndo}${questBoard}${overdueSurface}${habitsCard}${senkuTodayHTML()}${browserCompanionLaunchHTML()}</div>
     <aside class="today-support" aria-label="${t('Поддержка дня')}">${companionCard(attentionTodayControlHTML(selectedNudge))}${captureBar()}</aside>
@@ -34367,7 +34401,7 @@ async function onClick(e) {
   } else if (action === 'timer-pause') { pauseFocus();
   } else if (action === 'timer-resume') { resumeFocus();
   } else if (action === 'timer-stop') { stopFocus(true);
-  } else if (action === 'open-pip') { openFocusWidget();
+  } else if (action === 'open-pip') { openFocusWidget({ explicit: true });
   } else if (action === 'edit-actual') {
     openTaskActualDialog(id, el);
   } else if (action === 'control-review-revise') {

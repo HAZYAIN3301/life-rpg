@@ -885,3 +885,34 @@
 :root[data-design=next] .dchart-colval{background:var(--bg);padding:0 2px;border-radius:2px}
 :root[data-design=next] .den-theme-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
 :root[data-design=next] .den-item-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
+/* Доводка «Сегодня» на телефоне (за флажком ?refine=gap,week,quiet,head или ?today=refine → :root[data-today-refine], 24.10): тот же вид,
+   меньше преград до первого дела и одна громкая кнопка на экран. Только существующие токены; десктоп не трогаем. */
+/* gap — пустые слоты Племени и синхронизации фокуса не держат отступ ленты (было ~80px пустоты). */
+:root[data-design=next][data-today-refine~=gap] .today-shell .today-work>:is([data-focus-sync-host],[data-trial-today-host],[data-adventure-today-host],[data-project-today-host]):empty{display:none}
+/* week/head — дата-кнопка открывает календарь; подчёркнута как ссылка, касание 44px без лишней высоты строки. */
+:root[data-design=next] .today-shell .route-date-link{display:inline-flex;align-items:center;min-height:44px;margin-block:-12px;padding:0;border:0;background:none;color:var(--muted);font:inherit;text-transform:none;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px;cursor:pointer}
+:root[data-design=next] .today-shell .route-date-link:focus-visible{outline:2px solid var(--design-accent);outline-offset:2px}
+:root[data-design=next] .today-shell .route-date.is-sentence{text-transform:none}
+:root[data-design=next] .today-shell .route-date-short{display:none}
+/* head на десктопе: та же картина, что без флажка — дата над заголовком. */
+@media(min-width:601px){:root[data-design=next] .today-shell .route-title-row{display:flex;flex-direction:column-reverse;align-items:flex-start}:root[data-design=next] .today-shell .route-title-row h2{margin:4px 0}}
+@media(max-width:600px){
+ :root[data-design=next][data-today-refine~=week] .today-shell .today-week{display:none}
+ /* quiet — громкой остаётся одна кнопка (фокус или пауза); остальное на виду и ≥44px, но без рамки и заливки. */
+ :root[data-design=next][data-today-refine~=quiet] .today-shell :is(.day-recap-direct,.today-add-link){border-color:transparent;background:none;box-shadow:none;color:var(--design-accent)}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell .today-tab{border-color:transparent}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell .today-tab.on{background:var(--design-core)}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell :is(.today-hero,.task.task-entry-layout.is-core:not(.done)){border-color:transparent}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell .today-hero .th-actions{display:grid;grid-template-columns:1fr 1fr;gap:var(--sp-2)}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell .today-hero .th-actions>.btn:first-child{grid-column:1/-1}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell .today-hero .th-actions>.btn.ghost{background:none;border-color:var(--line)}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell .task-context .t-cat{background:color-mix(in srgb,var(--c) 16%,transparent);color:color-mix(in srgb,var(--c) 45%,var(--text))}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell .task-goal-chip{border-color:transparent}
+ :root[data-design=next][data-today-refine~=quiet] .today-shell #capture-form:has(#capture-text:placeholder-shown) .cap-add{background:none;border:1px solid var(--line);color:var(--muted) !important}
+ /* head — «Сегодня» и короткая дата одной строкой: на уровень меньше до вкладок. */
+ :root[data-design=next][data-today-refine~=head] .today-shell .today-route-head{align-items:center}
+ :root[data-design=next][data-today-refine~=head] .today-shell .route-title-row{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:var(--sp-3);row-gap:0;min-width:0}
+ :root[data-design=next][data-today-refine~=head] .today-shell .route-title-row h2{margin:0}
+ :root[data-design=next][data-today-refine~=head] .today-shell .route-date-long{display:none}
+ :root[data-design=next][data-today-refine~=head] .today-shell .route-date-short{display:inline}
+}
