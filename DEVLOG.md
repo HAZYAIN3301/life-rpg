@@ -1,3 +1,14 @@
+## Codex 27.10 — B2.15: доведение «Мира» в основном приложении
+
+B2.12 уже находился в root; сохранены B2.10/B2.5 generated и текущий art. Доведены
+перевод локальных диалогов/locale дат/персональных имён, поля16px/theme/focus,
+конкретные ошибки сохранения и receipts Тени, source local-day progress. Старые
+owners героя/питомцев/дерева/эпизодов/Den не заменялись, будущий3D renderer отделён.
+Root UI→API→reload: wardrobe/name/species/tree points/episodes/light; итоговые
+settings/tasks/tree/episodes/economy равны baseline, wallet22 и XP200 сохранены.
+179 live и native byte contracts PASS; полный source suite/деплой — в B215-QA.md
+и его release receipt. Физический iPhone/платный AI не засчитаны. SW345.
+
 ## Codex 27.10 — B2.14 / v344 опубликован: B2.5 и реальные Награды
 
 По явному разрешению владельца опубликован runtime4973db94: FF master из чистой ветки,

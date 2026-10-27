@@ -157,7 +157,7 @@ function Today({snapshot:s}:{snapshot:Snapshot}){
     {route==='today'&&mode==='Доска'&&<OwnedToday s={s} part="board"/>}
     {route==='today'&&mode==='Заметки'&&<><div className="wb-section-head"><h2 id="notes-title">Заметки</h2></div><OwnedToday s={s} part="notes"/></>}
     {route==='tribe'&&<OwnedToday s={s} part="tribe"/>}
-    {route==='world'&&<LiveWorld s={s} mode={worldMode} choose={setWorldMode} run={(c,p,m)=>act(c,p,m)} editTask={edit} rewards={()=>void navigate('rewards')} settings={g=>void navigate('settings',g)} shadow={shadow}/>}
+    {route==='world'&&<LiveWorld s={s} failure={error} mode={worldMode} choose={setWorldMode} run={(c,p,m)=>act(c,p,m)} editTask={edit} rewards={()=>void navigate('rewards')} settings={g=>void navigate('settings',g)} shadow={shadow}/>}
     {route==='rewards'&&<LiveRewards s={s} run={(c,p,m)=>act(c,p,m)} editTask={edit} complete={t=>void act('task.complete',{id:t.id},'Отдых отмечен · награда использована')} entry={rewardEntry} handled={()=>setRewardEntry('')}/>}
     {route==='settings'&&<LiveSettings s={s} group={settingsGroup} choose={g=>void navigate('settings',g)} back={goToday}/>}
     {route==='plan'&&<><nav className="pl-tabs live-plan-sections" aria-label="Разделы плана">{['Календарь','Цели','Привычки','Вдохновение'].map((name,i)=><button key={name} aria-current={planMode===name?'page':undefined} onClick={()=>{setPlanMode(name);setGoalEntry('');}}>{name}</button>)}</nav>{planMode==='Цели'&&<LiveGoals s={s} writeError={error} run={(c,p,m)=>act(c,p,m)} editTask={edit} shadow={shadow} entry={goalEntry} handled={()=>setGoalEntry('')}/>}

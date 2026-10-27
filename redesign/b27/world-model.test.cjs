@@ -12,3 +12,7 @@ test('episode uses existing schema, preserves metadata on editing and rejects fu
 test('progress counts recorded zero as zero, leaves unknown minutes unknown, includes XP from actual source events',()=>{const r=m.worldProgress([{date:'2026-10-27',xp:72}], [{id:'a',done:true,date:'2026-10-27',actualMin:0,estimateMin:60},{id:'b',done:true,date:'2026-10-27',estimateMin:80},{id:'c',done:true,date:'2026-10-27',actualMin:30,skillIds:['work','body']}],{},'2026-10-27',14);a.equal(r.xp,72);a.equal(r.minutes,30);a.equal(r.unknown,1);a.equal(r.bySphere.work,15);a.equal(r.days.length,14);});
 test('odd multi-sphere minutes retain the original integer-share semantics and conserve time',()=>{const r=m.worldProgress([],[{done:true,date:'2026-10-27',actualMin:3,skillIds:['work','body']}],{},'2026-10-27',14);a.equal(r.bySphere.work,2);a.equal(r.bySphere.body,1);a.equal(Object.values(r.bySphere).reduce((a,b)=>a+b,0),r.minutes);});
 test('recorded habit minutes go to their actual sphere without inventing time for XP-only records',()=>{const r=m.worldProgress([],[],{'2026-10-27':{h1:{min:20},h2:{xp:5}}},'2026-10-27',14,[{id:'h1',skillId:'work'},{id:'h2',skillId:'body'}]);a.equal(r.minutes,20);a.equal(r.bySphere.work,20);a.equal(r.bySphere.body,0);});
+test('progress respects the source normalized local day rather than slicing a UTC timestamp',()=>{
+ const r=m.worldProgress([],[{done:true,date:'2026-10-27',completedAt:'2026-10-26T23:30:00.000Z',actualMin:25,skillIds:['work']}],{},'2026-10-27',1);
+ a.equal(r.done,1);a.equal(r.minutes,25);
+});

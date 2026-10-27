@@ -45,7 +45,7 @@ export function worldProgress(events:any[],tasks:any[],habitlog:any,today:string
  const days=Array.from({length:range},(_,i)=>({date:shift(today,i-range+1),xp:0})),start=days[0].date,bySphere:Record<string,number>={};
  let xp=0,minutes=0,unknown=0,done=0;
  for(const e of events)if(e.date>=start&&e.date<=today){xp+=Number(e.xp)||0;const day=days.find(d=>d.date===e.date);if(day)day.xp+=Number(e.xp)||0;}
- for(const t of tasks){const date=t.completedAt?String(t.completedAt).slice(0,10):t.date;if(!t.done||date<start||date>today)continue;done++;if(t.actualMin==null){unknown++;continue;}const min=Math.max(0,Number(t.actualMin)||0);minutes+=min;const ids=t.skillIds?.length?t.skillIds:[t.skillId].filter(Boolean),base=Math.floor(min/ids.length);ids.forEach((id:string,i:number)=>bySphere[id]=(bySphere[id]||0)+base+Math.min(1,Math.max(0,min-base*ids.length-i)));}
+ for(const t of tasks){const date=t.date;if(!t.done||date<start||date>today)continue;done++;if(t.actualMin==null){unknown++;continue;}const min=Math.max(0,Number(t.actualMin)||0);minutes+=min;const ids=t.skillIds?.length?t.skillIds:[t.skillId].filter(Boolean),base=Math.floor(min/ids.length);ids.forEach((id:string,i:number)=>bySphere[id]=(bySphere[id]||0)+base+Math.min(1,Math.max(0,min-base*ids.length-i)));}
  for(const [date,logs]of Object.entries(habitlog||{}))if(date>=start&&date<=today)for(const [id,rec]of Object.entries(logs as any)as [string,any][]){const min=Math.max(0,Number(rec.min)||0);minutes+=min;const sid=habits.find(h=>h.id===id)?.skillId;if(sid)bySphere[sid]=(bySphere[sid]||0)+min;}
  return{days,xp,minutes,unknown,done,bySphere};
 }
