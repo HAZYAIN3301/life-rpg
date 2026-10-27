@@ -1,0 +1,10 @@
+// Reads only synthetic B2.10 test records from this worktree's isolated QA server.
+import fs from 'node:fs/promises';import vm from 'node:vm';import path from 'node:path';import {fileURLToPath} from 'node:url';
+process.chdir(path.dirname(fileURLToPath(import.meta.url)));
+const source=await fs.readFile('../../public/app.js','utf8'),fixture=vm.runInNewContext('('+source.match(/const TEST_USER = (\{[^\n]+\});/)[1]+')');
+const origin='http://localhost:8771',login=await fetch(origin+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:fixture.email,password:fixture.password})});if(!login.ok)throw Error('QA login failed');
+const cookie=login.headers.get('set-cookie').split(';')[0],data={};
+for(const slot of ['settings','goals','goal-groups','tasks','habits']){const r=await fetch(origin+'/api/data/'+slot,{headers:{cookie}});if(r.status===404){data[slot]=slot==='settings'?{}:[];continue;}if(!r.ok)throw Error(slot+': '+r.status);data[slot]=await r.json();}
+const label=process.argv[2]||'final';if(!/^[a-z-]+$/.test(label))throw Error('Invalid evidence label');
+const report={at:new Date().toISOString(),label,settings:{appName:data.settings.appName,lang:data.settings.lang,theme:data.settings.theme,accent:data.settings.accent,motion:data.settings.motion,xp:data.settings.xp,gold:data.settings.gold,curve:data.settings.curve,focus:data.settings.focus,skills:data.settings.skills?.filter(s=>s.name.includes('B2.10')),routine:data.settings.weeklyRoutineV1,inspirationConfigured:data.settings.inspiration?.configured},goals:data.goals.filter(g=>g.title.includes('B2.10')),groups:data['goal-groups'].filter(g=>g.title.includes('B2.10')),tasks:data.tasks.filter(t=>t.title.includes('B2.10')||['Проверить новый экран Satoru','Встреча по Satoru','Собрать план новой недели','Time with loved ones'].includes(t.title)),habits:data.habits.filter(h=>h.title.includes('B2.10'))};
+await fs.mkdir('review/b210',{recursive:true});await fs.writeFile('review/b210/'+label+'-readback.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

@@ -1,0 +1,129 @@
+{
+  "at": "2026-10-27T15:32:14.107Z",
+  "account": "Тестовый герой",
+  "tasks": [
+    {
+      "id": "24fdd5cf-209c-4c76-ad8c-929960eaea52",
+      "title": "B2.13 · Проверить перенос в приложение",
+      "date": "2026-10-27",
+      "startTime": null,
+      "estimateMin": 30,
+      "actualMin": null,
+      "done": false,
+      "core": true,
+      "xpAwarded": 0,
+      "goldAwarded": 0
+    }
+  ],
+  "notes": [
+    {
+      "id": "mvquats4qnosv",
+      "kind": "text",
+      "text": "B2.13 · Черновик быстрой мысли"
+    },
+    {
+      "id": "mvqtroy8qdch4",
+      "kind": "text",
+      "text": "B2.13 · Проверка заметки из приложения"
+    }
+  ],
+  "day": {
+    "closed": false,
+    "reflection": "B2.13 · Черновик итога не должен теряться"
+  },
+  "week": {
+    "intention": "Сохранить спокойный ритм и довести новый Satoru до проверки.",
+    "intentionSkillIdsV1": [
+      "sk__q7a9n"
+    ],
+    "dayBudgetsV1": {
+      "2026-10-26": 90
+    }
+  },
+  "preserved": {
+    "oldNote": true,
+    "oldCore": {
+      "id": "mvp8i0vmr1hdd",
+      "title": "Собрать план новой недели",
+      "skillId": "sk__q7a9n",
+      "estimateMin": 60,
+      "difficulty": "hard",
+      "date": "2026-10-27",
+      "done": false,
+      "completedAt": null,
+      "xpAwarded": 0,
+      "goldAwarded": 0,
+      "actualMin": 2,
+      "startTime": "09:00",
+      "createdAt": "2026-10-26T12:29:54.802Z",
+      "skillIds": [
+        "sk__q7a9n"
+      ],
+      "layers": [],
+      "core": false,
+      "postponedCount": 1,
+      "firstDate": "2026-10-26"
+    },
+    "worldQuest": {
+      "id": "tree-step:sk_mvprda9zik6c9:n_85d78986-7069-42aa-a96f-9ccf72d8c6bc",
+      "done": false,
+      "completedAt": null,
+      "xpAwarded": 0,
+      "goldAwarded": 0,
+      "actualMin": null,
+      "createdAt": "2026-10-27T11:40:50.137Z",
+      "title": "B2.12 · Проверить сохранение Мира",
+      "date": "2026-10-27",
+      "startTime": null,
+      "estimateMin": 30,
+      "difficulty": "normal",
+      "skillId": "sk_mvprda9zik6c9",
+      "skillIds": [
+        "sk_mvprda9zik6c9"
+      ],
+      "layers": [],
+      "core": false,
+      "treeNodeId": "n_85d78986-7069-42aa-a96f-9ccf72d8c6bc",
+      "treeSkillId": "sk_mvprda9zik6c9"
+    },
+    "goals": [
+      {
+        "id": "c403be72-1fec-4402-a091-27e381f87be6",
+        "title": "B2.10 · Проверить План",
+        "steps": [
+          {
+            "id": "562dc89a-b4c5-4a9b-88a3-3c5d0346d507",
+            "title": "Проверить связанную задачу B2.10",
+            "done": true
+          }
+        ],
+        "completedAt": "2026-10-26T21:15:05.663Z"
+      },
+      {
+        "id": "e7e2913d-17f7-44d0-973d-9e6b5870a14b",
+        "title": "B2.10 · Три проверенных сценария",
+        "steps": [],
+        "completedAt": null
+      }
+    ],
+    "purchases": [
+      {
+        "id": "p_mvqjwyh4wm8me",
+        "cost": 20
+      },
+      {
+        "id": "p_mvqk2506nzl9k",
+        "cost": 25
+      },
+      {
+        "id": "p_mvqkg3bx6zjfj",
+        "cost": 40
+      }
+    ],
+    "appearance": {
+      "lang": "ru",
+      "theme": "light",
+      "motion": true
+    }
+  }
+}

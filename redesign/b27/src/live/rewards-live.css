@@ -1,0 +1,64 @@
+/* Accepted B2.5 reward layout; additional original game owners use its surfaces. */
+.b211-rewards :is(.rw-lead,.rw-personal,.rw-owned)>.wb-icon{flex-shrink:0}
+.b211-rewards :is(.rw-row-actions button,.rw-edit){min-height:44px!important;min-width:44px!important}
+.b211-rewards .tri-section-head small{font-size:12px;color:var(--muted);font-weight:500}
+.b211-owned{min-width:0;--text:var(--ink);--text-muted:var(--muted);--border:var(--line);--bg-card:var(--paper)}
+.b211-owned :is(h2,h3,h4,p,summary,.muted){color:var(--ink)!important;-webkit-text-fill-color:currentColor;text-shadow:none}
+.b211-owned :is(p,.muted,.gear-sum){color:var(--muted)!important}
+.b211-owned :is(.card,.gear-item,.ach,.furniture-card){background:none!important;box-shadow:none!important;border:0!important;border-radius:0;color:var(--ink);max-width:100%}
+.b211-owned .card{padding:18px 0;margin:0;border-bottom:1px solid var(--line)!important}
+.b211-owned .daily-reward-card{padding-top:8px}
+.b211-owned .lb-body{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:center}
+.b211-owned .lb-chest{display:flex!important;flex-direction:column;align-items:center;gap:8px;background:none!important;color:var(--ink);border:0!important;min-width:0;width:100%;box-shadow:none!important;padding:0;grid-template-columns:none}
+.b211-owned .daily-chest-art{width:108px;height:100px;margin:auto}
+.b211-owned .lb-status{display:block;width:100%;font-size:12px;line-height:1.45;white-space:normal;word-break:normal;overflow-wrap:normal;color:var(--ink)}
+.b211-owned .lb-info{min-width:0;font-size:13px;line-height:1.6}
+.b211-owned .daily-reward-track{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:0;margin:16px 0;list-style:none}
+.b211-owned .daily-reward-step{display:flex;flex-direction:column;gap:4px;background:var(--soft)!important;border:0!important;border-radius:8px;padding:10px 8px;min-width:0;font-size:11px;color:var(--muted)}
+.b211-owned .daily-reward-step.is-earned{background:var(--selected)!important;color:var(--ink)}
+.b211-owned details>summary{padding:14px 0;cursor:pointer;font-size:14px;min-height:44px;overflow-wrap:anywhere}
+.b211-owned .rewards-disclosure-body{padding:0;background:none}
+.b211-owned :is(.coll-body,.coll-cats){min-width:0;display:block}
+.b211-owned .coll-preview{margin:12px auto 20px;max-width:160px}
+.b211-owned .cos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.b211-owned .cos-tile{display:flex!important;flex-direction:column;align-items:center;gap:6px;background:var(--soft)!important;color:var(--ink)!important;border:1px solid var(--line);box-shadow:none;min-height:110px;min-width:0;max-width:100%}
+.b211-owned .cos-tile.eq{border-color:var(--action);outline:1px solid var(--action)}
+.b211-owned .gear-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;overflow:visible}
+.b211-owned .gear-item{min-width:0;padding:14px 0;border-bottom:1px solid var(--line)!important;text-align:left}
+.b211-owned .gear-item.equipped{background:var(--selected)!important;padding:12px;border-radius:10px}
+.b211-owned .gear-item :is(.gear-nm,.gear-bonus){color:var(--ink)!important;overflow-wrap:anywhere}
+.b211-owned .gear-slot-h{margin:16px 0 6px;color:var(--ink)}
+.b211-owned .furniture-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.b211-owned .furniture-card{display:flex!important;flex-direction:column;grid-template-columns:none;min-width:0;padding:14px 0;border-bottom:1px solid var(--line)!important}
+.b211-owned .furniture-card img{object-fit:contain;width:100%;height:130px}
+.b211-owned .furniture-card button{width:100%;font-size:12px}
+.b211-owned :is(.ach-grid){display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px}
+.b211-owned .ach{display:flex!important;flex-direction:column;align-items:flex-start;padding:12px 0;opacity:1;min-width:0;border-bottom:1px solid var(--line)!important}
+.b211-owned .ach .ach-desc{color:var(--muted)}
+.b211-owned .ach:not(.got) .ach-icon{opacity:.45}
+.b211-owned .gold-goal{display:block!important}
+.b211-owned .gold-goal img{width:140px;height:120px;object-fit:contain;float:none;display:block}
+.b211-owned .gold-goal-copy{width:100%;min-width:0}
+.b211-owned .gold-goal-actions{display:flex;gap:8px;flex-wrap:wrap}
+.b211-owned .gold-goal-actions button{min-width:120px;flex:1}
+.b211-owned :is(.voucher-chip,.title-chip){background:var(--soft);color:var(--ink);border:1px solid var(--line);white-space:normal}
+.b211-owned .btn{display:inline-flex!important;align-items:center;justify-content:center;gap:6px;white-space:normal;background:var(--action)!important;color:var(--on-action)!important;min-height:44px;border-radius:9px;border:0}
+.b211-owned :is(.inline-emblem,.button-emblem,.cost-emblem,.slot-emblem){display:inline-block!important;width:20px!important;height:20px!important;min-width:20px;flex:0 0 20px;vertical-align:middle}
+.b211-owned .heading-emblem{display:inline-block;width:26px;height:26px;vertical-align:middle}
+.b211-owned .btn.ghost{background:var(--soft)!important;color:var(--ink)!important}
+.b211-owned .capsule-odds li{color:var(--ink);background:none!important;border-color:var(--line)}
+.b211-owned :is(.capsule-odds,.lb-hist){background:none!important;border:0!important;box-shadow:none!important;padding:0}
+.b211-owned .daily-reward-fairness{background:var(--soft)!important;color:var(--muted)!important;border-color:var(--line)}
+.b211-owned :is(.ach-date,.ach-desc,.cos-rarity){color:var(--muted)!important}
+.b211-owned :is(.cos-name,.cos-cost,.ach-title,.ach-prog){color:var(--ink)!important}
+.b28-live .modal-overlay :is(.economy-confirm-box,.reward-catalog-box,.furniture-preview-box,.loot-ceremony,.loot-box){background:var(--paper)!important;color:var(--ink)!important;font-family:Manrope,sans-serif;border:0;border-radius:16px;max-width:min(720px,calc(100vw - 24px));box-shadow:0 2px 6px #0003,0 22px 56px #0005}
+.b28-live .modal-overlay .economy-confirm-kicker{display:none}
+.b28-live .modal-overlay :is(.economy-confirm-box,.reward-catalog-box,.furniture-preview-box,.loot-ceremony) :is(h2,h3,p){color:var(--ink)!important;text-shadow:none}
+.b28-live .modal-overlay .economy-confirm-actions{display:flex;gap:10px;flex-wrap:wrap}
+.b28-live .modal-overlay .economy-confirm-actions button{flex:1;min-width:120px}
+.b28-live .modal-overlay .rwc-row{color:var(--ink);border-color:var(--line)}
+.b28-live .modal-overlay .loot-capsule-result{color:var(--ink);background:var(--soft);border-color:var(--line)}
+.b211-rewards :is(input,textarea){caret-color:var(--action)}
+.b211-rewards summary:focus-visible{outline:2px solid var(--action);outline-offset:3px}
+@media(min-width:900px){.b211-rewards .rw-catalog{grid-template-columns:repeat(3,minmax(0,1fr))}.b211-owned .lb-body{grid-template-columns:140px minmax(0,1fr)}.b211-owned .daily-chest-art{width:130px;height:120px}}
+@media(prefers-reduced-motion:reduce){.b211-owned *{animation:none!important;transition:none!important}}

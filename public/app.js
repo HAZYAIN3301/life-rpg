@@ -6396,6 +6396,7 @@ async function commitmentDataCommit(build, focusSelector = '') {
         settings: candidateSettings,
         tasks: structuredClone(State.tasks),
       });
+      if(candidate&&window.SatoruLiveModel)candidate.settings=window.SatoruLiveModel.reconcileRewardTasks(candidate.settings,candidate.tasks,Store._persisted?.tasks?.value||[],State.purchases||[],new Date().toISOString());
       if (!candidate || !validateSettingsPayload(candidate.settings) || !validateTasksPayload(candidate.tasks)
         || !validator.validateCommitPayload({ base, data: candidate })) return false;
       let response;
@@ -8126,7 +8127,7 @@ async function completeTask(task, desire, onDate) {
       settings.commitmentsV1 = commitmentApi.archive(commitments, activeCommitmentId, completionDay);
       return { settings, tasks };
     }, `[data-action="toggle-task"][data-id="${CSS.escape(String(task.id))}"]`)
-    : await Store.saveNow('tasks', State.tasks);
+    : task.rewardPurchaseId ? await commitmentDataCommit(({settings,tasks})=>({settings,tasks})) : await Store.saveNow('tasks', State.tasks);
   if (!saved) {
     if (!task.entry) State.tasks[taskIndex] = beforeTask;
     restoreFocusTimerSnapshot(timerSnapshot);
@@ -13645,7 +13646,7 @@ function focusSessionSync() {
   if (!_focusSessionSync) _focusSessionSync = window.FocusSessionSyncV1.create({
     account: () => State.me?.id || '', storage: localStorage,
     request: row => fetch('/api/focus/sessions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ accountId: State.me?.id, session: row }) }),
-    changed: () => { for (const host of document.querySelectorAll('[data-focus-sync-host]')) host.innerHTML = focusSyncNotice(); },
+    changed: () => { for (const host of document.querySelectorAll('[data-focus-sync-host]')) host.innerHTML = focusSyncNotice(); queueMicrotask(() => window.SatoruLiveBridge?.emit()); },
   });
   return _focusSessionSync;
 }
@@ -24474,7 +24475,7 @@ function startChestReel(overlay) {
   }
   const result = chestPrizeDisplay(overlay._reward);
   if (!result) { overlay._revealTimer = setTimeout(() => revealCosmeticCapsule(overlay), 1000); return; }
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduceMotion = State.settings?.motion === false || window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const reel_ = C.buildReel({
     pool: overlay._capsulePool, result, seed: result.id,
     durationMs: reduceMotion ? C.MIN_DURATION_MS : Math.min(700, C.DEFAULT_DURATION_MS),
@@ -24728,7 +24729,7 @@ async function commitEconomyConfirmation(overlay) {
     if (goldBalance() < data.cost) { payload = null; status.textContent = t('Недостаточно золота'); }
     else {
       guideReceiptId = 'p_' + uid();
-      const next = [...(State.purchases || []), { id: guideReceiptId, rewardId: data.id, name: data.name, cost: data.cost, at: new Date().toISOString() }];
+      const next = [...(State.purchases || []), { id: guideReceiptId, rewardId: data.id, name: data.name, cost: data.cost, at: new Date().toISOString(), ...(window.SatoruLiveModel?.rewardReceiptArt(State.rewards.find(r=>r.id===data.id))||{}) }];
       payload = { purchases: next }; apply = () => { State.purchases = next; }; success = `${t('Куплено')}: ${data.name}`;
     }
   } else if (data.kind === 'gear') {
@@ -30884,7 +30885,7 @@ function labelSettingsControls() {
   });
 }
 function commitMainView(main, staging, view) {
-  window.InterfaceCompositionV1?.apply(staging, view, {t, roomSrc:view === 'today' ? denMasterFor(ensureDen()).src : ''});
+  if(!main.classList.contains('b210-owned'))window.InterfaceCompositionV1?.apply(staging, view, {t, roomSrc:view === 'today' ? denMasterFor(ensureDen()).src : ''});
   // Async settings loads must not close the destination just revealed by a
   // support action. Keep only presentation state within the same live route.
   if (_renderedMainView === view && view === 'settings') {
@@ -36830,7 +36831,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v342';
+const PWA_CACHE_VERSION = 'satoru-v344';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -36965,6 +36966,7 @@ function applyEntryRoute() {
   // Ноль тапов между «открыл» и «делаю» — бэклог «Трение» (fb_mrnivhqrssjx).
   if (intent.action === 'dayrec' || intent.action === 'capture') {
     State.view = 'today';
+    if(intent.action==='capture')State._liveEntryFocus='capture';
     setTimeout(() => {
       try {
         if (intent.action === 'dayrec') { openDayRecap(); track('shortcut:dayrec'); }
@@ -36993,6 +36995,7 @@ function focusActivatedControl(event) {
   control.focus({ preventScroll: true });
 }
 async function init() {
+  window.SatoruAppStartup?.();
   captureEntryRoute();
   initPWA();
   initBrowserCompanionBridge();
@@ -37119,7 +37122,8 @@ async function init() {
 
   // Проверяем текущую сессию
   try {
-    const r = await fetch('/api/auth/me');
+    // Welcome preview keeps the real auth listeners without logging the account out.
+    const r = document.documentElement.dataset.satoruMode === 'review' && new URLSearchParams(location.search).get('welcome') === '1' ? { ok: false } : await fetch('/api/auth/me');
     if (r.ok) { State._accountSessionExpired = false; State.me = await r.json(); await initApp(); return; }
   } catch {}
 

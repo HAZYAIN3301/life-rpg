@@ -1,0 +1,29 @@
+/* Source-owned notes, board and day closing inside the accepted B2.5 layout. */
+.b213-owned :is(.capture-glyph,.note-kind-icon){display:inline-flex;width:22px;height:22px;flex:0 0 22px;vertical-align:middle}
+.b213-owned :is(.capture-glyph,.note-kind-icon)>svg{width:100%;height:100%}
+.b213-owned .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.b213-owned .cap-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start}
+.b213-owned .cap-add{padding:10px 14px;background:var(--action);color:var(--on-action);border:0}
+.b213-owned .capture-status{grid-column:1/-1;font-size:12px;color:var(--muted)}
+.b213-owned :is(.capture-secondary,.cap-rec,.note-acts){display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:10px}
+.b213-owned .cap-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:10px;background:var(--soft);color:var(--ink);border:0}
+.b213-owned .cap-btn:first-child{background:var(--action);color:var(--on-action)}
+.b213-owned .notes-list{display:block;list-style:none;margin:0;padding:0}
+.b213-owned .note-preview{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.b213-owned .note-preview h3{font-size:14px!important;line-height:1.6;margin:0;overflow-wrap:anywhere;flex:1;min-width:0;font-weight:650}
+.b213-owned .note-preview::after{content:'+';font-size:20px;line-height:1;min-width:20px;text-align:center;color:var(--muted)}
+.b213-owned .note-disclosure[open]>.note-preview::after{content:'−'}
+.b213-owned .note-when{display:flex;gap:7px;align-items:center;font-size:11px;white-space:nowrap}
+.b213-owned .note-editor{padding-top:16px}
+.b213-owned .note-media{display:block;max-width:100%;width:100%;margin:0 0 14px;border-radius:8px}
+.b213-owned .note-save-status{min-height:20px;margin:6px 0}
+.b213-owned .note-acts .del{display:inline-flex;align-items:center;justify-content:center;background:transparent;color:var(--muted);border:0;padding:10px;margin-left:auto}
+.b213-owned .note-acts .del .button-glyph{display:inline-flex}
+.b213-owned .shutdown{display:block;background:none;border:0;margin:0;padding:0}
+.b213-owned .shutdown>summary{display:none}
+.b213-owned .shutdown label{display:block;margin:12px 0 6px}
+.b213-owned .shutdown :is(.theme-row,.shutdown-actions){display:flex;gap:8px;flex-wrap:wrap}
+.b213-owned .shutdown textarea{margin:8px 0}
+.b28-live .modal-overlay :is(.note-delete-box,.dayrec-box){background:var(--paper);color:var(--ink);font-family:Manrope,sans-serif;border:0;border-radius:16px;padding:24px;max-width:min(620px,calc(100vw - 24px));box-shadow:0 22px 56px #0005}
+.b28-live .modal-overlay :is(.note-delete-box,.dayrec-box) :is(h2,h3,p){color:inherit}
+@media(max-width:600px){.b213-owned .note-preview{flex-wrap:wrap}.b213-owned .note-preview h3{flex-basis:calc(100% - 32px)}.b213-owned .note-preview::after{order:0}.b213-owned .note-when{order:1;flex-basis:100%;white-space:normal}.b213-owned .note-when .note-kind-icon{display:none}}

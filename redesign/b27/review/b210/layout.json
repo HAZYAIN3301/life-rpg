@@ -1,0 +1,13 @@
+{
+  "mobile": {
+    "lang": "ru",
+    "page": 375,
+    "theme": "wb palette-ink route-plan",
+    "width": 375
+  },
+  "errors": [],
+  "desktop": {
+    "page": 1280,
+    "width": 1280
+  }
+}

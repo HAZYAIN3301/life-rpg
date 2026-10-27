@@ -1,0 +1,165 @@
+{
+  "at": "2026-10-26T21:29:24.120Z",
+  "label": "routine-skipped",
+  "settings": {
+    "lang": "ru",
+    "theme": "light",
+    "accent": "#6c8cff",
+    "xp": {
+      "perMinute": 1,
+      "completionBonus": 5,
+      "difficulty": {
+        "easy": 1,
+        "normal": 1.5,
+        "hard": 1.75
+      }
+    },
+    "gold": {
+      "perMinute": 0.4,
+      "completionBonus": 3
+    },
+    "curve": {
+      "base": 100,
+      "growth": 1.3,
+      "skillBase": 60
+    },
+    "focus": {
+      "pomodoro": true,
+      "workMin": 30,
+      "breakMin": 5,
+      "sound": true,
+      "notify": true
+    },
+    "skills": [
+      {
+        "id": "sk_mvprda9zik6c9",
+        "name": "B2.10 · Дизайн",
+        "color": "#e67185",
+        "colorMode": "auto",
+        "parentId": "sk__q7a9n"
+      }
+    ],
+    "routine": {
+      "blocks": [
+        {
+          "day": 1,
+          "start": "18:05",
+          "end": "18:47",
+          "minutes": 42,
+          "title": "B2.10 · Дизайн по понедельникам",
+          "skillId": "sk_mvprda9zik6c9",
+          "fixed": true,
+          "outdoor": false,
+          "every": 2,
+          "week": 1,
+          "id": "r-32e65c63-94e3-4a8b-971e-9d04e40f40b1"
+        }
+      ],
+      "from": "09:00",
+      "to": "18:00",
+      "cycleStart": "2026-10-26",
+      "text": "",
+      "skips": [
+        "r-32e65c63-94e3-4a8b-971e-9d04e40f40b1|2026-10-26"
+      ]
+    }
+  },
+  "goals": [
+    {
+      "id": "c403be72-1fec-4402-a091-27e381f87be6",
+      "createdAt": "2026-10-26T21:14:32.896Z",
+      "status": "active",
+      "completedAt": "2026-10-26T21:15:05.663Z",
+      "archived": false,
+      "steps": [
+        {
+          "id": "562dc89a-b4c5-4a9b-88a3-3c5d0346d507",
+          "title": "Проверить связанную задачу B2.10",
+          "done": true
+        }
+      ],
+      "title": "B2.10 · Проверить План",
+      "description": "Синтетическая проверка целей, шагов и календаря.",
+      "type": "short",
+      "skillId": "sk__q7a9n",
+      "skillIds": [
+        "sk__q7a9n"
+      ],
+      "backgroundSkillIds": [],
+      "parentId": null,
+      "groupId": null,
+      "targetDate": null,
+      "metric": null,
+      "progressKind": "checklist",
+      "xpReward": 75
+    }
+  ],
+  "groups": [],
+  "tasks": [
+    {
+      "id": "5d4c5582-a2ca-49c9-92fc-937e3d99071d",
+      "done": true,
+      "completedAt": "2026-10-26T16:08:25.594Z",
+      "xpAwarded": 50,
+      "goldAwarded": 21,
+      "actualMin": 2,
+      "createdAt": "2026-10-26T15:58:03.981Z",
+      "title": "Проверить новый экран Satoru",
+      "date": "2026-10-26",
+      "startTime": null,
+      "estimateMin": 30,
+      "difficulty": "normal",
+      "skillId": "sk__q7a9n",
+      "skillIds": [
+        "sk__q7a9n"
+      ],
+      "layers": [],
+      "core": true,
+      "desire": null
+    },
+    {
+      "id": "8c33a422-3964-4ec6-ae31-318dd1fe3c87",
+      "done": false,
+      "completedAt": null,
+      "xpAwarded": 0,
+      "goldAwarded": 0,
+      "actualMin": null,
+      "createdAt": "2026-10-26T16:49:07.428Z",
+      "title": "Встреча по Satoru",
+      "date": "2026-10-26",
+      "startTime": "09:05",
+      "estimateMin": 30,
+      "difficulty": "normal",
+      "skillId": "sk__q7a9n",
+      "skillIds": [
+        "sk__q7a9n"
+      ],
+      "layers": [],
+      "core": false
+    },
+    {
+      "id": "ccf0059b-94cf-44c3-a666-228ff5017863",
+      "title": "Проверить связанную задачу B2.10",
+      "goalId": "c403be72-1fec-4402-a091-27e381f87be6",
+      "stepSourceId": "562dc89a-b4c5-4a9b-88a3-3c5d0346d507",
+      "skillId": "sk__q7a9n",
+      "skillIds": [
+        "sk__q7a9n"
+      ],
+      "layers": [],
+      "estimateMin": 30,
+      "difficulty": "normal",
+      "date": "2026-10-26",
+      "done": true,
+      "completedAt": "2026-10-26T21:15:05.622Z",
+      "xpAwarded": 50,
+      "goldAwarded": 21,
+      "actualMin": null,
+      "startTime": null,
+      "createdAt": "2026-10-26T21:14:52.708Z",
+      "desire": null,
+      "stepTicked": true
+    }
+  ],
+  "habits": []
+}

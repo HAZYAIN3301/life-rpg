@@ -1,3 +1,132 @@
+## Codex 27.10 — B2.13: B2.5 в корне приложения
+
+По поручению владельца перенесены структура/Сегодня/План в основной `/`.
+Один canonical app.js от master, startup до init, approved UI; B26 не подключается.
+Полные source Notes/Board/закрытие дня, media controls, unsent scoped drafts,
+native/B3 result→navigation projection без второго parser; прежние auth и data owners.
+Plan goals/calendar/routine/inspiration/настройки сохранены, focus panel подключён.
+SW344/asset pins, явный model export из startup. Сохранение/reload/фокус/close-reopen
+проверены на QA аккаунте.174 live +3387 source concurrency2;18 Swift core и byte
+contracts, Simulator build/install/launch. Native visual QA не засчитан из-за ошибки
+ScreenCaptureKit; не проверка iPhone. Детали/границы: redesign/b27/B213-QA.md.
+Без push/deploy/production origin changes. Чистый кандидат отдельно от истории d203502b.
+
+## Codex 27.10 — B2.12: Мир на данных аккаунта в B2.5
+
+LiveWorld сохраняет пять принятых подразделов и подключает исходных владельцев:
+hero/avatar/wardrobe/profile/body/collection; реальные topSkills/pets/fortune/wear,
+Тень с дневными care markers/journal; State.tree V4 с capability/practice/points,
+редактором/графом/перетаскиванием/AI-map; source XP/уровни/stats и episodes CRUD.
+Время отличает actualMin=0 и неизвестное, не подставляет estimates; сферы делят
+минуты с сохранением суммы, привычки учитываются по записанной длительности.
+Подтверждение вехи+журнал атомарно, nextAction создаёт один связанный task;
+retry сохраняет candidate identity, actor/epoch/load guards. Эпизоды — original
+Store.updateNow owner (economy endpoint ими не владеет). Source popups не остаются
+под native dialog, source отказы видны. Den renderer отделён от данных будущего3D.
+
+165 live/model/baseline +72 исходных domain tests; TypeScript/build/syntax/diff.
+UI375/1280 light/dark, persisted QA readback/reload: wardrobe/pet look/name,
+свет, веха/доказательство/один квест, care без дубля, bonus points, drag/reverse,
+эпизод create/edit/delete без золота и минут. QA: redesign/b27/B212-QA.md.
+public app/index/styles и generated B2.5, auth/B3/attention/native/3D не правились.
+Без remote/push/deploy. Не выпускать ветку с отклонённым d203502b целиком.
+
+## Codex 27.10 — B2.11: реальные Награды в B2.5
+
+LiveRewards сохраняет Личные/Каталог/Полученные, свои награды с картинкой и правкой,
+закрепление на Сегодня, статусы/отдых и всю историю. Покупка/удаление/Guide остаются
+на исходном economy confirmation/commit; lifecycle — RewardLifeV1, без переписывания
+purchase receipts. Отдых-квест и его дата/complete/undo — тот же settings/tasks WAL,
+с сохранением фактического времени и памяти переноса. Накопление мебели независимо.
+Через исходные owners перенесены сундуки/ваучеры/вероятности, косметика/звания,
+gear/реликвии, мебель/примерка и48 настоящих достижений. Preview40gold удалён изlive.
+
+144+233 целевых теста, TypeScript/esbuild/syntax/diff; UI375/1280 light/dark,
+API/reload: три покупки20/25/40, одна выдача40, баланс34; own image, delete с
+сохранением истории, defer/restore, rest/complete/undo и перенос на28.10.
+Найден и исправлен optional image:undefined в strict receipt; добавлены тесты
+фактического compiled confirmation, retry/double tap/account. Исправлены source
+mobile grid/icon sizing и contrast. QA redesign/b27/B211-QA.md.
+
+Только изолированный live entry; default shell/native/auth/B3/attention/3D не
+менялись. Нет публикации/подагентов/новых расходов. Физический iPhone/full suite,
+полная locale/a11y/offline матрица не заявлены; Мир/Племя и редактор Логова отдельно.
+Отклонённый d203502b в истории — ветку целиком не выпускать.
+
+## Codex 26.10 — B2.10: План и полные настройки B2.5
+
+Цели/проекты/шаги/метрики/сроки/карта подключены к исходному goalDataCommit;
+расписание — отдельный слой RoutineV2 с чередованием и исключениями, без долга.
+Сохранена исходная мастерская недели. Привычки и Вдохновение перешли с demo на
+живые owners. Полный settings DOM сохранён внутри B2.5 shell: сферы/вложенность,
+цвета/ритм, фокус/экономика, языки/темы/акцент/движение, профиль/пароль/PIN,
+подключения и данные. Навигация ждёт durable autosave; секреты не в snapshot.
+
+131+100 targeted tests, TypeScript/esbuild/syntax и diff PASS; browser375/1280,
+изолированный Тестовый герой и GET readback: цель/квест, метрика2/3, проект,
+вложенный навык, расписание18:05–18:47 раз в две недели, skip/restore,
+мастерская переноса, привычка, профиль Вдохновения, язык/тема/акцент/движение/
+имя приложения. Сохранены фактическое время и настройки экономики. QA:
+redesign/b27/B210-QA.md. Исправлены time inputs, ancestor traversal, hash path,
+settings visibility/overlap и cache pins live bundles.
+
+Local entry только; native/production/auth/B3/attention/3D не менялись.
+Нет push/deploy/подагентов/новых расходов. Физический iPhone, все языки,
+credential submit/реальные интеграции и полный release gate остаются.
+Мир/Награды/Племя пока preview; отклонённый d203502b не выпускать целиком.
+
+## Codex 26.10 — B2.9: новый старт и календарь B2.5
+
+Стартовая поверхность входа/регистрации/восстановления получила композицию B2.5
+с существующими ассетами и исходными auth-формами. Preview welcome не завершает
+сессию и не пропускает init/event listeners. Перенесён календарь день/неделя/месяц
+с реальными сферами/задачами, намерением недели/лимитом дня, переносом и undo.
+WAL снимает прежнюю границу; undo восстанавливает память переноса без оживления
+границы и без потери фактических минут. Исправлен Host/Origin локального proxy.
+
+110+43 targeted tests, build/syntax PASS; browser 375/1280, HTTP readback 09:05,
+сохранение actual и экономики, iOS Simulator visual startup. QA B29-QA.md описывает
+непроверенные сценарии и остаток. Просмотр запускается npm run review --prefix
+redesign/b27; phone.html?screen=start и live.html#plan. Native/prod/3D неизменны,
+публикации и подагентов нет. Следом: цели/шаги и постоянное расписание.
+
+## Codex 26.10 — B2.7/B2.8: принятому UI подключено Сегодня
+
+B2.7 сохранён в 0f66144b: исходные компоненты B2.5 плюс Время/Настройки.
+B2.8 добавляет отдельный live entry с действующим Store/экономикой: квесты,
+completion/undo, минуты фокуса, текстовые заметки, итог и привычки. Штатный чат
+Тени доступен из сцены/кружка. Успех после receipt; формы не исчезают при отказе,
+банковское намерение минут переживает потерю ответа без двойной дельты.
+
+98 model/regression tests + 51 профильный domain test, TypeScript/esbuild;
+browser 375/390/1280 и iOS Simulator. Реальный HTTP readback: 2 мин без completion,
+затем выполненный квест 50 XP/21 gold, заметка, итог и привычка. Исправлены theme
+leak, stale task после банка, toast-host и pending sync. QA: redesign/b27/B28-QA.md.
+Просмотр localhost:8771/redesign/phone.html. Остальные разделы — B2.7 preview;
+voice/video и полный runtime-перенос не заявляются. Native/auth/B3/attention,
+production и отдельный 3D-трек не менялись; публикации нет. Следом календарь Плана.
+Ветка включает отклонённый d203502b: не публиковать её целиком.
+
+## Codex 26.10 — B2.6 отклонён, продолжать от B2.5
+
+Владелец указал на возврат старого дизайна. Сравнение подтвердило: сохранены
+старые renderers под новой темой, компоненты B2.5 не перенесены. Технические
+проверки ниже не доказывают визуальную приёмку. B2.6 не публиковать.
+Продолжение: принятые компоненты/стили/сценарии B2.5 плюс адаптер реальных данных,
+затем прямое сравнение экранов. Корректный перенос ещё не реализован.
+
+### B2.6 / v343 — история отклонённого эксперимента
+
+Принятая владельцем структура B2.5: пять основных разделов, План включает
+привычки/Вдохновение, Мир объединяет развитие. Время и Настройки — в шапке.
+Новые экраны используют действующие данные, таймер и очередь сохранения. Сегодня
+содержит отдельный scene-host на существующих ассетах для последующей замены на 3D.
+Контракт REDESIGN-B26.md, квитанция docs/redesign/B26-RUNTIME-QA.md.
+3391/3391 tests; 44/44 после точечных правок; native contracts PASS; iOS Simulator
+Debug build SUCCEEDED и локальный WKWebView запуск. Не production-публикация.
+Server readback ru/light/workMin=30, actualMin=2 при done=false. 3D, auth и сервер
+не менялись. Остаток переноса B2.4/B2.5 описан в QA, чужой checkout сохранён.
+
 ## Codex 20.10 — база анимации для всех агентов
 
 В `docs/animation/` перенесены собственные конспекты Williams/Spine с переносимой

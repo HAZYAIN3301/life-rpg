@@ -1,0 +1,56 @@
+body.b29-start{margin:0;background:#242836;color:#f4f0e7;overflow:auto}
+body.b29-start #app{margin:0;padding:0;width:100%;max-width:none;min-height:100dvh}
+.wb.start-screen{height:auto;min-height:100dvh;max-width:1240px;padding:0 44px 44px;overflow:visible;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(340px,.8fr);gap:0 48px}
+.start-header{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:20px;height:96px;color:#f4f0e7}
+.start-brand{display:flex;align-items:center;gap:9px;font-size:29px;font-weight:800;letter-spacing:-.03em}
+.start-mark{display:inline-block;color:var(--gold);font-size:40px;transform:rotate(-12deg)}
+.start-screen .start-language select{min-width:114px;width:auto;background:var(--deep);color:#f4f0e7;border:1px solid #737989;border-radius:9px;padding:10px 12px;font-size:13px;cursor:pointer}
+.start-world{align-self:center;min-width:0;color:#f4f0e7}
+.start-intro{max-width:500px;padding:18px 0 28px}
+.start-screen .start-intro h1{font:800 clamp(38px,4.1vw,58px)/1.08 Manrope,sans-serif;letter-spacing:-.035em;white-space:pre-line;text-wrap:balance;color:#f4f0e7;margin:0 0 18px}
+.start-screen .start-intro p{font-size:16px;line-height:1.65;max-width:34ch;color:#c6c9d5;margin:0}
+.start-scene{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:16px;background:#534d3b}
+.start-scene img{display:block;position:absolute;object-fit:contain;pointer-events:none}
+.start-room{inset:0;width:100%;height:100%;filter:brightness(.84) saturate(.9)}
+.start-hero{height:98%;width:39%;right:7%;bottom:0}
+.start-pet{height:42%;width:24%;left:34%;bottom:5%}
+.start-shadow{width:24%;height:58%;bottom:12%;left:12%;animation:start-shadow-idle 5s ease-in-out infinite}
+@keyframes start-shadow-idle{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.start-panel{background:var(--paper);border-radius:16px;padding:30px;align-self:center;min-width:0;color:var(--ink);margin-top:12px}
+.start-screen .start-title{font:800 26px/1.25 Manrope,sans-serif;letter-spacing:-.025em;margin:24px 0;color:var(--ink)}
+.start-screen .auth-box{width:100%;max-width:none;padding:0;margin:0;border:0;border-radius:0;background:none;box-shadow:none}
+.start-screen .auth-box label{display:block;font:700 12px/1.5 Manrope,sans-serif;color:var(--ink);margin:17px 0 7px}
+.start-screen .auth-box input:not([type=checkbox]){font:500 16px/1.5 Manrope,sans-serif;display:block;min-height:48px;width:100%;color:var(--ink);background:#fffdf7;border:1px solid #969a98;border-radius:9px;padding:11px 12px;caret-color:var(--action);box-shadow:none}
+.start-screen .auth-box input::placeholder{color:var(--muted)}
+.start-screen .auth-box input:focus-visible,.start-screen select:focus-visible{outline:3px solid #85602d;outline-offset:3px}
+.start-screen .auth-box .btn{font:750 14px/1.4 Manrope,sans-serif;min-height:48px;border:0;border-radius:9px;background:var(--action);color:var(--on-action);box-shadow:none;padding:12px 16px;margin-top:20px}
+.start-screen .auth-box .btn.ghost{background:var(--soft);color:var(--ink)}
+.start-screen .auth-box button.btn[type=submit]{background:var(--action);color:var(--on-action)}
+.start-screen .auth-box [type=submit]:disabled{opacity:.55;cursor:wait}
+.start-screen .auth-links{display:block;text-align:right;margin:16px 0 0}
+.start-screen .auth-links button{padding:8px 0;text-decoration:underline;text-underline-offset:4px;font-size:12px}
+.start-modes{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.start-screen .start-modes button{border-radius:0;flex:1;font-size:13px;border-bottom:3px solid transparent;padding-bottom:12px}
+.start-screen .start-modes [aria-current=page]{border-bottom-color:var(--action);font-weight:800}
+.start-password{position:relative}
+.start-screen .auth-box .start-password input{padding-right:52px}
+.start-screen .start-password-toggle{position:absolute;right:2px;top:2px;width:44px;height:44px;min-height:44px;padding:11px;background:none;border:0;color:var(--muted)}
+.start-password-toggle svg{width:22px;height:22px}
+.start-screen .pin-error:not(:empty){background:#fbe7db;color:#842f29;padding:12px;border-radius:9px;font-size:13px;margin:14px 0 0}
+.start-screen .pin-error:empty{display:none}
+.start-screen .auth-box :is(.privacy-note,.muted){color:var(--muted);font-size:12px;line-height:1.65}
+.start-screen .auth-box .privacy-note{margin:20px 0 12px}
+.start-screen .legacy-login,.start-test{font-size:12px;border-top:1px solid var(--line);margin-top:22px;padding-top:16px}
+.start-screen summary{cursor:pointer;min-height:44px;padding:10px 0;color:var(--muted)}
+.start-screen .profiles-grid{grid-template-columns:1fr;gap:8px;margin-top:10px}
+.start-screen .profile-card{color:var(--ink);background:var(--soft);border-color:var(--line);box-shadow:none}
+.start-screen .av-grid{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 18px}
+.start-screen .av-btn{background:var(--soft);border:1px solid transparent;min-width:44px;height:44px;padding:7px;border-radius:8px}
+.start-screen .av-btn.sel{border-color:var(--action);background:var(--selected)}
+.start-screen .registration-language-option{width:100%;display:flex;justify-content:flex-start;background:var(--soft);border:1px solid transparent;border-radius:9px;padding:12px;margin:8px 0}
+.start-screen .registration-language-option.active{border-color:var(--action);background:var(--selected)}
+.start-screen ::selection{background:var(--selected);color:var(--ink)}
+.start-screen{scrollbar-color:#737989 #242836;scrollbar-width:thin}
+@media(max-width:799px){.wb.start-screen{display:block;padding:0 16px 32px}.start-header{height:76px}.start-brand{font-size:26px}.start-screen .start-intro{padding:8px 8px 18px}.start-screen .start-intro h1{font-size:34px;white-space:normal;max-width:11ch;margin-bottom:12px}.start-screen .start-intro p{font-size:13px;max-width:34ch}.start-scene{margin:0 0 -16px;border-radius:12px 12px 0 0}.start-panel{position:relative;margin:0;padding:24px 22px;border-radius:16px}.start-screen .start-title{font-size:24px;margin:20px 0}.start-screen .auth-box label{margin-top:14px}}
+@media(prefers-reduced-motion:reduce){.start-shadow{animation:none}}
+@media(max-width:799px){.start-header{height:68px}.start-screen .start-intro{padding:4px 8px 12px}.start-screen .start-intro h1{font-size:30px;margin-bottom:8px}.start-panel{padding:20px 22px}.start-screen .start-title{margin:16px 0}}

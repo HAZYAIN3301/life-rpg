@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-27T11:14:24.134Z",
+  "liveTests": 144,
+  "domainTests": 233,
+  "failed": 0,
+  "build": "PASS",
+  "syntax": "PASS",
+  "wallet": {
+    "initial": 79,
+    "chestCredit": 40,
+    "debits": [
+      20,
+      25,
+      40
+    ],
+    "final": 34
+  },
+  "purchaseHistoryPreservedAfterEditAndDelete": true,
+  "oneLinkedQuestWithAtomicLifecycle": true,
+  "oldTaskMinutesAndAwardsPreserved": true,
+  "settingsAndInventoryPreserved": true,
+  "themeRestored": "ru/light",
+  "defaultEntryAndAcceptedComponentsUnchanged": true,
+  "browserErrors": [],
+  "physicalIPhoneChecked": false,
+  "productionPublished": false
+}

@@ -1,0 +1,8 @@
+{
+  "name": "satoru-redesign-b27",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {"build": "node build.mjs && node build-live.mjs", "test": "node --test *.test.cjs", "review":"node start-review.mjs"},
+  "dependencies": {"react": "19.1.1", "react-dom": "19.1.1"},
+  "devDependencies": {"esbuild": "0.25.11", "typescript": "5.9.3", "@types/react": "19.1.16", "@types/react-dom": "19.1.9"}
+}

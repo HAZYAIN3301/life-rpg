@@ -1,0 +1,3 @@
+const test=require('node:test'),assert=require('node:assert/strict'),M=require('./.checks/live-model.cjs');
+test('every account accent remains readable as a link and a filled action in both themes',()=>{for(const dark of [false,true])for(const accent of ['#6c8cff','#22c1a4','#e0526a','#b06ff0','#e0a23e','#4f9ff7']){const tone=M.accessibleAccent(accent,dark);assert.ok(M.contrast(tone,dark?'#292d3b':'#f4f0e7')>=4.5);assert.ok(M.contrast(tone,M.accentText(tone))>=4.5);}});
+test('malformed legacy accents do not become executable CSS or unreadable text',()=>{for(const value of ['url(https://example.invalid)','red','',null])assert.equal(M.accessibleAccent(value,false),'#424760');});

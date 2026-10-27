@@ -1,0 +1,2 @@
+const Module=require('node:module'),fs=require('node:fs'),path=require('node:path');
+for(const [file,alias] of [['./regression-fixtures/daily.cjs','daily-regression.cjs'],['./regression-fixtures/plan.cjs','plan-regression.cjs']]){const m=new Module(path.join(__dirname,alias),module);m.filename=path.join(__dirname,alias);m.paths=module.paths;m._compile(fs.readFileSync(path.join(__dirname,file),'utf8'),m.filename);}

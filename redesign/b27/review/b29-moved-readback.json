@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-26T16:45:15.898Z",
+  "phase": "moved",
+  "tasks": [
+    {
+      "title": "Собрать план новой недели",
+      "date": "2026-10-27",
+      "startTime": null,
+      "estimateMin": 60,
+      "actualMin": 2,
+      "done": false,
+      "xpAwarded": 0,
+      "goldAwarded": 0,
+      "postponedCount": 1
+    },
+    {
+      "title": "Проверить новый экран Satoru",
+      "date": "2026-10-26",
+      "startTime": null,
+      "estimateMin": 30,
+      "actualMin": 2,
+      "done": true,
+      "xpAwarded": 50,
+      "goldAwarded": 21
+    }
+  ],
+  "week": {}
+}

@@ -1,3 +1,95 @@
+## B2.13 — первый перенос в приложение, 27.10
+
+- [x] Принятый B2.5 в основном корне; один source runtime и настоящие данные.
+- [x] Сегодня/План/настройки; оригинальные Notes/Board/media controls/закрытие дня.
+- [x] Native/B3 navigation projection, one startup, SW344, drafts и reload/focus QA.
+- [x]174 live,3387 source,18 Swift tests; byte contracts; Simulator build/install/launch.
+- [ ] Native visual/keyboard/safe-area/VoiceOver и physical iPhone, mic/camera.
+- [ ] Полная offline/locale/a11y матрица; новый чат/настоящий multiplayer/3D отдельно.
+- [ ] Решение владельца о публикации чистого кандидата; рабочую историю d203502b не выпускать.
+- QA: redesign/b27/B213-QA.md. Локально, без push/deploy/TestFlight.
+
+## B2.12 — Мир, 27.10
+
+- [x] Пять подразделов B2.5 на реальном аккаунте: Дом/Герой/Спутники/Путь/Прогресс.
+- [x] Гардероб/profile/body/позы, gear/relic/cosmetics/titles; питомцы/канонические
+  хранители/Кацую, rename/species/fortune/wear, Тень/care/name/journal.
+- [x] Дерево V4: capability/practice, proof/history, one linked step, points/perks,
+  editor/add/delete/dependencies/coords/drag/arrange, source AI map без optimistic save.
+- [x] XP/actual time/habit time, периоды14/30/90, исходные подробные stats,
+  эпизоды create/edit/delete и прежний manual/AI composer.
+- [x] Den source scene + полный editor/ownership, renderer boundary для будущего3D.
+- [x] 165+72 targeted tests, build/syntax, browser375/1280 light/dark, QA server readback.
+- [ ] Отдельный 3D/art процесс и согласование visual parity гардероба/сцены.
+- [ ] Реальные Племя/Доска/voice/video и новый UI чата; полная locale/VoiceOver/offline
+  и physical-device QA. Затем интегрированный release без d203502b и полный suite.
+- QA: redesign/b27/B212-QA.md. Локально, без push/deploy/native changes.
+
+## B2.11 — Награды, 27.10
+
+- [x] Свои награды/каталог33/картинки/правка/удаление и реальные gold purchases.
+- [x] Исходный economy owner, Guide-покупка, immutable receipts, pending/retry/ошибки.
+- [x] Полученные/статусы/даты/отдых-квест, atomic complete/undo/перенос; выбор в Сегодня.
+- [x] Все source owners: chest/voucher/odds/history, коллекция/арсенал/звания,
+  реликвии, мебель/накопление/примерка,48 достижений; без prototype данных.
+- [x] 144+233 targeted, build, browser375/1280 light/dark и server readback.
+- [ ] Новый UI чата, Доска/voice/video, реальные Мир/Племя и редактор Логова/3D.
+- [ ] Полная locale/VoiceOver/клавиатура/offline матрица, physical-device QA и
+  интегрированный release без d203502b с полным suite до публикации.
+- QA: redesign/b27/B211-QA.md. Локально, без push/deploy; native/3D сохранены.
+
+## B2.10 — План и настройки, 26.10 (история)
+
+- [x] Реальные цели/проекты/шаги/метрики, состояния/архив, карта и календарные сроки.
+- [x] Шаг→обычный квест без дубликата; исходный completion/экономика и durable owner.
+- [x] RoutineV2: отдельный слой, чередование/исключения, save и мастерская недели.
+- [x] Полные настройки: дерево сфер/навыков, язык/тема/акцент, профиль/безопасность,
+  подключения/ИИ, баланс/фокус, данные; сохранение скрытых полей и flush переходов.
+- [x] Привычки/Вдохновение используют исходные owners вместо prototype data.
+- [x] Targeted131+100, build, browser375/1280 и чтение API изолированного QA аккаунта.
+- [ ] Полная локализация составной копии/дат; VoiceOver/клавиатура/200%/offline.
+- [ ] ICS download, routine→count и остальные опасные CRUD UI-сценарии;
+  password submit/реальные OAuth/AI/photo/weather с участием владельца.
+- [ ] Доска/voice/video, новый UI чата Тени; реальные Мир/Племя. Награды — B2.11.
+- [ ] Свежий интегрированный release candidate без d203502b, полный suite,
+  service-worker/entry gate и physical-device QA до публикации.
+- QA/доказательства: redesign/b27/B210-QA.md. Native/3D и production не менялись.
+
+## B2.9 — старт и календарь, 26.10 (история)
+
+- [x] Новый вход/регистрация/восстановление в мире B2.5; исходные handlers и формы.
+- [x] Live календарь день/неделя/месяц, задачи из Сегодня, время/дата, перенос/undo.
+- [x] Реальные сферы, намерение недели и доступные минуты дня; server readback.
+- [x] Async receipt, stale/повтор, атомарный пакет, undo памяти переносов; proxy origin.
+- [x] Цели/шаги и постоянное расписание — локальный B2.10, QA выше.
+- [ ] Пакетный UI/ICS download, PIN/login native input, VoiceOver/200%/языки/offline.
+- [ ] Новый onboarding, подключение остальных разделов по B28 backlog.
+- QA: redesign/b27/B29-QA.md. Ничего не опубликовано; d203502b не выпускать.
+
+## B2.8 — перенос принятого UI, 26.10 (история)
+
+- [x] Сохранить B2.5 в web-worktree, добавить Время/Настройки: B2.7 / 0f66144b.
+- [x] Подключить live Сегодня: задачи/отмена, реальные сферы/экономика, текстовые
+  заметки, итог, привычки, фокус; проверить HTTP readback и native Simulator.
+- [ ] Подключить принятый календарь Плана, затем цели/шаги с существующими writers.
+- [ ] Доска, voice/video, note→goal, новая поверхность чата, настоящие награды.
+- [ ] Прогнать live note→quest/actual-time UI; offline/fault injection, пустой и
+  насыщенный аккаунт, полный accessibility/localization/physical-device QA.
+- [ ] Интерфейс разрешения конфликта actual-time с незавершённым банком таймера.
+- [ ] Перед релизом перенести только принятый срез на свежий master, включить entry
+  и service-worker, пройти полный suite. Отклонённый d203502b не публиковать.
+- Доказательства и границы: redesign/b27/B28-QA.md. 3D/Племя отдельным треком.
+
+## B2.6 отклонён — перенос B2.5, 26.10 (история)
+
+- B2.6 не публиковать: прежние renderers под новой темой потеряли принятый дизайн.
+- Перенести UI B2.5, начиная с полного Сегодня; реальные данные подключить
+  отдельным слоем, не подменяя их demo-состоянием.
+- Прямое сравнение B2.5/переноса на одинаковых данных: 375/390/1100, пустой и
+  заполненный экраны, фокус, формы; затем проверки сохранения и восстановления.
+- 3D меняет содержимое сцены, не принятую композицию вокруг неё.
+- Корректный перенос пока не реализован. История проверки: docs/redesign/B26-RUNTIME-QA.md.
+
 ## Codex 20.10 — Traveller / применение базы анимации
 
 - Подготовлена общая база [Williams + Spine](docs/animation/README.md), включая

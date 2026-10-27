@@ -1,0 +1,12 @@
+[
+  {
+    "antipattern": "border-accent-on-rounded",
+    "name": "Border accent on rounded element",
+    "description": "Thick accent border on a rounded card — the border clashes with the rounded corners. Remove the border or the border-radius.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/al.prokopets/Projects/satoru-redesign-runtime-20261026/redesign/b27/src/live/start-screen.css",
+    "line": 33,
+    "snippet": "border-bottom:3px solid"
+  }
+]

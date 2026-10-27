@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-26T16:10:45.876Z",
+  "origin": "localhost:8771 isolated QA",
+  "tasks": [
+    {
+      "title": "Проверить новый экран Satoru",
+      "actualMin": 2,
+      "done": true,
+      "xpAwarded": 50,
+      "goldAwarded": 21,
+      "core": true
+    }
+  ],
+  "notes": [
+    {
+      "text": "Логово и главный экран должны оставаться такими, как в B2.5.",
+      "kind": "text"
+    }
+  ],
+  "day": {
+    "closed": false,
+    "reflection": "Проверили сохранение квеста, заметки и фокуса в новом интерфейсе."
+  },
+  "habitCompletions": 1
+}

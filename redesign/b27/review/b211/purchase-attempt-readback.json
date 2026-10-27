@@ -1,0 +1,226 @@
+{
+  "at": "2026-10-27T10:37:26.030Z",
+  "label": "purchase-attempt",
+  "rewards": [
+    {
+      "id": "r_0ede36b1-0584-4b23-a12a-78355934bf57",
+      "name": "B2.11 · Вечер с игрой",
+      "cost": 20,
+      "iconId": "reward.game",
+      "createdAt": "2026-10-27T10:36:34.139Z"
+    }
+  ],
+  "purchases": [
+    {
+      "id": "p_mvqjwyh4wm8me",
+      "rewardId": "r_0ede36b1-0584-4b23-a12a-78355934bf57",
+      "name": "B2.11 · Вечер с игрой",
+      "cost": 20,
+      "at": "2026-10-27T10:37:13.480Z",
+      "iconId": "reward.game"
+    }
+  ],
+  "life": {},
+  "pin": "r_0ede36b1-0584-4b23-a12a-78355934bf57",
+  "tasks": [],
+  "lootbox": {
+    "day": "2026-10-26",
+    "opened": 0,
+    "goldWon": 0,
+    "boost": null,
+    "titles": [],
+    "equipped": null,
+    "history": [],
+    "carry": 0,
+    "vouchers": [],
+    "economyV124": true
+  },
+  "achievements": {
+    "first_quest": "2026-10-26T16:04:32.414Z",
+    "first_habit": "2026-10-26T16:09:15.581Z",
+    "first_note": "2026-10-26T16:09:15.581Z",
+    "first_goal": "2026-10-26T21:15:05.714Z"
+  },
+  "gear": {
+    "owned": [],
+    "equipped": {},
+    "relics": []
+  },
+  "cosmetics": [],
+  "equipped": {
+    "frame": null,
+    "background": null,
+    "title": null
+  },
+  "den": {
+    "theme": "workshop",
+    "slots": {
+      "wall": "wall-map",
+      "seat": "seat-cushion",
+      "surface": "surface-crate",
+      "comfort": "comfort-bonsai",
+      "light": "light-lantern",
+      "keepsake": "keepsake-blades",
+      "floor": "floor-traveller"
+    },
+    "owned": [
+      "wall-map",
+      "seat-cushion",
+      "surface-crate",
+      "comfort-bonsai",
+      "light-lantern",
+      "keepsake-blades",
+      "floor-traveller",
+      "theme:workshop"
+    ],
+    "light": "auto",
+    "petCount": 3
+  },
+  "partyGold": {
+    "version": 1,
+    "receipts": []
+  },
+  "earned": {
+    "tasks": 42,
+    "habits": 11,
+    "goals": 26
+  },
+  "settingsPreserved": {
+    "xp": {
+      "perMinute": 1,
+      "completionBonus": 5,
+      "difficulty": {
+        "easy": 1,
+        "normal": 1.5,
+        "hard": 1.75
+      }
+    },
+    "gold": {
+      "perMinute": 0.4,
+      "completionBonus": 3
+    },
+    "focus": {
+      "pomodoro": true,
+      "workMin": 30,
+      "breakMin": 5,
+      "sound": true,
+      "notify": true
+    },
+    "skills": [
+      {
+        "id": "sk__mhdbg",
+        "name": "Тело",
+        "color": "#5fbf5f",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      },
+      {
+        "id": "sk__kb9dk",
+        "name": "Ум",
+        "color": "#4f86f7",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      },
+      {
+        "id": "sk__q7a9n",
+        "name": "Дело",
+        "color": "#e0526a",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      },
+      {
+        "id": "sk_mvprda9zik6c9",
+        "name": "B2.10 · Дизайн",
+        "color": "#e67185",
+        "colorMode": "auto",
+        "parentId": "sk__q7a9n"
+      },
+      {
+        "id": "sk__crn17",
+        "name": "Деньги / Ресурсы",
+        "color": "#d8a44b",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      },
+      {
+        "id": "sk__q7qlb",
+        "name": "Душа",
+        "color": "#b06ff0",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      },
+      {
+        "id": "sk__4semm",
+        "name": "Связи",
+        "color": "#e87d3e",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      },
+      {
+        "id": "sk__h1yru",
+        "name": "Творчество",
+        "color": "#c08a5e",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      },
+      {
+        "id": "sk__eqltr",
+        "name": "Быт",
+        "color": "#8899bb",
+        "parentId": null,
+        "canon": null,
+        "noBalance": false
+      }
+    ],
+    "weeklyRoutineV1": {
+      "blocks": [
+        {
+          "day": 1,
+          "start": "18:05",
+          "end": "18:47",
+          "minutes": 42,
+          "title": "B2.10 · Дизайн по понедельникам",
+          "skillId": "sk_mvprda9zik6c9",
+          "fixed": true,
+          "outdoor": false,
+          "every": 2,
+          "week": 1,
+          "id": "r-32e65c63-94e3-4a8b-971e-9d04e40f40b1"
+        }
+      ],
+      "from": "09:00",
+      "to": "18:00",
+      "cycleStart": "2026-10-26",
+      "text": "",
+      "skips": []
+    }
+  },
+  "oldCompletedTask": {
+    "id": "5d4c5582-a2ca-49c9-92fc-937e3d99071d",
+    "done": true,
+    "completedAt": "2026-10-26T16:08:25.594Z",
+    "xpAwarded": 50,
+    "goldAwarded": 21,
+    "actualMin": 2,
+    "createdAt": "2026-10-26T15:58:03.981Z",
+    "title": "Проверить новый экран Satoru",
+    "date": "2026-10-26",
+    "startTime": null,
+    "estimateMin": 30,
+    "difficulty": "normal",
+    "skillId": "sk__q7a9n",
+    "skillIds": [
+      "sk__q7a9n"
+    ],
+    "layers": [],
+    "core": true,
+    "desire": null
+  }
+}

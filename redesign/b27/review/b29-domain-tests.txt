@@ -1,0 +1,52 @@
+✔ перебор пароля упирается в 429, а не в процессор (428.538917ms)
+✔ чужой не может запереть вход человеку, которого знает по email (730.909375ms)
+✔ регистрация ограничена: папку на диске не наплодить (222.810833ms)
+✔ другой источник не наследует чужой лимит (161.113166ms)
+✔ сброс пароля тоже под лимитом (133.427667ms)
+✔ tasks use checked loading and retain a distinct error state (3.031583ms)
+✔ task payload validation rejects false-empty shapes (1.083125ms)
+✔ task writes are blocked at the lowest Store primitive (1.522167ms)
+✔ recovery UI is actionable, localized, and not an empty calendar (2.538125ms)
+✔ retry only clears the write guard after a valid payload (1.045584ms)
+✔ checked loading distinguishes malformed JSON, HTTP failure, and valid data at runtime (1.110459ms)
+✔ five-minute proposal saves exactly after a recurring block ending 09:05 (4.203583ms)
+✔ exact editor preserves last minutes of day; drag snapping stays quarter-hour (1.481584ms)
+✔ refused scheduling restores unknown duration instead of inventing thirty minutes (1.354833ms)
+✔ undo restores unknown duration and postponement history, including retry after a refused write (1.373458ms)
+✔ undo preserves the existing original date and count rather than treating reversal as a new postponement (1.873167ms)
+✔ events keep stable UIDs, floating local time and a clean title (0.979ms)
+✔ long UTF-8 lines fold at 75 octets without splitting characters (0.190375ms)
+✔ invalid dates or times are skipped and counted; short times are normalised (0.146458ms)
+✔ filename uses the product name and the export date (0.044958ms)
+✔ export entry points are wired, verified and localized (10.714125ms)
+✔ extended goal commit atomically stores the exact five-file proposal graph (213.819042ms)
+✔ invalid proposal graph and unknown skill references change none of the five files (177.797958ms)
+✔ an old quest pointing to a deleted sphere does not block a proposal commit; new unknown spheres still do (200.245833ms)
+✔ extended goal commit requires exact base and rejects a stale five-file revision (237.836208ms)
+✔ caught mid-graph write failure rolls every proposal file back (202.002625ms)
+✔ SIGKILL during five-file proposal write is rolled back on restart (424.589041ms)
+✔ SIGKILL after five-file commit marker rolls the complete proposal graph forward (471.483959ms)
+✔ legacy three-file goal commit remains compatible with the protected settings/tasks pair (191.583333ms)
+✔ commitment endpoint requires auth and atomically stores the exact settings + tasks graph (155.938958ms)
+✔ stale tab base is rejected with 409 and cannot overwrite a newer pair (195.733625ms)
+✔ exact payload, strict commitmentsV1, graph refs, and owner boundary reject without mutation (214.926459ms)
+✔ malformed and oversized bodies are rejected before account files change (177.627417ms)
+▶ failure after either transaction file restores every prior snapshot
+  ✔ fault after file 1 (157.389958ms)
+  ✔ fault after file 2 (164.600459ms)
+✔ failure after either transaction file restores every prior snapshot (322.2205ms)
+✔ protected graph rejects single-file generic writes and accepts a based settings-only domain commit (195.964667ms)
+✔ SIGKILL after settings write leaves a prepared journal that restart rolls back (396.768958ms)
+✔ SIGKILL after committed journal leaves a transaction that restart rolls forward (414.017333ms)
+✔ a corrupted journal fails closed for protected reads and writes without deleting evidence (248.171333ms)
+✔ only unfinished past tasks are selectable; selection never mutates source or rewards (1.728334ms)
+✔ any concurrent edit to selected task rejects the stale confirmation; unrelated edits survive (0.162083ms)
+✔ replay, active focus, invalid dates and excessive selection do not silently change tasks (0.1025ms)
+ℹ tests 43
+ℹ suites 0
+ℹ pass 43
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 19761.191709
