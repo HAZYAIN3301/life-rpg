@@ -1,0 +1,15 @@
+{
+  "account": "Тестовый герой",
+  "allSavedDataUnchanged": true,
+  "comparedTo": "b215/final-readback.json",
+  "domains": [
+    "settings",
+    "tasks",
+    "skilltree",
+    "episodes",
+    "goals",
+    "habitlog",
+    "purchases",
+    "lootbox"
+  ]
+}

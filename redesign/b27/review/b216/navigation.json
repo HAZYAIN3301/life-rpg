@@ -1,0 +1,37 @@
+[
+  {
+    "navBottom": 1064,
+    "page": "План",
+    "route": "wb palette-ink route-plan",
+    "viewport": 1920,
+    "width": 1920
+  },
+  {
+    "navBottom": 1064,
+    "page": "Мир",
+    "route": "wb palette-ink route-world",
+    "viewport": 1920,
+    "width": 1920
+  },
+  {
+    "navBottom": 1064,
+    "page": "Награды",
+    "route": "wb palette-ink route-rewards",
+    "viewport": 1920,
+    "width": 1920
+  },
+  {
+    "navBottom": 1064,
+    "page": "Племя",
+    "route": "wb palette-ink route-tribe",
+    "viewport": 1920,
+    "width": 1920
+  },
+  {
+    "navBottom": 1064,
+    "page": "Сегодня",
+    "route": "wb palette-ink route-today",
+    "viewport": 1920,
+    "width": 1920
+  }
+]

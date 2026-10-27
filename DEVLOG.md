@@ -1,3 +1,12 @@
+## Codex 27.10 — B2.16: ширина Today, навигация и загрузчик
+
+На desktop Логово слева/дела справа, canvas1760; пять равных nav targets вместо
+percentage padding. Phone B2.10 сохранён. Те же Manrope/Literata self-hosted/OFL,
+без внешних font requests, SW346.180 live+3387 source, geometry375–1920 и все
+nav routes PASS; QA данные неизменны. Native build12 отдельно снимает overlay
+при document commit: реальный WebKit hold-image red/green PASS. iOS/Mac signed
+archive/export; Apple availability — по отдельной receipt. B216-QA.md.
+
 ## Codex 27.10 — B2.15: доведение «Мира» в основном приложении
 
 B2.12 уже находился в root; сохранены B2.10/B2.5 generated и текущий art. Доведены

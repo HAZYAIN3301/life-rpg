@@ -1,0 +1,16 @@
+{
+  "red": {
+    "cancelWithoutPageError": true,
+    "documentInteractive": true,
+    "ok": false,
+    "openingOverlayDismissed": false,
+    "resourceStillPending": true
+  },
+  "green": {
+    "cancelWithoutPageError": true,
+    "documentInteractive": true,
+    "ok": true,
+    "openingOverlayDismissed": true,
+    "resourceStillPending": true
+  }
+}

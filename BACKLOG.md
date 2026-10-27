@@ -1,3 +1,13 @@
+## B2.16 — layout/loading, 27.10
+
+- [x] Desktop Today: место используется двумя колонками, Логово и дела рядом.
+- [x] Nav centered/equal targets, phone375/tablet geometry/desktop1920 без overflow.
+- [x] Local fonts/OFL,180 live+3387 source, real WebKit red/green для native overlay.
+- [x] Native12 signed archives/export и iOS4-bundle entitlement validation.
+- [ ] Physical iPhone/current wrapped Mac visual QA. Apple TestFlight availability
+  подтверждать отдельно от upload; квитанция native release/B216-LAYOUT-20261027.md.
+- Подробности: redesign/b27/B216-QA.md; generated B2.10 и data owners сохранены.
+
 ## B2.15 — Мир в приложении, 27.10
 
 - [x] Root Герой/Спутники/Тень/Путь/Прогресс/Дом, source owners без демо и новых stores.

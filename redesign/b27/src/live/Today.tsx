@@ -27,6 +27,7 @@ import './live.css';
 import './StartScreen';
 import './plan-settings.css';
 import './today-owned.css';
+import './layout-live.css';
 import {accessibleAccent,accentText} from './theme';
 type Result={ok:boolean;error?:string;notice?:string;snapshot?:Snapshot};
 declare global{interface Window{SatoruLiveBridge:{snapshot:()=>Snapshot;run:(c:string,p:unknown,scope:{account:string;epoch:number})=>Promise<Result>};SatoruLiveView:{render:(s:Snapshot)=>void;hide:()=>void}}}

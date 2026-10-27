@@ -1,0 +1,63 @@
+/* B2.10 responsive placement; accepted components and room art stay intact. */
+.wb .wb-nav {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  padding-inline: 10px;
+}
+.wb .wb-nav button { min-width: 0; width: 100%; }
+.td-aside .wb-habit { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; }
+.td-aside .wb-habit > div { min-width: 0; flex: 1; }
+.td-aside .wb-habit strong { display: block; font-size: 13px; overflow-wrap: anywhere; }
+.td-aside .wb-habit small { display: block; margin-top: 4px; }
+
+@media (min-width: 1000px) {
+  .wb .wb-nav {
+    width: min(640px, calc(100% - 48px));
+    max-width: 640px;
+    height: 76px;
+    inset: auto auto 16px 50%;
+    transform: translateX(-50%);
+    padding: 6px 12px;
+    border-radius: 16px;
+  }
+  .wb .wb-nav button { font-size: 12px; min-height: 62px; }
+  .wb.route-today .wb-scroll:has(> .wb-scene-column) {
+    display: grid;
+    grid-template-columns: minmax(340px, .9fr) minmax(0, 1.35fr);
+    gap: 0 28px;
+    align-items: start;
+    align-content: start;
+    max-width: 1760px;
+    width: 100%;
+    margin-inline: auto;
+    padding: 0 32px 112px;
+  }
+  .wb.route-today .wb-scroll:has(> .wb-scene-column) > .wb-header {
+    grid-column: 1 / -1;
+    max-width: none;
+    width: 100%;
+    height: 72px;
+    margin: 0;
+    padding: 12px 0;
+  }
+  .wb.route-today .wb-scroll:has(> .wb-scene-column) > .wb-global-error { grid-column: 1 / -1; }
+  .wb.route-today .wb-scene-column {
+    position: sticky !important;
+    top: 16px;
+    width: 100%;
+    margin: 0;
+  }
+  .wb.route-today .wb-lair { border-radius: 16px; }
+  .wb.route-today .wb-main.with-scene {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 24px 26px;
+  }
+  .wb.route-today .td-dashboard { column-gap: 24px; }
+  .wb.route-today .td-aside { padding-left: 20px; }
+}
+@media (min-width: 1000px) and (max-width: 1279px) {
+  .wb.route-today .td-dashboard { grid-template-columns: minmax(0, 1fr); }
+  .wb.route-today .td-aside { border-left: 0; border-top: 1px solid var(--line); padding: 20px 0 0; margin-top: 20px; }
+}

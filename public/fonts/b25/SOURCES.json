@@ -1,0 +1,37 @@
+[
+  {
+    "font": "manrope",
+    "commit": "b31870aff700ab7a1d74fa0c6887d95beb9e0037",
+    "source": "google/fonts/ofl/manrope",
+    "file": "manrope-variable.woff2",
+    "sha256": "8bf48deaae24af00d7d2b52649fba1a6be7f13ae1e3e30eda474759c048beaeb",
+    "bytes": 53904,
+    "axes": [
+      {
+        "tag": "wght",
+        "min": 200.0,
+        "max": 800.0
+      }
+    ]
+  },
+  {
+    "font": "literata",
+    "commit": "4e5f06dbb274a27ebe71ed54ea706b3ee40eabd9",
+    "source": "google/fonts/ofl/literata",
+    "file": "literata-variable.woff2",
+    "sha256": "c162fc83d0a8d680ce9966ce3e6f57ab40792f08e5f80921fd7b3404bd2ecd9e",
+    "bytes": 397420,
+    "axes": [
+      {
+        "tag": "opsz",
+        "min": 7.0,
+        "max": 72.0
+      },
+      {
+        "tag": "wght",
+        "min": 200.0,
+        "max": 900.0
+      }
+    ]
+  }
+]
