@@ -1,3 +1,14 @@
+## Codex 27.10 — B2.14 / v344 опубликован: B2.5 и реальные Награды
+
+По явному разрешению владельца опубликован runtime4973db94: FF master из чистой ветки,
+Railway life-rpg success b1881347. В18:02 Europe/Berlin оба домена подтвердили commit
+и satoru-v344;20/20 critical asset hashes совпали.3387 source +176 live +268 economy
+PASS, без skip. Public welcome375 без ошибок; покупки только isolated QA.
+Текущий TestFlight получает новый web root после перезапуска; Apple upload не нужен
+и не выполнялся. Native remote/параллельные ветки/production аккаунт-данные не менялись.
+Квитанция: redesign/b27/B214-RELEASE.md и review/b214/release-receipt.json.
+Ниже — контекст подготовки; физический iPhone/VoiceOver/offline ещё не засчитаны.
+
 ## Codex 27.10 — B2.14: Награды в основном B2.5, подготовка общего выпуска
 
 Владелец разрешил публикацию для сайта и текущего TestFlight. До выпуска production

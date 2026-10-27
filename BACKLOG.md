@@ -3,10 +3,11 @@
 - [x] Root B2.5: весь существующий reward функционал и покупка своих наград за золото.
 - [x] UI→API→reload, double tap/cancel/history, lifecycle/rest/undo/date, исходные owners.
 - [x] Theme/focus/16px, переводы и locale dates;176 live +268 профильных проверок.
-- [ ] Полный source suite на чистой ветке, FF master, Railway success и live hashes.
+- [x]3387 source на чистой ветке, FF master4973db94, Railway success и20/20 live hashes.
 - [ ] Физический iPhone/TestFlight после обновления web; полный VoiceOver/offline/locale.
 - Владелец разрешил общий выпуск; новая Apple upload для этого UI не нужна.
 - QA: redesign/b27/B214-QA.md. Код экономики и native contracts сохранены.
+- Опубликовано v344: redesign/b27/B214-RELEASE.md. TestFlight — перезапуск текущей оболочки.
 
 ## B2.13 — первый перенос в приложение, 27.10
 

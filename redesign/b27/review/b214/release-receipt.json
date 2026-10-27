@@ -1,0 +1,228 @@
+{
+  "at": "2026-10-27T17:02:13.449Z",
+  "runtimeCommit": "4973db94009b5124f6051684576b886b43890225",
+  "cache": "satoru-v344",
+  "deployment": {
+    "statuses": [
+      {
+        "context": "brilliant-amazement - piper-tts",
+        "state": "success",
+        "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/5805cd49-5d30-4dcf-a4fb-3f1bb5cca666?id=b683844f-6af5-4ed5-a491-c6f2dabf36cb&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+      },
+      {
+        "context": "brilliant-amazement - life-rpg",
+        "state": "success",
+        "target_url": "https://railway.com/project/b7468036-1520-433f-937f-1d73b73d933b/service/7a8e0c26-8a60-4bcc-ade2-f9f2e0f7ac7c?id=b1881347-6925-4646-8112-5da81a74e56d&environmentId=6765444e-61c8-49b4-b37c-d3759cc4985f"
+      }
+    ]
+  },
+  "production": [
+    {
+      "base": "https://satoruapp.com",
+      "status": 200,
+      "version": {
+        "app": "satoru",
+        "shellCache": "satoru-v344",
+        "commit": "4973db94009b5124f6051684576b886b43890225",
+        "serverTime": "2026-10-27T17:02:08.852Z",
+        "capabilities": {
+          "attentionEpisodeIntake": true,
+          "attentionLocalModeRefusal": true,
+          "webPush": true,
+          "deviceSessions": true,
+          "deviceWebSessions": true,
+          "appleAppSiteAssociation": true,
+          "androidAssetLinks": false
+        }
+      },
+      "assets": [
+        {
+          "file": "index.html",
+          "status": 200,
+          "expected": "0b2d32b4c477e99c1633646c93f3b23ef5908602726aa1a53b83cd9e1cd68b56",
+          "actual": "0b2d32b4c477e99c1633646c93f3b23ef5908602726aa1a53b83cd9e1cd68b56",
+          "match": true,
+          "bytes": 15295
+        },
+        {
+          "file": "app.js",
+          "status": 200,
+          "expected": "d6c19f464f1eab72271e25399a15a613d6e3a4a6acfb118073b779bd9bbfd150",
+          "actual": "d6c19f464f1eab72271e25399a15a613d6e3a4a6acfb118073b779bd9bbfd150",
+          "match": true,
+          "bytes": 3770639
+        },
+        {
+          "file": "sw.js",
+          "status": 200,
+          "expected": "6571c248a0b7bdf910c8a458ffd2cc8438de40d16f68a323e954563353e46e3b",
+          "actual": "6571c248a0b7bdf910c8a458ffd2cc8438de40d16f68a323e954563353e46e3b",
+          "match": true,
+          "bytes": 23429
+        },
+        {
+          "file": "redesign/app-runtime.js",
+          "status": 200,
+          "expected": "97820b14a2ca65256925db895b30d5d7aa7a1f0dca543b4f783fd49afd2f755e",
+          "actual": "97820b14a2ca65256925db895b30d5d7aa7a1f0dca543b4f783fd49afd2f755e",
+          "match": true,
+          "bytes": 125325
+        },
+        {
+          "file": "redesign/live-ui.js",
+          "status": 200,
+          "expected": "f18ded52e51cc6a6fe377045c1cd338d1952056c0f60f76440ec74b30de591a0",
+          "actual": "f18ded52e51cc6a6fe377045c1cd338d1952056c0f60f76440ec74b30de591a0",
+          "match": true,
+          "bytes": 472683
+        },
+        {
+          "file": "redesign/live-ui.css",
+          "status": 200,
+          "expected": "ce6ac426cb3f80ef9cd6aa3bb96a91d9dace57911cd282acfe25857904117c92",
+          "actual": "ce6ac426cb3f80ef9cd6aa3bb96a91d9dace57911cd282acfe25857904117c92",
+          "match": true,
+          "bytes": 140386
+        },
+        {
+          "file": "redesign/live.html",
+          "status": 200,
+          "expected": "23747c2fd7ad5fa25a212a92651706b860fd265eb337059d87a04fe1df764594",
+          "actual": "23747c2fd7ad5fa25a212a92651706b860fd265eb337059d87a04fe1df764594",
+          "match": true,
+          "bytes": 15298
+        },
+        {
+          "file": "styles.css",
+          "status": 200,
+          "expected": "2f3f2526aa3b7809e7662673f2347d4bc62dbbf5e552ea58ad562d561de9ce08",
+          "actual": "2f3f2526aa3b7809e7662673f2347d4bc62dbbf5e552ea58ad562d561de9ce08",
+          "match": true,
+          "bytes": 970803
+        },
+        {
+          "file": "app-entry-routes-v1.js",
+          "status": 200,
+          "expected": "69a87b83fce96b426e203f31058253c597026e4c8ee9bdd52ce7f68a68b8ad5e",
+          "actual": "69a87b83fce96b426e203f31058253c597026e4c8ee9bdd52ce7f68a68b8ad5e",
+          "match": true,
+          "bytes": 10029
+        },
+        {
+          "file": "redesign/assets/wardrobe/male-idle.png",
+          "status": 200,
+          "expected": "6d952b7ddcc1c485cbb9ec54bcff2cbd530d4e3908f3fe0398b2bb88b88b8958",
+          "actual": "6d952b7ddcc1c485cbb9ec54bcff2cbd530d4e3908f3fe0398b2bb88b88b8958",
+          "match": true,
+          "bytes": 299720
+        }
+      ]
+    },
+    {
+      "base": "https://life-rpg-production-416a.up.railway.app",
+      "status": 200,
+      "version": {
+        "app": "satoru",
+        "shellCache": "satoru-v344",
+        "commit": "4973db94009b5124f6051684576b886b43890225",
+        "serverTime": "2026-10-27T17:02:10.923Z",
+        "capabilities": {
+          "attentionEpisodeIntake": true,
+          "attentionLocalModeRefusal": true,
+          "webPush": true,
+          "deviceSessions": true,
+          "deviceWebSessions": true,
+          "appleAppSiteAssociation": true,
+          "androidAssetLinks": false
+        }
+      },
+      "assets": [
+        {
+          "file": "index.html",
+          "status": 200,
+          "expected": "0b2d32b4c477e99c1633646c93f3b23ef5908602726aa1a53b83cd9e1cd68b56",
+          "actual": "0b2d32b4c477e99c1633646c93f3b23ef5908602726aa1a53b83cd9e1cd68b56",
+          "match": true,
+          "bytes": 15295
+        },
+        {
+          "file": "app.js",
+          "status": 200,
+          "expected": "d6c19f464f1eab72271e25399a15a613d6e3a4a6acfb118073b779bd9bbfd150",
+          "actual": "d6c19f464f1eab72271e25399a15a613d6e3a4a6acfb118073b779bd9bbfd150",
+          "match": true,
+          "bytes": 3770639
+        },
+        {
+          "file": "sw.js",
+          "status": 200,
+          "expected": "6571c248a0b7bdf910c8a458ffd2cc8438de40d16f68a323e954563353e46e3b",
+          "actual": "6571c248a0b7bdf910c8a458ffd2cc8438de40d16f68a323e954563353e46e3b",
+          "match": true,
+          "bytes": 23429
+        },
+        {
+          "file": "redesign/app-runtime.js",
+          "status": 200,
+          "expected": "97820b14a2ca65256925db895b30d5d7aa7a1f0dca543b4f783fd49afd2f755e",
+          "actual": "97820b14a2ca65256925db895b30d5d7aa7a1f0dca543b4f783fd49afd2f755e",
+          "match": true,
+          "bytes": 125325
+        },
+        {
+          "file": "redesign/live-ui.js",
+          "status": 200,
+          "expected": "f18ded52e51cc6a6fe377045c1cd338d1952056c0f60f76440ec74b30de591a0",
+          "actual": "f18ded52e51cc6a6fe377045c1cd338d1952056c0f60f76440ec74b30de591a0",
+          "match": true,
+          "bytes": 472683
+        },
+        {
+          "file": "redesign/live-ui.css",
+          "status": 200,
+          "expected": "ce6ac426cb3f80ef9cd6aa3bb96a91d9dace57911cd282acfe25857904117c92",
+          "actual": "ce6ac426cb3f80ef9cd6aa3bb96a91d9dace57911cd282acfe25857904117c92",
+          "match": true,
+          "bytes": 140386
+        },
+        {
+          "file": "redesign/live.html",
+          "status": 200,
+          "expected": "23747c2fd7ad5fa25a212a92651706b860fd265eb337059d87a04fe1df764594",
+          "actual": "23747c2fd7ad5fa25a212a92651706b860fd265eb337059d87a04fe1df764594",
+          "match": true,
+          "bytes": 15298
+        },
+        {
+          "file": "styles.css",
+          "status": 200,
+          "expected": "2f3f2526aa3b7809e7662673f2347d4bc62dbbf5e552ea58ad562d561de9ce08",
+          "actual": "2f3f2526aa3b7809e7662673f2347d4bc62dbbf5e552ea58ad562d561de9ce08",
+          "match": true,
+          "bytes": 970803
+        },
+        {
+          "file": "app-entry-routes-v1.js",
+          "status": 200,
+          "expected": "69a87b83fce96b426e203f31058253c597026e4c8ee9bdd52ce7f68a68b8ad5e",
+          "actual": "69a87b83fce96b426e203f31058253c597026e4c8ee9bdd52ce7f68a68b8ad5e",
+          "match": true,
+          "bytes": 10029
+        },
+        {
+          "file": "redesign/assets/wardrobe/male-idle.png",
+          "status": 200,
+          "expected": "6d952b7ddcc1c485cbb9ec54bcff2cbd530d4e3908f3fe0398b2bb88b88b8958",
+          "actual": "6d952b7ddcc1c485cbb9ec54bcff2cbd530d4e3908f3fe0398b2bb88b88b8958",
+          "match": true,
+          "bytes": 299720
+        }
+      ]
+    }
+  ],
+  "sourceTests": 3387,
+  "liveTests": 176,
+  "economyTests": 268,
+  "productionAccountWrites": false,
+  "nativeUpload": false
+}

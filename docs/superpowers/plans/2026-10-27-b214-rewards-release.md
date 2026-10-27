@@ -22,16 +22,16 @@ ECONOMY-WRITES-V251.md, PURCHASE-ENTITLEMENTS-V258.md и более новые s
 
 ## Tasks
 
-- [ ] Inventory: сравнить LiveRewards/bridge с renderRewards и source contracts;
+- [x] Inventory: сравнить LiveRewards/bridge с renderRewards и source contracts;
   проверка всех reachable исходных владельцев без новой реализации кошелька.
-- [ ] Root QA: создать свою награду, cancel/buy/double tap/reload, rename/delete,
+- [x] Root QA: создать свою награду, cancel/buy/double tap/reload, rename/delete,
   history, insufficient funds, lifecycle и rest→Plan→complete/undo; readback API.
   Файлы: src/live/LiveRewards.tsx, rewards-bridge.js, rewards-model.ts,
   rewards-live.css. При дефекте — точный failing regression до минимальной правки.
-- [ ] Проверки: оба build, live/model/baseline, профильные HTTP/CAS/economy tests,
+- [x] Проверки: оба build, live/model/baseline, профильные HTTP/CAS/economy tests,
   полный suite concurrency2 на чистом release-кандидате, byte contracts.
-- [ ] Release: свежий fetch, FF чистого кандидата в master, Railway success нужного
+- [x] Release: свежий fetch, FF чистого кандидата в master, Railway success нужного
   SHA; root/app/UI/runtime/SW hash-check обоих доменов, published no-login UI.
   Не считать git push равным deploy. Не трогать пользовательские production записи.
-- [ ] QA/release receipt, DEVLOG/BACKLOG и native CHECKPOINT; ясно отличить web
+- [x] QA/release receipt, DEVLOG/BACKLOG и native CHECKPOINT; ясно отличить web
   проверку от физического iPhone и фактической доступности Apple build.
