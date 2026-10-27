@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-27T15:32:14.107Z",
+  "at": "2026-10-27T15:38:03.539Z",
   "account": "Тестовый герой",
   "tasks": [
     {
@@ -10,7 +10,7 @@
       "estimateMin": 30,
       "actualMin": null,
       "done": false,
-      "core": true,
+      "core": false,
       "xpAwarded": 0,
       "goldAwarded": 0
     }
