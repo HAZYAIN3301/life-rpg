@@ -59,6 +59,8 @@
 .b28-live .modal-overlay .rwc-row{color:var(--ink);border-color:var(--line)}
 .b28-live .modal-overlay .loot-capsule-result{color:var(--ink);background:var(--soft);border-color:var(--line)}
 .b211-rewards :is(input,textarea){caret-color:var(--action)}
+.b211-rewards .rw-dialog :is(input,textarea,select){font-size:16px;background:var(--paper);color:var(--ink);border-color:var(--muted)}
+.b211-rewards .rw-dialog :is(input,textarea)::placeholder{color:var(--muted);opacity:1}
 .b211-rewards summary:focus-visible{outline:2px solid var(--action);outline-offset:3px}
 @media(min-width:900px){.b211-rewards .rw-catalog{grid-template-columns:repeat(3,minmax(0,1fr))}.b211-owned .lb-body{grid-template-columns:140px minmax(0,1fr)}.b211-owned .daily-chest-art{width:130px;height:120px}}
 @media(prefers-reduced-motion:reduce){.b211-owned *{animation:none!important;transition:none!important}}

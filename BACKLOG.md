@@ -1,3 +1,13 @@
+## B2.14 — Награды и общий выпуск, 27.10
+
+- [x] Root B2.5: весь существующий reward функционал и покупка своих наград за золото.
+- [x] UI→API→reload, double tap/cancel/history, lifecycle/rest/undo/date, исходные owners.
+- [x] Theme/focus/16px, переводы и locale dates;176 live +268 профильных проверок.
+- [ ] Полный source suite на чистой ветке, FF master, Railway success и live hashes.
+- [ ] Физический iPhone/TestFlight после обновления web; полный VoiceOver/offline/locale.
+- Владелец разрешил общий выпуск; новая Apple upload для этого UI не нужна.
+- QA: redesign/b27/B214-QA.md. Код экономики и native contracts сохранены.
+
 ## B2.13 — первый перенос в приложение, 27.10
 
 - [x] Принятый B2.5 в основном корне; один source runtime и настоящие данные.

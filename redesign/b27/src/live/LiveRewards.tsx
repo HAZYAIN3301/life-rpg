@@ -1,13 +1,13 @@
 import {useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {Icon} from '../components/generated/B2Scene';
-import {day,label} from '../components/generated/B2Model';
+import {day} from '../components/generated/B2Model';
 import type {Reward} from '../components/generated/B2Model';
 import {statusOf} from '../components/generated/DailyModel';
 import type {Purchase} from '../components/generated/DailyModel';
 import {RewardArt,readRewardImage} from '../components/generated/RewardArt';
 import {Field} from './Field';
 import {rewardProjection,personalRewardLabel} from './rewards-model';
-import type {PersonalReward} from './rewards-model';
+import type {PersonalReward,RewardReceipt} from './rewards-model';
 import type {Snapshot,RawTask} from './model';
 import './rewards-live.css';
 declare global{interface Window{SatoruRewardsBridge:{mount:(host:HTMLElement,part:string)=>void}}}
@@ -20,16 +20,19 @@ function RewardOwners({s,part}:{s:Snapshot;part:'chest'|'collection'}){
  return <div className={'b210-owned b211-owned owned-rewards reward-owner-'+part} ref={host}/>;
 }
 export function LiveRewards({s,run,editTask,complete,entry,handled}:{s:Snapshot;run:Run;editTask:(t:RawTask)=>void;complete:(t:RawTask)=>void;entry:string;handled:()=>void}){
+ const workspace=useRef<HTMLElement>(null);
+ useLayoutEffect(()=>{if(workspace.current)window.SatoruPlanBridge.translate(workspace.current);});
  const d=s.rewardsData,projection=rewardProjection({...d,rewardLife:d.life}),purchases=projection.purchases.slice().reverse();
  const [mode,setMode]=useState('Личные'),[query,setQuery]=useState(''),[filter,setFilter]=useState('Все'),[owned,setOwned]=useState('Ждут меня');
- const [layer,setLayer]=useState<Layer|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(false),[message,setMessage]=useState('');
+ const [layer,setLayer]=useState<Layer|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(false),[message,setMessage]=useState<RewardReceipt|null>(null);
+ const dateLabel=(key:string)=>new Date(key+'T12:00:00').toLocaleDateString(s.preferences.language,{day:'numeric',month:'short'});
  const receiptsSeen=useRef(new Set(d.purchases.map(p=>p.id)));
- useEffect(()=>{const fresh=d.purchases.filter(p=>!receiptsSeen.current.has(p.id));receiptsSeen.current=new Set(d.purchases.map(p=>p.id));if(fresh.length)setMessage('Покупка сохранена: '+fresh.at(-1)!.name+' · −'+fresh.at(-1)!.cost+' золота.');},[s.revision]);
+ useEffect(()=>{const fresh=d.purchases.filter(p=>!receiptsSeen.current.has(p.id));receiptsSeen.current=new Set(d.purchases.map(p=>p.id));if(fresh.length)setMessage(fresh.at(-1)!);},[s.revision]);
  const dialog=useRef<HTMLDialogElement>(null),opener=useRef<HTMLElement|null>(null),lock=useRef(false),catalogIds=useRef(new Map<string,string>());
  const blocked=d.errors.length>0;
  function open(l:Layer){opener.current=document.activeElement as HTMLElement;setError('');setLayer(l);}
  function close(){if(lock.current)return;setLayer(null);requestAnimationFrame(()=>opener.current?.isConnected&&opener.current.focus());}
- useEffect(()=>{if(layer)dialog.current?.showModal();else dialog.current?.close();},[layer]);
+ useEffect(()=>{if(layer){dialog.current?.showModal();if(layer.kind==='edit')dialog.current?.querySelector<HTMLInputElement>('input:not([type=file])')?.focus();}else dialog.current?.close();},[layer]);
  useEffect(()=>{if(!entry)return;const [kind,...parts]=entry.split(':'),id=parts.join(':');if(kind==='use'){setMode('Полученные');open({kind:'use',id});}else if(kind==='buy'){void run('reward.open',{kind:'reward',id});}handled();},[entry]);
  async function write(command:string,input:unknown,message:string,dismiss=false){
   if(lock.current)return false;lock.current=true;setPending(true);setError('');
@@ -52,21 +55,21 @@ export function LiveRewards({s,run,editTask,complete,entry,handled}:{s:Snapshot;
   dialog.current?.close();setLayer(null);
   editTask(linked||{id:'reward-rest:'+p.id,title:p.reward.name,date:p.date||day(),startTime:null,estimateMin:p.reward.iconId==='reward.game'?60:30,difficulty:'easy',skillId:s.skills.find(k=>!k.archived)?.id,skillIds:[s.skills.find(k=>!k.archived)?.id].filter(Boolean),layers:[],core:false,rewardPurchaseId:p.id});
  }
- return <section className="rw-workspace b211-rewards">
+ return <section ref={workspace} className="rw-workspace b211-rewards">
   <div className="tri-heading"><div><h2>Награды</h2><p>То, ради чего приятно стараться.</p></div><span className="rw-wallet" aria-label={'Баланс '+s.gold+' золота'}><Icon id="status.gold" size={34}/><b>{s.gold.toLocaleString(s.preferences.language)}</b></span></div>
   <div className="wb-segments rw-tabs" role="group" aria-label="Раздел наград">{['Личные','Каталог','Полученные'].map(m=><button key={m} aria-pressed={mode===m} onClick={()=>changeMode(m)}>{m}{m==='Полученные'&&waiting.length>0&&<span className="rw-count">{waiting.length}</span>}</button>)}</div>
   {d.errors.map(e=><p className="pl-error" role="alert" key={e}>{e}</p>)}
-  {message&&<p className="tri-receipt" role="status" data-noi18n>{message}</p>}
+  {message&&<p className="tri-receipt" role="status"><span>Покупка сохранена:</span> <span data-noi18n>{message.name}</span> · −{message.cost} <span>золота</span>.</p>}
   {error&&!layer&&<p className="pl-error" role="alert">{error}</p>}
   {mode==='Личные'&&<>
    {!blocked&&<RewardOwners s={s} part="chest"/>}
-   <div className="rw-lead">{selected?<RewardArt reward={selected} size={86}/>:<Icon id="reward.game" size={86}/>}<div><h3 data-noi18n={selected?'':undefined}>{selected?personalRewardLabel(selected,d.catalog):'Выбери, чего ждёшь'}</h3><p>{selected?s.gold>=selected.cost?'Уже доступна · '+selected.cost+' золота':'Осталось накопить '+(selected.cost-s.gold)+' золота':'Закрепи одну личную награду — она появится на главной.'}</p>{selected&&<div className="rw-lead-actions"><button className="wb-primary" disabled={blocked||pending||s.gold<selected.cost} onClick={()=>buy(selected)}>Получить</button><button disabled={pending} onClick={()=>void write('reward.pin',{id:null},'Выбор снят')}>Открепить</button></div>}</div></div>
-   {waiting.length>0&&<button className="tri-link-row" onClick={()=>changeMode('Полученные')}><Icon id="action.check"/><span><strong>{waiting.length===1?'Награда ждёт тебя':waiting.length+' награды ждут тебя'}</strong><small data-noi18n>{waiting[0].reward.name}</small></span><Icon id="action.expand"/></button>}
+   <div className="rw-lead">{selected?<RewardArt reward={selected} size={86}/>:<Icon id="reward.game" size={86}/>}<div><h3 data-noi18n={selected?'':undefined}>{selected?personalRewardLabel(selected,d.catalog):'Выбери, чего ждёшь'}</h3><p>{selected?<><span>{s.gold>=selected.cost?'Уже доступна':'Осталось накопить'}</span> {s.gold>=selected.cost?selected.cost:selected.cost-s.gold} <span>золота</span></>:'Закрепи одну личную награду — она появится на главной.'}</p>{selected&&<div className="rw-lead-actions"><button className="wb-primary" disabled={blocked||pending||s.gold<selected.cost} onClick={()=>buy(selected)}>Получить</button><button disabled={pending} onClick={()=>void write('reward.pin',{id:null},'Выбор снят')}>Открепить</button></div>}</div></div>
+   {waiting.length>0&&<button className="tri-link-row" onClick={()=>changeMode('Полученные')}><Icon id="action.check"/><span><strong>{waiting.length===1?'Награда ждёт тебя':'Награды ждут тебя'}{waiting.length>1&&<span> · {waiting.length}</span>}</strong><small data-noi18n>{waiting[0].reward.name}</small></span><Icon id="action.expand"/></button>}
    <div className="tri-section-head"><h3>Мой список <small>{d.rewards.length}{d.limit<5000?'/'+d.limit:''}</small></h3><button disabled={blocked||pending} onClick={create}><Icon id="action.add"/>Своя награда</button></div>
    <div className="rw-search"><input aria-label="Поиск личной награды" placeholder="Найти в моих наградах" value={query} onChange={e=>setQuery(e.target.value)}/><button aria-pressed={filter==='Доступные'} onClick={()=>setFilter(filter==='Все'?'Доступные':'Все')}>Доступные</button></div>
-   <div className="rw-personal-list">{list.map(r=><article className="rw-personal" key={r.id}><RewardArt reward={r} size={64}/><div><button className="rw-name" data-noi18n onClick={()=>open({kind:'edit',reward:r})}>{personalRewardLabel(r,d.catalog)}</button><small>{r.cost} золота{r.cost>s.gold?' · не хватает '+(r.cost-s.gold):' · доступна'}</small><div className="rw-row-actions"><button disabled={blocked||pending} aria-pressed={d.nextReward===r.id} onClick={()=>void write('reward.pin',{id:d.nextReward===r.id?null:r.id},'Выбор награды сохранён')}>{d.nextReward===r.id?'Выбрана на главной':'Хочу следующей'}</button><button disabled={blocked||pending||r.cost>s.gold} onClick={()=>buy(r)}>Получить</button></div></div><button className="rw-edit" aria-label={'Изменить награду: '+personalRewardLabel(r,d.catalog)} onClick={()=>open({kind:'edit',reward:r})}><Icon id="action.edit" size={18}/></button></article>)}</div>
+   <div className="rw-personal-list">{list.map(r=><article className="rw-personal" key={r.id}><RewardArt reward={r} size={64}/><div><button className="rw-name" data-noi18n onClick={()=>open({kind:'edit',reward:r})}>{personalRewardLabel(r,d.catalog)}</button><small>{r.cost} <span>золота</span> · <span>{r.cost>s.gold?'не хватает':'доступна'}</span>{r.cost>s.gold?' '+(r.cost-s.gold):''}</small><div className="rw-row-actions"><button disabled={blocked||pending} aria-pressed={d.nextReward===r.id} onClick={()=>void write('reward.pin',{id:d.nextReward===r.id?null:r.id},'Выбор награды сохранён')}>{d.nextReward===r.id?'Выбрана на главной':'Хочу следующей'}</button><button disabled={blocked||pending||r.cost>s.gold} onClick={()=>buy(r)}>Получить</button></div></div><button className="rw-edit" aria-label={'Изменить награду: '+personalRewardLabel(r,d.catalog)} onClick={()=>open({kind:'edit',reward:r})}><Icon id="action.edit" size={18}/></button></article>)}</div>
    {!blocked&&!list.length&&empty(query||filter!=='Все'?'Ничего не найдено':'Твой список пока пуст',query||filter!=='Все'?'Измени поиск или фильтр.':'Добавь личную награду или выбери готовую из каталога.')}
-   <button className="tri-link-row" onClick={()=>changeMode('Каталог')}><Icon id="nav.rewards"/><span>Каталог · {d.catalog.length} готовых наград</span><Icon id="action.expand"/></button>
+   <button className="tri-link-row" onClick={()=>changeMode('Каталог')}><Icon id="nav.rewards"/><span><span>Каталог наград</span> · {d.catalog.length}</span><Icon id="action.expand"/></button>
    <p className="rw-note">Отдых не нужно заслуживать. Золото — способ отметить усилия и не забыть о том, что радует.</p>
   </>}
   {mode==='Каталог'&&<>
@@ -79,16 +82,16 @@ export function LiveRewards({s,run,editTask,complete,entry,handled}:{s:Snapshot;
   {mode==='Полученные'&&<>
    <p className="rw-note">Золото уже списано. Планирование и отметки использования не меняют баланс.</p>
    <div className="tri-filters">{['Ждут меня','Использованы','Отложены','Все'].map(f=><button key={f} aria-pressed={owned===f} onClick={()=>setOwned(f)}>{f}</button>)}</div>
-   {visible.map(p=><article className="rw-owned" key={p.id}><RewardArt reward={p.reward} size={60}/><div><h3 data-noi18n>{p.reward.name}</h3><p>{states[statusOf(p)]}{p.date?' · '+label(p.date,true):''}</p><small>{label(p.at.slice(0,10),true)} · {p.reward.cost} золота</small></div><button aria-label={'Открыть полученную награду: '+p.reward.name} onClick={()=>open({kind:'use',id:p.id})}><Icon id="action.expand"/></button></article>)}
+   {visible.map(p=><article className="rw-owned" key={p.id}><RewardArt reward={p.reward} size={60}/><div><h3 data-noi18n>{p.reward.name}</h3><p>{states[statusOf(p)]}{p.date?' · '+dateLabel(p.date):''}</p><small>{dateLabel(p.at.slice(0,10))} · {p.reward.cost} золота</small></div><button aria-label={'Открыть полученную награду: '+p.reward.name} onClick={()=>open({kind:'use',id:p.id})}><Icon id="action.expand"/></button></article>)}
    {!blocked&&!visible.length&&empty('Здесь пока пусто','Получи награду из своего списка. Здесь она останется до использования.')}
-   <details className="wb-details"><summary>История золота и действий · {d.purchases.length}</summary>{d.purchases.length?d.purchases.slice().reverse().map((p,i)=><p key={p.id||i}><small>{label((p.at||'').slice(0,10),true)}</small><br/><span data-noi18n>{p.name||'Списание'}</span> · −{p.cost} золота</p>):<p>Операций пока нет.</p>}</details>
+   <details className="wb-details"><summary>История золота и действий · {d.purchases.length}</summary>{d.purchases.length?d.purchases.slice().reverse().map((p,i)=><p key={p.id||i}><small>{dateLabel((p.at||'').slice(0,10))}</small><br/><span data-noi18n>{p.name||'Списание'}</span> · −{p.cost} золота</p>):<p>Операций пока нет.</p>}</details>
   </>}
   <details className="rw-collection"><summary>Коллекция, Логово и достижения</summary>{!blocked&&<RewardOwners s={s} part="collection"/>}</details>
   <details className="wb-details"><summary>Правила экономики</summary><p>Самооценка сложности и настроения не меняет выплату.</p><p>Бонус XP ограничен +60%, бонус золота +40%, множитель сложности максимум ×1,75.</p><p>Любая трата или удаление требует подтверждения и сохраняется до изменения экрана.</p><p>Если награда требует реальных расходов, их нужно обеспечить отдельно.</p></details>
-  <dialog ref={dialog} className="wb-dialog rw-dialog palette-ink" aria-label={layer?.kind==='edit'?'Личная награда':'Полученная награда'} onCancel={e=>{e.preventDefault();close();}} onClick={e=>{if(e.target===dialog.current)close();}}><div className="wb-sheet"><header><h2>{layer?.kind==='edit'?'Личная награда':'Время для себя'}</h2><button aria-label="Закрыть награду" disabled={pending} onClick={close}><Icon id="action.close"/></button></header>{error&&<p className="pl-error" role="alert">{error}</p>}{pending&&<p role="status">Сохраняю…</p>}
+  <dialog ref={dialog} className="wb-dialog rw-dialog" aria-label={layer?.kind==='edit'?'Личная награда':'Полученная награда'} onCancel={e=>{e.preventDefault();close();}} onClick={e=>{if(e.target===dialog.current)close();}}><div className="wb-sheet"><header><h2>{layer?.kind==='edit'?'Личная награда':'Время для себя'}</h2><button aria-label="Закрыть награду" disabled={pending} onClick={close}><Icon id="action.close"/></button></header>{error&&<p className="pl-error" role="alert">{error}</p>}{pending&&<p role="status">Сохраняю…</p>}
    <fieldset className="live-fields" disabled={pending||blocked}>
     {layer?.kind==='edit'&&<RewardEditor key={layer.reward.id} s={s} initial={layer.reward} save={(reward,base)=>write('reward.save',{reward,base},'Личная награда сохранена',true)} remove={d.rewards.some(r=>r.id===layer.reward.id)?()=>{dialog.current?.close();setLayer(null);void run('reward.open',{kind:'delete-reward',id:layer.reward.id});}:undefined}/>}
-    {purchase&&<><div className="rw-buy"><RewardArt reward={purchase.reward} size={92}/><h3 data-noi18n>{purchase.reward.name}</h3><p>{states[statusOf(purchase)]}{purchase.date?' · '+label(purchase.date,true):''}</p></div>
+    {purchase&&<><div className="rw-buy"><RewardArt reward={purchase.reward} size={92}/><h3 data-noi18n>{purchase.reward.name}</h3><p>{states[statusOf(purchase)]}{purchase.date?' · '+dateLabel(purchase.date):''}</p></div>
      {['received','planned'].includes(statusOf(purchase))?<>
       <button className="wb-primary wb-wide" onClick={()=>{if(linked&&!linked.done){dialog.current?.close();setLayer(null);complete(linked);}else void write('reward.life',{id:purchase.id,status:'used'},'Использование сохранено · без повторного списания',true);}}>Я воспользовался</button>
       <RewardDate initial={purchase.date||day()} save={date=>write('reward.life',{id:purchase.id,status:'planned',date},'Дата награды сохранена',true)}/>

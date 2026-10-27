@@ -1,3 +1,16 @@
+## Codex 27.10 — B2.14: Награды в основном B2.5, подготовка общего выпуска
+
+Владелец разрешил публикацию для сайта и текущего TestFlight. До выпуска production
+проверен как v342, новый root оставался локально. В основном root проверены source
+personal/catalog/purchases/lifecycle/rest и все игровые owners. Покупки5/7, cancel,
+double tap/reload, rename/delete immutable receipts, недостаток9977, complete/undo,
+перенос28.10 без дубля и defer/restore. QA-only balance34→22; исходные данные сохранены.
+Исправлены theme/16px/focus формы, переводы EN/DE/UK/ES и обновление её заголовка,
+locale dates, безопасное сохранение личных имён и числовой счётчик.176 live +268 domain,
+build/syntax/diff, browser375/1280 light/dark/EN/DE, detector[], byte contracts PASS.
+QA: redesign/b27/B214-QA.md. Публикация/полный suite подтверждаются отдельной квитанцией.
+Native binary/remote, auth/B3/attention/3D и backend экономика не менялись.
+
 ## Codex 27.10 — B2.13: B2.5 в корне приложения
 
 По поручению владельца перенесены структура/Сегодня/План в основной `/`.

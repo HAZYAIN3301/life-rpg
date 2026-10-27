@@ -19,7 +19,7 @@ const undoStart=core.indexOf('      const completedDay = dayOf(q), beforeTask = 
 const undoEnd=core.indexOf('      checkAchievements(); render(); publishLeaderboard();',undoStart);
 if(undoStart<0||undoEnd<0)throw Error('Undo transaction anchor changed');
 const undo=`async function b28UndoTask(id){const q=questById(id),el=null;\n${core.slice(undoStart,undoEnd)}\nreturn saved;}\n`.replace(": await Store.saveNow('tasks', State.tasks);",": q.rewardPurchaseId ? await commitmentDataCommit(({settings,tasks})=>({settings,tasks})) : await Store.saveNow('tasks', State.tasks);");
-const parts=await Promise.all(['live-copy.js','plan-bridge.js','rewards-bridge.js','world-bridge.js','today-bridge.js','live-bridge.js','app-hooks.js'].map(p=>readFile(p,'utf8')));
+const parts=await Promise.all(['live-copy.js','rewards-copy.js','plan-bridge.js','rewards-bridge.js','world-bridge.js','today-bridge.js','live-bridge.js','app-hooks.js'].map(p=>readFile(p,'utf8')));
 const runtime=`'use strict';\nwindow.SatoruAppStartup=function(){\nif(window.SatoruLiveBridge)return;\n${model.outputFiles[0].text}\nwindow.SatoruLiveModel=SatoruLiveModel;\n${undo}\n${parts.join('\n')}\n};\n`;
 await writeFile(out+'/app-runtime.js',runtime);
 if(core.split('\ninit();').length!==2)throw Error('Canonical startup anchor changed');
