@@ -171,6 +171,17 @@ Debug build SUCCEEDED и локальный WKWebView запуск. Не product
 Server readback ru/light/workMin=30, actualMin=2 при done=false. 3D, auth и сервер
 не менялись. Остаток переноса B2.4/B2.5 описан в QA, чужой checkout сохранён.
 
+## Codex 28.10 — знания Creator College в основном репозитории
+
+По прямому поручению владельца перенесены собственные SATORU-APPLICATION и
+WHATSAPP-APPLICATION из отдельного плана в `docs/knowledge/creator-college-20261028/`.
+Добавлены вход, контент-план и переносимые ссылки на полный канон/реестр Mahoraga.
+Исходники курса, личные материалы и переписка сюда не копировались. Срез v342 внутри
+исследования обозначен историческим; текущая база переноса — origin/master c0fae3c7.
+Docs-only: проверяются diff, ссылки и состав коммита; нового UI/runtime/device QA нет.
+Auth/B3/attention, данные, кеши и очереди продукта не менялись. Доставка на GitHub и
+статус автоматического deployment фиксируются отдельной квитанцией.
+
 ## Codex 20.10 — база анимации для всех агентов
 
 В `docs/animation/` перенесены собственные конспекты Williams/Spine с переносимой
