@@ -23,9 +23,9 @@ const video = (extra) => candidate('clip', Object.assign({
 
 test('production batch admits nine real owned texts and preserves eight pending external records', () => {
   const raw = R.candidates(), out = R.prepare(opts());
-  assert.equal(raw.length, 17);
+  assert.equal(raw.length, 20);
   assert.equal(out.admission.items.length, 9);
-  assert.equal(out.admission.rejected.length, 8);
+  assert.equal(out.admission.rejected.length, 11);
   assert.equal(Catalog.CATALOG.length, 11);
   assert.ok(out.catalog.every((c) => c.mediaPolicy === 'text' && c.attribution === 'Satoru'));
   assert.ok(raw.some((c) => c.id === 'spiderverse-official-trailer'));
@@ -51,7 +51,7 @@ test('own quotes migrate to text, visual and check method survive; embed rights 
   const accepted = P.admit([quote.draft], { now: NOW });
   assert.equal(accepted.items.length, 1);
   assert.equal(P.toCatalogRows(accepted.items, 'en')[0].visual, 'ink');
-  const old = P.fromCatalogV1Row(Catalog.CATALOG[0]);
+  const old = P.fromCatalogV1Row(Catalog.CATALOG.find(r=>r.id==='blender-bunny'));
   assert.equal(old.draft.rights.embedAllowed, false);
   const reviewed = P.fromCatalogV1Row(Catalog.CATALOG[0], { embedAllowed: true, lang: 'none', available: true, lastCheckedAt: NOW, checkMethod: 'head' });
   assert.equal(P.admit([reviewed.draft], { now: NOW }).rejected[0].code, P.REJECT.PLAYBACK_UNVERIFIED);
@@ -209,9 +209,24 @@ test('manual page review does not admit a video or podcast as playback', () => {
 test('review queue is finite, prioritizes unreviewed records, and never mutates receipts', () => {
   const raw = R.candidates(), before = JSON.stringify(raw);
   const out = R.reviewQueue(raw, { now: NOW, limit: 3 });
-  assert.equal(out.items.length, 3); assert.equal(out.remaining, 5);
+  assert.equal(out.items.length, 3); assert.equal(out.remaining, 4);
   assert.ok(out.items.every((c) => c.requiredCheck === 'playback_in_satoru'));
   assert.equal(JSON.stringify(raw), before);
   assert.equal(R.reviewQueue([video({ lastCheckedAt: '2026-08-20T22:00:00.000Z' })], { now: NOW }).items.length, 0);
   assert.equal(R.reviewQueue([video({ lastCheckedAt: '2026-08-18T22:00:00.000Z' })], { now: NOW }).items.length, 1);
+});
+test('explicit retry repairs an empty day only when licensed matching stock exists, preserving any real shown deck',()=>{
+ const p=profile(['design'],['video']);p.digest={day:'2026-10-28',ids:[],doneIds:[]};
+ const options={profile:p,day:'2026-10-28',now:'2026-10-28T18:00:00Z',locale:'ru'},before=JSON.stringify(p);
+ assert.deepEqual(R.ensureDigest(options).items,[]);
+ assert.deepEqual(R.retryEmptyDigest(options).items.map(i=>i.id),['blender-spring']);
+ assert.equal(JSON.stringify(p),before);
+ const shown={...p,digest:{day:options.day,ids:['control-circle'],doneIds:['control-circle']}};
+ assert.deepEqual(R.retryEmptyDigest({...options,profile:shown}).profile.digest,shown.digest);
+ assert.deepEqual(R.retryEmptyDigest({...options,candidates:[]}).profile.digest,p.digest);
+});
+test('licensed photographs have checked local files and remain language-neutral; raw external links stay excluded',()=>{
+ const out=R.ensureDigest({profile:profile(['space'],['image']),day:'2026-10-28',now:'2026-10-28T18:00:00Z',locale:'uk',ctx:{maxSharePerSource:1}});
+ assert.equal(out.items.length,3);
+ for(const item of out.items){assert.equal(item.rightsKind,'public-domain');assert.equal(item.mediaPolicy,'local');assert.ok(fs.statSync(require('node:path').join(__dirname,'../public',item.assetPath)).size>1000);}
 });

@@ -39,6 +39,7 @@
   }
   function safeImage(url, provider) {
     if (provider === 'tiktok' || Media?.externalOnly(url)) return '';
+    if(/^https:\/\/i\.ytimg\.com\/vi(?:_webp)?\/[a-zA-Z0-9_-]{11}\/(?:hq|sd|maxres)default\.(?:jpg|webp)$/.test(String(url||'')))return url;
     const image = Media && Media.safeImage(url, provider);
     if (image) return image;
     try {
@@ -52,7 +53,7 @@
   function mediaSource(item) { return Media ? Media.parseSource(item.sourceUrl || item.url) : null; }
   function providerLabel(item) {
     const source = mediaSource(item);
-    return source ? (source.provider === 'tiktok' ? 'TikTok' : 'Pinterest') : String(item.provider || '');
+    return source ? (source.provider === 'tiktok' ? 'TikTok' : 'Pinterest') : ({'youtube-blender-studio':'Blender Studio · YouTube',nasa:'NASA'})[item.provider] || String(item.provider || '');
   }
 
   function shellHead(t, actions = '') {
@@ -227,7 +228,8 @@
 
   function renderVisual(item, t) {
     const source = mediaSource(item);
-    const imageUrl = Media?.externalOnly(item) ? '' : safeImage(item.imageUrl, source && source.provider);
+    const local=item.mediaPolicy==='local'&&item.format==='image'&&/^assets\/inspiration\/[a-z0-9/_-]+\.(?:jpg|png|webp)$/i.test(item.assetPath||'')?'/'+item.assetPath:'';
+    const imageUrl = Media?.externalOnly(item) ? '' : local || safeImage(item.imageUrl, source && source.provider);
     const image = imageUrl ? `<img class="inspiration-visual-image" src="${esc(imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
     if (source || image) {
       return `<div class="inspiration-media-card"><div class="inspiration-visual is-media${source ? ` is-${source.provider}` : ''}${image ? ' has-image' : ' has-no-image'}" data-inspiration-media="${esc(item.id)}">${image}${image ? '' : `<p class="inspiration-media-unavailable">${tr(t, Media?.externalOnly(item) ? 'TikTok открывается вне Satoru.' : 'Предпросмотр недоступен. Открой материал из источника.')}</p>`}${mediaControl(item, t)}</div>
@@ -291,7 +293,7 @@
       const report = vm.supplyReport;
       const title = report ? supplyCopy(report.emptyReason || 'no_matching_material', vm) : tr(t, 'Для этих интересов пока нет безопасных материалов');
       const detail = report ? supplyCopy('empty_detail', vm) : tr(t, 'Измени форматы или добавь своё. Мы не подставляем случайные ссылки только ради заполнения экрана.');
-      return `${summary}${discovery}${notice}<div class="card inspiration-state" role="status"><h3 data-noi18n>${title}</h3><p data-noi18n>${detail}</p><button type="button" class="btn" data-action="inspiration-setup-edit">${tr(t, 'Изменить интересы')}</button></div>`;
+      return `${summary}${discovery}${notice}<div class="card inspiration-state" role="status"><h3 data-noi18n>${title}</h3><p data-noi18n>${detail}</p><button type="button" class="btn" data-action="inspiration-digest-retry">${tr(t, 'Повторить загрузку подборки')}</button><button type="button" class="btn ghost" data-action="inspiration-setup-edit">${tr(t, 'Изменить интересы')}</button></div>`;
     }
     const terminal = vm.digestDone ? `<section class="card inspiration-terminal" role="status"><span aria-hidden="true">✓</span><div><h3>${tr(t, 'На сегодня всё')}</h3><p>${tr(t, 'Подборка закончилась. Никакого «ещё одного». Можно вернуться к своему дню.')}</p></div><button type="button" class="btn" data-action="goto-today">${tr(t, 'К делам')}</button></section>` : '';
     return `${summary}${discovery}${notice}<div class="inspiration-digest${vm.animateEntry ? ' should-enter' : ''}" aria-label="${tr(t, 'Подборка на сегодня')}">${items.map((item, index) => renderDigestItem(item, index, vm, t)).join('')}</div>${terminal}`;

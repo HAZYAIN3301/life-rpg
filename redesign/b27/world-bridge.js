@@ -6,7 +6,7 @@ window.SatoruWorldBridge=(()=>{
  const errors=()=>[State._treeLoadError&&'Путь не загрузился. Сохранённая карта не заменена; повтори загрузку.',State._settingsLoadError&&'Настройки Мира не загрузились.',State._accountDataLoadErrors?.episodes&&'Эпизоды не загрузились. История не заменена.'].filter(Boolean);
  function snapshot(){
   const c=State.settings?.companion||{},curve=State.settings.curve,level=levelInfo(overallXp(),curve.base,curve.growth),rank=charRank();
-  return{errors:errors(),level,rank:{name:t(rank.name),color:rank.color},title:equippedTitle()||'',archetype:t(archetype().name),visuals:Object.fromEntries(['avatarAppearance','avatarCoreGender','avatar','body','wear','gear','cosmetics','petNames','petSpecies','fortuneSkins','fortuneProps'].map(k=>[k,State.settings[k]??null])),
+  return{errors:errors(),level,rank:{name:t(rank.name),color:rank.color},title:equippedTitle()||'',archetype:t(archetype().name),recovery:{enabled:State.settings.recoveryGuardianV1?.enabled??ensureDen().petCount>=2,sphereId:topSkills().find(s=>canonOf(s)==='rest')?.id||null},visuals:Object.fromEntries(['avatarAppearance','avatarCoreGender','avatar','body','wear','gear','cosmetics','petNames','petSpecies','fortuneSkins','fortuneProps','recoveryGuardianV1'].map(k=>[k,State.settings[k]??null])),
    companion:{name:c.name||'Тень',bond:c.bond||0,tier:t(COMP_TIERS[compTierIdx(c.bond||0)].name),next:compNextTier(c.bond||0),pet:c.pet||'',check:c.check?.[todayStr()]||{},journal:c.journal||[]},
    pets:topSkills().map(s=>{const traits=petTraits(s.id),stats=petStats(s.id);return{id:s.id,name:petName(s.id),sphere:sphereNameText(s.name),color:s.color,species:petSpeciesForSphere(s.id,traits),level:skillLevelOf(s.id),xp:skillXp(s.id),stats,hint:t(traits[0]?.hint||''),kind:t(traits[0]?.kind||'Спутник')};}),
    trees:State._treeLoadError?{}:State.tree||{},nodes:Object.fromEntries(Object.entries(State.tree||{}).map(([id,tree])=>[id,(tree.nodes||[]).map(n=>({...n,title:treeNodeCopy(n,'title'),desc:treeNodeCopy(n,'desc'),criterion:treeNodeCriterion(n),nextAction:treeNodeNextAction(n),state:treeNodeState(id,n),reason:treeNodeLockReason(id,n),perks:nodePerks(n),effects:nodePerks(n).map(p=>PERK_KINDS[p.kind]?t(PERK_KINDS[p.kind].fmt(p.val)):'').filter(Boolean)}))])),
@@ -80,6 +80,9 @@ window.SatoruWorldBridge=(()=>{
      node.claimedAt=new Date().toISOString();node.claimSource='self';const proof=String(input.proof||'').trim().slice(0,500);if(proof)node.proofNote=proof;
      const settings=structuredClone(State.settings),c=ensureCompanion(settings);c.journal=c.journal.concat({date:todayStr(),kind:'ms',skillId:input.skillId,nodeId:n.id,title:n.title,titleKey:n.titleKey||null,text:treeNodeCopy(n,'title')}).slice(-120);data.settings=settings;
     }
+   }else if(command==='world.recovery'){
+    if(typeof input.enabled!=='boolean')throw Error('Выбери состояние хранительницы.');
+    data={settings:{...structuredClone(State.settings),recoveryGuardianV1:{enabled:input.enabled}}};
    }else if(command==='world.pet.name'){
     if(!topSkills().some(s=>s.id===input.id))throw Error('Сфера не найдена.');
     const settings=structuredClone(State.settings);settings.petNames={...settings.petNames,[input.id]:String(input.name||'').trim().slice(0,20)};data={settings};
@@ -106,7 +109,8 @@ window.SatoruWorldBridge=(()=>{
  }
  // The scene contract is independent of its renderer. 3D must use the same room,
  // ownership, focus and care owners; never create another room/account store.
- function mount(host,part,id){
+ async function mount(host,part,id){
+  const token=(host._worldRenderToken||0)+1;host._worldRenderToken=token;
   if(part==='den'&&!host.firstElementChild)State._denEdit=true;
   const opened=new Set([...host.querySelectorAll('details[open]')].map(e=>e.id||e.className));
   const staging=document.createElement('div');let view='character';
@@ -122,7 +126,10 @@ window.SatoruWorldBridge=(()=>{
   staging.querySelectorAll('.th-kicker,.character-kicker,.settings-eyebrow').forEach(e=>e.remove());
   staging.querySelectorAll('details').forEach(d=>{if(opened.has(d.id||d.className))d.open=true;});
   if(part==='scene')host.dataset.sceneRenderer='den-'+(staging.querySelector('.den-scene')?.dataset.denRenderer||'source');
-  if(lang()!=='ru')translateDOM(staging);commitMainView(host,staging,view);
+  if(lang()!=='ru')translateDOM(staging);
+  if(['wardrobe','heroArt','petArt'].includes(part))await waitForViewImages(staging,650);
+  if(host._worldRenderToken!==token||!host.isConnected)return;
+  window.SatoruPlanBridge.commitOwned(host,staging,view);
   host.querySelectorAll('form').forEach(form=>{form.method='post';if(!form.dataset.b212Guard){form.dataset.b212Guard='1';form.addEventListener('submit',e=>e.preventDefault());}});
  }
  return{snapshot,run,mount,accepts:c=>c.startsWith('world.')};

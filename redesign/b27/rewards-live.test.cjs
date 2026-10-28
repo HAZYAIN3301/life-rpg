@@ -46,3 +46,9 @@ test('linked rest quest status shares settings/tasks transaction without changin
  next=M.reconcileRewardTasks(next,[{...old[0],date:'2026-10-29'}],done,purchases,'2026-10-27T12:00:00Z');assert.equal(next.rewardLifeV1.p1.status,'planned');assert.equal(next.rewardLifeV1.p1.date,'2026-10-29');
  assert.equal(settings.rewardLifeV1.p1.status,'planned');assert.equal(purchases[0].cost,30);
 });
+test('old receipts without usage evidence stay historical; explicit and legacy usage retain their meaning',()=>{
+ const receipts=[{id:'old',rewardId:'r1',cost:30},{id:'new',rewardId:'r1',cost:30},{id:'used',rewardId:'r1',cost:30,used:true}];
+ const before=JSON.stringify(receipts),d=M.rewardProjection({rewards:[reward],purchases:receipts,rewardLife:{new:{status:'received',date:null}}});
+ assert.equal(d.purchases[0].historical,true);assert.equal(d.purchases[1].historical,false);assert.equal(d.purchases[2].status,'used');
+ assert.deepEqual(d.purchases.filter(p=>!p.historical&&p.status==='received').map(p=>p.id),['new']);assert.equal(JSON.stringify(receipts),before);
+});

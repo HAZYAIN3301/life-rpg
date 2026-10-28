@@ -25,7 +25,7 @@ window.SatoruTodayBridge=(()=>{
   staging.querySelectorAll('.th-kicker,.route-kicker').forEach(e=>e.remove());
   // Only unsent drafts live here. Existing handlers still own every confirmed write.
   const savedFields={};for(const id of ['reflection','first-line']){const field=staging.querySelector('#'+id);if(field)savedFields[id]=field.value;}
-  if(lang()!=='ru')translateDOM(staging);commitMainView(host,staging,view);
+  if(lang()!=='ru')translateDOM(staging);window.SatoruPlanBridge.commitOwned(host,staging,view);
   for(const id of ['reflection','first-line','capture-text']){
    const field=host.querySelector('#'+id);if(!field)continue;const key=id==='capture-text'?'capture':id,base=savedFields[id]||'',draft=readDraft(key);
    if(draft&&(key==='capture'||draft.base===base))field.value=draft.value;else if(draft)forget(key);

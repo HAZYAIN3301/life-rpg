@@ -90,6 +90,12 @@
     const result = Profile.ensureDigest(profile, prepared.poolRows, opts.day);
     return Object.assign({}, prepared, result, { unavailableIds: [], fixed: false });
   }
+  function retryEmptyDigest(options) {
+    const p=Profile.normalize(options.profile),fixed=ensureDigest(options);
+    if(!p.digest||p.digest.day!==options.day||p.digest.ids.length||p.shownHistory.some(r=>r.day===options.day))return fixed;
+    const fresh=ensureDigest(Object.assign({},options,{profile:Object.assign({},p,{digest:null})}));
+    return fresh.ok&&fresh.items.length?fresh:fixed;
+  }
   function resolveSaved(item, catalog) {
     if (!item || !item.catalogId) return item;
     const source = (Array.isArray(catalog) ? catalog : []).find((row) => row.id === item.catalogId);
@@ -119,5 +125,5 @@
       .sort((a, b) => a.dueAtMs - b.dueAtMs || a.id.localeCompare(b.id));
     return { ok: true, items: rows.slice(0, limit), remaining: Math.max(0, rows.length - limit) };
   }
-  return Object.freeze({ VERSION, candidates, prepare, ensureDigest, resolveSaved, reviewQueue });
+  return Object.freeze({ VERSION, candidates, prepare, ensureDigest, retryEmptyDigest, resolveSaved, reviewQueue });
 });

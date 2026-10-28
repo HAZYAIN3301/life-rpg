@@ -44,7 +44,7 @@ function harness(modes = [], locale = 'en') {
   const server = { settings: snapshot(State.settings), purchases: snapshot([]), tasks: snapshot([]) };
   const before = clone(State), initialSnapshots = clone(server);
   let sequence = 0;
-  const context = vm.createContext({ State, window: { AccountDataV1: Account, EconomyWriteV1: Economy, PurchaseFeedbackV1: Feedback, PersonalProgressV1: Progress },
+  const context = vm.createContext({ State, window: { AccountDataV1: Account, EconomyWriteV1: Economy, PurchaseFeedbackV1: Feedback, PersonalProgressV1: Progress, RewardLifeV1: require('../public/reward-life-v1.js') },
     structuredClone, AbortSignal, clearTimeout, setTimeout, CSS: { escape: String },
     console: { error() {}, warn() {} }, lang: () => State.settings.lang, t: value => value,
     accountDataWriteAllowed: () => true, settingsWriteAllowed: () => true,

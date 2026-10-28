@@ -1,6 +1,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {createRoot,Root} from 'react-dom/client';
-import {Icon,Lair,Portrait} from '../components/generated/B2Scene';
+import {Icon,Lair} from '../components/generated/B2Scene';
+import {Portrait} from './Portrait';
 import {TodayDashboard} from '../components/generated/TodayDashboard';
 import {FocusDock} from '../components/generated/FocusDock';
 import {Field} from './Field';
@@ -28,6 +29,7 @@ import './StartScreen';
 import './plan-settings.css';
 import './today-owned.css';
 import './layout-live.css';
+import './feedback-live.css';
 import {accessibleAccent,accentText} from './theme';
 type Result={ok:boolean;error?:string;notice?:string;snapshot?:Snapshot};
 declare global{interface Window{SatoruLiveBridge:{snapshot:()=>Snapshot;run:(c:string,p:unknown,scope:{account:string;epoch:number})=>Promise<Result>};SatoruLiveView:{render:(s:Snapshot)=>void;hide:()=>void}}}
@@ -43,9 +45,9 @@ function TaskForm({s,initial,save}:{s:Snapshot;initial:RawTask;save:(t:RawTask,b
   const choose=(id:string,background=false)=>{const slot=background?'layers':'skillIds',old=task[slot]||[],next=old.includes(id)?old.filter((x:string)=>x!==id):[...old,id];patch({[slot]:next,...(!background?{skillId:next[0]}:{})});};
   return <form className="pl-form" onSubmit={async e=>{e.preventDefault();if(await save(task,base))sessionStorage.removeItem(key);}}>
     <Field label="Название квеста"><input autoFocus required maxLength={180} value={task.title} onChange={e=>patch({title:e.target.value})}/></Field>
-    <LiveSpheres skills={s.skills} value={task.skillIds||[]} change={skillIds=>patch({skillIds,skillId:skillIds[0],layers:(task.layers||[]).filter((id:string)=>!skillIds.includes(id))})}/>
-    <details className="pl-disclosure"><summary>Сопутствующие сферы</summary><LiveSpheres label="Сопутствующие сферы" skills={s.skills.filter(k=>!(task.skillIds||[]).includes(k.id))} value={task.layers||[]} change={layers=>patch({layers})} max={3}/></details>
-    <label className="b24-core"><input type="checkbox" checked={!!task.core} onChange={e=>patch({core:e.target.checked})}/><span><b>Ядро дня</b></span></label>
+    {(()=>{const suggestion=window.SatoruPlanBridge.suggestSphere?.(task.title);return suggestion&&!(task.skillIds||[]).includes(suggestion.id)?<button type="button" className="sp-suggestion" onClick={()=>patch({skillId:suggestion.id,skillIds:[suggestion.id],layers:(task.layers||[]).filter((id:string)=>id!==suggestion.id)})}><Icon id="nav.shadow" size={26}/><span>Подходит сфера <strong data-noi18n>{suggestion.name}</strong></span><span>Выбрать</span></button>:null;})()}
+    <LiveSpheres label="Сферы квеста" skills={s.skills} value={task.skillIds||[]} secondary={task.layers||[]} change={skillIds=>patch({skillIds,skillId:skillIds[0],layers:(task.layers||[]).filter((id:string)=>!skillIds.includes(id))})} changeSecondary={layers=>{const skillIds=(task.skillIds||[]).filter((id:string)=>!layers.includes(id));patch({layers,skillIds,skillId:skillIds[0]});}}/>
+    <label className="b24-core"><input type="checkbox" checked={!!task.core} onChange={e=>patch({core:e.target.checked})}/><span><b>Главное на сегодня</b><small>Выделить квест первым в плане дня</small></span></label>
     <div className="pl-form-pair"><Field label="Дата"><input required type="date" value={task.date} onInput={e=>patch({date:e.currentTarget.value})} onChange={e=>patch({date:e.target.value})}/></Field><Field label="Начало"><input type="time" value={task.startTime||''} onInput={e=>patch({startTime:e.currentTarget.value||null})} onChange={e=>patch({startTime:e.target.value||null})}/></Field></div>
     <DurationField value={task.estimateMin||0} onChange={estimateMin=>patch({estimateMin})}/>
     <fieldset className="pl-difficulties"><legend>Сложность</legend>{Object.entries(difficultyNames).map(([id,name])=><button type="button" key={id} aria-pressed={task.difficulty===id} onClick={()=>patch({difficulty:id})}><Icon id={'difficulty.'+id} size={28}/>{name}</button>)}</fieldset>
@@ -73,7 +75,7 @@ function Today({snapshot:s}:{snapshot:Snapshot}){
     window.SatoruPlanBridge.view(route==='world'?worldViews[worldMode]:route==='settings'?'settings':route==='rewards'?'rewards':route==='today'?(mode==='Заметки'?'notes':'today'):route==='tribe'?(['party','leaderboard'].includes(s.view)?s.view:'party'):({Календарь:'calendar',Цели:'goals',Привычки:'habits',Вдохновение:'shelf'} as Record<string,string>)[planMode],settingsGroup);
   },[route,calendarDate,calendarScale,planMode,settingsGroup,goalEntry,worldMode,mode]);
   useEffect(()=>{const legacy=(e:Event)=>{const d=(e as CustomEvent).detail;if(d.view==='settings'){setRoute('settings');setSettingsGroup(d.group==='overview'?'':d.group||'');}else if(['calendar','goals','habits','shelf'].includes(d.view)){setRoute('plan');setPlanMode(({calendar:'Календарь',goals:'Цели',habits:'Привычки',shelf:'Вдохновение'} as Record<string,string>)[d.view]);if(d.navigation?.calendarDate)setCalendarDate(d.navigation.calendarDate);if(d.navigation?.calendarMode)setCalendarScale(({day:'День',week:'Неделя',month:'Месяц'} as Record<string,string>)[d.navigation.calendarMode]||'Неделя');if(d.view==='goals')setGoalEntry(d.navigation?.goalId||'');}else if(Object.values(worldViews).includes(d.view)){setRoute('world');setWorldMode(Object.keys(worldViews).find(k=>worldViews[k]===d.view)||'home');}else if(d.view==='rewards')setRoute('rewards');else if(d.view==='notes'){setRoute('today');setMode('Заметки');}else if(d.view==='today'){setRoute('today');setMode(d.navigation?.todayTab==='board'?'Доска':'День');}else if(['party','leaderboard'].includes(d.view))setRoute('tribe');};addEventListener('satoru:legacy-route',legacy);return()=>removeEventListener('satoru:legacy-route',legacy);},[]);
-  const displayBrand=s.preferences?.appName&&s.preferences.appName!=='Satoru'?s.preferences.appName:'satoru';
+  const displayBrand=s.preferences?.appName||'Satoru';
   const defaultSkill=s.skills.find(k=>!k.archived);
   const data=project(s),[panel,setPanel]=useState<Panel|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[receipt,setReceipt]=useState(''),[query,setQuery]=useState(''),[seen,setSeen]=useState(true),[,tick]=useState(0);
   const motion=s.preferences?.motion!==false&&!matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -85,6 +87,7 @@ function Today({snapshot:s}:{snapshot:Snapshot}){
   const dialog=useRef<HTMLDialogElement>(null),root=useRef<HTMLDivElement>(null),opener=useRef<HTMLElement|null>(null),lock=useRef(false);
   useEffect(()=>{const t=setInterval(()=>tick(n=>n+1),1000);return()=>clearInterval(t);},[]);
   useEffect(()=>{root.current?.querySelector('.wb-scroll')?.scrollTo({top:0});},[route,mode,planMode,settingsGroup,worldMode]);
+  useEffect(()=>{const el=root.current?.querySelector<HTMLElement>('.wb-scroll');if(!el)return;let frame=0,p=0,last=el.scrollTop;const paint=()=>{frame=0;const delta=el.scrollTop-last;last=el.scrollTop;p=el.scrollTop<=0?0:Math.max(0,Math.min(1,p+delta/Math.max(240,innerHeight*.55)));root.current?.style.setProperty('--lair-progress',String(p));root.current?.classList.toggle('scene-collapsed',p>.7);};const scroll=()=>{if(!frame)frame=requestAnimationFrame(paint);};el.addEventListener('scroll',scroll,{passive:true});paint();return()=>{el.removeEventListener('scroll',scroll);cancelAnimationFrame(frame);};},[route,mode]);
   useEffect(()=>{if(!receipt)return;const t=setTimeout(()=>setReceipt(''),6000);return()=>clearTimeout(t);},[receipt]);
   useEffect(()=>{if(panel){dialog.current?.showModal();dialog.current?.querySelector<HTMLElement>('input:not([type=checkbox]),textarea')?.focus();}else if(dialog.current?.open){dialog.current.close();opener.current?.focus();}},[panel]);
   useEffect(()=>{if(!panel)return;const observer=new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n instanceof Element&&n.matches('.modal-overlay')))){dialog.current?.close();setPanel(null);}});observer.observe(document.body,{childList:true});return()=>observer.disconnect();},[panel?.kind]);
@@ -149,7 +152,7 @@ function Today({snapshot:s}:{snapshot:Snapshot}){
     return null;
   }
   const showScene=route==='today'&&mode==='День';
-  return <div ref={root} className={'wb palette-ink '+(dark?'theme-dark ':'')+'route-'+route+(!motion?' reduce-motion':'')} style={customAccent?{'--action':customAccent,'--on-action':accentText(customAccent)} as React.CSSProperties:undefined}><div className="wb-scroll"><header className="wb-header"><button className={'wb-brand '+(displayBrand!=='satoru'?'custom-brand':'')} onClick={goToday} aria-label="Satoru — Сегодня"><span>?</span><strong className="b210-brand-name" data-noi18n>{displayBrand}</strong></button><button className="wb-header-tool" onClick={()=>open({kind:'streak',title:'Твой прогресс'})}><Icon id="status.streak" size={31}/><span>{s.streak} {countWord(s.streak,'день','дня','дней')}</span></button><button className="wb-header-tool" aria-label="Палитра и настройки" onClick={()=>void navigate('settings','')}><Icon id="nav.settings"/></button></header>
+  return <div ref={root} className={'wb palette-ink '+(dark?'theme-dark ':'')+'route-'+route+(!motion?' reduce-motion':'')} style={customAccent?{'--action':customAccent,'--on-action':accentText(customAccent)} as React.CSSProperties:undefined}><div className="wb-scroll"><header className="wb-header"><button className={'wb-brand '+(displayBrand.toLowerCase()!=='satoru'?'custom-brand':'')} onClick={goToday} aria-label="Satoru — Сегодня"><span>?</span><strong className="b210-brand-name" data-noi18n>{displayBrand}</strong></button><button className="wb-header-tool" onClick={()=>open({kind:'streak',title:'Твой прогресс'})}><Icon id="status.streak" size={31}/><span>{s.streak} {countWord(s.streak,'день','дня','дней')}</span></button><button className="wb-header-tool" aria-label="Палитра и настройки" onClick={()=>void navigate('settings','')}><Icon id="nav.settings"/></button></header>
     {!!s.errors.length&&<div role="alert" className="wb-global-error">{s.errors.join(' ')}</div>}
     {error&&!panel&&<p role="alert" className="wb-global-error">{error}</p>}
     {showScene&&<aside className="wb-scene-column"><div className="wb-date"><h1>{label(day())}</h1><button onClick={review} aria-label="Открыть итог дня"><Icon id="system.day-end"/></button></div><Lair working={!!focus} paused={!focus?.running} motion={motion&&!panel} form={s.shadowForm} onShadow={shadow} onOpen={()=>void navigate('world')} onSeen={setSeen}/></aside>}

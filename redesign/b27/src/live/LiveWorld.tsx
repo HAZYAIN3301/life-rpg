@@ -1,5 +1,6 @@
 import {useEffect,useLayoutEffect,useRef,useState,type ReactNode} from 'react';
-import {Icon,Portrait} from '../components/generated/B2Scene';
+import {Icon} from '../components/generated/B2Scene';
+import {Portrait} from './Portrait';
 import {day} from '../components/generated/B2Model';
 import {duration} from '../components/generated/PlanModel';
 import {Field} from './Field';
@@ -8,9 +9,9 @@ import type {WorldNode,WorldTree} from './world-model';
 import type {Snapshot,RawTask} from './model';
 import '../components/generated/WorldWorkspace.css';
 import './world-live.css';
-export const worldModes=[['home','Дом'],['hero','Герой'],['pets','Спутники'],['path','Путь'],['progress','Прогресс']];
+export const worldModes=[['home','Дом'],['hero','Герой'],['pets','Спутники'],['path','Навыки'],['progress','Прогресс']];
 export const worldViews:Record<string,string>={home:'den',hero:'character',pets:'pets',path:'tree',progress:'stats'};
-export type WorldData={errors:string[];level:{level:number;into:number;need:number;pct:number};rank:{name:string;color:string};title:string;archetype:string;companion:{name:string;bond:number;tier:string;next:{at:number;name:string}|null;pet:string;check:Record<string,boolean>;journal:any[]};pets:any[];trees:Record<string,WorldTree>;nodes:Record<string,WorldNode[]>;points:Record<string,{earned:number;spent:number;available:number}>;progressTasks:RawTask[];perks:{id:string;label:string;cap:number|null}[];events:any[];episodes:any[];rawEpisodes:any[];episodeTypes:{id:string;name:string}[];intensities:string[];record:number;den:any};
+export type WorldData={errors:string[];level:{level:number;into:number;need:number;pct:number};rank:{name:string;color:string};title:string;archetype:string;companion:{name:string;bond:number;tier:string;next:{at:number;name:string}|null;pet:string;check:Record<string,boolean>;journal:any[]};recovery:{enabled:boolean;sphereId:string|null};pets:any[];trees:Record<string,WorldTree>;nodes:Record<string,WorldNode[]>;points:Record<string,{earned:number;spent:number;available:number}>;progressTasks:RawTask[];perks:{id:string;label:string;cap:number|null}[];events:any[];episodes:any[];rawEpisodes:any[];episodeTypes:{id:string;name:string}[];intensities:string[];record:number;den:any};
 declare global{interface Window{SatoruWorldBridge:{mount:(host:HTMLElement,part:string,id?:string)=>void}}}
 type Run=(command:string,input:unknown,message?:string)=>Promise<boolean>;
 export function WorldOwned({s,part,id}:{s:Snapshot;part:string;id?:string}){
@@ -26,7 +27,7 @@ export function LiveWorld({s,mode,choose,run,editTask,rewards,settings,shadow,fa
  useLayoutEffect(()=>{if(workspace.current)window.SatoruPlanBridge.translate(workspace.current);});
  const label=(key:string,_compact?:boolean)=>new Date(key.length>10?key:key+'T12:00:00').toLocaleDateString(s.preferences.language,{day:'numeric',month:'short'});
  const d=(s as Snapshot&{worldData:WorldData}).worldData,c=d.companion;
- const [sphere,setSphere]=useState(s.skills.find(k=>!k.archived&&d.trees[k.id])?.id||s.skills[0]?.id||''),[petId,setPetId]=useState(d.pets[0]?.id||''),[pathMode,setPathMode]=useState('Реальные вехи'),[map,setMap]=useState(false),[architect,setArchitect]=useState(false),[range,setRange]=useState(14);
+ const [sphere,setSphere]=useState(s.skills.find(k=>!k.archived&&d.trees[k.id])?.id||s.skills[0]?.id||''),[petId,setPetId]=useState(d.pets[0]?.id||''),[pathMode,setPathMode]=useState('Реальные вехи'),[map,setMap]=useState(true),[architect,setArchitect]=useState(false),[range,setRange]=useState(14);
  const [layer,setLayer]=useState<Layer|null>(null),[pending,setPending]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState('');
  const lock=useRef(false),dialog=useRef<HTMLDialogElement>(null),opener=useRef<HTMLElement|null>(null);
  const tree=d.trees[sphere],nodes=d.nodes[sphere]||[],pet=d.pets.find(p=>p.id===petId)||d.pets[0],points=d.points[sphere];
@@ -55,7 +56,7 @@ export function LiveWorld({s,mode,choose,run,editTask,rewards,settings,shadow,fa
    <div className="wo-title"><div><h2>Логово</h2><p>Твой мир растёт вместе с делами.</p></div><button aria-label="Обустройство Логова" onClick={()=>open('owner','Обустройство Логова','den')}><Icon id="action.edit"/>Обустройство</button></div>
    {!blocked&&<WorldOwned s={s} part="scene"/>}
    <button className="wo-shadow" onClick={()=>open('shadow',c.name)}><Portrait form={s.shadowForm}/><span><b><span data-noi18n>{c.name}</span> · {c.tier}</b><small><span>Связь</span> {c.bond} · {c.next?<><span>Следующая форма при</span> {c.next.at}</>:<span>Хранитель</span>}{c.pet===day()&&<> · <span>сегодня были рядом</span></>}</small></span><Icon id="action.expand"/></button>
-   <div className="wo-home-links">{row(s.name,<>{d.rank.name} · <span>уровень</span> {d.level.level}</>,'nav.hero',()=>choose('hero'),true)}{row('Спутники','Сферы и хранительница отдыха','nav.pets',()=>choose('pets'))}{row('Твой путь','Реальные результаты и игровые бонусы','nav.skills',()=>choose('path'))}{row('Прогресс','История усилий, времени и опыта','nav.progress',()=>choose('progress'))}</div>
+   <div className="wo-home-links">{row(s.name,<>{d.rank.name} · <span>уровень</span> {d.level.level}</>,'nav.hero',()=>choose('hero'),true)}{row('Спутники','Сферы и хранительница отдыха','nav.pets',()=>choose('pets'))}{row('Дерево навыков','Реальные вехи и бонусы героя','nav.skills',()=>choose('path'))}{row('Прогресс','История усилий, времени и опыта','nav.progress',()=>choose('progress'))}</div>
    {row('Коллекция и мебель','Нарядить героя и обустроить комнату','nav.rewards',rewards)}
   </>}
   {mode==='hero'&&<>
@@ -71,16 +72,17 @@ export function LiveWorld({s,mode,choose,run,editTask,rewards,settings,shadow,fa
    <div className="wo-title"><div><h2>Спутники</h2><p>Каждая сфера живёт в своём ритме.</p></div><button onClick={()=>open('shadow',c.name)}><Portrait form={s.shadowForm}/><span data-noi18n>{c.name}</span></button></div>
    <div className="wo-pet-strip" role="group" aria-label="Спутники сфер">{d.pets.map(p=><button key={p.id} aria-pressed={pet?.id===p.id} onClick={()=>setPetId(p.id)}><WorldOwned s={s} part="petArt" id={p.id}/><b data-noi18n>{p.name}</b>{p.name!==p.sphere&&<span data-noi18n>{p.sphere}</span>}</button>)}</div>
    {pet?<>
-    <WorldOwned key={pet.id} s={s} part="petControls" id={pet.id}/>
+    {pet.id===d.recovery.sphereId&&<label className="b212-check recovery-choice"><input type="checkbox" checked={d.recovery.enabled} disabled={pending||blocked} onChange={e=>void write('world.recovery',{enabled:e.target.checked},'Выбор хранительницы сохранён')}/><span><b>Кацую · хранительница отдыха</b><small>Показывать в восстановлении и Логове. Она не требует отдельной прокачки.</small></span></label>}
+    <WorldOwned key={pet.id+':'+d.recovery.enabled} s={s} part={pet.id===d.recovery.sphereId&&d.recovery.enabled?'recovery':'petControls'} id={pet.id}/>
     <div className="wo-pet-facts"><span>Уровень сферы<b>{pet.level}</b></span><span>Опыт сферы<b>{pet.xp} XP</b></span><span>Последняя запись<b>{pet.stats.lastFed?label(pet.stats.lastFed,true):'Пока нет'}</b></span></div>
     <p className="in-note">Погладить — просто побыть рядом. Рост питомца связан с записанными действиями в его сфере.</p>
     {row('Запланировать действие',pet.hint||pet.sphere,'action.add',()=>editTask({id:crypto.randomUUID(),title:'',date:day(),estimateMin:30,startTime:null,skillId:pet.id,skillIds:[pet.id],layers:[],difficulty:'normal',core:false}))}
     <details className="wo-disclosure"><summary>Дела в этой сфере</summary>{s.tasks.filter(t=>(t.skillIds||[t.skillId]).includes(pet.id)).slice(-20).map(t=><button className="wo-task-link" key={t.id} onClick={()=>editTask(t)}><span><b data-noi18n>{t.title}</b><small>{t.done?'Выполнено':label(t.date,true)}</small></span><Icon id="action.expand"/></button>)}</details>
    </>:<div className="wb-empty"><h3>Спутникам нужна сфера</h3><button onClick={()=>settings('life')}>Настроить сферы жизни</button></div>}
-   <details className="wo-disclosure"><summary>Кацую · хранительница отдыха</summary><WorldOwned s={s} part="recovery"/></details>
+   {!d.recovery.sphereId&&<section className="recovery-panel"><h3>Отдых и восстановление</h3><label className="b212-check recovery-choice"><input type="checkbox" checked={d.recovery.enabled} disabled={pending||blocked} onChange={e=>void write('world.recovery',{enabled:e.target.checked},'Выбор хранительницы сохранён')}/><span>Кацую · хранительница отдыха</span></label>{d.recovery.enabled&&<WorldOwned s={s} part="recovery"/>}</section>}
   </>}
   {mode==='path'&&<>
-   <div className="wo-title"><div><h2>Твой путь</h2><p>Не только уровень. То, чему ты научился.</p></div><button onClick={()=>setArchitect(!architect)} aria-pressed={architect}><Icon id="action.edit"/>{architect?'Готово':'Редактор'}</button></div>
+   <div className="wo-title"><div><h2>Дерево навыков</h2><p>Вехи показывают реальные результаты, бонусы усиливают героя в игре.</p></div><button onClick={()=>setArchitect(!architect)} aria-pressed={architect}><Icon id="action.edit"/>{architect?'Готово':'Редактор'}</button></div>
    <Field label="Сфера пути"><select value={sphere} onChange={e=>setSphere(e.target.value)}>{s.skills.filter(k=>d.trees[k.id]).map(k=><option key={k.id} value={k.id}>{k.name}{k.archived?' · архив':''}</option>)}</select></Field>
    <div className="wb-segments" role="group" aria-label="Слой пути">{['Реальные вехи','Игровые бонусы'].map(v=><button key={v} aria-pressed={v===pathMode} onClick={()=>setPathMode(v)}>{v}</button>)}</div>
    {tree&&<>
@@ -138,8 +140,11 @@ function NodeEditor({d,tree,initial,save,remove}:{d:WorldData;tree:WorldTree;ini
 }
 function WorldMap({nodes,filter,editing,blocked,open,move}:{nodes:WorldNode[];filter:string;editing:boolean;blocked:boolean;open:(n:WorldNode)=>void;move:(n:WorldNode,x:number,y:number)=>Promise<boolean>}){
  const [draft,setDraft]=useState<{id:string;x:number;y:number}|null>(null),drag=useRef<any>(null);
- const shown=nodes.filter(n=>worldKind(n)===filter),pos=(n:WorldNode)=>draft?.id===n.id?draft:{x:Number(n.x||0),y:Number(n.y||0)},width=Math.max(620,...shown.map(n=>pos(n).x+170)),height=Math.max(240,...shown.map(n=>pos(n).y+130));
- return <div className="wo-map-scroll" tabIndex={0} aria-label="Карта пути, можно прокручивать"><div className="wo-map" style={{width,height}}><svg width={width} height={height} aria-hidden="true">{shown.flatMap(n=>(n.requires||[]).map(id=>{const from=shown.find(o=>o.id===id);return from?<path key={id+':'+n.id} d={`M ${pos(from).x+70} ${pos(from).y+48} L ${pos(n).x+70} ${pos(n).y+48}`} stroke="currentColor" fill="none"/>:null;}))}</svg>{shown.map(n=><button disabled={blocked} key={n.id} className={'wo-node '+(n.unlocked?'earned':n.state)} style={{left:pos(n).x,top:pos(n).y,touchAction:editing?'none':'auto'}} onPointerDown={e=>{if(!editing)return;drag.current={id:n.id,x:e.clientX,y:e.clientY,old:pos(n),moved:false};e.currentTarget.setPointerCapture(e.pointerId);}} onPointerMove={e=>{const start=drag.current;if(start?.id!==n.id)return;const x=e.clientX-start.x,y=e.clientY-start.y;if(Math.abs(x)+Math.abs(y)<8)return;start.moved=true;setDraft({id:n.id,x:Math.round(Math.max(0,start.old.x+x)),y:Math.round(Math.max(0,start.old.y+y))});}} onPointerUp={async()=>{const start=drag.current;if(!start)return;if(start.moved&&draft)await move(n,draft.x,draft.y);setDraft(null);drag.current=null;}} onPointerCancel={()=>{setDraft(null);drag.current=null;}} onClick={()=>{if(!draft&&!drag.current?.moved)open(n);}}><small>{n.unlocked?'Открыт':n.state==='available'?worldKind(n)==='practice'?(n.cost||0)+' очков':'Следующая веха':'Впереди'}</small><b data-noi18n>{n.title}</b></button>)}</div></div>;
+ const shown=nodes.filter(n=>worldKind(n)===filter),raw=(n:WorldNode)=>({x:Number(n.x||0),y:Number(n.y||0)});
+ // Reframe each layer without rewriting the owner's stored editor coordinates.
+ const origin={x:(shown.length?Math.min(...shown.map(n=>raw(n).x)):0)-16,y:(shown.length?Math.min(...shown.map(n=>raw(n).y)):0)-16};
+ const pos=(n:WorldNode)=>{const p=draft?.id===n.id?draft:raw(n);return {x:p.x-origin.x,y:p.y-origin.y};},width=Math.max(620,...shown.map(n=>pos(n).x*1.5+240)),height=Math.max(240,...shown.map(n=>pos(n).y*1.5+160));
+ return <div className="wo-map-scroll" tabIndex={0} aria-label="Карта пути, можно прокручивать"><div className="wo-map" style={{width,height}}><svg width={width} height={height} aria-hidden="true">{shown.flatMap(n=>(n.requires||[]).map(id=>{const from=shown.find(o=>o.id===id);return from?<path key={id+':'+n.id} d={`M ${pos(from).x*1.5+110} ${pos(from).y*1.5+70} L ${pos(n).x*1.5+110} ${pos(n).y*1.5+70}`} stroke="currentColor" fill="none"/>:null;}))}</svg>{shown.map(n=><button disabled={blocked} key={n.id} className={'wo-node '+(n.unlocked?'earned':n.state)} style={{left:pos(n).x*1.5,top:pos(n).y*1.5,touchAction:editing?'none':'auto'}} onPointerDown={e=>{if(!editing)return;drag.current={id:n.id,x:e.clientX,y:e.clientY,old:raw(n),moved:false};e.currentTarget.setPointerCapture(e.pointerId);}} onPointerMove={e=>{const start=drag.current;if(start?.id!==n.id)return;const x=e.clientX-start.x,y=e.clientY-start.y;if(Math.abs(x)+Math.abs(y)<8)return;start.moved=true;setDraft({id:n.id,x:Math.round(Math.max(0,start.old.x+x/1.5)),y:Math.round(Math.max(0,start.old.y+y/1.5))});}} onPointerUp={async()=>{const start=drag.current;if(!start)return;if(start.moved&&draft)await move(n,draft.x,draft.y);setDraft(null);drag.current=null;}} onPointerCancel={()=>{setDraft(null);drag.current=null;}} onClick={()=>{if(!draft&&!drag.current?.moved)open(n);}}><small>{n.unlocked?'Открыт':n.state==='available'?worldKind(n)==='practice'?(n.cost||0)+' очков':'Следующая веха':'Впереди'}</small><b data-noi18n>{n.title}</b></button>)}</div></div>;
 }
 function EpisodeEditor({s,d,initial,save,remove}:{s:Snapshot;d:WorldData;initial:any;save:(e:any,b:string|null)=>Promise<boolean>;remove?:()=>void}){
  const [base]=useState(()=>d.rawEpisodes.some(e=>e.id===initial.id)?JSON.stringify(initial):null),[ep,set]=useState(()=>structuredClone(initial)),patch=(v:any)=>set({...ep,...v});

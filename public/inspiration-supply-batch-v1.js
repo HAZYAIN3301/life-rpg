@@ -35,6 +35,18 @@
     quote('sat-nature-one-detail', ['nature', 'travel', 'hiking', 'rest'],
       copy('Знакомое место меняется, когда замечаешь одну деталь.', 'A familiar place changes when you notice one detail.', 'Ein vertrauter Ort verändert sich, wenn du ein Detail bemerkst.', 'Знайоме місце змінюється, коли помічаєш одну деталь.', 'Un lugar conocido cambia cuando observas un detalle.'),
       copy('Свет на стене, форма листа, звук за окном. Можно просто заметить — без фотографии, коллекции и следующего задания.', 'Light on a wall, the shape of a leaf, a sound outside. You can simply notice, without a photo, a collection or another assignment.', 'Licht an einer Wand, die Form eines Blatts, ein Geräusch draußen. Einfach wahrnehmen, ohne Foto, Sammlung oder nächste Aufgabe.', 'Світло на стіні, форма листка, звук за вікном. Можна просто помітити — без фотографії, колекції та наступного завдання.', 'La luz en una pared, la forma de una hoja, un sonido fuera. Puedes observar sin foto, colección ni otra tarea.')),
+    ...[
+      ['blue-marble','ARC-1972-AS17-148-22727',copy('Земля целиком · Apollo 17','The whole Earth · Apollo 17','Die ganze Erde · Apollo 17','Земля цілком · Apollo 17','La Tierra entera · Apollo 17')],
+      ['first-steps','as11-40-5878',copy('Первый след · Apollo 11','A first footprint · Apollo 11','Eine erste Spur · Apollo 11','Перший слід · Apollo 11','Una primera huella · Apollo 11')],
+      ['earthrise','as08-14-2383',copy('Новый взгляд · Apollo 8','A new perspective · Apollo 8','Eine neue Perspektive · Apollo 8','Новий погляд · Apollo 8','Una nueva perspectiva · Apollo 8')],
+    ].map(([slug,externalId,title])=>Object.freeze({
+      id:'nasa-'+slug,source:'nasa',externalId,format:'image',lang:'none',interestIds:['space','science','nature','learning'],
+      title,body:copy('Настоящий снимок из архива NASA.','An original photograph from the NASA archive.','Eine Originalaufnahme aus dem NASA-Archiv.','Справжній знімок з архіву NASA.','Una fotografía original del archivo de la NASA.'),
+      visual:'photo',durationSec:null,mediaType:'image',
+      rights:{kind:'public-domain',holder:'NASA',url:'https://www.nasa.gov/nasa-brand-center/images-and-media/',embedAllowed:false,downloadAllowed:true},
+      delivery:{policy:'local',assetPath:'assets/inspiration/nasa-20261028/'+slug+'.jpg',sourceUrl:'https://images.nasa.gov/details/'+externalId},
+      lastCheckedAt:'2026-10-28T17:45:00.000Z',available:true,checkMethod:'manual',availabilityReason:'',
+    })),
   ]);
   return Object.freeze({ VERSION: '1.0.0', ID: '2026-09-10-originals', CANDIDATES });
 });

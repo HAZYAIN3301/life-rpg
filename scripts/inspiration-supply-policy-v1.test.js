@@ -396,6 +396,8 @@ test('11 строк мигрированы: свои тексты полны, в
       assert.equal(res.draft.delivery.policy, 'text');
       assert.equal(res.draft.available, true);
       assert.equal(res.draft.checkMethod, 'manual');
+    } else if(Catalog.CATALOG[i].id==='blender-spring'){
+      assert.equal(res.ok,true);assert.equal(res.draft.available,true);assert.equal(res.draft.checkMethod,'playback');
     } else {
       assert.equal(res.ok, false, Catalog.CATALOG[i].id);
       assert.ok(res.missing.includes('lastCheckedAt'));

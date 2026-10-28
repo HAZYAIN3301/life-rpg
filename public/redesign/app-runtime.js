@@ -276,8 +276,8 @@ var SatoruLiveModel = (() => {
   }
   function rewardProjection(d) {
     const purchases = d.purchases.filter((p) => typeof p.rewardId === "string" && !!p.rewardId).map((p) => {
-      const r = d.rewards.find((r2) => r2.id === p.rewardId), life = d.rewardLife?.[p.id], status = life?.status || "received";
-      return { id: p.id, at: p.at || "", used: status === "used", status, date: life?.date || void 0, reward: { id: p.rewardId, name: p.name || r?.name || "\u041B\u0438\u0447\u043D\u0430\u044F \u043D\u0430\u0433\u0440\u0430\u0434\u0430", cost: Number(p.cost) || 0, iconId: p.iconId || "reward.wishlist", image: p.image } };
+      const r = d.rewards.find((r2) => r2.id === p.rewardId), life = d.rewardLife?.[p.id], legacyUsed = p.used === true || !!p.usedAt, status = life?.status || (legacyUsed ? "used" : "received");
+      return { id: p.id, at: p.at || "", used: status === "used", status, historical: !life && !legacyUsed, date: life?.date || void 0, reward: { id: p.rewardId, name: p.name || r?.name || "\u041B\u0438\u0447\u043D\u0430\u044F \u043D\u0430\u0433\u0440\u0430\u0434\u0430", cost: Number(p.cost) || 0, iconId: p.iconId || "reward.wishlist", image: p.image } };
     });
     return { rewards: d.rewards.map((r) => ({ ...r, name: personalRewardLabel(r, d.catalog) })), purchases, nextReward: d.rewards.some((r) => r.id === d.nextReward) ? d.nextReward : void 0 };
   }
@@ -479,7 +479,7 @@ var SatoruLiveModel = (() => {
     return { id: t.id, title: t.title, date: t.date, goal: typeof t.goalId === "string" ? t.goalId : void 0, start: t.startTime || "", minutes: Number(t.estimateMin) || 0, actual: t.actualMin ?? null, difficulty: t.difficulty || "normal", primary: t.skillIds?.length ? t.skillIds : t.skillId ? [t.skillId] : [], background: t.layers || [], done: !!t.done, core: !!t.core, xp: t.xpAwarded || 0, gold: t.goldAwarded || 0 };
   }
   function project(s) {
-    return { version: 3, tasks: s.tasks.map(projectTask), goals: [], habits: s.habits.map((h) => ({ id: h.id, title: h.title, minutes: h.estimateMin || 0, days: h.days || [], sphere: h.skillId, identity: "", cue: "", twoMin: "", reward: "", logs: Object.keys(s.habitlog).filter((d) => !!s.habitlog[d]?.[h.id]), paused: !!(h.paused || h.archived) })), notes: s.inbox.map((n) => ({ id: n.id, text: n.text, kind: n.kind, created: n.at, media: n.file ? "/api/inbox/media/" + encodeURIComponent(n.file) : void 0 })), ...rewardProjection({ ...s.rewardsData, rewards: s.rewardsData?.rewards || [], purchases: s.rewardsData?.purchases || [], rewardLife: s.rewardsData?.life || {} }), gold: s.gold, xp: s.xp, reviews: Object.fromEntries(Object.entries(s.days).map(([k, v]) => [k, v.reflection || ""])), palette: "ink", sound: true, motion: true, identity: "", lapses: [], rules: [], inspiration: [], history: [], care: "", weekIntent: "", boardHidden: [] };
+    return { version: 3, tasks: s.tasks.map(projectTask), goals: [], habits: s.habits.map((h) => ({ id: h.id, title: h.title, minutes: h.estimateMin || 0, days: h.days || [], sphere: h.skillId, identity: "", cue: "", twoMin: "", reward: "", logs: Object.keys(s.habitlog).filter((d) => !!s.habitlog[d]?.[h.id]), paused: !!(h.paused || h.archived) })), notes: s.inbox.map((n) => ({ id: n.id, text: n.text, kind: n.kind, created: n.at, media: n.file ? "/api/inbox/media/" + encodeURIComponent(n.file) : void 0 })), ...dailyRewards(s), gold: s.gold, xp: s.xp, reviews: Object.fromEntries(Object.entries(s.days).map(([k, v]) => [k, v.reflection || ""])), palette: "ink", sound: true, motion: true, identity: "", lapses: [], rules: [], inspiration: [], history: [], care: "", weekIntent: "", boardHidden: [] };
   }
   function buildTask(tasks, input, base, skills, now) {
     const current = tasks.find((t) => t.id === input.id);
@@ -502,6 +502,10 @@ var SatoruLiveModel = (() => {
     if (input.core && (!current?.core || current.date !== input.date) && tasks.filter((t) => t.id !== input.id && t.core && t.date === input.date).length >= 3) throw Error("\u0412 \u044F\u0434\u0440\u0435 \u0434\u043D\u044F \u043C\u0430\u043A\u0441\u0438\u043C\u0443\u043C \u0442\u0440\u0438 \u043A\u0432\u0435\u0441\u0442\u0430. \u0421\u043D\u0430\u0447\u0430\u043B\u0430 \u043E\u0441\u0432\u043E\u0431\u043E\u0434\u0438 \u043C\u0435\u0441\u0442\u043E.");
     const next = { ...current || { id: input.id, done: false, completedAt: null, xpAwarded: 0, goldAwarded: 0, actualMin: null, createdAt: now }, title: title2, date: input.date, startTime: input.startTime || null, estimateMin: input.estimateMin, difficulty: input.difficulty, skillId: primary[0], skillIds: primary, layers: background, core: !!input.core };
     return current ? tasks.map((t) => t.id === next.id ? next : t) : [...tasks, next];
+  }
+  function dailyRewards(s) {
+    const d = rewardProjection({ ...s.rewardsData, rewards: s.rewardsData?.rewards || [], purchases: s.rewardsData?.purchases || [], rewardLife: s.rewardsData?.life || {} });
+    return { ...d, purchases: d.purchases.filter((p) => !p.historical) };
   }
   return __toCommonJS(model_exports);
 })();
@@ -810,6 +814,13 @@ window.SatoruPlanBridge=(()=>{
   });
   function originalRender(){revision++;window.dispatchEvent(new CustomEvent('satoru:legacy-route',{detail:{view:State.view,group:State.settingsSection,navigation:window.SatoruTodayBridge?.navigation()}}));}
   function view(view,group){if(State.view!==view)sfx('navigate');State.view=view;if(group!==undefined)State.settingsSection=group;}
+  function commitOwned(host,staging,view){
+    // The source renderer had one #main. The new shell has several independent
+    // owners (including nested dialogs); their presentation history is per host.
+    const previous=_renderedMainView;_renderedMainView=host.dataset.ownerView||'';
+    try{commitMainView(host,staging,view);host.dataset.ownerView=view;}
+    finally{_renderedMainView=previous;}
+  }
   async function flush(){
     if(!document.getElementById('skills-list'))return true;
     const owner=scope(),deadline=Date.now()+15000;
@@ -842,10 +853,19 @@ window.SatoruPlanBridge=(()=>{
     State.view=viewName;if(group)State.settingsSection=group;
     const openedSkills=new Set([...host.querySelectorAll('.b210-skill-row[open]')].map(el=>el.dataset.skill));
     const sameGroup=host.dataset.settingsGroup===group;
+    const disclosureKey=el=>(el.closest('[data-settings-group]')?.dataset.settingsGroup||group||'')+'|'+(el.dataset.section||el.dataset.skill||el.querySelector(':scope > summary')?.textContent.trim()||'');
+    const disclosureState=new Map(sameGroup?[...host.querySelectorAll('details')].map(el=>[disclosureKey(el),el.open]):[]);
+    const active=document.activeElement;
+    const drafts=sameGroup?[...host.querySelectorAll('input[id],textarea[id],.skill-edit input[data-field]')].filter(el=>!['file','checkbox','radio','hidden','color'].includes(el.type)&&(el===active||el.value!==el.defaultValue)):[];
     const openedSections=new Set([...host.querySelectorAll('.b210-owned-section[open]')].map(el=>el.dataset.section));
     const staging=document.createElement('div');staging.innerHTML=safeViewMarkup(viewName);
     staging.querySelectorAll('.b26-settings').forEach(el=>el.classList.remove('b26-settings'));
     if(viewName==='settings'){
+      // The controls stay in the source form for its capture/save contract, but
+      // unused product modes are not exposed as normal account configuration.
+      staging.querySelector('.path-card-settings')?.setAttribute('hidden','');
+      staging.querySelector('[data-action="toggle-system"]')?.closest('.theme-row')?.setAttribute('hidden','');
+      staging.querySelectorAll('details:has(.prog-grid)').forEach(el=>el.hidden=true);
       staging.querySelectorAll('.settings-group').forEach(el=>{el.hidden=el.dataset.settingsGroup!==group;});
       staging.querySelectorAll('.settings-hub h2,.settings-hub>div>p,.settings-hub-nav,.b26-settings-back,.settings-group-head').forEach(el=>el.hidden=true);
       // Spheres are the main task here; keep all hidden controls for the original capture owner.
@@ -866,17 +886,33 @@ window.SatoruPlanBridge=(()=>{
       }
     }
     if(lang()!=='ru')translateDOM(staging);
-    commitMainView(host,staging,viewName);
+    // Keep the source owner's actual input nodes. A receipt can repaint the
+    // surrounding controls while someone types; it must not reset that draft.
+    for(const input of drafts){const row=input.closest('.skill-edit'),selector=input.id?'#'+CSS.escape(input.id):'.skill-edit[data-id="'+CSS.escape(row.dataset.id)+'"] [data-field="'+CSS.escape(input.dataset.field)+'"]';const next=staging.querySelector(selector);if(next){if(next.value===input.value)input.defaultValue=next.defaultValue;next.replaceWith(input);}}
+    commitOwned(host,staging,viewName);
     host.dataset.settingsGroup=group||'';
     host.querySelectorAll('form').forEach(form=>{form.method='post';if(!form.dataset.b210Guard){form.dataset.b210Guard='1';form.addEventListener('submit',e=>e.preventDefault());}});
     host.querySelectorAll('.skill-edit').forEach(row=>{
       row.querySelectorAll('input,select').forEach(control=>control.setAttribute('data-noi18n',''));
       const skill=State.settings.skills.find(s=>s.id===row.dataset.id),details=document.createElement('details'),summary=document.createElement('summary'),name=document.createElement('span'),meta=document.createElement('small');
+      if(skill&&!skill.parentId){const input=row.querySelector('[data-field="color"]'),palette=document.createElement('div');palette.className='sphere-root-palette';palette.setAttribute('role','group');palette.setAttribute('aria-label',t('Цвет сферы'));for(const color of ['#6c8cff','#d2ad69','#7ebc7a','#a878d6','#d17089']){const button=document.createElement('button');button.type='button';button.style.background=color;button.setAttribute('aria-label',color);button.setAttribute('aria-pressed',String(input?.value.toLowerCase()===color));button.addEventListener('click',()=>{input.value=color;input.dispatchEvent(new Event('input',{bubbles:true}));});palette.append(button);}input?.parentElement.append(palette);}
       details.className='b210-skill-row';details.dataset.skill=row.dataset.id;details.style.setProperty('--skill-depth',row.style.getPropertyValue('--d')||'0');
-      name.textContent=skill?.name||'Сфера';name.dataset.noi18n='';meta.textContent=skill?.parentId?skillLabel(skill.parentId):skill?.archived?t('Архив'):t('Самостоятельная сфера');meta.dataset.noi18n='';summary.append(name,meta);details.append(summary);row.before(details);details.append(row);details.open=openedSkills.has(row.dataset.id)||skill?.name==='Новая сфера';
+      const swatch=document.createElement('i');swatch.className='settings-sphere-color';swatch.style.background=skill?.color||'#777';swatch.setAttribute('aria-hidden','true');
+      name.textContent=skill?.name||'Сфера';name.dataset.noi18n='';meta.textContent=skill?.parentId?skillLabel(skill.parentId):skill?.archived?t('Архив'):t('Самостоятельная сфера');meta.dataset.noi18n='';summary.append(swatch,name,meta);details.append(summary);row.before(details);details.append(row);details.open=openedSkills.has(row.dataset.id)||skill?.name==='Новая сфера';
     });
+    const branches=new Map([...host.querySelectorAll('.b210-skill-row')].map(el=>[el.dataset.skill,el]));
+    for(const skill of State.settings.skills){const child=branches.get(skill.id),parent=branches.get(skill.parentId);if(child&&parent&&!child.contains(parent))parent.append(child);}
+    if(sameGroup)host.querySelectorAll('details').forEach(el=>{const key=disclosureKey(el);if(disclosureState.has(key))el.open=disclosureState.get(key);});
+    if(drafts.includes(active))requestAnimationFrame(()=>{if(active.isConnected)active.focus({preventScroll:true});});
   }
   const occurrences=dates=>Object.fromEntries(routineForDates(dates));
+  function suggestSphere(title){
+    if(typeof title!=='string'||title.trim().length<2)return null;
+    const named=State.settings.skills.filter(s=>!s.archived&&String(s.name).trim().length>2).sort((a,b)=>b.name.length-a.name.length).find(s=>title.toLocaleLowerCase().includes(s.name.trim().toLocaleLowerCase()));
+    const match=guessCategoryFromHistory(title.trim())||(named?{skillId:named.id}:null)||guessFromDictionary(title.trim());
+    const skill=State.settings.skills.find(s=>s.id===match?.skillId&&!s.archived);
+    return skill?{id:skill.id,name:skillLabel(skill.id)}:null;
+  }
   async function run(command,input,expected){
     if(!current(expected))throw Error('Аккаунт изменился. Обнови страницу.');
     if(command==='routine.workshop'){State.weekStart=input.week||weekStart(todayStr());openWeekWorkshop();return {ok:true};}
@@ -920,7 +956,7 @@ window.SatoruPlanBridge=(()=>{
     if(ok){State.goals=data.goals;State.tasks=data.tasks;State.goalGroups=data.groups;attempt=null;}
     return {ok};
   }
-  return {snapshot,originalRender,view,flush,preference,mount,occurrences,run,translate:translateDOM,accepts:c=>/^(goal\.|group\.|routine\.)/.test(c)};
+  return {snapshot,originalRender,view,flush,preference,mount,commitOwned,occurrences,suggestSphere,run,translate:translateDOM,accepts:c=>/^(goal\.|group\.|routine\.)/.test(c)};
 })();
 
 /* B2.5 presentation; original economy, chest issuer and inventory owners. */
@@ -928,7 +964,7 @@ window.SatoruRewardsBridge=(()=>{
  let attempt=null;
  const current=s=>State.phase==='app'&&s.account===String(State.me?.id||'')&&s.epoch===Store._writeEpoch;
  const errors=()=>[...['rewards','purchases','lootbox','achievements'].filter(k=>State._accountDataLoadErrors?.[k]).map(k=>({rewards:'Личные награды',purchases:'История покупок',lootbox:'Сундуки',achievements:'Достижения'}[k])+' не загрузились. Обнови страницу; сохранённые данные не заменены.'),...(!window.RewardLifeV1.valid(State.settings?.rewardLifeV1)?['Статусы наград не читаются. Исходные данные сохранены; открой восстановление в настройках.']:[]),...(State._lootboxReadUnsupported?['Данные сундука не читаются. Открой восстановление в настройках.']:[])];
- const snapshot=()=>({rewards:State.rewards||[],purchases:State.purchases||[],catalog:REWARD_CATALOG.map((r,i)=>({...r,id:'catalog-'+i,name:t(r.name),catalogNameKey:r.name})),life:State.settings?.rewardLifeV1||{},nextReward:State.settings?.personalRewardTargetV1||undefined,limit:isPro()?5000:FREE_REWARDS_MAX,errors:errors()});
+ const snapshot=()=>({rewards:(State.rewards||[]).map(r=>({...r,iconId:rewardIconId(r)})),purchases:(State.purchases||[]).map(p=>({...p,iconId:p.iconId||rewardIconId(State.rewards.find(r=>r.id===p.rewardId))})),catalog:REWARD_CATALOG.map((r,i)=>({...r,id:'catalog-'+i,name:t(r.name),iconId:rewardIconId(r),catalogNameKey:r.name})),life:State.settings?.rewardLifeV1||{},nextReward:State.settings?.personalRewardTargetV1||undefined,limit:isPro()?5000:FREE_REWARDS_MAX,errors:errors()});
  function guard(expected){if(!current(expected))throw Error('Аккаунт изменился. Обнови страницу.');if(errors().length||State._settingsLoadError||!settingsWriteAllowed('B2.11',true)||!['rewards','purchases'].every(k=>accountDataWriteAllowed(k,'B2.11',true)))throw Error('Сначала восстанови загрузку наград и настроек.');}
  async function run(command,input,expected){
   guard(expected);
@@ -984,7 +1020,7 @@ window.SatoruRewardsBridge=(()=>{
   staging.querySelectorAll('details').forEach(d=>d.open=opened.has(d.className));
   staging.querySelectorAll('.th-kicker').forEach(e=>e.remove());
   if(lang()!=='ru')translateDOM(staging);
-  commitMainView(host,staging,'rewards');
+  window.SatoruPlanBridge.commitOwned(host,staging,'rewards');
  }
  return{snapshot,run,mount,accepts:c=>c.startsWith('reward.')};
 })();
@@ -997,7 +1033,7 @@ window.SatoruWorldBridge=(()=>{
  const errors=()=>[State._treeLoadError&&'Путь не загрузился. Сохранённая карта не заменена; повтори загрузку.',State._settingsLoadError&&'Настройки Мира не загрузились.',State._accountDataLoadErrors?.episodes&&'Эпизоды не загрузились. История не заменена.'].filter(Boolean);
  function snapshot(){
   const c=State.settings?.companion||{},curve=State.settings.curve,level=levelInfo(overallXp(),curve.base,curve.growth),rank=charRank();
-  return{errors:errors(),level,rank:{name:t(rank.name),color:rank.color},title:equippedTitle()||'',archetype:t(archetype().name),visuals:Object.fromEntries(['avatarAppearance','avatarCoreGender','avatar','body','wear','gear','cosmetics','petNames','petSpecies','fortuneSkins','fortuneProps'].map(k=>[k,State.settings[k]??null])),
+  return{errors:errors(),level,rank:{name:t(rank.name),color:rank.color},title:equippedTitle()||'',archetype:t(archetype().name),recovery:{enabled:State.settings.recoveryGuardianV1?.enabled??ensureDen().petCount>=2,sphereId:topSkills().find(s=>canonOf(s)==='rest')?.id||null},visuals:Object.fromEntries(['avatarAppearance','avatarCoreGender','avatar','body','wear','gear','cosmetics','petNames','petSpecies','fortuneSkins','fortuneProps','recoveryGuardianV1'].map(k=>[k,State.settings[k]??null])),
    companion:{name:c.name||'Тень',bond:c.bond||0,tier:t(COMP_TIERS[compTierIdx(c.bond||0)].name),next:compNextTier(c.bond||0),pet:c.pet||'',check:c.check?.[todayStr()]||{},journal:c.journal||[]},
    pets:topSkills().map(s=>{const traits=petTraits(s.id),stats=petStats(s.id);return{id:s.id,name:petName(s.id),sphere:sphereNameText(s.name),color:s.color,species:petSpeciesForSphere(s.id,traits),level:skillLevelOf(s.id),xp:skillXp(s.id),stats,hint:t(traits[0]?.hint||''),kind:t(traits[0]?.kind||'Спутник')};}),
    trees:State._treeLoadError?{}:State.tree||{},nodes:Object.fromEntries(Object.entries(State.tree||{}).map(([id,tree])=>[id,(tree.nodes||[]).map(n=>({...n,title:treeNodeCopy(n,'title'),desc:treeNodeCopy(n,'desc'),criterion:treeNodeCriterion(n),nextAction:treeNodeNextAction(n),state:treeNodeState(id,n),reason:treeNodeLockReason(id,n),perks:nodePerks(n),effects:nodePerks(n).map(p=>PERK_KINDS[p.kind]?t(PERK_KINDS[p.kind].fmt(p.val)):'').filter(Boolean)}))])),
@@ -1071,6 +1107,9 @@ window.SatoruWorldBridge=(()=>{
      node.claimedAt=new Date().toISOString();node.claimSource='self';const proof=String(input.proof||'').trim().slice(0,500);if(proof)node.proofNote=proof;
      const settings=structuredClone(State.settings),c=ensureCompanion(settings);c.journal=c.journal.concat({date:todayStr(),kind:'ms',skillId:input.skillId,nodeId:n.id,title:n.title,titleKey:n.titleKey||null,text:treeNodeCopy(n,'title')}).slice(-120);data.settings=settings;
     }
+   }else if(command==='world.recovery'){
+    if(typeof input.enabled!=='boolean')throw Error('Выбери состояние хранительницы.');
+    data={settings:{...structuredClone(State.settings),recoveryGuardianV1:{enabled:input.enabled}}};
    }else if(command==='world.pet.name'){
     if(!topSkills().some(s=>s.id===input.id))throw Error('Сфера не найдена.');
     const settings=structuredClone(State.settings);settings.petNames={...settings.petNames,[input.id]:String(input.name||'').trim().slice(0,20)};data={settings};
@@ -1097,7 +1136,8 @@ window.SatoruWorldBridge=(()=>{
  }
  // The scene contract is independent of its renderer. 3D must use the same room,
  // ownership, focus and care owners; never create another room/account store.
- function mount(host,part,id){
+ async function mount(host,part,id){
+  const token=(host._worldRenderToken||0)+1;host._worldRenderToken=token;
   if(part==='den'&&!host.firstElementChild)State._denEdit=true;
   const opened=new Set([...host.querySelectorAll('details[open]')].map(e=>e.id||e.className));
   const staging=document.createElement('div');let view='character';
@@ -1113,7 +1153,10 @@ window.SatoruWorldBridge=(()=>{
   staging.querySelectorAll('.th-kicker,.character-kicker,.settings-eyebrow').forEach(e=>e.remove());
   staging.querySelectorAll('details').forEach(d=>{if(opened.has(d.id||d.className))d.open=true;});
   if(part==='scene')host.dataset.sceneRenderer='den-'+(staging.querySelector('.den-scene')?.dataset.denRenderer||'source');
-  if(lang()!=='ru')translateDOM(staging);commitMainView(host,staging,view);
+  if(lang()!=='ru')translateDOM(staging);
+  if(['wardrobe','heroArt','petArt'].includes(part))await waitForViewImages(staging,650);
+  if(host._worldRenderToken!==token||!host.isConnected)return;
+  window.SatoruPlanBridge.commitOwned(host,staging,view);
   host.querySelectorAll('form').forEach(form=>{form.method='post';if(!form.dataset.b212Guard){form.dataset.b212Guard='1';form.addEventListener('submit',e=>e.preventDefault());}});
  }
  return{snapshot,run,mount,accepts:c=>c.startsWith('world.')};
@@ -1178,7 +1221,7 @@ window.SatoruTodayBridge=(()=>{
   staging.querySelectorAll('.th-kicker,.route-kicker').forEach(e=>e.remove());
   // Only unsent drafts live here. Existing handlers still own every confirmed write.
   const savedFields={};for(const id of ['reflection','first-line']){const field=staging.querySelector('#'+id);if(field)savedFields[id]=field.value;}
-  if(lang()!=='ru')translateDOM(staging);commitMainView(host,staging,view);
+  if(lang()!=='ru')translateDOM(staging);window.SatoruPlanBridge.commitOwned(host,staging,view);
   for(const id of ['reflection','first-line','capture-text']){
    const field=host.querySelector('#'+id);if(!field)continue;const key=id==='capture-text'?'capture':id,base=savedFields[id]||'',draft=readDraft(key);
    if(draft&&(key==='capture'||draft.base===base))field.value=draft.value;else if(draft)forget(key);

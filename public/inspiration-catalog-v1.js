@@ -19,7 +19,7 @@
   // rechecking and saved references, but cannot enter a digest until admitted.
   const REVIEWED_AT = '2026-09-10T21:27:18.000Z';
   const SOURCE_REVIEW = Object.freeze({
-    'blender-spring': { lang: 'none' },
+    'blender-spring': { lang: 'none', embedAllowed: true, available: true, lastCheckedAt: '2026-10-28T17:45:00.000Z', checkMethod: 'playback', availabilityReason: '' },
     'nps-yosemite': { lang: null, embedAllowed: true },
     'dvids-run': { lang: null },
     'blender-bunny': { lang: 'none' },
@@ -44,10 +44,10 @@
   }, extra || {}));
 
   const CATALOG = Object.freeze([
-    row('blender-spring', 'video', ['animation', 'nature', 'fantasy', 'creative', 'video'], 'spring',
+    row('blender-spring', 'video', ['animation', 'design', 'art', 'nature', 'fantasy', 'creative', 'video'], 'spring',
       copy('Spring · открытый анимационный фильм', 'Spring · open animated film', 'Spring · offener Animationsfilm', 'Spring · відкритий анімаційний фільм', 'Spring · película animada abierta'),
       copy('Семь минут без диалогов о столкновении света, природы и силы. Официальный фильм Blender Studio.', 'Seven dialogue-free minutes about light, nature and force. An official Blender Studio film.', 'Sieben Minuten ohne Dialog über Licht, Natur und Kraft. Ein offizieller Film von Blender Studio.', 'Сім хвилин без діалогів про зіткнення світла, природи й сили. Офіційний фільм Blender Studio.', 'Siete minutos sin diálogos sobre luz, naturaleza y fuerza. Una película oficial de Blender Studio.'),
-      { provider: 'YouTube · Blender Studio', durationLabel: '7:44', mediaPolicy: 'iframe',
+      { provider: 'YouTube · Blender Studio', durationLabel: '7:44', mediaPolicy: 'iframe', imageUrl: 'https://i.ytimg.com/vi_webp/WhWc3b3KhnY/sddefault.webp',
         sourceUrl: 'https://www.youtube.com/watch?v=WhWc3b3KhnY', embedUrl: 'https://www.youtube-nocookie.com/embed/WhWc3b3KhnY',
         rightsKind: 'cc-by-4.0', rightsUrl: 'https://studio.blender.org/projects/spring/pages/about/', attribution: '© Blender Foundation · cloud.blender.org/spring' }),
     row('nps-yosemite', 'video', ['nature', 'travel', 'calm', 'video'], 'valley',

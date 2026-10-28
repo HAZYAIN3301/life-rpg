@@ -3,7 +3,7 @@ window.SatoruRewardsBridge=(()=>{
  let attempt=null;
  const current=s=>State.phase==='app'&&s.account===String(State.me?.id||'')&&s.epoch===Store._writeEpoch;
  const errors=()=>[...['rewards','purchases','lootbox','achievements'].filter(k=>State._accountDataLoadErrors?.[k]).map(k=>({rewards:'Личные награды',purchases:'История покупок',lootbox:'Сундуки',achievements:'Достижения'}[k])+' не загрузились. Обнови страницу; сохранённые данные не заменены.'),...(!window.RewardLifeV1.valid(State.settings?.rewardLifeV1)?['Статусы наград не читаются. Исходные данные сохранены; открой восстановление в настройках.']:[]),...(State._lootboxReadUnsupported?['Данные сундука не читаются. Открой восстановление в настройках.']:[])];
- const snapshot=()=>({rewards:State.rewards||[],purchases:State.purchases||[],catalog:REWARD_CATALOG.map((r,i)=>({...r,id:'catalog-'+i,name:t(r.name),catalogNameKey:r.name})),life:State.settings?.rewardLifeV1||{},nextReward:State.settings?.personalRewardTargetV1||undefined,limit:isPro()?5000:FREE_REWARDS_MAX,errors:errors()});
+ const snapshot=()=>({rewards:(State.rewards||[]).map(r=>({...r,iconId:rewardIconId(r)})),purchases:(State.purchases||[]).map(p=>({...p,iconId:p.iconId||rewardIconId(State.rewards.find(r=>r.id===p.rewardId))})),catalog:REWARD_CATALOG.map((r,i)=>({...r,id:'catalog-'+i,name:t(r.name),iconId:rewardIconId(r),catalogNameKey:r.name})),life:State.settings?.rewardLifeV1||{},nextReward:State.settings?.personalRewardTargetV1||undefined,limit:isPro()?5000:FREE_REWARDS_MAX,errors:errors()});
  function guard(expected){if(!current(expected))throw Error('Аккаунт изменился. Обнови страницу.');if(errors().length||State._settingsLoadError||!settingsWriteAllowed('B2.11',true)||!['rewards','purchases'].every(k=>accountDataWriteAllowed(k,'B2.11',true)))throw Error('Сначала восстанови загрузку наград и настроек.');}
  async function run(command,input,expected){
   guard(expected);
@@ -59,7 +59,7 @@ window.SatoruRewardsBridge=(()=>{
   staging.querySelectorAll('details').forEach(d=>d.open=opened.has(d.className));
   staging.querySelectorAll('.th-kicker').forEach(e=>e.remove());
   if(lang()!=='ru')translateDOM(staging);
-  commitMainView(host,staging,'rewards');
+  window.SatoruPlanBridge.commitOwned(host,staging,'rewards');
  }
  return{snapshot,run,mount,accepts:c=>c.startsWith('reward.')};
 })();

@@ -1,3 +1,15 @@
+## B2.17 — полный видеоотзыв, 28.10
+
+- [x] Верхнее Логово, directional collapse, desktop/dialog/nav, tree spheres/roles.
+- [x] Settings navigation/presentation regressions, reward history/icons/atomic receipt.
+- [x] Goals graph/schedule actions, habits typography, world path/recovery/wardrobe/stats.
+- [x]3389 source+184 live, UI→API→reload и настоящий PNG; TestFlight13 обе платформы.
+- [ ] Непрерывное лицензированное наполнение Вдохновения по всем интересам/эдитам:
+  текущие Spring+3NASA — конечный стартовый запас. Внешний поиск выключен по v323.
+- [ ] Physical iPhone/VoiceOver/full offline/locale и Family Controls enforcement.
+- [ ] Будущие3D/Племя/новый герой — отдельный согласованный процесс.
+- QA: redesign/b27/B217-QA.md; выпуск347 подтверждать deployment/hash receipt.
+
 ## B2.16 — layout/loading, 27.10
 
 - [x] Desktop Today: место используется двумя колонками, Логово и дела рядом.

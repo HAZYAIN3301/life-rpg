@@ -3,6 +3,7 @@ import type {Purchase} from '../components/generated/DailyModel';
 export type PersonalReward=Reward&{catalogNameKey?:string;createdAt?:string;[key:string]:unknown};
 export type RewardReceipt={id:string;rewardId?:string;name:string;cost:number;at:string;iconId?:string;image?:string;[key:string]:unknown};
 export type RewardLife={status:'received'|'planned'|'used'|'deferred';date:string|null;updatedAt?:string};
+export type ProjectedPurchase=Purchase&{historical?:boolean};
 export type RewardsData={rewards:PersonalReward[];purchases:RewardReceipt[];catalog:PersonalReward[];life:Record<string,RewardLife>;nextReward?:string;limit:number;errors:string[]};
 export function rewardReceiptArt(r:Partial<PersonalReward>={}){return{...(r.iconId?{iconId:r.iconId}:{}),...(r.image?{image:r.image}:{})};}
 export function personalRewardLabel(r:PersonalReward,catalog:PersonalReward[]=[]){return r.catalogNameKey?catalog.find(c=>c.catalogNameKey===r.catalogNameKey)?.name||r.name:r.name;}
@@ -22,9 +23,9 @@ export function savePersonalReward(all:PersonalReward[],input:PersonalReward,bas
  return old?all.map(x=>x.id===r.id?r:x):[...all,r];
 }
 export function rewardProjection(d:Pick<RewardsData,'rewards'|'purchases'|'nextReward'>&{rewardLife:Record<string,RewardLife>;catalog?:PersonalReward[]}){
- const purchases:Purchase[]=d.purchases.filter(p=>typeof p.rewardId==='string'&&!!p.rewardId).map(p=>{
-  const r=d.rewards.find(r=>r.id===p.rewardId),life=d.rewardLife?.[p.id],status=life?.status||'received';
-  return{id:p.id,at:p.at||'',used:status==='used',status,date:life?.date||undefined,reward:{id:p.rewardId!,name:p.name||r?.name||'Личная награда',cost:Number(p.cost)||0,iconId:p.iconId||'reward.wishlist',image:p.image}};
+ const purchases:ProjectedPurchase[]=d.purchases.filter(p=>typeof p.rewardId==='string'&&!!p.rewardId).map(p=>{
+  const r=d.rewards.find(r=>r.id===p.rewardId),life=d.rewardLife?.[p.id],legacyUsed=p.used===true||!!p.usedAt,status=life?.status||(legacyUsed?'used':'received');
+  return{id:p.id,at:p.at||'',used:status==='used',status,historical:!life&&!legacyUsed,date:life?.date||undefined,reward:{id:p.rewardId!,name:p.name||r?.name||'Личная награда',cost:Number(p.cost)||0,iconId:p.iconId||'reward.wishlist',image:p.image}};
  });
  return{rewards:d.rewards.map(r=>({...r,name:personalRewardLabel(r,d.catalog)})),purchases,nextReward:d.rewards.some(r=>r.id===d.nextReward)?d.nextReward:undefined};
 }

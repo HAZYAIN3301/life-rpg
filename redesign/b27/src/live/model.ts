@@ -56,7 +56,7 @@ export function saveWeek(weeks:Record<string,Week>,command:'intent'|'budget',inp
 }
 export function editable(t:RawTask){return Object.fromEntries(fields.map(k=>[k,t[k]??null]));}
 export function projectTask(t:RawTask):Task{return{id:t.id,title:t.title,date:t.date,goal:typeof t.goalId==='string'?t.goalId:undefined,start:t.startTime||'',minutes:Number(t.estimateMin)||0,actual:t.actualMin??null,difficulty:t.difficulty||'normal',primary:t.skillIds?.length?t.skillIds:t.skillId?[t.skillId]:[],background:t.layers||[],done:!!t.done,core:!!t.core,xp:t.xpAwarded||0,gold:t.goldAwarded||0};}
-export function project(s:Snapshot):DailyData{return{version:3,tasks:s.tasks.map(projectTask),goals:[],habits:s.habits.map(h=>({id:h.id,title:h.title,minutes:h.estimateMin||0,days:h.days||[],sphere:h.skillId,identity:'',cue:'',twoMin:'',reward:'',logs:Object.keys(s.habitlog).filter(d=>!!s.habitlog[d]?.[h.id]),paused:!!(h.paused||h.archived)})),notes:s.inbox.map(n=>({id:n.id,text:n.text,kind:n.kind,created:n.at,media:n.file?'/api/inbox/media/'+encodeURIComponent(n.file):undefined})),...rewardProjection({...s.rewardsData,rewards:s.rewardsData?.rewards||[],purchases:s.rewardsData?.purchases||[],rewardLife:s.rewardsData?.life||{}}),gold:s.gold,xp:s.xp,reviews:Object.fromEntries(Object.entries(s.days).map(([k,v])=>[k,v.reflection||''])),palette:'ink',sound:true,motion:true,identity:'',lapses:[],rules:[],inspiration:[],history:[],care:'',weekIntent:'',boardHidden:[]};}
+export function project(s:Snapshot):DailyData{return{version:3,tasks:s.tasks.map(projectTask),goals:[],habits:s.habits.map(h=>({id:h.id,title:h.title,minutes:h.estimateMin||0,days:h.days||[],sphere:h.skillId,identity:'',cue:'',twoMin:'',reward:'',logs:Object.keys(s.habitlog).filter(d=>!!s.habitlog[d]?.[h.id]),paused:!!(h.paused||h.archived)})),notes:s.inbox.map(n=>({id:n.id,text:n.text,kind:n.kind,created:n.at,media:n.file?'/api/inbox/media/'+encodeURIComponent(n.file):undefined})),...dailyRewards(s),gold:s.gold,xp:s.xp,reviews:Object.fromEntries(Object.entries(s.days).map(([k,v])=>[k,v.reflection||''])),palette:'ink',sound:true,motion:true,identity:'',lapses:[],rules:[],inspiration:[],history:[],care:'',weekIntent:'',boardHidden:[]};}
 export function buildTask(tasks:RawTask[],input:RawTask,base:Record<string,unknown>|null,skills:Skill[],now:string){
   const current=tasks.find(t=>t.id===input.id);
   // Same ID after a lost response is a retry, never another quest.
@@ -78,3 +78,5 @@ export function buildTask(tasks:RawTask[],input:RawTask,base:Record<string,unkno
   // All unedited domain fields (goals, commitment, entry, rewards, actual time) survive.
   return current?tasks.map(t=>t.id===next.id?next:t):[...tasks,next];
 }
+
+function dailyRewards(s:Snapshot){const d=rewardProjection({...s.rewardsData,rewards:s.rewardsData?.rewards||[],purchases:s.rewardsData?.purchases||[],rewardLife:s.rewardsData?.life||{}});return{...d,purchases:d.purchases.filter(p=>!p.historical)};}

@@ -21368,7 +21368,7 @@ function renderDen() {
     const rank = (sphere) => sphere.id === bodyId ? 0 : sphere.id === resourcesId ? 1 : 2;
     return rank(a) - rank(b);
   });
-  const recoveryGuardianActive = Boolean(window.RecoverySlugV1 && den.petCount >= 2);
+  const recoveryGuardianActive = Boolean(window.RecoverySlugV1 && den.petCount >= 2 && State.settings.recoveryGuardianV1?.enabled !== false);
   const spherePetLimit = Math.max(0, den.petCount - (recoveryGuardianActive ? 1 : 0));
   const pets = denSpheres.slice(0, spherePetLimit).map((s) => {
     const traits = petTraits(s.id);
@@ -24730,7 +24730,8 @@ async function commitEconomyConfirmation(overlay) {
     else {
       guideReceiptId = 'p_' + uid();
       const next = [...(State.purchases || []), { id: guideReceiptId, rewardId: data.id, name: data.name, cost: data.cost, at: new Date().toISOString(), ...(window.SatoruLiveModel?.rewardReceiptArt(State.rewards.find(r=>r.id===data.id))||{}) }];
-      payload = { purchases: next }; apply = () => { State.purchases = next; }; success = `${t('Куплено')}: ${data.name}`;
+      const nextSettings = window.RewardLifeV1.change(State.settings, next, guideReceiptId, 'received', null, next.at(-1).at);
+      payload = { settings: nextSettings, purchases: next }; apply = () => { State.settings = nextSettings; State.purchases = next; }; success = `${t('Куплено')}: ${data.name}`;
     }
   } else if (data.kind === 'gear') {
     const item = gearById(data.id), currentGear = structuredClone(ensureGear());
@@ -24834,6 +24835,8 @@ function weekShareSVG(ws, st) {
     <defs>
       <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#12111a"/><stop offset="100%" stop-color="#1e1b2e"/></linearGradient>
       <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${esc(rk.color)}"/><stop offset="100%" stop-color="#a78bfa"/></linearGradient>
+      <clipPath id="week-name"><rect x="76" y="52" width="494" height="28"/></clipPath>
+      <clipPath id="week-sphere"><rect x="46" y="229" width="390" height="24"/></clipPath>
     </defs>
     <rect width="${WEEK_CARD_W}" height="${WEEK_CARD_H}" rx="20" fill="url(#bg)"/>
     <rect x="0" y="0" width="${WEEK_CARD_W}" height="4" rx="2" fill="url(#acc)"/>
@@ -24841,7 +24844,7 @@ function weekShareSVG(ws, st) {
     <text x="${WEEK_CARD_W - 30}" y="42" ${font} font-size="13" fill="#a3a3b8" text-anchor="end">${esc(dmShort(ws))} – ${esc(dmShort(end))}</text>
     <path d="M48 51l18 7-3 21c-2 9-7 14-15 18-8-4-13-9-15-18l-3-21z" fill="#1f2742" stroke="${esc(rk.color)}" stroke-width="2"/>
     <text x="48" y="82" ${font} font-size="21" fill="#f1dfba" font-weight="800" text-anchor="middle">?</text>
-    <text x="76" y="74" ${font} font-size="20" fill="#fff" font-weight="700">${esc(nm)}</text>
+    <text x="76" y="74" ${font} font-size="20" fill="#fff" font-weight="700" clip-path="url(#week-name)">${esc(nm)}</text>
     <text x="76" y="94" ${font} font-size="13" fill="#d7d3ea" font-weight="600">${esc(t(rk.name))} · ${esc(t('Уровень'))} ${lvl}</text>
     <line x1="30" y1="112" x2="${WEEK_CARD_W - 30}" y2="112" stroke="#2d2b3a" stroke-width="1"/>
     ${stats.map(({ label, val, x }) => `<text x="${x}" y="156" ${font} font-size="${val.length > 6 ? 24 : 32}" fill="#fff" font-weight="800">${esc(val)}</text>
@@ -24849,7 +24852,7 @@ function weekShareSVG(ws, st) {
     ${topArea ? `<rect x="30" y="200" width="${WEEK_CARD_W - 60}" height="58" rx="10" fill="#1a1829"/>
     <rect x="30" y="200" width="4" height="58" rx="2" fill="${esc(topArea.color)}"/>
     <text x="46" y="222" ${font} font-size="12" fill="#a3a3b8">${esc(t('Главная сфера недели'))}</text>
-    <text x="46" y="246" ${font} font-size="16" fill="#fff" font-weight="700">${esc(sphereNameText(topArea.label))}</text>
+    <text x="46" y="246" ${font} font-size="16" fill="#fff" font-weight="700" clip-path="url(#week-sphere)">${esc(sphereNameText(topArea.label))}</text>
     <text x="${WEEK_CARD_W - 46}" y="246" ${font} font-size="15" fill="#fff" font-weight="700" text-anchor="end">${esc(fmtDur(topArea.value))}</text>` : ''}
     <text x="30" y="${WEEK_CARD_H - 20}" ${font} font-size="11" fill="#77758c">satoruapp.com</text>
   </svg>`;
@@ -28538,14 +28541,14 @@ function inspirationImportDevice() {
 function inspirationCatalog() {
   const result = inspirationSupply(); return result.ok ? result.catalog : [];
 }
-function inspirationSupply(profile = inspirationProfileState(), pending = []) {
+function inspirationSupply(profile = inspirationProfileState(), pending = [], retryEmpty = false) {
   const R = window.InspirationSupplyRuntimeV1;
   const stored = State.settings?.inspirationFinds;
   const finds = Array.isArray(stored) ? stored : stored?.candidates;
   const rawFinds = Array.isArray(finds) ? finds.slice(-120).map((item) => ({ ...item,
     delivery: { ...item.delivery, sourceUrl: item.delivery?.sourceUrl || item.sourceUrl,
       embedUrl: item.delivery?.embedUrl || item.embedUrl, assetPath: item.delivery?.assetPath || item.assetPath } })) : [];
-  return R ? R.ensureDigest({ profile, day: todayStr(), now: new Date().toISOString(), locale: lang(),
+  return R ? R[retryEmpty ? 'retryEmptyDigest' : 'ensureDigest']({ profile, day: todayStr(), now: new Date().toISOString(), locale: lang(),
     candidates: R.candidates().concat(window.InspirationVisualBatchV1?.CANDIDATES || [],
       rawFinds, Array.isArray(pending) ? pending.slice(0, 3) : []),
     ctx: { maxSharePerSource: 1 } })
@@ -28606,7 +28609,7 @@ async function prepareInspirationDigest({ retry = false } = {}) {
   const P = inspirationProfileEngine();
   if (!P || !State.me?.id || State.view !== 'shelf' || State._inspirationSetupOpen
     || !State.settings?.inspiration?.configured || State._settingsLoadError || State._shelfLoadError
-    || State._shelfBusy || State._inspirationSetupResolving || _inspirationPrepareWork || inspirationDailyReceipt()
+    || State._shelfBusy || State._inspirationSetupResolving || _inspirationPrepareWork || inspirationDailyReceipt() && !(retry && inspirationSupply(P.normalize(State.settings.inspiration), [], true).items?.length)
     || State._inspirationDigestPending === 'error' && !retry) return false;
   const accountId = String(State.me.id), writeEpoch = Store._writeEpoch, day = todayStr();
   const base = P.normalize(State.settings.inspiration), generation = ++_inspirationGeneration;
@@ -28638,7 +28641,7 @@ async function prepareInspirationDigest({ retry = false } = {}) {
         State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = 'disabled';
       }
       if (!active()) return false;
-      const ensured = inspirationSupply(base, finds);
+      const ensured = inspirationSupply(base, finds, retry);
       if (!ensured.ok) throw new Error('supply');
       candidate = { accountId, day, base, profile: P.recordShown(ensured.profile, day), finds };
       State._inspirationDailyAttempt = candidate;
@@ -36831,7 +36834,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v346';
+const PWA_CACHE_VERSION = 'satoru-v347';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

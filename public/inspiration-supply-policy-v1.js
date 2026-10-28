@@ -96,7 +96,7 @@
   /* Рантайм использует те же хосты; для Pinterest/TikTok одного хоста мало:
    * InspirationMediaV1 проверяет конкретный пост и параметры плеера. */
   const PRODUCTION_EMBED_HOSTS = Object.freeze(['www.youtube-nocookie.com', 'www.nps.gov', 'www.dvidshub.net', 'assets.pinterest.com', 'www.tiktok.com']);
-  const PRODUCTION_IMAGE_HOSTS = Object.freeze(['science.nasa.gov', 'i.pinimg.com', 'p16.muscdn.com', 'p16-common-sign.tiktokcdn-eu.com']);
+  const PRODUCTION_IMAGE_HOSTS = Object.freeze(['science.nasa.gov', 'i.ytimg.com', 'i.pinimg.com', 'p16.muscdn.com', 'p16-common-sign.tiktokcdn-eu.com']);
 
   const REJECT = Object.freeze({
     SCHEMA: 'invalid_schema',

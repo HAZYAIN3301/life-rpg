@@ -11,6 +11,13 @@ window.SatoruPlanBridge=(()=>{
   });
   function originalRender(){revision++;window.dispatchEvent(new CustomEvent('satoru:legacy-route',{detail:{view:State.view,group:State.settingsSection,navigation:window.SatoruTodayBridge?.navigation()}}));}
   function view(view,group){if(State.view!==view)sfx('navigate');State.view=view;if(group!==undefined)State.settingsSection=group;}
+  function commitOwned(host,staging,view){
+    // The source renderer had one #main. The new shell has several independent
+    // owners (including nested dialogs); their presentation history is per host.
+    const previous=_renderedMainView;_renderedMainView=host.dataset.ownerView||'';
+    try{commitMainView(host,staging,view);host.dataset.ownerView=view;}
+    finally{_renderedMainView=previous;}
+  }
   async function flush(){
     if(!document.getElementById('skills-list'))return true;
     const owner=scope(),deadline=Date.now()+15000;
@@ -43,10 +50,19 @@ window.SatoruPlanBridge=(()=>{
     State.view=viewName;if(group)State.settingsSection=group;
     const openedSkills=new Set([...host.querySelectorAll('.b210-skill-row[open]')].map(el=>el.dataset.skill));
     const sameGroup=host.dataset.settingsGroup===group;
+    const disclosureKey=el=>(el.closest('[data-settings-group]')?.dataset.settingsGroup||group||'')+'|'+(el.dataset.section||el.dataset.skill||el.querySelector(':scope > summary')?.textContent.trim()||'');
+    const disclosureState=new Map(sameGroup?[...host.querySelectorAll('details')].map(el=>[disclosureKey(el),el.open]):[]);
+    const active=document.activeElement;
+    const drafts=sameGroup?[...host.querySelectorAll('input[id],textarea[id],.skill-edit input[data-field]')].filter(el=>!['file','checkbox','radio','hidden','color'].includes(el.type)&&(el===active||el.value!==el.defaultValue)):[];
     const openedSections=new Set([...host.querySelectorAll('.b210-owned-section[open]')].map(el=>el.dataset.section));
     const staging=document.createElement('div');staging.innerHTML=safeViewMarkup(viewName);
     staging.querySelectorAll('.b26-settings').forEach(el=>el.classList.remove('b26-settings'));
     if(viewName==='settings'){
+      // The controls stay in the source form for its capture/save contract, but
+      // unused product modes are not exposed as normal account configuration.
+      staging.querySelector('.path-card-settings')?.setAttribute('hidden','');
+      staging.querySelector('[data-action="toggle-system"]')?.closest('.theme-row')?.setAttribute('hidden','');
+      staging.querySelectorAll('details:has(.prog-grid)').forEach(el=>el.hidden=true);
       staging.querySelectorAll('.settings-group').forEach(el=>{el.hidden=el.dataset.settingsGroup!==group;});
       staging.querySelectorAll('.settings-hub h2,.settings-hub>div>p,.settings-hub-nav,.b26-settings-back,.settings-group-head').forEach(el=>el.hidden=true);
       // Spheres are the main task here; keep all hidden controls for the original capture owner.
@@ -67,17 +83,33 @@ window.SatoruPlanBridge=(()=>{
       }
     }
     if(lang()!=='ru')translateDOM(staging);
-    commitMainView(host,staging,viewName);
+    // Keep the source owner's actual input nodes. A receipt can repaint the
+    // surrounding controls while someone types; it must not reset that draft.
+    for(const input of drafts){const row=input.closest('.skill-edit'),selector=input.id?'#'+CSS.escape(input.id):'.skill-edit[data-id="'+CSS.escape(row.dataset.id)+'"] [data-field="'+CSS.escape(input.dataset.field)+'"]';const next=staging.querySelector(selector);if(next){if(next.value===input.value)input.defaultValue=next.defaultValue;next.replaceWith(input);}}
+    commitOwned(host,staging,viewName);
     host.dataset.settingsGroup=group||'';
     host.querySelectorAll('form').forEach(form=>{form.method='post';if(!form.dataset.b210Guard){form.dataset.b210Guard='1';form.addEventListener('submit',e=>e.preventDefault());}});
     host.querySelectorAll('.skill-edit').forEach(row=>{
       row.querySelectorAll('input,select').forEach(control=>control.setAttribute('data-noi18n',''));
       const skill=State.settings.skills.find(s=>s.id===row.dataset.id),details=document.createElement('details'),summary=document.createElement('summary'),name=document.createElement('span'),meta=document.createElement('small');
+      if(skill&&!skill.parentId){const input=row.querySelector('[data-field="color"]'),palette=document.createElement('div');palette.className='sphere-root-palette';palette.setAttribute('role','group');palette.setAttribute('aria-label',t('Цвет сферы'));for(const color of ['#6c8cff','#d2ad69','#7ebc7a','#a878d6','#d17089']){const button=document.createElement('button');button.type='button';button.style.background=color;button.setAttribute('aria-label',color);button.setAttribute('aria-pressed',String(input?.value.toLowerCase()===color));button.addEventListener('click',()=>{input.value=color;input.dispatchEvent(new Event('input',{bubbles:true}));});palette.append(button);}input?.parentElement.append(palette);}
       details.className='b210-skill-row';details.dataset.skill=row.dataset.id;details.style.setProperty('--skill-depth',row.style.getPropertyValue('--d')||'0');
-      name.textContent=skill?.name||'Сфера';name.dataset.noi18n='';meta.textContent=skill?.parentId?skillLabel(skill.parentId):skill?.archived?t('Архив'):t('Самостоятельная сфера');meta.dataset.noi18n='';summary.append(name,meta);details.append(summary);row.before(details);details.append(row);details.open=openedSkills.has(row.dataset.id)||skill?.name==='Новая сфера';
+      const swatch=document.createElement('i');swatch.className='settings-sphere-color';swatch.style.background=skill?.color||'#777';swatch.setAttribute('aria-hidden','true');
+      name.textContent=skill?.name||'Сфера';name.dataset.noi18n='';meta.textContent=skill?.parentId?skillLabel(skill.parentId):skill?.archived?t('Архив'):t('Самостоятельная сфера');meta.dataset.noi18n='';summary.append(swatch,name,meta);details.append(summary);row.before(details);details.append(row);details.open=openedSkills.has(row.dataset.id)||skill?.name==='Новая сфера';
     });
+    const branches=new Map([...host.querySelectorAll('.b210-skill-row')].map(el=>[el.dataset.skill,el]));
+    for(const skill of State.settings.skills){const child=branches.get(skill.id),parent=branches.get(skill.parentId);if(child&&parent&&!child.contains(parent))parent.append(child);}
+    if(sameGroup)host.querySelectorAll('details').forEach(el=>{const key=disclosureKey(el);if(disclosureState.has(key))el.open=disclosureState.get(key);});
+    if(drafts.includes(active))requestAnimationFrame(()=>{if(active.isConnected)active.focus({preventScroll:true});});
   }
   const occurrences=dates=>Object.fromEntries(routineForDates(dates));
+  function suggestSphere(title){
+    if(typeof title!=='string'||title.trim().length<2)return null;
+    const named=State.settings.skills.filter(s=>!s.archived&&String(s.name).trim().length>2).sort((a,b)=>b.name.length-a.name.length).find(s=>title.toLocaleLowerCase().includes(s.name.trim().toLocaleLowerCase()));
+    const match=guessCategoryFromHistory(title.trim())||(named?{skillId:named.id}:null)||guessFromDictionary(title.trim());
+    const skill=State.settings.skills.find(s=>s.id===match?.skillId&&!s.archived);
+    return skill?{id:skill.id,name:skillLabel(skill.id)}:null;
+  }
   async function run(command,input,expected){
     if(!current(expected))throw Error('Аккаунт изменился. Обнови страницу.');
     if(command==='routine.workshop'){State.weekStart=input.week||weekStart(todayStr());openWeekWorkshop();return {ok:true};}
@@ -121,5 +153,5 @@ window.SatoruPlanBridge=(()=>{
     if(ok){State.goals=data.goals;State.tasks=data.tasks;State.goalGroups=data.groups;attempt=null;}
     return {ok};
   }
-  return {snapshot,originalRender,view,flush,preference,mount,occurrences,run,translate:translateDOM,accepts:c=>/^(goal\.|group\.|routine\.)/.test(c)};
+  return {snapshot,originalRender,view,flush,preference,mount,commitOwned,occurrences,suggestSphere,run,translate:translateDOM,accepts:c=>/^(goal\.|group\.|routine\.)/.test(c)};
 })();
