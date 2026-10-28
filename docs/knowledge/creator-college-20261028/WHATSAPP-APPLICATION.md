@@ -4,7 +4,7 @@
 
 28.10.2026. Применение по поручению Альберта. Статус: подробные предложения для подготовки и проверки материалов. Это не изменение продукта, новая утверждённая стратегия, план публикаций или разрешение тратить кредиты.
 
-Документ дополняет [предыдущее применение полного курса](https://github.com/HAZYAIN3301/satoru-plan/blob/main/docs/knowledge/creator-college-20261028/SATORU-APPLICATION.md). Общее хранилище источников — [новый WhatsApp-пакет](https://github.com/HAZYAIN3301/mahoraga/blob/master/knowledge/webinars/2026-10-28-whatsapp-resources/README.md); выводы и противоречия собраны в [SYNTHESIS](https://github.com/HAZYAIN3301/mahoraga/blob/master/knowledge/webinars/2026-10-28-whatsapp-resources/SYNTHESIS.md). Копировать сюда все банки примеров не нужно.
+Документ дополняет [предыдущее применение полного курса](SATORU-APPLICATION.md). Общее хранилище источников — [новый WhatsApp-пакет](https://github.com/HAZYAIN3301/mahoraga/blob/master/knowledge/webinars/2026-10-28-whatsapp-resources/README.md); выводы и противоречия собраны в [SYNTHESIS](https://github.com/HAZYAIN3301/mahoraga/blob/master/knowledge/webinars/2026-10-28-whatsapp-resources/SYNTHESIS.md). Копировать сюда все банки примеров не нужно.
 
 <a id="status"></a>
 ## 1. Что остаётся решением владельца, а что добавляет курс
