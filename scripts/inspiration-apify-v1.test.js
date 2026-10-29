@@ -14,8 +14,8 @@ test('one bounded metadata run is persisted, resumed after restart and shared by
  const f=fixture(),p=A.createInventory(f.options);
  const [a,b]=await Promise.all([p.get(['anime']),p.get(['anime'])]);assert.equal(a.status,'pending');assert.equal(b.status,'pending');assert.equal(f.calls.filter(c=>c.method==='POST').length,1);
  const call=f.calls[0],u=new URL(call.url);assert.equal(u.hostname,'api.apify.com');assert.equal(u.searchParams.get('maxTotalChargeUsd'),'0.1');assert.equal(u.searchParams.get('restartOnError'),'false');assert.equal(u.searchParams.has('token'),false);
- assert.equal(u.pathname,'/v2/acts/clockworks~free-tiktok-scraper/runs');
- assert.deepEqual(call.body.searchQueries,['anime motivation edit']);assert.equal(call.body.videoSearchSorting,'LATEST');assert.equal(call.body.shouldDownloadVideos,false);assert.equal(call.body.shouldDownloadCovers,false);assert.equal(call.body.commentsPerPost,0);
+ assert.equal(u.pathname,'/v2/acts/scrapeforge~tiktok-posts/runs');
+ assert.deepEqual(call.body,{scrapeMode:'keyword',keyword:'anime motivation edit',maxResults:50,sortBy:'date-posted',datePosted:'this-month'});
  assert.equal(f.state().runs[0].runId,'run1');assert.equal(f.state().runs[0].reservedUsd,0.1);
  f.setStatus('SUCCEEDED');const restarted=A.createInventory(f.options),ready=await restarted.get(['anime']);assert.equal(ready.status,'ready');assert.equal(ready.items.length,1);
  await restarted.get(['anime']);assert.equal(f.calls.filter(c=>c.method==='POST').length,1);
@@ -39,4 +39,22 @@ test('durable daily and monthly reservation limits survive process restart',asyn
  f.setDay('2026-10-30');p=A.createInventory(f.options);await p.get(['fitness']);
  f.setDay('2026-10-31');assert.equal((await A.createInventory(f.options).get(['nature'])).status,'budget_limited');
  assert.equal(f.calls.filter(c=>c.method==='POST').length,2);
+});
+test('provider migration keeps the failed reservation and respects the new actor rolling 24-hour quota',async()=>{
+ const f=fixture();f.setState({version:1,items:[],runs:[{key:'anime',topics:['anime'],day:'2026-10-29',reservedUsd:0.1,state:'done',accepted:0,startedAt:'2026-10-29T08:00:00.000Z'}]});
+ const p=A.createInventory(f.options);assert.equal((await p.get(['anime','fitness'])).status,'pending');
+ assert.equal(f.state().runs.length,2);assert.equal(f.state().runs[1].actor,'scrapeforge~tiktok-posts');assert.deepEqual(f.state().runs[1].topics,['anime']);
+ assert.equal((await A.createInventory(f.options).get(['fitness'])).status,'budget_limited');assert.equal(f.calls.filter(c=>c.method==='POST').length,1);
+ f.setDay('2026-10-30');assert.equal((await A.createInventory(f.options).get(['fitness'])).status,'pending');assert.equal(f.calls.filter(c=>c.method==='POST').length,2);
+});
+test('one malformed provider row cannot discard all valid metadata',()=>{
+ assert.doesNotThrow(()=>A.fromPost({...row,authorMeta:{name:{unexpected:true}}},['anime'],'2026-10-29T09:00:00.000Z'));
+ assert.equal(A.fromPost({...row,authorMeta:{name:{unexpected:true}}},['anime'],'2026-10-29T09:00:00.000Z'),null);
+});
+test('startup pilot resumes its receipt but cannot monopolize acquisition on subsequent days',async()=>{
+ const f=fixture(),p=A.createInventory(f.options);await p.get(['anime'],{bootstrap:true});
+ f.setStatus('SUCCEEDED');assert.equal((await p.get(['anime'],{bootstrap:true})).status,'ready');
+ f.setDay('2026-10-30');assert.equal((await A.createInventory(f.options).get(['anime'],{bootstrap:true})).status,'ready');
+ assert.equal(f.calls.filter(c=>c.method==='POST').length,1);
+ await A.createInventory(f.options).get(['fitness']);assert.equal(f.calls.filter(c=>c.method==='POST').length,2);
 });

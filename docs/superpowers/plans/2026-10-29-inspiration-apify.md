@@ -11,9 +11,11 @@ Existing Profile selector/CAS, history, feedback, refs and exact-ID viewer remai
 
 ## Decisions / constraints
 
-- `clockworks/free-tiktok-scraper`: public topic search, videos only, latest, bounded12 rows;
+- `scrapeforge/tiktok-posts`: public topic search, date-posted/this-month, bounded50 rows;
   no downloads, avatars, covers, comments, followers or transcripts. No private custom
   text/ref descriptions/account/history goes to Apify. Unmapped topics yield honest gap.
+- Free provider: one source and one run / rolling24 hours; other topics use cached
+  inventory. No promise of fresh acquisition for every account/interest every day.
 - Max$0.10/run,$0.20/day,$4.50/month in durable reservations, before POST. Free-credit
   account and owner key entry needed. No payment/subscription; paid cash needs owner.
 - Resume recorded run IDs; uncertain POST outcome is not retried. Serialized state,
@@ -49,9 +51,11 @@ Existing .qa-inline-v349 is private local QA data, never staged or overwritten.
 No native product changes/remote/push planned. No brainstorming interview: owner has
 specified behavior, accepted design/playback and directly asked for execution.
 
-Ruling: Public actor API shows tiktok-scraper minimum cap$0.50; use the same author's
-Data Extractor (free-tiktok-scraper), identical documented search/LATEST and no minimum.
-Approved$0.10 cap remains unchanged; Free result$3/1000 +LATEST$1.30/1000. No cash/card.
+Provider ruling after real pilot: Clockworks Data Extractor returned0 rows because
+device registration failed (runQn1zkiaK7sfxCOgbY,charge$0.000). Preserve its reservation.
+Use Scrapeforge's compatible metadata, separate method key and rolling24h guard.
+Approved$0.10 cap remains unchanged; result$0.30/1000 +start$0.00005/GB. No cash/card.
+API Dojo was rejected before a run: Free5/month cannot support daily acquisition.
 
 QA ledger:3434/3434 source,184/184 live, native byte contracts PASS. Dedicated local
 QA UI→API→reload, real player started/ended; saved recommendation uses the existing

@@ -232,7 +232,7 @@ test('real HTTP daily edit supply uses signed current-account CAS, replay and re
  for(const key of ['inventory','gold','commitmentsV1'])assert.deepEqual(r.read(a,'settings')[key],stable[key]);
  await r.stop();await r.start({APIFY_API_TOKEN:'synthetic-provider-key'});
  const fixed=await r.api('/api/inspiration/supply',{cookie:a.cookie,method:'POST',body:{dayKey:day}});assert.equal(fixed.data.editStatus,'fixed');
- assert.equal(r.calls().filter(c=>c.url.includes('/acts/clockworks~free-tiktok-scraper/runs')).length,1);
+ assert.equal(r.calls().filter(c=>c.url.includes('/acts/scrapeforge~tiktok-posts/runs')).length,1);
  assert.equal(r.read(a,'settings').inspirationFinds.length,3);assert.deepEqual(r.read(a,'settings').inspiration.digest,next.digest);
 });
 

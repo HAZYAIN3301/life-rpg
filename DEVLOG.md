@@ -1,3 +1,13 @@
+## Codex 29.10 — реальный provider pilot / v350
+
+Clockworks runQn1zkiaK7sfxCOgbY: SUCCEEDED, но0/1 query и0строк, upstream device ID
+registration failure, charge$0.000. Это не готовая поставка. Резерв0.10 сохранён.
+Заменён на Scrapeforge keyword/date-posted/this-month, до50строк, один источник и
+один запуск за rolling24ч для Free. Отдельный ключ стратегии без обнуления бюджета;
+startup pilot больше не занимает новые дни, последующие запросы идут по интересам.
+API Dojo не запускался: Free5run/month непригоден для ежедневного обновления.
+B2.17/клиент/player и cache350 без изменений. Настоящий ответ/выпуск — release receipt.
+
 ## Codex 29.10 — ежедневные эдиты через Apify / v350
 
 По поручению владельца подключён server-only источник public topic metadata с

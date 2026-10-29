@@ -22,9 +22,10 @@ const TOPICS=Object.freeze({
  rest:['calm nature edit',/calm|nature|peace|relax|спокой/i],recovery:['recovery motivation edit',/recover|rest|healing|восстанов/i],health:['healthy life motivation edit',/health|healthy|wellbeing|здоров/i]
 });
 const maps=s=>Object.fromEntries(['ru','en','de','uk','es'].map(l=>[l,s]));
+const ACTOR='scrapeforge~tiktok-posts';
 function fromPost(row,topics,at){
  const source=Media.parseSource(row?.webVideoUrl),caption=String(row?.text||'').slice(0,4000),tags=[...new Set([...(Array.isArray(row?.hashtags)?row.hashtags:[]).map(t=>typeof t==='string'?t:t?.name),...(caption.match(/#[\p{L}\p{N}_]+/gu)||[]).map(t=>t.slice(1))].filter(t=>typeof t==='string'))].slice(0,32),hay=[caption,...tags].join(' ');
- if(!source||source.provider!=='tiktok'||String(row.id)!==source.id||row.isSlideshow||row.isAd||row.isSponsored||row.authorMeta?.name&&row.authorMeta.name.toLowerCase()!==source.authorHandle.toLowerCase())return null;
+ if(!source||source.provider!=='tiktok'||String(row.id)!==source.id||row.isSlideshow||row.isAd||row.isSponsored||row.authorMeta?.name&&(typeof row.authorMeta.name!=='string'||row.authorMeta.name.toLowerCase()!==source.authorHandle.toLowerCase()))return null;
  if(!/(?:edit|amv|cinematic|motivat|inspir|эдит|мотивац)/i.test(hay)||/thinspo|proana|self.?harm|suicide.?challenge|casino|guaranteed.?profit|free.?crypto/i.test(hay))return null;
  const interests=[...new Set(topics)].filter(t=>TOPICS[t]?.[1].test(hay));if(!interests.length)return null;
  const published=row.createTimeISO||(Number.isFinite(row.createTime)?new Date(row.createTime*1000).toISOString():'');
@@ -57,10 +58,10 @@ function createInventory({apiKey,read,write,request=requestJson,now=()=>new Date
   const response=await request({url:'https://api.apify.com/v2/'+path,method,headers:{Authorization:'Bearer '+apiKey,Accept:'application/json','Content-Type':'application/json'},...(body?{body}:{})});
   if(response.status<200||response.status>=300)throw Error('apify_request_failed');return response.json;
  };
- async function refresh(input){
-  const topics=[...new Set((Array.isArray(input)?input:[]).filter(t=>Object.hasOwn(TOPICS,t)))].sort().slice(0,3);
+ async function refresh(input,bootstrap){
+  const topics=[...new Set((Array.isArray(input)?input:[]).filter(t=>Object.hasOwn(TOPICS,t)))].slice(0,3);
   if(!apiKey)return {status:'unconfigured',items:[]};if(!topics.length)return {status:'unsupported',items:[]};
-  const at=now().toISOString(),day=at.slice(0,10),month=day.slice(0,7),key=topics.join('+');
+  const at=now().toISOString(),day=at.slice(0,10),month=day.slice(0,7),key=ACTOR+':'+topics[0];
   const state=(await read())??{version:1,runs:[],items:[]};
   if(state.version!==1||!Array.isArray(state.runs)||state.runs.length>200||!Array.isArray(state.items)||state.items.length>600||state.runs.some(r=>!r||typeof r.key!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(r.day)||r.reservedUsd!==reserve||!['starting','running','done','failed','uncertain'].includes(r.state)||!Array.isArray(r.topics)||r.topics.some(t=>!Object.hasOwn(TOPICS,t))||r.state==='running'&&!id(r.runId)))throw Error('apify_corrupt_state');
   // Completed run metadata is normalized before it becomes inventory. A failed
@@ -73,8 +74,9 @@ function createInventory({apiKey,read,write,request=requestJson,now=()=>new Date
     if(result.status!=='SUCCEEDED')continue;
     if(!id(result.defaultDatasetId))throw Error('invalid_dataset');
     const fields='id,text,webVideoUrl,authorMeta,videoMeta,createTimeISO,createTime,hashtags,isSlideshow,isAd,isSponsored';
-    const rows=await call('datasets/'+result.defaultDatasetId+'/items?clean=true&limit=12&fields='+encodeURIComponent(fields));
-    if(!Array.isArray(rows)||rows.length>12)throw Error('invalid_dataset_rows');
+    const limit=run.actor===ACTOR?50:12;
+    const rows=await call('datasets/'+result.defaultDatasetId+'/items?clean=true&limit='+limit+'&fields='+encodeURIComponent(fields));
+    if(!Array.isArray(rows)||rows.length>limit)throw Error('invalid_dataset_rows');
     const normalized=rows.map(r=>fromPost(r,run.topics,at)).filter(Boolean),byId=new Map(state.items.map(r=>[r.id,r]));
     for(const row of normalized)byId.set(row.id,row);
     state.items=[...byId.values()].filter(r=>E.normalize(r,{unsigned:true})&&Date.parse(at)-Date.parse(r.lastCheckedAt)<=30*86400000).sort((a,b)=>b.lastCheckedAt.localeCompare(a.lastCheckedAt)).slice(0,600);
@@ -86,24 +88,25 @@ function createInventory({apiKey,read,write,request=requestJson,now=()=>new Date
   const items=()=>state.items.filter(r=>r.interestIds.some(t=>topics.includes(t))&&Date.parse(at)-Date.parse(r.lastCheckedAt)<=30*86400000);
   const existing=state.runs.find(r=>r.key===key&&(r.day===day||r.state==='running'));
   if(existing)return {status:['starting','uncertain','failed'].includes(existing.state)?'provider_error':existing.state==='running'?'pending':items().length?'ready':'empty',items:items()};
+  if(bootstrap&&state.runs.some(r=>r.actor===ACTOR))return {status:items().length?'ready':'empty',items:items()};
+  // The Free actor accepts one source / rolling 24 hours for the whole account.
+  // Keep this receipt across restart and UTC midnight; other interests use cache.
+  if(state.runs.some(r=>r.actor===ACTOR&&Date.parse(at)-Date.parse(r.startedAt)<86400000))return {status:items().length?'ready':'budget_limited',items:items()};
   const spent=period=>state.runs.filter(r=>r.day.startsWith(period)).reduce((n,r)=>n+r.reservedUsd,0);
   if(spent(day)+reserve>dailyUsd+1e-8||spent(month)+reserve>monthlyUsd+1e-8)return {status:'budget_limited',items:items()};
   // Reserve durably BEFORE sending a non-idempotent start. On an uncertain
   // outcome keep the reservation and never retry this topic/day blindly.
-  const run={key,topics,day,reservedUsd:reserve,state:'starting',startedAt:at};state.runs.push(run);
+  const run={key,actor:ACTOR,topics:[topics[0]],day,reservedUsd:reserve,state:'starting',startedAt:at};state.runs.push(run);
   state.runs=state.runs.filter(r=>r.day.slice(0,7)===month||r.state==='running').slice(-200);await save(state);
   const params=new URLSearchParams({timeout:'180',maxTotalChargeUsd:'0.1',restartOnError:'false',waitForFinish:'0',forcePermissionLevel:'LIMITED_PERMISSIONS'});
   try{
-   const result=(await call('acts/clockworks~free-tiktok-scraper/runs?'+params,'POST',{
-    searchQueries:topics.map(t=>TOPICS[t][0]),searchSection:'/video',videoSearchSorting:'LATEST',resultsPerPage:Math.max(1,Math.floor(12/topics.length)),
-    shouldDownloadVideos:false,shouldDownloadCovers:false,shouldDownloadSlideshowImages:false,shouldDownloadAvatars:false,shouldDownloadMusicCovers:false,
-    downloadSubtitlesOptions:'NEVER_DOWNLOAD_SUBTITLES',maxFollowersPerProfile:0,maxFollowingPerProfile:0,commentsPerPost:0,
-    scrapeRelatedSearchWords:false,scrapeRelatedVideos:false,scrapeAdditionalAuthorMeta:false
+   const result=(await call('acts/'+ACTOR+'/runs?'+params,'POST',{
+    scrapeMode:'keyword',keyword:TOPICS[topics[0]][0],maxResults:50,sortBy:'date-posted',datePosted:'this-month'
    })).data;
    if(!result||!id(result.id))throw Error('invalid_start_receipt');run.runId=result.id;run.state='running';await save(state);
    return {status:'pending',items:items()};
   }catch{run.state=run.runId?'running':'uncertain';await save(state);return {status:'provider_error',items:items()};}
  }
- return Object.freeze({configured:!!apiKey,get(topics){const result=queue.then(()=>refresh(topics));queue=result.catch(()=>{});return result;}});
+ return Object.freeze({configured:!!apiKey,get(topics,{bootstrap=false}={}){const result=queue.then(()=>refresh(topics,bootstrap));queue=result.catch(()=>{});return result;}});
 }
 module.exports={TOPICS,fromPost,createSigner,createInventory,requestJson};

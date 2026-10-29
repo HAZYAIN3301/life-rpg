@@ -7683,7 +7683,7 @@ server.listen(PORT, HOST, () => {
   const editWarmup=(process.env.APIFY_WARMUP_TOPICS||'').split(',').filter(t=>Object.hasOwn(inspirationApifyModule.TOPICS,t)).slice(0,3);
   if(inspirationEditInventory.configured&&editWarmup.length)(async()=>{
     for(let i=0;i<24;i++){
-      const r=await inspirationEditInventory.get(editWarmup);
+      const r=await inspirationEditInventory.get(editWarmup,{bootstrap:true});
       if(r.status!=='pending'){
         inspirationApifyReady=r.status==='ready'&&r.items.length>0;
         console.info('[inspiration-edits] public warmup '+JSON.stringify({status:r.status,accepted:r.items.length,samples:r.items.slice(0,2).map(row=>({id:row.id,sourceUrl:row.delivery.sourceUrl,publishedAt:row.publishedAt,caption:row.body.ru,durationSec:row.durationSec}))}));return;

@@ -3,6 +3,8 @@
 - [x] Topic adapter, bounded durable run/budget/restart/uncertain, owner-entered key.
 - [x] Signed account private candidates/CAS, finite day/history/refs/feedback, saved Play.
 - [x] Pending client lifecycle, same B2.17 cards/player, five-locale privacy and cache350.
+- [x] Реальный Clockworks pilot выявил0результатов/device ID failure; замена на
+  Scrapeforge с сохранённым резервом и Free rolling24h gate. API Dojo5/month отклонён.
 - [ ] Actual Apify capped run/usage, native/browser flow, release deployment receipt.
 - [ ] Расширение покрытия интересов/субъективное качество; не обещать неизвестные темы
   или полный анализ изображения/звука по одним метаданным.
