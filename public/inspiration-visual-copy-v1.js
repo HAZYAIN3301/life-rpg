@@ -7,6 +7,9 @@
   'use strict';
   const locales = ['ru','en','de','uk','es'];
   const rows = [
+    ['Сохраняй свои материалы; TikTok загружается здесь только по нажатию.','Save your materials; TikTok loads here only when you tap.','Speichere deine Inhalte; TikTok lädt hier erst nach dem Antippen.','Зберігай свої матеріали; TikTok завантажується тут лише після натискання.','Guarda tu material; TikTok se carga aquí solo al pulsar.'],
+    ['Нажми Play в плеере TikTok.','Press Play in the TikTok player.','Drücke Play im TikTok-Player.','Натисни Play у плеєрі TikTok.','Pulsa Play en el reproductor de TikTok.'],
+    ['Эдит не загрузился. Повтори просмотр здесь.','The edit did not load. Try watching here again.','Der Edit wurde nicht geladen. Versuche es hier erneut.','Едіт не завантажився. Спробуй переглянути тут ще раз.','El edit no se cargó. Vuelve a intentarlo aquí.'],
     ['Новые фото и видео ещё не подключены. Сохранённые материалы доступны.','New photos and videos are not connected yet. Saved materials are available.','Neue Fotos und Videos sind noch nicht verbunden. Gespeicherte Inhalte sind verfügbar.','Нові фото й відео ще не підключено. Збережені матеріали доступні.','Las fotos y vídeos nuevos aún no están conectados. El material guardado está disponible.'],
     ['Новые фото и короткие видео каждый день · Pexels','New photos and short videos each day · Pexels','Jeden Tag neue Fotos und kurze Videos · Pexels','Нові фото й короткі відео щодня · Pexels','Fotos y vídeos cortos nuevos cada día · Pexels'],
     ['Часть новых материалов не загрузилась. Доступное сохранено.','Some new materials did not load. Available items were saved.','Einige neue Inhalte wurden nicht geladen. Verfügbare Inhalte wurden gespeichert.','Частина нових матеріалів не завантажилася. Доступне збережено.','Parte del material nuevo no se cargó. Se guardó el material disponible.'],

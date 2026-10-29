@@ -28852,6 +28852,7 @@ function inspirationYoutubeEmbed(url) {
 }
 function inspirationPersonalMedia(item) {
   const M = window.InspirationMediaV1, source = M?.parseSource(item.url || item.sourceUrl);
+  if(source?.provider==='tiktok'&&!item.catalogId)return {...item,personalMedia:true,provider:'tiktok',sourceUrl:source.url,embedUrl:M.buildEmbed(source),imageUrl:'',format:'edit',mediaPolicy:'iframe'};
   if (M?.externalOnly(item)) return { ...item, provider: 'tiktok', sourceUrl: item.url || item.sourceUrl || '',
     embedUrl: '', imageUrl: '', mediaPolicy: 'link' };
   const embedUrl = source ? M.buildEmbed(source) : inspirationYoutubeEmbed(item.url);
@@ -29333,7 +29334,7 @@ function previewInspirationReference(button) {
   const item = inspirationPersonalMedia({ url, imageUrl: prior?.imageUrl,
     mediaType: prior?.mediaFormat === 'image' ? 'image' : undefined,
     title: String(row.querySelector('[name="referenceTitle"]')?.value || '').trim() });
-  if (window.InspirationMediaV1?.externalOnly(item)) { openProtectedInspirationSource(item, button); return; }
+  if (window.InspirationMediaV1?.externalOnly(item)&&!window.InspirationTikTokFrameV1?.personalSource(item)) { openProtectedInspirationSource(item, button); return; }
   const host = row.querySelector(`[data-inspiration-media="reference-${index}"]`);
   if (window.InspirationPlayerV1?.open({ host, item, opener: button, copy: inspirationVisualCopy, allowLegacy: inspirationEmbedAllowed })) sfx('open');
 }
@@ -36843,7 +36844,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v348';
+const PWA_CACHE_VERSION = 'satoru-v349';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

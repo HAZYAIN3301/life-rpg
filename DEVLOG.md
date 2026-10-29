@@ -1,3 +1,16 @@
+## Codex 29.10 — личные эдиты внутри Satoru / v349
+
+После подтверждённого владельцем стенда личные TikTok references/saved links
+открывают официальный player в dialog: exact-ID CSP wrapper, sandbox, строгие
+message source/origin/ID, close/end/hidden cleanup. Общий license gate не расширен;
+Apify отложен. Прежние CAS/profile/shelf/auth/economy сохранены; нет видеофайлов
+на сервере, eager posters, auto-next и награды за просмотр. Five-locale privacy.
+3422 source+184 live, byte contracts PASS; isolated UI→API→reload и browser video
+time/end/source confinement PASS. Owner-authorized XCUITest actual iPhone Simulator
+shell Play/time/видимый author link/ended/relaunch PASS15:32CET; native delegate без
+правок. Physical iPhone не заявлен; production receipt отдельно.
+Контракт: INSPIRATION-INLINE-V349.md. Cache349 и связанные immutable pins обновлены.
+
 ## Codex 29.10 — ежедневная поставка Вдохновения / Pexels v348
 
 По выбору владельца подключён бесплатный Pexels provider: общий daily topic cache,

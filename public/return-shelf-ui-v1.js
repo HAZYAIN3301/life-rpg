@@ -179,7 +179,7 @@
     const referenceRow = (reference = {}, index = 0) => {
       const source = mediaSource(reference);
       const image = safeImage(reference.imageUrl, source && source.provider);
-      const preview = source || image ? `<div class="inspiration-reference-preview${source ? ` is-${source.provider}` : ''}" data-inspiration-media="reference-${index}">${image ? `<img src="${esc(image)}" alt="${esc(reference.title)}" loading="lazy" referrerpolicy="no-referrer">` : ''}${source ? `<button type="button" class="btn ghost sm" data-action="inspiration-reference-preview" data-reference-index="${index}">${tr(t, Media?.externalOnly(reference) ? 'Открыть источник' : 'Показать референс')}</button>` : ''}</div>` : '';
+      const preview = source || image ? `<div class="inspiration-reference-preview${source ? ` is-${source.provider}` : ''}" data-inspiration-media="reference-${index}">${image ? `<img src="${esc(image)}" alt="${esc(reference.title)}" loading="lazy" referrerpolicy="no-referrer">` : ''}${source ? `<button type="button" class="btn ghost sm" data-action="inspiration-reference-preview" data-reference-index="${index}">${tr(t, 'Показать референс')}</button>` : ''}</div>` : '';
       return `<div class="inspiration-reference-row" data-inspiration-reference-row>
       ${preview}
       <label class="inspiration-reference-url"><span>${tr(t, 'Ссылка на пин или видео')}</span><input type="url" name="referenceUrl" value="${esc(reference.url)}" maxlength="1000" placeholder="${tr(t, 'Pinterest, TikTok, YouTube…')}" inputmode="url" autocomplete="url"></label>
@@ -201,7 +201,7 @@
       <fieldset><legend><b>2</b><span>${tr(t, 'Что показывать')}</span><small>${tr(t, 'Можно выбрать несколько форматов.')}</small></legend><div class="inspiration-format-choices">${formatChoices}</div>
       <details class="inspiration-setup-more"><summary>${tr(t, 'Что не показывать')}</summary><label class="inspiration-free"><span>${tr(t, 'Исключить темы')}</span><input name="blocked" value="${esc((profile.blocked || []).join(', '))}" maxlength="300" placeholder="${tr(t, 'Необязательно. Например: hustle, сравнение тел, политика.')}" autocomplete="off"></label></details></fieldset>
       <fieldset class="inspiration-reference-fieldset"><legend><b>3</b><span>${tr(t, 'Референсы: фото и эдиты')}</span><small>${tr(t, 'Необязательно · до 10 ссылок.')}</small></legend>
-      <p class="inspiration-reference-intro">${tr(t, 'Сохраняй свои материалы; TikTok открывается снаружи.')}</p>
+      <p class="inspiration-reference-intro">${tr(t, 'Сохраняй свои материалы; TikTok загружается здесь только по нажатию.')}</p>
       <div class="inspiration-reference-head"><details class="inspiration-reference-storage"><summary>${tr(t, 'Как хранятся ссылки')}</summary><p>${tr(t, 'Фото и видео остаются у источника. В Satoru сохраняются ссылки, подписи и твои объяснения.')}</p></details><output data-inspiration-reference-count>${references.length} / 10</output></div>
       <div class="inspiration-reference-list" data-inspiration-reference-list>${referenceRows}</div>
       <button type="button" class="btn ghost sm inspiration-reference-add" data-action="inspiration-reference-add" ${references.length >= 10 ? 'disabled' : ''}>+ ${tr(t, 'Добавить референс')}</button>

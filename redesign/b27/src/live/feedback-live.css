@@ -204,6 +204,14 @@
 .wb .owned-inspiration .inspiration-why .inspiration-source { width:100%; }
 .wb .owned-inspiration .inspiration-style-feedback button { font-size:14px; border:1px solid var(--line); color:var(--ink); }
 .wb .owned-inspiration .inspiration-item-actions { gap:10px; margin-bottom:18px; }
+.wb .owned-inspiration .inspiration-saved-preview.has-player { block-size:auto; min-block-size:0; overflow:visible; }
+.wb .owned-inspiration .inspiration-embed.is-tiktok { max-inline-size:390px; margin-inline:auto; }
+.wb .owned-inspiration .inspiration-embed.is-tiktok iframe { aspect-ratio:9/16; min-block-size:0; }
+dialog.inspiration-embed.is-personal-viewer { box-sizing:border-box; width:min(420px,calc(100vw - 24px),calc((100dvh - 100px)*9/16 + 16px)); max-height:calc(100dvh - 24px); margin:auto; padding:48px 8px 8px; border:1px solid #525a70; border-radius:16px; background:#191d28; color:#fff; overflow:hidden; }
+dialog.inspiration-embed.is-personal-viewer::backdrop { background:#080a10dc; }
+dialog.inspiration-embed.is-personal-viewer iframe { display:block; width:100%; aspect-ratio:9/16; height:auto; border:0; }
+dialog.inspiration-embed.is-personal-viewer > button { position:absolute; inset:2px 4px auto auto; min-width:44px; min-height:44px; border:0; border-radius:8px; background:#191d28; color:#fff; font:700 20px/1.2 Manrope,sans-serif; cursor:pointer; }
+dialog.inspiration-embed.is-personal-viewer > button:focus-visible { outline:2px solid #e0c389; outline-offset:-4px; }
 .wb .b212-world .wo-node { width:220px; height:140px; padding:16px; }
 .wb .b212-world .wo-node b { font-size:17px; line-height:1.4; max-height:72px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .wb .b212-world .wo-node small { font-size:13px; }

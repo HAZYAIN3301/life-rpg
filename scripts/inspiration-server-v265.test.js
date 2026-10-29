@@ -80,6 +80,15 @@ async function runtime(t, initialEnv = {}) {
   return { api, register, seed, file, read, start, stop, calls, dir, base, child: () => child };
 }
 
+test('personal player wrapper sends an exact-ID CSP without provider fetches or account data',async t=>{
+ const r=await runtime(t);
+ const a=await fetch(r.base+'/inspiration-tiktok-player.html?id=7647936071673629973');assert.equal(a.status,200);
+ assert.match(a.headers.get('content-security-policy'),/frame-src https:\/\/www.tiktok.com\/player\/v1\/7647936071673629973;/);
+ assert.equal(a.headers.get('cache-control'),'no-store');
+ assert.match(await a.text(),/inspiration-tiktok-frame-v1.js/);
+ const bad=await fetch(r.base+'/inspiration-tiktok-player.html?id=1');assert.match(bad.headers.get('content-security-policy'),/frame-src 'none'/);
+ assert.equal(r.calls().length,0);
+});
 test('authenticated profile owner keeps the current account and existing device-session semantics', { timeout: 30000 }, async t => {
   const r = await runtime(t), a = await r.register('inspiration-a'), b = await r.register('inspiration-b');
   for (const [route, method, body] of [['profile', 'POST', payload()], ['metadata', 'POST', { url: 'https://example.test' }], ['discovery', 'GET'], ['discovery', 'POST', {}]]) {

@@ -40,8 +40,19 @@ function harness() {
       data: { 'x-tiktok-player': true, type, value }, ...extra };
     for (const listener of [...(listeners.message || [])]) listener(message);
   }
-  return { controller, host, opener, item, open, layer, event, timers, listeners, body: document.body };
+  return { controller, host, opener, item, open, layer, event, timers, listeners, window, document, body: document.body };
 }
+test('personal TikTok waits for user Play, trusts only its wrapper and closes on end/background',()=>{
+ const h=harness();h.window.location={origin:'https://satoru.example'};
+ const item={personalMedia:true,sourceUrl:TIKTOK,embedUrl:Media.buildEmbed(TIKTOK),title:'Private reference'};
+ assert.equal(h.open({item}),true);const frame=h.layer().children[0];assert.equal(frame.src,'inspiration-tiktok-player.html?id=7647936071673629973');
+ assert.equal(h.timers.size,0,'waiting for an initial user gesture is not a network timeout');
+ const send=(event,extra={})=>{for(const fn of h.listeners.message)fn({origin:'https://satoru.example',source:frame.contentWindow,data:{satoruInspirationPlayer:true,id:'7647936071673629973',event},...extra});};
+ send({type:'ended'},{origin:'https://www.tiktok.com'});assert.ok(h.layer());
+ send({type:'buffering'});assert.equal(h.timers.size,1);send({type:'playing'});assert.equal(h.timers.size,0);
+ send({type:'ended'});assert.equal(h.layer(),undefined);assert.equal(h.opener.focused,true);
+ h.open({item});for(const fn of h.listeners.pagehide)fn();assert.equal(h.layer(),undefined);
+});
 test('licensed MP4 uses a finite native player, closes on end and never autoplays another item',()=>{
  const h=harness(),item={id:'pexels-video-456',provider:'pexels',mediaPolicy:'stream',format:'video',title:'Forest',sourceUrl:'https://www.pexels.com/video/forest-456/',videoUrl:'https://videos.pexels.com/video-files/456/clip.mp4'};
  assert.equal(h.open({item}),true);const video=h.layer().children[0];assert.equal(video.tag,'video');assert.equal(video.controls,true);assert.equal(video.loop,false);assert.notEqual(video.autoplay,true);

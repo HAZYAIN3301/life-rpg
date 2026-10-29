@@ -486,14 +486,18 @@ test('external source uses the native link delegate or browser navigation with t
     assert.deepEqual(events, native ? [['append'], ['click', url, '_blank', 'noopener noreferrer'], ['remove']] : [['assign', url]]);
   }
 });
-test('personal TikTok stays external, Pinterest keeps its validated embed, denied catalog stays denied', () => {
+test('personal TikTok gets an explicit inline scope, Pinterest and shared catalog gates stay intact', () => {
   const h = harness();
   h.State.shelf.items.push({ id: 'pin', url: 'https://www.pinterest.com/pin/974818281863152085/' },
     { id: 'edit', url: 'https://www.tiktok.com/@example/video/7647936071673629973' });
   assert.equal(h.ctx.inspirationFormatFromContent(h.State.shelf.items[0].url), 'image');
   assert.match(h.ctx.inspirationActionItem('pin').embedUrl, /assets.pinterest.com/);
-  assert.equal(h.ctx.inspirationActionItem('edit').embedUrl, '');
-  assert.equal(h.ctx.inspirationActionItem('edit').mediaPolicy, 'link');
+  const edit=h.ctx.inspirationActionItem('edit');
+  assert.equal(edit.embedUrl,Media.buildEmbed(edit.sourceUrl));
+  assert.equal(edit.mediaPolicy,'iframe');assert.equal(edit.personalMedia,true);
+  assert.ok(require('../public/inspiration-tiktok-frame-v1.js').personalSource(edit));
+  h.State.shelf.items.push({id:'denied',catalogId:'unlicensed',url:edit.sourceUrl});
+  assert.equal(h.ctx.inspirationActionItem('denied').supplyUnavailable,true);
   assert.equal(h.State.shelf.items[1].url, 'https://www.tiktok.com/@example/video/7647936071673629973');
   assert.equal(h.ctx.inspirationEmbedAllowed(Media.buildEmbed(h.State.shelf.items[1].url), h.State.shelf.items[0].url), false);
 });

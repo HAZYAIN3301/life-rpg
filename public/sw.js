@@ -1,7 +1,7 @@
 /* Satoru Service Worker — офлайн app-shell + push-уведомления (#10/#11).
    App shell: network-first. Art/media: cache-first. /api/: always live network.
    Bump CACHE whenever the shell or a stable asset URL changes. */
-const CACHE = 'satoru-v348';
+const CACHE = 'satoru-v349';
 const ECONOMY_ICON_SHELL = [
   ...'allspheres_5 avatar_custom balanced balanced_90 capstone_first clean_30 clean_7 cofounder_10 collector_5 early_bird first_goal first_habit first_note first_quest first_reward focus_10h full_spectrum gear_full goals_10 gold_500 habit_100 legendary_drop level_10 level_20 level_30 level_5 marathon_day mission_set new_year night_owl path_chosen quests_100 quests_250 quests_50 reporter_3 skill_master skills_all3 skills_all5 sphere_lvl10 streak_100 streak_30 streak_7 tree_full wear_first weekend_warrior xp_1000 xp_25000 xp_5000'.split(' ').map((id) => `art/icons/content-raster-v208/achievements/${id}.png`),
   ...'banya bath boardgames boba book breakfast cake chocolate clothes coffee concert course decor delivery drawing episode event gadget game hobby icecream meditation movie music pizza restaurant sleep small-purchase spa vacation walk weekend-trip wishlist'.split(' ').map((id) => `art/icons/content-raster-v208/rewards/${id}.png`),
@@ -21,7 +21,7 @@ const SHELL = [
   'goal-proposal-import-v1.js',
   'settings-discovery-v1.js',
   'device-sessions-ui-v1.js',
-  'inspiration-media-v1.js', 'inspiration-player-v1.js', 'inspiration-visual-batch-v1.js', 'inspiration-visual-copy-v1.js',
+  'inspiration-media-v1.js', 'inspiration-tiktok-frame-v1.js', 'inspiration-tiktok-frame-v1.css', 'inspiration-player-v1.js', 'inspiration-visual-batch-v1.js', 'inspiration-visual-copy-v1.js',
   'party-session-v1.js', 'party-session-ui-v1.js', 'party-session-v1.css',
   'party-den-ui-v1.js', 'party-den-v1.css',
   'party-adventure-v1.js', 'party-adventure-ui-v1.js', 'party-adventure-v1.css',
@@ -321,6 +321,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;        // сторонние — как есть
+  if (url.pathname === '/inspiration-tiktok-player.html') { e.respondWith(fetch(req).catch(() => new Response('Offline. Close the player and try again.', {status:503,headers:{'Content-Type':'text/plain','Content-Security-Policy':"default-src 'none'; frame-ancestors 'self'"}}))); return; }
   if (url.pathname.startsWith('/api/')) return;           // API — мимо SW (живые данные)
   // Range responses (usually video/audio) are partial 206 responses and cannot
   // be safely stored with Cache.put. Let the browser/server handle the range.

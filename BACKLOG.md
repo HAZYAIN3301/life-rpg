@@ -1,9 +1,19 @@
+## Вдохновение v349 — просмотр личных эдитов внутри, 29.10
+
+- [x] Personal-only official TikTok player, exact-ID CSP/sandbox, dialog/close/end.
+- [x] UI→API→reload, browser playback/end и3422 source+184 live, byte contracts.
+- [x] Owner-authorized iPhone Simulator XCUITest Play/time/source/end/relaunch.
+- [ ] Production deployment/hash receipt; physical iPhone playback отдельно.
+- [ ] Автоматические новые эдиты: отдельный источник после просмотра; Apify отложен.
+- Контракт INSPIRATION-INLINE-V349.md; shared license gate и B2.17 сохранены.
+
 ## Вдохновение v348 — ежедневная лицензированная поставка, 29.10
 
 - [x] Pexels adapter/topic cache/новые страницы, подпись кандидатов, прежний selector/CAS.
 - [x] 45-дневный cooldown, immutable day, lost reply/account guards, HTML5 player/credit.
 - [x] 3416 source+184 live и симуляция7 дней; ключ введён владельцем в Railway.
-- [ ] Подтвердить реальный API, browser playback, deployment и production SHA по receipt.
+- [x] Реальный API, browser playback, deployment и24/24 production SHA: web101f88bc,
+  Railway5c53d48b; native release/INSPIRATION-V348-20261029.md.
 - [ ] Авторские эдиты/аниме/Minecraft: отдельные допущенные авторы/каналы; stock без
   звука не выдаётся за музыкальные эдиты. Physical iPhone/full VoiceOver/offline отдельно.
 - Контракт: INSPIRATION-DAILY-PEXELS-V348.md; дизайн B2.17 сохранён.
