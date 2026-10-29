@@ -43,10 +43,11 @@
  * Чистый модуль: время приходит параметром, ни DOM, ни сети, ни случайности.
  */
 (function exposeInspirationSupplyPolicy(root, factory) {
-  const api = factory(typeof module === 'object' && module.exports ? require('./inspiration-media-v1.js') : root.InspirationMediaV1);
+  const node = typeof module === 'object' && module.exports;
+  const api = factory(node ? require('./inspiration-media-v1.js') : root.InspirationMediaV1,node ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.InspirationSupplyPolicyV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildInspirationSupplyPolicy(Media) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildInspirationSupplyPolicy(Media, Licensed) {
   'use strict';
 
   const VERSION = '1.0.0';
@@ -63,11 +64,11 @@
    *  official-embed  — можно показать через официальный проигрыватель источника.
    *                    Копировать файл НЕЛЬЗЯ, даже если технически получится.
    *  link-only       — можно только дать ссылку; открытие идёт через attention boundary. */
-  const TIERS = Object.freeze(['licensed-local', 'official-embed', 'link-only']);
+  const TIERS = Object.freeze(['licensed-local', 'licensed-stream', 'official-embed', 'link-only']);
   // Надёжность поставки, а НЕ качество материала. Используется только в дедупе:
   // из двух одинаковых записей остаётся та, которая переживёт исчезновение чужого
   // сервера. Ранжирования содержимого в модуле нет и быть не должно.
-  const TIER_RELIABILITY = Object.freeze({ 'licensed-local': 3, 'official-embed': 2, 'link-only': 1 });
+  const TIER_RELIABILITY = Object.freeze({ 'licensed-local': 3, 'licensed-stream': 2, 'official-embed': 2, 'link-only': 1 });
 
   const RIGHTS_KINDS = Object.freeze([
     'satoru-original', 'public-domain', 'cc0', 'cc-by-3.0', 'cc-by-4.0', 'cc-by-sa-4.0',
@@ -80,7 +81,7 @@
   // `text` — материал, содержимое которого и есть строка каталога (цитата). Такая
   // политика уже существует в рантайме (`mediaPolicy: 'text'` в app.js), поэтому
   // схема обязана её знать: иначе собственные цитаты не пройдут собственный допуск.
-  const DELIVERY = Object.freeze(['local', 'embed', 'link', 'text']);
+  const DELIVERY = Object.freeze(['local', 'embed', 'link', 'text', 'stream']);
 
   /* Чем именно подтверждена живость материала. Различие не формальное: успешный HEAD
    * доказывает, что сервер ответил, и НЕ доказывает, что плеер проигрывает. У YouTube
@@ -147,7 +148,7 @@
       embedHosts: PRODUCTION_EMBED_HOSTS.slice(),
       imageHosts: PRODUCTION_IMAGE_HOSTS.slice(),
       // Своё не протухает; чужое, показываемое по ссылке или через embed, — протухает.
-      maxAgeDays: { 'licensed-local': 365, 'official-embed': 30, 'link-only': 30 },
+      maxAgeDays: { 'licensed-local': 365, 'licensed-stream': 30, 'official-embed': 30, 'link-only': 30 },
       repeatCooldownDays: 45,
       maxSharePerSource: 0.5,
       minPerInterest: 2,
@@ -245,6 +246,11 @@
     const c = ctx || defaultContext();
     const fail = (code, detail) => ({ ok: false, id: raw && typeof raw === 'object' ? text(raw.id, 64) : '', code, detail: detail || '' });
     if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return fail(REJECT.SCHEMA, 'not an object');
+    if(raw.delivery?.policy==='stream') {
+      const item=Licensed?.normalize(raw);
+      if(!item)return fail(REJECT.DELIVERY,'invalid licensed media');
+      return {ok:true,candidate:Object.freeze({...item,sourceUrl:item.delivery.sourceUrl,tier:'licensed-stream'})};
+    }
 
     const id = text(raw.id, 64);
     const source = slug(raw.source);
@@ -394,6 +400,7 @@
     if (!candidate || !candidate.delivery) return null;
     if (candidate.delivery.policy === 'local' || candidate.delivery.policy === 'text') return 'licensed-local';
     if (candidate.delivery.policy === 'embed') return 'official-embed';
+    if (candidate.delivery.policy === 'stream') return 'licensed-stream';
     if (candidate.delivery.policy === 'link') return 'link-only';
     return null;
   }
@@ -447,7 +454,7 @@
       // post is allowed; the viewer must expose loading/error and stop on end.
       const providerLead = c.checkMethod === 'metadata' && c.delivery.policy === 'embed'
         && ['pinterest','tiktok'].includes(c.source) && Media && Media.isAllowedEmbed(c.embedUrl,c.sourceUrl);
-      if (c.available === 'unknown' && c.tier !== 'licensed-local' && !providerLead) {
+      if (c.available === 'unknown' && c.tier !== 'licensed-local' && c.tier !== 'licensed-stream' && !providerLead) {
         rejected.push({ id: c.id, code: REJECT.AVAILABILITY_UNKNOWN, detail: '' }); continue;
       }
 
@@ -465,7 +472,9 @@
         }
         // Успешный HEAD говорит, что сервер ответил, а не что плеер проигрывает.
         const manualStatic = !DURATION_LIMITS[c.format] && c.checkMethod === 'manual';
-        if (PLAYBACK_PROOFS.indexOf(c.checkMethod) < 0 && !manualStatic && !providerLead) {
+        // Direct licensed media is tried by the viewer. Metadata is not relabelled
+        // as playback; load/error/ended are handled on the actual media element.
+        if (PLAYBACK_PROOFS.indexOf(c.checkMethod) < 0 && !manualStatic && !providerLead && c.tier!=='licensed-stream') {
           rejected.push({ id: c.id, code: REJECT.PLAYBACK_UNVERIFIED, detail: c.checkMethod });
           continue;
         }
@@ -741,10 +750,11 @@
       rightsUrl: c.rights.url || '',
       provider: c.source,
       availabilityCheck: c.checkMethod,
-      mediaPolicy: c.delivery.policy === 'embed' ? 'iframe'
+      mediaPolicy: c.delivery.policy === 'stream' ? 'stream' : c.delivery.policy === 'embed' ? 'iframe'
         : c.delivery.policy === 'local' ? 'local'
           : c.delivery.policy === 'text' ? 'text' : c.imageUrl ? 'remote-image' : 'link',
       embedUrl: c.embedUrl || '',
+      videoUrl: c.videoUrl || '',
       sourceUrl: c.sourceUrl || '',
       imageUrl: c.imageUrl || '',
       imageWidth: c.imageWidth || null, imageHeight: c.imageHeight || null, mediaType: c.mediaType || 'unknown',

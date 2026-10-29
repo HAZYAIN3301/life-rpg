@@ -1,3 +1,13 @@
+## Вдохновение v348 — ежедневная лицензированная поставка, 29.10
+
+- [x] Pexels adapter/topic cache/новые страницы, подпись кандидатов, прежний selector/CAS.
+- [x] 45-дневный cooldown, immutable day, lost reply/account guards, HTML5 player/credit.
+- [x] 3416 source+184 live и симуляция7 дней; ключ введён владельцем в Railway.
+- [ ] Подтвердить реальный API, browser playback, deployment и production SHA по receipt.
+- [ ] Авторские эдиты/аниме/Minecraft: отдельные допущенные авторы/каналы; stock без
+  звука не выдаётся за музыкальные эдиты. Physical iPhone/full VoiceOver/offline отдельно.
+- Контракт: INSPIRATION-DAILY-PEXELS-V348.md; дизайн B2.17 сохранён.
+
 ## B2.17 — полный видеоотзыв, 28.10
 
 - [x] Верхнее Логово, directional collapse, desktop/dialog/nav, tree spheres/roles.

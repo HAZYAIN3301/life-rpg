@@ -32,7 +32,7 @@ function functionSource(name) {
 function profile() {
   return Profile.configure({ interests: ['creative', 'learning', 'rest'].map(id => ({ id, label: id })), formats: ['quote'] });
 }
-function harness({ paired = false, modes = [], discoveryTest = false } = {}) {
+function harness({ paired = false, modes = [], discoveryTest = false, licensedResponse } = {}) {
   const events = [], requests = [], toasts = [], sounds = [], renders = [];
   const initial = Profile.recordShown(Supply.ensureDigest({ profile: profile(), day: DAY, now: NOW, locale: 'en' }).profile, DAY);
   const State = { me: { id: 'owner-a' }, view: 'shelf', settings: { inspiration: initial, unrelated: { keep: 1 } }, tasks: [],
@@ -42,7 +42,7 @@ function harness({ paired = false, modes = [], discoveryTest = false } = {}) {
   const queue = modes.slice();
   const ctx = vm.createContext({ State, URL, Response, AbortController, structuredClone, clearTimeout, setTimeout,
     Date: class extends Date { constructor(...args) { super(...(args.length ? args : [NOW])); } },
-    window: { InspirationProfileV1: Profile, InspirationCatalogV1: Catalog, InspirationSupplyRuntimeV1: Supply,
+    window: { ...(licensedResponse?{InspirationLicensedMediaV1:require('../public/inspiration-licensed-media-v1.js')} : {}), InspirationProfileV1: Profile, InspirationCatalogV1: Catalog, InspirationSupplyRuntimeV1: Supply,
       InspirationSupplyUIV1: Copy, ReturnShelfUIV1: UI, ReturnShelfV1: Shelf, CommitmentStoreV1: Commit, InspirationMediaV1: discoveryTest ? { ...Media, DISCOVERY_ENABLED: true } : Media },
     CSS: { escape: String }, console: { error() {}, warn() {} },
     lang: () => 'en', todayStr: () => DAY, t: text => text, esc: String,
@@ -75,6 +75,7 @@ function harness({ paired = false, modes = [], discoveryTest = false } = {}) {
       if (mode === 'corrupt') return new Response(JSON.stringify({ error: 'commitment_data_corrupt' }), { status: 409 });
       if (mode === 'html') return new Response('<!doctype html><html>login</html>');
       if (mode === 'empty-json') return new Response('{}');
+      if (url === '/api/inspiration/supply') return new Response(JSON.stringify(licensedResponse));
       if (url === '/api/inspiration/discovery') {
         return new Response(JSON.stringify({ providerAvailable: false, status: 'unconfigured', dayKey: DAY, candidates: [] }));
       }
@@ -83,7 +84,8 @@ function harness({ paired = false, modes = [], discoveryTest = false } = {}) {
         if (!replay && !isDeepStrictEqual(payload.base, Profile.normalize(server.settings.inspiration))) {
           return new Response(JSON.stringify({ error: 'inspiration_revision_conflict' }), { status: 409 });
         }
-        server.settings.inspiration = clone(payload.profile);
+        if(licensedResponse){const decision=require('../server-inspiration-profile-v1.js').prepareCommit(server.settings,payload,{verifyLicensed:require('../server-inspiration-pexels-v1.js').createSigner(()=>'fixture').verify});assert.equal(decision.ok,true);server.settings=clone(decision.settings);}
+        else server.settings.inspiration = clone(payload.profile);
         if (Object.hasOwn(payload, 'baseDraft')) delete server.settings.inspirationDraft;
         if (mode === 'lost-reply') throw new Error('server wrote, reply lost');
         return new Response(JSON.stringify({ ok: true, kind: 'inspiration-profile', version: 1, replay,
@@ -337,6 +339,30 @@ function newDay(h, { discoveryEnabled = false, empty = false } = {}) {
     ...(empty ? { formats: ['podcast'] } : {}) });
   h.server.settings = clone(h.State.settings);
 }
+function licensedHarness(modes=[]){
+ const provider=require('../server-inspiration-pexels-v1.js'),signer=provider.createSigner(()=>'fixture');
+ const items=[123,124,125].map(id=>signer.sign(provider.photoCandidate({id,url:`https://www.pexels.com/photo/forest-${id}/`,photographer:'Ada',alt:'Forest',src:{large:`https://images.pexels.com/photos/${id}/forest.jpeg`}},'nature',NOW)));
+ const h=harness({modes,licensedResponse:{provider:'pexels',providerAvailable:true,status:'ready',dayKey:DAY,candidates:items}});
+ h.State.settings.inspiration=Profile.configure({...Profile.emptyProfile(),interests:[{id:'nature',label:'Nature'}],formats:['image']});h.server.settings=clone(h.State.settings);
+ return h;
+}
+test('daily licensed supply is selected, signed findings persist through the actual owner and reload',async()=>{
+ const h=licensedHarness();await h.ctx.prepareInspirationDigest();assert.deepEqual(h.requests.map(r=>r.url),['/api/inspiration/supply','/api/inspiration/profile']);
+ assert.equal(h.State.settings.inspirationFinds.length,3);assert.equal(h.ctx.shelfViewModel().items.length,3);
+ assert.equal(h.State.settings.inspiration.shownHistory.length,3);await h.ctx.prepareInspirationDigest();assert.equal(h.requests.length,2);
+ h.State.settings=clone(h.server.settings);assert.equal(h.ctx.shelfViewModel().items[0].provider,'pexels');
+});
+test('lost licensed receipt retries the same chosen ids without fetching a second page',async()=>{
+ const h=licensedHarness([undefined,'lost-reply']);await h.ctx.prepareInspirationDigest();assert.equal(h.State._inspirationDigestPending,'error');
+ const committed=clone(h.server.settings);await h.ctx.prepareInspirationDigest({retry:true});assert.equal(h.State._inspirationDigestPending,'');assert.deepEqual(h.server.settings,committed);
+ assert.deepEqual(h.requests.map(r=>r.url),['/api/inspiration/supply','/api/inspiration/profile','/api/inspiration/profile']);
+});
+test('provider failure never fixes an empty daily receipt and account switch never saves old supply',async()=>{
+ const bad=licensedHarness(['503']);await bad.ctx.prepareInspirationDigest();assert.equal(bad.State._inspirationDigestPending,'error');assert.equal(bad.State.settings.inspiration.digest,null);
+ let release,entered;const wait=new Promise(r=>entered=r),gate=new Promise(r=>release=r);
+ const h=licensedHarness([()=>{entered();return gate;}]);const work=h.ctx.prepareInspirationDigest();await wait;h.State.me={id:'owner-b'};h.State.settings={inspiration:Profile.emptyProfile()};release();await work;
+ assert.equal(h.requests.length,1);assert.equal(h.State.settings.inspiration.configured,false);
+});
 test('new day stays hidden until the owner confirms shown history; render performs no fetch', async () => {
   const h = harness(); newDay(h);
   const before = clone(h.State.settings), view = h.ctx.shelfViewModel();

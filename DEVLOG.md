@@ -1,3 +1,13 @@
+## Codex 29.10 — ежедневная поставка Вдохновения / Pexels v348
+
+По выбору владельца подключён бесплатный Pexels provider: общий daily topic cache,
+новые страницы и45-дневная история вместо малого статического запаса. До3 карточек
+через прежний selector/CAS; HMAC signed licensed media, без клиентского API key.
+HTML5 viewer/author/source credit/loading/error/end, утверждённый B2.17 сохранён.
+Непустой день неизменен, lost reply повторяет выбранное, account switch защищён.
+Эдиты/аниме не выдаются за stock-видео без звука; их источник — отдельно.
+Контракт/проверки/границы: INSPIRATION-DAILY-PEXELS-V348.md. Публикация по receipt.
+
 ## Codex 28.10 — B2.17: исправления полного видеоотзыва
 
 Вертикальное верхнее Логово и directional collapse, читаемый desktop/диалоги,

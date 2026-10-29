@@ -68,6 +68,12 @@ test('первый вход начинается с импорта интере�
   assert.match(html, /Спорт/);
   assert.doesNotMatch(html, /name="url"|name="kind"|Тип материала|Экспорт и удаление данных|Энергия|Практика/);
 });
+test('licensed Pexels cards credit source, show a safe real poster and wait for explicit player open',()=>{
+ const item=digestItem('pexels-video-456','video',{provider:'pexels',mediaPolicy:'stream',imageUrl:'https://images.pexels.com/videos/456/forest.jpg',videoUrl:'https://videos.pexels.com/video-files/456/clip.mp4',sourceUrl:'https://www.pexels.com/video/forest-456/',attribution:'Ada · Pexels'});
+ const html=UI.render(ready({items:[item],licensedStatus:'ready'}),t);
+ assert.match(html,/https:\/\/images\.pexels\.com\/videos\/456\/forest\.jpg/);assert.match(html,/Photos and videos provided by Pexels/);assert.match(html,/data-action="inspiration-play"/);assert.doesNotMatch(html,/<video|autoplay|loop=/);
+ const bad=UI.render(ready({items:[{...item,imageUrl:'https://evil.invalid/photo.jpg',videoUrl:'https://evil.invalid/clip.mp4'}]}),t);assert.doesNotMatch(bad,/src="https:\/\/evil/);
+});
 
 test('главная Подборка конечна: ровно три карточки и явный конец вместо load more', () => {
   const html = UI.render(ready(), t);
@@ -467,7 +473,7 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20261028-b25-app-v347-1');
+  const appAt = index.indexOf('app.js?v=20261029-b25-app-v348-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'return-shelf-v1.js']) {
@@ -475,22 +481,22 @@ test('интеграция подключает профиль и каталог
     assert.match(sw, new RegExp(asset.replaceAll('.', '\\.')));
   }
   for (const asset of ['inspiration-catalog-v1.js', 'inspiration-supply-policy-v1.js', 'inspiration-supply-batch-v1.js', 'inspiration-supply-runtime-v1.js', 'inspiration-supply-ui-v1.js']) {
-    const pin = ['inspiration-catalog-v1.js','inspiration-supply-runtime-v1.js','inspiration-supply-batch-v1.js'].includes(asset) ? '20261028-inspiration-v347-1' : asset === 'inspiration-supply-policy-v1.js' ? '20261028-inspiration-v347-1' : '20260912-inspiration-v257-1';
+    const pin = ['inspiration-catalog-v1.js','inspiration-supply-runtime-v1.js','inspiration-supply-batch-v1.js'].includes(asset) ? '20261029-inspiration-v348-1' : asset === 'inspiration-supply-policy-v1.js' ? '20261029-inspiration-v348-1' : '20260912-inspiration-v257-1';
     assert.ok(index.includes(asset + '?v=' + pin));
     assert.ok(index.indexOf(asset) < uiAt);
     assert.ok(sw.includes(asset));
   }
   for (const asset of ['inspiration-profile-v1.js','inspiration-media-v1.js','inspiration-player-v1.js','inspiration-visual-batch-v1.js','inspiration-visual-copy-v1.js']) {
-    const pin = asset === 'inspiration-catalog-v1.js' ? '20261028-inspiration-v347-1' : ['inspiration-profile-v1.js','inspiration-visual-batch-v1.js'].includes(asset) ? '20260919-inspiration-v265-1' : '20261003-inspiration-release-v323-1';
+    const pin = ['inspiration-player-v1.js','inspiration-visual-copy-v1.js'].includes(asset) ? '20261029-inspiration-v348-1' : ['inspiration-profile-v1.js','inspiration-visual-batch-v1.js'].includes(asset) ? '20260919-inspiration-v265-1' : '20261003-inspiration-release-v323-1';
     assert.ok(index.includes(asset + '?v=' + pin));
     assert.ok(index.indexOf(asset) < uiAt && sw.includes(asset));
   }
   assert.ok(index.indexOf('inspiration-media-v1.js') < index.indexOf('inspiration-supply-policy-v1.js'));
-  assert.match(index, /return-shelf-ui-v1\.js\?v=20261028-inspiration-v347-1/);
+  assert.match(index, /return-shelf-ui-v1\.js\?v=20261029-inspiration-v348-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
   assert.match(index, /styles\.css\?v=20261016-world-v342-1/);
-  assert.match(sw, /satoru-v347/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v347'/);
+  assert.match(sw, /satoru-v348/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v348'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {

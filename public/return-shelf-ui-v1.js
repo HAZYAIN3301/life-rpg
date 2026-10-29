@@ -8,10 +8,11 @@
   const api = factory(
     commonJS ? require('./inspiration-supply-ui-v1.js') : root.InspirationSupplyUIV1,
     commonJS ? require('./inspiration-media-v1.js') : root.InspirationMediaV1,
-    commonJS ? require('./inspiration-visual-copy-v1.js') : root.InspirationVisualCopyV1);
+    commonJS ? require('./inspiration-visual-copy-v1.js') : root.InspirationVisualCopyV1,
+    commonJS ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.ReturnShelfUIV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI(SupplyUI, Media, VisualCopy) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI(SupplyUI, Media, VisualCopy,Licensed) {
   'use strict';
 
   const VERSION = '2.3.0';
@@ -38,6 +39,7 @@
     catch { return ''; }
   }
   function safeImage(url, provider) {
+    if(provider==='pexels')return Licensed?.safeUrl(url,'image')||'';
     if (provider === 'tiktok' || Media?.externalOnly(url)) return '';
     if(/^https:\/\/i\.ytimg\.com\/vi(?:_webp)?\/[a-zA-Z0-9_-]{11}\/(?:hq|sd|maxres)default\.(?:jpg|webp)$/.test(String(url||'')))return url;
     const image = Media && Media.safeImage(url, provider);
@@ -53,7 +55,7 @@
   function mediaSource(item) { return Media ? Media.parseSource(item.sourceUrl || item.url) : null; }
   function providerLabel(item) {
     const source = mediaSource(item);
-    return source ? (source.provider === 'tiktok' ? 'TikTok' : 'Pinterest') : ({'youtube-blender-studio':'Blender Studio · YouTube',nasa:'NASA'})[item.provider] || String(item.provider || '');
+    return source ? (source.provider === 'tiktok' ? 'TikTok' : 'Pinterest') : ({'youtube-blender-studio':'Blender Studio · YouTube',nasa:'NASA',pexels:'Pexels'})[item.provider] || String(item.provider || '');
   }
 
   function shellHead(t, actions = '') {
@@ -215,6 +217,7 @@
   }
 
   function mediaControl(item, t) {
+    if(item.provider==='pexels'&&item.mediaPolicy==='stream'&&Licensed?.safeUrl(item.format==='video'?item.videoUrl:item.imageUrl,item.format==='video'?'video':'image'))return `<button type="button" class="inspiration-play" data-action="inspiration-play" data-id="${esc(item.id)}" aria-label="${tr(t,formatAction(item.format))}: ${esc(item.title)}"><span aria-hidden="true">${item.format==='video'?'▶':'↗'}</span>${tr(t,formatAction(item.format))}</button>`;
     if (Media?.externalOnly(item)) return `<button type="button" class="inspiration-play" data-action="inspiration-open-source" data-id="${esc(item.id)}">${tr(t, 'Открыть источник')}</button>`;
     const source = mediaSource(item);
     if (source && item.mediaPolicy === 'iframe' && Media.isAllowedEmbed(item.embedUrl, source.url)) {
@@ -229,7 +232,7 @@
   function renderVisual(item, t) {
     const source = mediaSource(item);
     const local=item.mediaPolicy==='local'&&item.format==='image'&&/^assets\/inspiration\/[a-z0-9/_-]+\.(?:jpg|png|webp)$/i.test(item.assetPath||'')?'/'+item.assetPath:'';
-    const imageUrl = Media?.externalOnly(item) ? '' : local || safeImage(item.imageUrl, source && source.provider);
+    const imageUrl = Media?.externalOnly(item) ? '' : local || safeImage(item.imageUrl, item.provider==='pexels'?'pexels':source && source.provider);
     const image = imageUrl ? `<img class="inspiration-visual-image" src="${esc(imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
     if (source || image) {
       return `<div class="inspiration-media-card"><div class="inspiration-visual is-media${source ? ` is-${source.provider}` : ''}${image ? ' has-image' : ' has-no-image'}" data-inspiration-media="${esc(item.id)}">${image}${image ? '' : `<p class="inspiration-media-unavailable">${tr(t, Media?.externalOnly(item) ? 'TikTok открывается вне Satoru.' : 'Предпросмотр недоступен. Открой материал из источника.')}</p>`}${mediaControl(item, t)}</div>
@@ -244,12 +247,12 @@
     const reason = Array.isArray(item.reason) && item.reason.length ? item.reason.join(' + ') : tr(t, 'твои интересы');
     const done = !!item.done, saved = !!item.saved, verdict = item.feedbackVerdict || '';
     const draft = row(vm.feedbackDraft), editingFeedback = draft.itemId === item.id;
-    const rights = item.attribution ? `<span class="inspiration-source" data-noi18n>${esc(item.attribution)}</span>` : '';
+    const rights = item.attribution ? item.provider==='pexels'?`<button type="button" class="inspiration-menu-action inspiration-source" data-action="inspiration-open-source" data-id="${esc(item.id)}" data-noi18n>${esc(item.attribution)}</button>`:`<span class="inspiration-source" data-noi18n>${esc(item.attribution)}</span>` : '';
     const sourceAction = item.rightsUrl || item.sourceUrl ? `<button type="button" class="inspiration-menu-action" data-action="inspiration-open-rights" data-id="${esc(item.id)}">${tr(t, 'Источник и права')}</button>` : '';
     return `<article class="inspiration-item${index === 0 ? ' is-featured' : ''}${done ? ' is-done' : ''}" style="--item-index:${index}" data-inspiration-id="${esc(item.id)}" aria-labelledby="inspiration-item-${esc(item.id)}">
       <div class="inspiration-item-meta"><span>${tr(t, formatLabel(item.format))}${item.durationLabel ? ` · ${esc(item.durationLabel)}` : ''}</span><span>${index + 1} ${tr(t, 'из')} ${Number(vm.digestTotal) || 3}</span></div>
       ${renderVisual(item, t)}
-      <div class="inspiration-why"><span>${tr(t, 'Почему здесь')}</span><b data-noi18n>${esc(reason)}</b>${rights}</div>
+      <div class="inspiration-why"><span>${tr(t, 'Почему здесь')}</span><b data-noi18n>${esc(reason)}</b>${rights}${item.provider==='pexels'?'<a href="https://www.pexels.com/" target="_blank" rel="noopener noreferrer">Photos and videos provided by Pexels</a>':''}</div>
       <div class="inspiration-style-feedback" role="group" aria-label="${tr(t, 'Настроить подборку')}">
         <button type="button" class="inspiration-menu-action${verdict === 'more' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="more" data-id="${esc(item.id)}" aria-pressed="${verdict === 'more'}">${tr(t, 'Понравился стиль')}</button>
         <button type="button" class="inspiration-menu-action${verdict === 'not_for_me' ? ' is-active' : ''}" data-action="inspiration-feedback-open" ${vm.profileBusy ? 'disabled' : ''} data-verdict="not_for_me" data-id="${esc(item.id)}" aria-pressed="${verdict === 'not_for_me'}">${tr(t, 'Не мой стиль')}</button>
@@ -269,13 +272,15 @@
   }
 
   function renderDiscoveryStatus(vm, t) {
+    const licensedMessage=({unconfigured:'Новые фото и видео ещё не подключены. Сохранённые материалы доступны.',ready:'Новые фото и короткие видео каждый день · Pexels',partial:'Часть новых материалов не загрузилась. Доступное сохранено.',empty:'Новых материалов по этим темам сегодня не нашлось.',unsupported:'Для этих интересов или форматов пока нет источника новых материалов.',provider_error:'Новые материалы пока не загрузились. Повтори попытку.'})[vm.licensedStatus]||'';
+    const licensed=licensedMessage?`<p class="inspiration-discovery-status" role="status">${tr(t,licensedMessage)}</p>`:'';
     const unavailable = vm.discoveryAvailable === false;
     const failed = ['error', 'failed', 'timeout', 'rate_limited', 'unavailable', 'provider_error', 'provider_auth', 'provider_rate_limited', 'storage_error'].includes(vm.discoveryStatus);
     const message = unavailable ? 'Поиск новых находок сейчас не подключён. Доступна подборка из каталога.'
       : failed ? 'Новые находки пока не загрузились. Сохранённая подборка остаётся на месте.'
       : vm.discoveryStatus === 'needs_taste' ? 'Добавь описание вкуса или референсы, чтобы поиск стал точнее.'
       : vm.discoveryStatus === 'daily_limit' ? 'На сегодня поиск завершён. Новые находки появятся в другой день.' : '';
-    return message ? `<p class="inspiration-discovery-status" role="status">${tr(t, message)}</p>` : '';
+    return licensed+(message ? `<p class="inspiration-discovery-status" role="status">${tr(t, message)}</p>` : '');
   }
 
   function renderDaily(vm, t) {

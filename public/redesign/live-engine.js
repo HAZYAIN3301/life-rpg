@@ -28550,7 +28550,7 @@ function inspirationSupply(profile = inspirationProfileState(), pending = [], re
       embedUrl: item.delivery?.embedUrl || item.embedUrl, assetPath: item.delivery?.assetPath || item.assetPath } })) : [];
   return R ? R[retryEmpty ? 'retryEmptyDigest' : 'ensureDigest']({ profile, day: todayStr(), now: new Date().toISOString(), locale: lang(),
     candidates: R.candidates().concat(window.InspirationVisualBatchV1?.CANDIDATES || [],
-      rawFinds, Array.isArray(pending) ? pending.slice(0, 3) : []),
+      rawFinds, Array.isArray(pending) ? pending.slice(0, 24) : []),
     ctx: { maxSharePerSource: 1 } })
     : { ok: false, error: 'supply_not_loaded' };
 }
@@ -28609,7 +28609,7 @@ async function prepareInspirationDigest({ retry = false } = {}) {
   const P = inspirationProfileEngine();
   if (!P || !State.me?.id || State.view !== 'shelf' || State._inspirationSetupOpen
     || !State.settings?.inspiration?.configured || State._settingsLoadError || State._shelfLoadError
-    || State._shelfBusy || State._inspirationSetupResolving || _inspirationPrepareWork || inspirationDailyReceipt() && !(retry && inspirationSupply(P.normalize(State.settings.inspiration), [], true).items?.length)
+    || State._shelfBusy || State._inspirationSetupResolving || _inspirationPrepareWork || inspirationDailyReceipt() && !(retry && !P.normalize(State.settings.inspiration).digest?.ids.length && (window.InspirationLicensedMediaV1 || inspirationSupply(P.normalize(State.settings.inspiration), [], true).items?.length))
     || State._inspirationDigestPending === 'error' && !retry) return false;
   const accountId = String(State.me.id), writeEpoch = Store._writeEpoch, day = todayStr();
   const base = P.normalize(State.settings.inspiration), generation = ++_inspirationGeneration;
@@ -28626,6 +28626,15 @@ async function prepareInspirationDigest({ retry = false } = {}) {
       || !inspirationProfileEqual(candidate.base, base)) candidate = null;
     if (!candidate) {
       let finds = [];
+      if(window.InspirationLicensedMediaV1) {
+        const {response,data}=await inspirationJSON('/api/inspiration/supply',{dayKey:day},controller.signal);
+        if(!active())return false;
+        if(response.status===401){handleAccountSessionExpired();return false;}
+        if(!response.ok||!data||data.provider!=='pexels'||data.dayKey!==day||!Array.isArray(data.candidates)||data.candidates.length>24)throw Error('licensed_supply_receipt');
+        State._inspirationLicensedStatus=data.status;
+        if(data.status==='provider_error')throw Error('licensed_supply_unavailable');
+        finds=data.candidates.filter(row=>window.InspirationLicensedMediaV1.normalize(row));
+      }
       if (window.InspirationMediaV1?.DISCOVERY_ENABLED && base.discoveryEnabled && base.digest?.day !== day) {
         const { response, data } = await inspirationJSON('/api/inspiration/discovery', { dayKey: day }, controller.signal);
         if (!active()) return false;
@@ -28636,14 +28645,14 @@ async function prepareInspirationDigest({ retry = false } = {}) {
         State._inspirationDiscoveryStatus = data.status;
         if (!['ready', 'partial', 'empty', 'unconfigured', 'needs_taste'].includes(data.status)
           || data.status === 'unconfigured' && data.providerAvailable) throw new Error('discovery_unavailable');
-        finds = await enrichInspirationFinds(data.candidates, { signal: controller.signal, active });
+        finds = finds.concat(await enrichInspirationFinds(data.candidates, { signal: controller.signal, active }));
       } else if (!window.InspirationMediaV1?.DISCOVERY_ENABLED || !base.discoveryEnabled) {
         State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = 'disabled';
       }
       if (!active()) return false;
       const ensured = inspirationSupply(base, finds, retry);
       if (!ensured.ok) throw new Error('supply');
-      candidate = { accountId, day, base, profile: P.recordShown(ensured.profile, day), finds };
+      candidate = { accountId, day, base, profile: P.recordShown(ensured.profile, day), finds:finds.filter(row=>ensured.profile.digest?.ids.includes(row.id)).slice(0,3) };
       State._inspirationDailyAttempt = candidate;
     }
     if (!active()) return false;
@@ -28893,7 +28902,7 @@ function shelfViewModel() {
     importGuideOpen: !!State._inspirationImportGuideOpen, importDevice: inspirationImportDevice(),
     feedbackDraft: State._inspirationFeedbackDraft || null,
     supplyReport: ensured.report, supplyLocale: ensured.locale, unavailableIds: ensured.unavailableIds,
-    digestPending, discoveryAvailable: State._inspirationDiscoveryAvailable ?? null,
+    digestPending, licensedStatus:State._inspirationLicensedStatus||'', discoveryAvailable: State._inspirationDiscoveryAvailable ?? null,
     discoveryStatus: State._inspirationDiscoveryStatus || '',
     profileBusy: State._shelfBusy === 'profile' || !!State._inspirationSetupResolving,
     items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
@@ -36834,7 +36843,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v347';
+const PWA_CACHE_VERSION = 'satoru-v348';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

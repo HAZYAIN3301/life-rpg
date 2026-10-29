@@ -32,7 +32,7 @@ const assets={'live-ui.js':await readFile(out+'/live-ui.js'),'live-ui.css':await
 function html(mode){
  let page=template.replace('<html lang="en"','<html lang="en" data-satoru-mode="'+mode+'"').replace('<head>','<head><base href="/">');
  page=page.replace('</head>','<link rel="stylesheet" href="redesign/live-ui.css"></head>');
- page=page.replace(/<script src="app\.js[^" ]*"><\/script>/,'<script src="redesign/live-ui.js"></script><script src="redesign/app-runtime.js"></script><script src="app.js?v=20261028-b25-app-v347-1"></script>');
+ page=page.replace(/<script src="app\.js[^" ]*"><\/script>/,'<script src="redesign/live-ui.js"></script><script src="redesign/app-runtime.js"></script><script src="app.js?v=20261029-b25-app-v348-1"></script>');
  for(const name of ['app-runtime.js','live-ui.js','live-ui.css']){
   const digest=createHash('sha256').update(name==='app-runtime.js'?runtime:assets[name]).digest('hex').slice(0,12);
   page=page.replace('redesign/'+name+'"','redesign/'+name+'?v=b213-'+digest+'"');

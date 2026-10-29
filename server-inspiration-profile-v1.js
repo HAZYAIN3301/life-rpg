@@ -39,7 +39,12 @@ function checkedAt(value) {
 
 // Client metadata is display material, never proof of playback, availability,
 // authorship, duration, rights to copy, or a path to fetch arbitrary resources.
-function cleanFind(raw) {
+function cleanFind(raw, options = {}) {
+  if(raw?.source==='pexels') {
+    if(typeof options.verifyLicensed!=='function'||!options.verifyLicensed(raw))return null;
+    const item=require('./public/inspiration-licensed-media-v1.js').normalize(raw);
+    return item?{...item,supplyProof:raw.supplyProof}:null;
+  }
   if (!plain(raw) || !plain(raw.delivery)) return null;
   const source = Media.parseSource(raw.delivery.sourceUrl);
   if (!source || !Media.isAllowedEmbed(raw.delivery.embedUrl, source)) return null;
@@ -85,7 +90,7 @@ function normalizedProfile(value, nullable) {
 }
 function failure(error, status = 400) { return { ok: false, status, error }; }
 
-function prepareCommit(currentSettings, payload) {
+function prepareCommit(currentSettings, payload, options = {}) {
   if (!plain(currentSettings)) return failure('inspiration_settings_corrupt', 409);
   if (!plain(payload) || !own(payload, 'base') || !own(payload, 'profile') || !Array.isArray(payload.finds)
     || payload.finds.length > 3 || Object.keys(payload).some(key => !['base', 'profile', 'finds', 'baseDraft'].includes(key))) {
@@ -98,13 +103,13 @@ function prepareCommit(currentSettings, payload) {
   if (!base || !target || own(payload, 'baseDraft') && payload.baseDraft !== null && !plain(payload.baseDraft)) {
     return failure('invalid_inspiration_profile');
   }
-  const incoming = payload.finds.map(cleanFind);
+  const incoming = payload.finds.map(row=>cleanFind(row,options));
   if (incoming.some(row => !row)) return failure('invalid_inspiration_find');
   const actual = Profile.normalize(currentSettings.inspiration);
   const currentDraft = own(currentSettings, 'inspirationDraft') ? currentSettings.inspirationDraft : null;
   const deletesDraft = own(payload, 'baseDraft');
   const existing = (Array.isArray(currentSettings.inspirationFinds) ? currentSettings.inspirationFinds.slice(-MAX_FINDS * 2) : [])
-    .map(cleanFind).filter(Boolean);
+    .map(row=>cleanFind(row,options)).filter(Boolean);
   const byId = new Map();
   for (const row of existing) if (!byId.has(row.id)) byId.set(row.id, row);
   // Fresh metadata may refresh a rediscovered identity after its cooldown. An

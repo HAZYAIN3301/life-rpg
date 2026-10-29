@@ -1,9 +1,10 @@
 /* Explicit single-item viewer. Metadata/load never awards a watched receipt. */
 (function (root, factory) {
-  const api = factory(typeof module === 'object' && module.exports ? require('./inspiration-media-v1.js') : root.InspirationMediaV1);
+  const node=typeof module==='object'&&module.exports;
+  const api = factory(node ? require('./inspiration-media-v1.js') : root.InspirationMediaV1,node ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.InspirationPlayerV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function (Media) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (Media,Licensed) {
   'use strict';
   function createController({ document, window, setTimeout: later = setTimeout, clearTimeout: cancel = clearTimeout, timeoutMs = 15000 } = {}) {
     let current = null;
@@ -16,24 +17,30 @@
       const active = current; if (!active) return;
       current = null; cancel(active.timer); window.removeEventListener('message', active.listener);
       window.removeEventListener('keydown', active.keydown);
-      active.frame.removeAttribute('src'); active.layer.close?.(); active.layer.remove(); active.host.classList.remove('has-player');
+      active.frame.pause?.(); active.frame.removeAttribute('src'); active.frame.load?.(); active.layer.close?.(); active.layer.remove(); active.host.classList.remove('has-player');
       status(active.host, message);
       if (restoreFocus && active.opener?.isConnected) active.opener.focus();
     }
     function open({ host, item, opener, copy = (key) => key, allowLegacy = () => false } = {}) {
       if (!host || !item || item.supplyUnavailable || Media.externalOnly(item)) return false;
-      const source = Media?.parseSource(item.sourceUrl || item.url), url = item.embedUrl;
-      const imageUrl = source?.provider === 'pinterest' && item.mediaType === 'image' && Media.safeImage(item.imageUrl, 'pinterest');
-      if (!imageUrl && (source ? !Media.isAllowedEmbed(url, source) : !allowLegacy(url))) return false;
+      const direct=item.mediaPolicy==='stream'&&item.provider==='pexels';
+      const videoUrl=direct&&item.format==='video'&&Licensed?.safeUrl(item.videoUrl,'video');
+      const source = Media?.parseSource(item.sourceUrl || item.url), url = videoUrl || item.embedUrl;
+      const imageUrl = direct&&item.format==='image'?Licensed?.safeUrl(item.imageUrl,'image'):source?.provider === 'pinterest' && item.mediaType === 'image' && Media.safeImage(item.imageUrl, 'pinterest');
+      if(direct&&!imageUrl&&!videoUrl)return false;
+      if (!imageUrl && !videoUrl && (source ? !Media.isAllowedEmbed(url, source) : !allowLegacy(url))) return false;
       close({ restoreFocus: false });
       const layer = document.createElement(imageUrl ? 'dialog' : 'div');
-      const frame = document.createElement(imageUrl ? 'img' : 'iframe'), button = document.createElement('button');
+      const frame = document.createElement(imageUrl ? 'img' : videoUrl ? 'video' : 'iframe'), button = document.createElement('button');
       layer.className = 'inspiration-embed' + (source ? ` is-${source.provider}` : '') + (imageUrl ? ' is-image-viewer' : '');
       if (imageUrl) {
         layer.setAttribute('aria-label', item.title || copy('Показать референс'));
         layer.setAttribute('aria-modal', 'true');
         frame.className = 'inspiration-viewer-image'; frame.alt = item.title || ''; frame.decoding = 'async';
         layer.addEventListener('cancel', (event) => { event.preventDefault(); close(); });
+      } else if(videoUrl) {
+        layer.className+=' is-licensed-video';frame.controls=true;frame.playsInline=true;frame.loop=false;frame.preload='metadata';frame.referrerPolicy='no-referrer';
+        frame.setAttribute('aria-label',item.title||copy('Смотреть'));
       } else {
         frame.title = item.title || copy('Показать референс'); frame.loading = 'eager';
         frame.referrerPolicy = 'strict-origin-when-cross-origin';
@@ -65,6 +72,7 @@
         if (message.type === 'ready' || message.type === 'playing') { cancel(active.timer); status(host, ''); }
       };
       frame.addEventListener('error', fail);
+      if(videoUrl){frame.addEventListener('loadedmetadata',()=>{if(current===active){cancel(active.timer);status(host,'');}});frame.addEventListener('ended',()=>{if(current===active)close();});}
       frame.addEventListener('load', () => {
         if (current === active && source?.provider !== 'tiktok') { cancel(active.timer); status(host, ''); }
       });

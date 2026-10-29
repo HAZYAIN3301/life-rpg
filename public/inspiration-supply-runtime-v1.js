@@ -4,10 +4,11 @@
   const api = factory(node ? require('./inspiration-supply-policy-v1.js') : root.InspirationSupplyPolicyV1,
     node ? require('./inspiration-profile-v1.js') : root.InspirationProfileV1,
     node ? require('./inspiration-catalog-v1.js') : root.InspirationCatalogV1,
-    node ? require('./inspiration-supply-batch-v1.js') : root.InspirationSupplyBatchV1);
+    node ? require('./inspiration-supply-batch-v1.js') : root.InspirationSupplyBatchV1,
+    node ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1);
   if (node) module.exports = api;
   if (root) root.InspirationSupplyRuntimeV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function build(Policy, Profile, Catalog, Batch) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function build(Policy, Profile, Catalog, Batch, Licensed) {
   'use strict';
   const VERSION = '1.1.0';
   function candidates() {
@@ -99,6 +100,9 @@
   function resolveSaved(item, catalog) {
     if (!item || !item.catalogId) return item;
     const source = (Array.isArray(catalog) ? catalog : []).find((row) => row.id === item.catalogId);
+    // Inventory is bounded; an old saved Pexels link still opens at its source
+    // after its playback metadata leaves the rolling cache. No guessed media URL.
+    if(!source&&/^pexels-(photo|video)-\d+$/.test(item.catalogId)&&Licensed?.safeUrl(item.url,'source'))return Object.assign({},item,{catalogItem:null,supplyUnavailable:false,mediaPolicy:'link',sourceUrl:item.url,embedUrl:'',imageUrl:'',videoUrl:'',assetPath:'',rightsUrl:Licensed.LICENSE});
     if (!source) return Object.assign({}, item, {
       catalogItem: null, supplyUnavailable: true, mediaPolicy: 'unavailable',
       url: '', embedUrl: '', imageUrl: '', assetPath: '', sourceUrl: '', rightsUrl: '',

@@ -42,6 +42,12 @@ function harness() {
   }
   return { controller, host, opener, item, open, layer, event, timers, listeners, body: document.body };
 }
+test('licensed MP4 uses a finite native player, closes on end and never autoplays another item',()=>{
+ const h=harness(),item={id:'pexels-video-456',provider:'pexels',mediaPolicy:'stream',format:'video',title:'Forest',sourceUrl:'https://www.pexels.com/video/forest-456/',videoUrl:'https://videos.pexels.com/video-files/456/clip.mp4'};
+ assert.equal(h.open({item}),true);const video=h.layer().children[0];assert.equal(video.tag,'video');assert.equal(video.controls,true);assert.equal(video.loop,false);assert.notEqual(video.autoplay,true);
+ video.listeners.loadedmetadata();assert.equal(h.timers.size,0);video.listeners.ended();assert.equal(h.layer(),undefined);assert.equal(video.src,'');
+ assert.equal(h.open({item:{...item,videoUrl:'https://evil.invalid/clip.mp4'}}),false);
+});
 test('viewer creates no frame until explicit open, uses exact safe params and focuses close', () => {
   const h = harness(); assert.equal(h.layer(), undefined);
   assert.equal(h.open(), true);

@@ -62,6 +62,7 @@ const AttentionRevisionV1 = require('./public/attention-revision-v1.js');
 const InspirationProfileV1 = require('./public/inspiration-profile-v1.js');
 const InspirationProfileOwnerV1 = require('./server-inspiration-profile-v1.js');
 const InspirationDiscoveryV1 = require('./server-inspiration-discovery-v1.js');
+const InspirationPexelsV1 = require('./server-inspiration-pexels-v1.js');
 const InspirationMediaV1 = require('./server-inspiration-media-v1.js');
 const SenkuBridgeV1 = require('./server-senku-bridge-v1.js');
 const RoutineAiV1 = require('./server-routine-ai-v1.js');
@@ -633,6 +634,15 @@ const inspirationDiscovery = InspirationDiscoveryV1.createInspirationDiscoverySe
   },
 });
 const inspirationMetadata = InspirationMediaV1.createMetadataResolver();
+const inspirationLicensedSigner = InspirationPexelsV1.createSigner(()=>SECRET);
+const inspirationLicensedProvider = InspirationPexelsV1.createProvider({apiKey:process.env.PEXELS_API_KEY||'',request:boardV2RequestJson});
+const inspirationLicensedCache = require('./server-inspiration-daily-supply-v1.js').createDailySupply({
+  read:async key=>{try{return JSON.parse(fs.readFileSync(path.join(DATA_DIR,'inspiration-supply',key+'.json'),'utf8'));}catch(e){if(e.code==='ENOENT')return null;throw e;}},
+  write:async(key,value)=>{const dir=path.join(DATA_DIR,'inspiration-supply');fs.mkdirSync(dir,{recursive:true});writeJsonDurable(path.join(dir,key+'.json'),value);return {ok:true};},
+  fetchPage:input=>inspirationLicensedProvider.fetchPage(input),
+});
+const inspirationLicensedSupply = require('./server-inspiration-supply-service-v1.js').createService({provider:inspirationLicensedProvider,cache:inspirationLicensedCache,signer:inspirationLicensedSigner});
+let inspirationPexelsReady=false;
 const inspirationMetadataRequests = new Map();
 function allowInspirationMetadata(uid) {
   const now = Date.now(), cutoff = now - 60000;
@@ -4449,6 +4459,8 @@ const server = http.createServer(async (req, res) => {
         serverTime: new Date().toISOString(),
         capabilities: {
           attentionEpisodeIntake: true,
+          inspirationLicensedSupply: true,
+          inspirationPexelsReady,
           attentionLocalModeRefusal: true,
           webPush: true,
           deviceSessions: true,
@@ -7294,7 +7306,7 @@ const server = http.createServer(async (req, res) => {
       if (!commitmentSnapshotShapeValid(actual.settings, 'object') || !commitmentSnapshotShapeValid(actual.tasks, 'array')) {
         return failure(409, 'inspiration_settings_corrupt');
       }
-      const decision = InspirationProfileOwnerV1.prepareCommit(actual.settings.exists ? actual.settings.value : {}, payload);
+      const decision = InspirationProfileOwnerV1.prepareCommit(actual.settings.exists ? actual.settings.value : {}, payload,{verifyLicensed:inspirationLicensedSigner.verify});
       if (!decision.ok) return failure(decision.status, decision.error);
       if (!decision.replay) {
         const data = { settings: decision.settings, tasks: actual.tasks.exists ? actual.tasks.value : [] };
@@ -7307,6 +7319,20 @@ const server = http.createServer(async (req, res) => {
       return failure(error && error.commitmentBoundary ? error.status || 500 : 500,
         error && error.commitmentBoundary ? error.message : 'inspiration_profile_save_unconfirmed');
     }
+  }
+
+  if (u === '/api/inspiration/supply' && req.method === 'POST') {
+    const uid=sessionUserId(req);if(!uid)return sendJson(res,401,{error:'not logged in'});
+    let payload;try{payload=JSON.parse(await readBody(req,1024));}catch{return sendJson(res,400,{error:'invalid_supply_request'});}
+    if(!payload||typeof payload!=='object'||Array.isArray(payload)||Object.keys(payload).some(k=>k!=='dayKey')||!require('./public/inspiration-supply-policy-v1.js').isDay(payload.dayKey))return sendJson(res,400,{error:'invalid_supply_request'});
+    if(!allowInspirationMetadata(uid))return sendJson(res,429,{error:'supply_rate_limited'});
+    try{
+      const actual=commitmentActualPair(uid);
+      if(!commitmentSnapshotShapeValid(actual.settings,'object'))return sendJson(res,503,{error:'inspiration_settings_corrupt'});
+      const result=await inspirationLicensedSupply.daily(actual.settings.exists?actual.settings.value.inspiration:null,payload.dayKey);
+      if(sessionUserId(req)!==uid)return sendJson(res,401,{error:'not logged in'});
+      return sendJson(res,200,result);
+    }catch{return sendJson(res,503,{error:'supply_unavailable'});}
   }
 
   if (u === '/api/inspiration/metadata' && req.method === 'POST') {
@@ -7635,6 +7661,7 @@ const server = http.createServer(async (req, res) => {
 // This blocks duplicate payouts, not a guess or compensation for past goldWon writes.
 partyRewards.migrateLegacy(loadParties(), (uid) => loadUsers().some((user) => user.id === uid));
 server.listen(PORT, HOST, () => {
+  if(inspirationLicensedProvider.configured)inspirationLicensedSupply.probe().then(result=>{inspirationPexelsReady=result.ready;console.info('[inspiration-supply] public provider probe '+JSON.stringify(result));}).catch(()=>console.info('[inspiration-supply] provider probe unavailable'));
   console.log(`\n  ⚔️  Satoru запущен:  http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
   console.log(`  📁  Данные:            ${DATA_DIR}`);
   if (HOST === '0.0.0.0') console.log('  🌐  Многопользовательский режим — доступен по сети.');
