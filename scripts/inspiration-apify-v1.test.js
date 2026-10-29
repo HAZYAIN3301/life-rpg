@@ -7,7 +7,7 @@ function fixture(extra={}){
  const options={apiKey:'synthetic-key',read:async()=>structuredClone(state),write:async s=>{state=structuredClone(s);return {ok:true};},now:()=>time,
  request:async input=>{calls.push(structuredClone(input));if(input.method==='POST')return {status:201,json:{data:{id:'run1',status:'RUNNING',defaultDatasetId:'dataset1'}}};
  if(input.url.includes('/actor-runs/'))return {status:200,json:{data:{id:'run1',status,defaultDatasetId:'dataset1',usageTotalUsd:0.005}}};
- if(input.url.includes('/datasets/'))return {status:200,json:[row]};throw Error('unexpected');},...extra};
+ if(input.url.includes('/datasets/'))return {status:200,json:[{...row,videoMeta:{duration:21000}}]};throw Error('unexpected');},...extra};
  return {options,calls,setStatus:s=>status=s,setDay:d=>time=new Date(d+'T09:00:00.000Z'),state:()=>state,setState:s=>state=s};
 }
 test('one bounded metadata run is persisted, resumed after restart and shared by concurrent requests',async()=>{
@@ -18,7 +18,16 @@ test('one bounded metadata run is persisted, resumed after restart and shared by
  assert.deepEqual(call.body,{scrapeMode:'keyword',keyword:'anime motivation edit',maxResults:50,sortBy:'date-posted',datePosted:'this-month'});
  assert.equal(f.state().runs[0].runId,'run1');assert.equal(f.state().runs[0].reservedUsd,0.1);
  f.setStatus('SUCCEEDED');const restarted=A.createInventory(f.options),ready=await restarted.get(['anime']);assert.equal(ready.status,'ready');assert.equal(ready.items.length,1);
+ assert.equal(ready.items[0].durationSec,21);
  await restarted.get(['anime']);assert.equal(f.calls.filter(c=>c.method==='POST').length,1);
+});
+test('real Scrapeforge millisecond duration is converted only by its adapter; old empty receipt is reprocessed without POST',async()=>{
+ const actual={id:'7688585048366386445',text:'All might the GOAT 🐐👑🔥 #mha #allmight #anime #myheroacadamia #edit',createTimeISO:'2026-09-23T04:37:00+00:00',authorMeta:{name:'.midnightx3_'},videoMeta:{duration:60534},webVideoUrl:'https://www.tiktok.com/@.midnightx3_/video/7688585048366386445'};
+ const f=fixture({request:async input=>{f.calls.push(input);if(input.method==='POST')throw Error('must not start');if(input.url.includes('/actor-runs/'))return {status:200,json:{data:{id:'run1',status:'SUCCEEDED',defaultDatasetId:'dataset1',usageTotalUsd:0.007}}};return {status:200,json:[actual]};}});
+ f.setState({version:1,items:[],runs:[{key:'scrapeforge~tiktok-posts:anime',actor:'scrapeforge~tiktok-posts',topics:['anime'],day:'2026-10-29',reservedUsd:0.1,state:'done',accepted:0,runId:'run1',startedAt:'2026-10-29T08:00:00.000Z'}]});
+ const r=await A.createInventory(f.options).get(['anime']);assert.equal(r.status,'ready');assert.equal(r.items[0].durationSec,61);assert.equal(f.calls.filter(c=>c.method==='POST').length,0);
+ assert.equal(f.state().runs[0].normalizationVersion,2);assert.equal(f.state().runs[0].actualUsd,0.007);
+ assert.equal(A.fromPost(actual,['anime'],'2026-10-29T09:00:00.000Z'),null,'Do not guess units for other providers');
 });
 test('unknown POST outcome reserves its cost and is never blindly resubmitted, including after restart',async()=>{
  const f=fixture({request:async input=>{if(input.method==='POST')throw Error('lost reply');throw Error('unexpected');}});

@@ -23,15 +23,19 @@ const TOPICS=Object.freeze({
 });
 const maps=s=>Object.fromEntries(['ru','en','de','uk','es'].map(l=>[l,s]));
 const ACTOR='scrapeforge~tiktok-posts';
-function fromPost(row,topics,at){
+function fromPost(row,topics,at,{durationUnit='seconds'}={}){
  const source=Media.parseSource(row?.webVideoUrl),caption=String(row?.text||'').slice(0,4000),tags=[...new Set([...(Array.isArray(row?.hashtags)?row.hashtags:[]).map(t=>typeof t==='string'?t:t?.name),...(caption.match(/#[\p{L}\p{N}_]+/gu)||[]).map(t=>t.slice(1))].filter(t=>typeof t==='string'))].slice(0,32),hay=[caption,...tags].join(' ');
  if(!source||source.provider!=='tiktok'||String(row.id)!==source.id||row.isSlideshow||row.isAd||row.isSponsored||row.authorMeta?.name&&(typeof row.authorMeta.name!=='string'||row.authorMeta.name.toLowerCase()!==source.authorHandle.toLowerCase()))return null;
  if(!/(?:edit|amv|cinematic|motivat|inspir|эдит|мотивац)/i.test(hay)||/thinspo|proana|self.?harm|suicide.?challenge|casino|guaranteed.?profit|free.?crypto/i.test(hay))return null;
  const interests=[...new Set(topics)].filter(t=>TOPICS[t]?.[1].test(hay));if(!interests.length)return null;
  const published=row.createTimeISO||(Number.isFinite(row.createTime)?new Date(row.createTime*1000).toISOString():'');
  if(!Number.isFinite(Date.parse(published))||Date.parse(published)>Date.parse(at)+86400000)return null;
+ // Real Scrapeforge output uses milliseconds despite its schema saying seconds.
+ // Provider identity determines conversion; never guess from magnitude globally.
+ const rawDuration=row.videoMeta?.duration;
+ const duration=durationUnit==='milliseconds'&&Number.isFinite(rawDuration)&&rawDuration>=1000&&rawDuration<=180000?Math.ceil(rawDuration/1000):durationUnit==='seconds'?rawDuration:NaN;
  return E.normalize({id:'edit-tiktok-'+source.id,externalId:source.id,source:'tiktok',format:'edit',personalRecommendation:true,
-  interestIds:interests,title:maps(caption.replace(/#[\p{L}\p{N}_]+/gu,'').replace(/\s+/g,' ').trim().slice(0,140)||'@'+source.authorHandle),body:maps(caption.slice(0,800)),tags,durationSec:row.videoMeta?.duration,
+  interestIds:interests,title:maps(caption.replace(/#[\p{L}\p{N}_]+/gu,'').replace(/\s+/g,' ').trim().slice(0,140)||'@'+source.authorHandle),body:maps(caption.slice(0,800)),tags,durationSec:duration,
   publishedAt:new Date(published).toISOString(),lastCheckedAt:at,rights:{kind:'linked-public',downloadAllowed:false},
   delivery:{policy:'embed',sourceUrl:source.url,embedUrl:Media.buildEmbed(source)},discovery:{provider:'apify'}},{unsigned:true});
 }
@@ -66,7 +70,7 @@ function createInventory({apiKey,read,write,request=requestJson,now=()=>new Date
   if(state.version!==1||!Array.isArray(state.runs)||state.runs.length>200||!Array.isArray(state.items)||state.items.length>600||state.runs.some(r=>!r||typeof r.key!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(r.day)||r.reservedUsd!==reserve||!['starting','running','done','failed','uncertain'].includes(r.state)||!Array.isArray(r.topics)||r.topics.some(t=>!Object.hasOwn(TOPICS,t))||r.state==='running'&&!id(r.runId)))throw Error('apify_corrupt_state');
   // Completed run metadata is normalized before it becomes inventory. A failed
   // GET/dataset read retains its run ID and can be resumed without another POST.
-  for(const run of state.runs.filter(r=>r.state==='running'&&r.topics.some(t=>topics.includes(t)))){
+  for(const run of state.runs.filter(r=>(r.state==='running'||r.state==='done'&&r.actor===ACTOR&&r.normalizationVersion!==2)&&r.topics.some(t=>topics.includes(t)))){
    try{
     const result=(await call('actor-runs/'+run.runId)).data;
     if(!result||result.id!==run.runId||typeof result.status!=='string')throw Error('invalid_run');
@@ -77,10 +81,10 @@ function createInventory({apiKey,read,write,request=requestJson,now=()=>new Date
     const limit=run.actor===ACTOR?50:12;
     const rows=await call('datasets/'+result.defaultDatasetId+'/items?clean=true&limit='+limit+'&fields='+encodeURIComponent(fields));
     if(!Array.isArray(rows)||rows.length>limit)throw Error('invalid_dataset_rows');
-    const normalized=rows.map(r=>fromPost(r,run.topics,at)).filter(Boolean),byId=new Map(state.items.map(r=>[r.id,r]));
+    const normalized=rows.map(r=>fromPost(r,run.topics,at,{durationUnit:run.actor===ACTOR?'milliseconds':'seconds'})).filter(Boolean),byId=new Map(state.items.map(r=>[r.id,r]));
     for(const row of normalized)byId.set(row.id,row);
     state.items=[...byId.values()].filter(r=>E.normalize(r,{unsigned:true})&&Date.parse(at)-Date.parse(r.lastCheckedAt)<=30*86400000).sort((a,b)=>b.lastCheckedAt.localeCompare(a.lastCheckedAt)).slice(0,600);
-    run.state='done';run.completedAt=at;run.accepted=normalized.length;
+    run.state='done';run.completedAt=at;run.accepted=normalized.length;run.normalizationVersion=2;
     if(Number.isFinite(result.usageTotalUsd))run.actualUsd=result.usageTotalUsd;
     await save(state);
    }catch{ return {status:'provider_error',items:state.items.filter(r=>r.interestIds.some(t=>topics.includes(t)))}; }

@@ -1,5 +1,11 @@
 ## Codex 29.10 — реальный provider pilot / v350
 
+Scrapeforge WAiLlE83kT51bzfsK:23реальных результата за19с, UI charge$0.007.
+Фактическая videoMeta.duration в миллисекундах (60534), вопреки схеме seconds:
+первый parser отклонил всё. Явный actor-specific перевод в секунды; version2
+перечитывает тот же dataset по сохранённому runID без нового POST/расхода.
+Regression на фактических публичных полях, восстановление старой empty receipt.
+
 Clockworks runQn1zkiaK7sfxCOgbY: SUCCEEDED, но0/1 query и0строк, upstream device ID
 registration failure, charge$0.000. Это не готовая поставка. Резерв0.10 сохранён.
 Заменён на Scrapeforge keyword/date-posted/this-month, до50строк, один источник и
