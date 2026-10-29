@@ -5,10 +5,11 @@
     node ? require('./inspiration-profile-v1.js') : root.InspirationProfileV1,
     node ? require('./inspiration-catalog-v1.js') : root.InspirationCatalogV1,
     node ? require('./inspiration-supply-batch-v1.js') : root.InspirationSupplyBatchV1,
-    node ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1);
+    node ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1,
+    node ? require('./inspiration-edit-media-v1.js') : root.InspirationEditMediaV1);
   if (node) module.exports = api;
   if (root) root.InspirationSupplyRuntimeV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function build(Policy, Profile, Catalog, Batch, Licensed) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function build(Policy, Profile, Catalog, Batch, Licensed, Edits) {
   'use strict';
   const VERSION = '1.1.0';
   function candidates() {
@@ -27,12 +28,15 @@
     const synthetic = raw.filter((c) => c && (c.synthetic === true || c.verified === false));
     const ctx = Object.assign({}, opts.ctx || {}, { now: opts.now });
     // An official source or embed permission alone is not a content licence.
-    const unlicensed = raw.filter(c => !Policy.SELF_HOSTABLE_RIGHTS.includes(c?.rights?.kind));
-    const admission = Policy.admit(raw.filter((c) => !synthetic.includes(c) && !unlicensed.includes(c)), ctx);
+    const personal = raw.filter(c=>Edits?.normalize(c)&&!synthetic.includes(c));
+    const privateById=new Map();for(const c of personal)if(Edits.readable(c,opts.now)&&(!privateById.has(c.id)||c.lastCheckedAt>privateById.get(c.id).lastCheckedAt))privateById.set(c.id,c);
+    const privateRows=[...privateById.values()].map(c=>Edits.toRow(c,locale));
+    const unlicensed = raw.filter(c => !personal.includes(c)&&!Policy.SELF_HOSTABLE_RIGHTS.includes(c?.rights?.kind));
+    const admission = Policy.admit(raw.filter((c) => !personal.includes(c)&&!synthetic.includes(c) && !unlicensed.includes(c)), ctx);
     if (!admission.ok) return admission;
     const rejected = admission.rejected.concat(synthetic.map((c) => ({ id: c.id, code: 'unverified_fixture', detail: '' })),
       unlicensed.filter(c => c && !synthetic.includes(c)).map(c => ({ id: c.id, code: 'release_rights_required', detail: '' })));
-    const catalog = Policy.toCatalogRows(admission.items, locale);
+    const catalog = Policy.toCatalogRows(admission.items, locale).concat(privateRows);
     const byId = new Map(catalog.map((row) => [row.id, row]));
     const wanted = new Set(profile.interests.map((i) => i.id));
     const relevant = admission.items.filter((c) => profile.formats.includes(c.format) && c.interestIds.some((id) => wanted.has(id)));
@@ -46,8 +50,9 @@
     const eligible = Policy.eligibleToday(matching, {
       day: opts.day, locales, shown, requestedIds: opts.requestedIds, ctx,
     });
-    const poolRows = Policy.toCatalogRows(eligible.pool, locale);
-    const report = Policy.shortageReport(eligible.pool, {
+    const privatePool=privateRows.filter(row=>!shown.some(s=>s.id===row.id&&Date.parse(opts.day)-Date.parse(s.day)>=0&&Date.parse(opts.day)-Date.parse(s.day)<45*86400000)&&Profile.choose([row],profile,opts.day).length);
+    const poolRows = Policy.toCatalogRows(eligible.pool, locale).concat(privatePool);
+    const report = Policy.shortageReport(eligible.pool.concat(privatePool), {
       interests: [...wanted], formats: profile.formats, ctx,
     });
     const relevantIds = new Set(relevant.map((c) => c.id));
@@ -60,7 +65,7 @@
         : matching.length < relevantIds.size ? 'profile_filters'
           : pendingMatch ? 'supply_unverified' : 'no_matching_material';
     return { ok: true, profile, locale, locales, admission: Object.assign({}, admission, { rejected }),
-      catalog, poolRows, report: Object.assign({}, report, { emptyReason }), blocked: eligible.blocked };
+      catalog, privateRows, poolRows, report: Object.assign({}, report, { emptyReason }), blocked: eligible.blocked };
   }
   function ensureDigest(options) {
     const opts = options || {};
@@ -74,7 +79,7 @@
       const readable = Policy.eligibleToday(prepared.admission.items, {
         day: opts.day, locales: prepared.locales, ctx: { maxSharePerSource: 1 },
       });
-      const byId = new Map(Policy.toCatalogRows(readable.pool, prepared.locale)
+      const byId = new Map(Policy.toCatalogRows(readable.pool, prepared.locale).concat(prepared.privateRows)
         .filter((row) => !Profile.isReference(row, profile)).map((r) => [r.id, r]));
       const items = profile.digest.ids.map((id) => byId.get(id)).filter(Boolean);
       const unavailableIds = profile.digest.ids.filter((id) => !byId.has(id));
@@ -100,6 +105,7 @@
   function resolveSaved(item, catalog) {
     if (!item || !item.catalogId) return item;
     const source = (Array.isArray(catalog) ? catalog : []).find((row) => row.id === item.catalogId);
+    if(!source&&Edits?.savedLink(item))return Edits.savedLink(item);
     // Inventory is bounded; an old saved Pexels link still opens at its source
     // after its playback metadata leaves the rolling cache. No guessed media URL.
     if(!source&&/^pexels-(photo|video)-\d+$/.test(item.catalogId)&&Licensed?.safeUrl(item.url,'source'))return Object.assign({},item,{catalogItem:null,supplyUnavailable:false,mediaPolicy:'link',sourceUrl:item.url,embedUrl:'',imageUrl:'',videoUrl:'',assetPath:'',rightsUrl:Licensed.LICENSE});
@@ -107,8 +113,8 @@
       catalogItem: null, supplyUnavailable: true, mediaPolicy: 'unavailable',
       url: '', embedUrl: '', imageUrl: '', assetPath: '', sourceUrl: '', rightsUrl: '',
     });
-    return Object.assign({}, item, source, { id: item.id, catalogId: item.catalogId,
-      note: item.note, why: item.why, url: source.sourceUrl || '', catalogItem: source, supplyUnavailable: false });
+    return Object.assign({}, item, source, { id: item.id, catalogId: source.personalRecommendation?'':item.catalogId,
+      note: item.note, why: item.why, url: source.sourceUrl || '', catalogItem: source.personalRecommendation?null:source, supplyUnavailable: false });
   }
   // Operator queue, not a background network runner. Never refresh a timestamp
   // merely because a row was placed here or a server returned HEAD 200.

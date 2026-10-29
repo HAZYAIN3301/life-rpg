@@ -28568,6 +28568,7 @@ function cancelInspirationWork() {
   _inspirationPrepareWork?.controller.abort(); _inspirationPrepareWork = null;
   _inspirationMetadataWork?.abort(); _inspirationMetadataWork = null;
   State._inspirationDigestPending = ''; State._inspirationSetupResolving = false;
+  State._inspirationEditsChecked=false;State._inspirationEditStatus='';
   window.InspirationPlayerV1?.close({ restoreFocus: false });
 }
 async function inspirationJSON(url, body, signal, timeoutMs = 20000) {
@@ -28607,9 +28608,10 @@ async function enrichInspirationFinds(rows, { signal, active }) {
 }
 async function prepareInspirationDigest({ retry = false } = {}) {
   const P = inspirationProfileEngine();
+  const emptyEditDay=!!(window.InspirationEditSupplyClientV1&&P?.normalize(State.settings?.inspiration).formats.includes('edit')&&!P.normalize(State.settings?.inspiration).digest?.ids.length&&!State._inspirationEditsChecked);
   if (!P || !State.me?.id || State.view !== 'shelf' || State._inspirationSetupOpen
     || !State.settings?.inspiration?.configured || State._settingsLoadError || State._shelfLoadError
-    || State._shelfBusy || State._inspirationSetupResolving || _inspirationPrepareWork || inspirationDailyReceipt() && !(retry && !P.normalize(State.settings.inspiration).digest?.ids.length && (window.InspirationLicensedMediaV1 || inspirationSupply(P.normalize(State.settings.inspiration), [], true).items?.length))
+    || State._shelfBusy || State._inspirationSetupResolving || _inspirationPrepareWork || inspirationDailyReceipt() && !emptyEditDay && !(retry && !P.normalize(State.settings.inspiration).digest?.ids.length && (window.InspirationLicensedMediaV1 || inspirationSupply(P.normalize(State.settings.inspiration), [], true).items?.length))
     || State._inspirationDigestPending === 'error' && !retry) return false;
   const accountId = String(State.me.id), writeEpoch = Store._writeEpoch, day = todayStr();
   const base = P.normalize(State.settings.inspiration), generation = ++_inspirationGeneration;
@@ -28627,13 +28629,21 @@ async function prepareInspirationDigest({ retry = false } = {}) {
     if (!candidate) {
       let finds = [];
       if(window.InspirationLicensedMediaV1) {
-        const {response,data}=await inspirationJSON('/api/inspiration/supply',{dayKey:day},controller.signal);
+        const fetchSupply=async()=>{
+          const {response,data}=await inspirationJSON('/api/inspiration/supply',{dayKey:day},controller.signal);
+          if(response.status===401){handleAccountSessionExpired();throw Error('supply_session_expired');}
+          if(!response.ok||!data||data.provider!=='pexels'||data.dayKey!==day||!Array.isArray(data.candidates)||data.candidates.length>24)throw Error('licensed_supply_receipt');
+          if(data.editStatus!==undefined&&(!['unsupported','fixed','ready','empty','unconfigured','pending','provider_error','budget_limited'].includes(data.editStatus)||!Array.isArray(data.editCandidates)||data.editCandidates.length>24))throw Error('edit_supply_receipt');
+          return data;
+        };
+        const data=window.InspirationEditSupplyClientV1?await window.InspirationEditSupplyClientV1.load({fetchSupply,active,signal:controller.signal}):await fetchSupply();
         if(!active())return false;
-        if(response.status===401){handleAccountSessionExpired();return false;}
-        if(!response.ok||!data||data.provider!=='pexels'||data.dayKey!==day||!Array.isArray(data.candidates)||data.candidates.length>24)throw Error('licensed_supply_receipt');
         State._inspirationLicensedStatus=data.status;
-        if(data.status==='provider_error')throw Error('licensed_supply_unavailable');
-        finds=data.candidates.filter(row=>window.InspirationLicensedMediaV1.normalize(row));
+        State._inspirationEditStatus=data.editStatus||'';
+        const edits=(data.editCandidates||[]).filter(row=>window.InspirationEditMediaV1?.normalize(row));
+        finds=edits.concat(data.candidates.filter(row=>window.InspirationLicensedMediaV1.normalize(row))).slice(0,24);
+        if((data.status==='provider_error'||data.editStatus==='provider_error')&&!finds.length)throw Error('supply_unavailable');
+        State._inspirationEditsChecked=true;
       }
       if (window.InspirationMediaV1?.DISCOVERY_ENABLED && base.discoveryEnabled && base.digest?.day !== day) {
         const { response, data } = await inspirationJSON('/api/inspiration/discovery', { dayKey: day }, controller.signal);
@@ -28650,7 +28660,7 @@ async function prepareInspirationDigest({ retry = false } = {}) {
         State._inspirationDiscoveryAvailable = null; State._inspirationDiscoveryStatus = 'disabled';
       }
       if (!active()) return false;
-      const ensured = inspirationSupply(base, finds, retry);
+      const ensured = inspirationSupply(base, finds, retry||emptyEditDay);
       if (!ensured.ok) throw new Error('supply');
       candidate = { accountId, day, base, profile: P.recordShown(ensured.profile, day), finds:finds.filter(row=>ensured.profile.digest?.ids.includes(row.id)).slice(0,3) };
       State._inspirationDailyAttempt = candidate;
@@ -28903,7 +28913,7 @@ function shelfViewModel() {
     importGuideOpen: !!State._inspirationImportGuideOpen, importDevice: inspirationImportDevice(),
     feedbackDraft: State._inspirationFeedbackDraft || null,
     supplyReport: ensured.report, supplyLocale: ensured.locale, unavailableIds: ensured.unavailableIds,
-    digestPending, licensedStatus:State._inspirationLicensedStatus||'', discoveryAvailable: State._inspirationDiscoveryAvailable ?? null,
+    digestPending, licensedStatus:State._inspirationLicensedStatus||'', editStatus:State._inspirationEditStatus||'', discoveryAvailable: State._inspirationDiscoveryAvailable ?? null,
     discoveryStatus: State._inspirationDiscoveryStatus || '',
     profileBusy: State._shelfBusy === 'profile' || !!State._inspirationSetupResolving,
     items, digestTotal: items.length, digestDone: P.isDigestDone(activeProfile),
@@ -36844,7 +36854,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v349';
+const PWA_CACHE_VERSION = 'satoru-v350';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;

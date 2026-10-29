@@ -644,6 +644,14 @@ const inspirationLicensedCache = require('./server-inspiration-daily-supply-v1.j
 });
 const inspirationLicensedSupply = require('./server-inspiration-supply-service-v1.js').createService({provider:inspirationLicensedProvider,cache:inspirationLicensedCache,signer:inspirationLicensedSigner});
 let inspirationPexelsReady=false;
+const inspirationApifyModule=require('./server-inspiration-apify-v1.js');
+const inspirationEditSigner=inspirationApifyModule.createSigner(()=>SECRET);
+const inspirationEditInventory=inspirationApifyModule.createInventory({apiKey:process.env.APIFY_API_TOKEN||'',
+  read:async()=>{try{return JSON.parse(fs.readFileSync(path.join(DATA_DIR,'inspiration-apify-v1.json'),'utf8'));}catch(e){if(e.code==='ENOENT')return null;throw e;}},
+  write:async value=>{writeJsonDurable(path.join(DATA_DIR,'inspiration-apify-v1.json'),value);return {ok:true};},
+});
+const inspirationEditSupply=require('./server-inspiration-edit-supply-v1.js').createService({inventory:inspirationEditInventory,signer:inspirationEditSigner});
+let inspirationApifyReady=false;
 const inspirationMetadataRequests = new Map();
 function allowInspirationMetadata(uid) {
   const now = Date.now(), cutoff = now - 60000;
@@ -4462,6 +4470,8 @@ const server = http.createServer(async (req, res) => {
           attentionEpisodeIntake: true,
           inspirationLicensedSupply: true,
           inspirationPexelsReady,
+          inspirationApifyConfigured:inspirationEditInventory.configured,
+          inspirationApifyReady,
           attentionLocalModeRefusal: true,
           webPush: true,
           deviceSessions: true,
@@ -7307,7 +7317,7 @@ const server = http.createServer(async (req, res) => {
       if (!commitmentSnapshotShapeValid(actual.settings, 'object') || !commitmentSnapshotShapeValid(actual.tasks, 'array')) {
         return failure(409, 'inspiration_settings_corrupt');
       }
-      const decision = InspirationProfileOwnerV1.prepareCommit(actual.settings.exists ? actual.settings.value : {}, payload,{verifyLicensed:inspirationLicensedSigner.verify});
+      const decision = InspirationProfileOwnerV1.prepareCommit(actual.settings.exists ? actual.settings.value : {}, payload,{verifyLicensed:inspirationLicensedSigner.verify,verifyEdit:row=>inspirationEditSigner.verify(row,uid)});
       if (!decision.ok) return failure(decision.status, decision.error);
       if (!decision.replay) {
         const data = { settings: decision.settings, tasks: actual.tasks.exists ? actual.tasks.value : [] };
@@ -7330,9 +7340,14 @@ const server = http.createServer(async (req, res) => {
     try{
       const actual=commitmentActualPair(uid);
       if(!commitmentSnapshotShapeValid(actual.settings,'object'))return sendJson(res,503,{error:'inspiration_settings_corrupt'});
-      const result=await inspirationLicensedSupply.daily(actual.settings.exists?actual.settings.value.inspiration:null,payload.dayKey);
+      const profile=actual.settings.exists?actual.settings.value.inspiration:null;
+      const [result,edits]=await Promise.all([
+        inspirationLicensedSupply.daily(profile,payload.dayKey),
+        inspirationEditSupply.daily(profile,payload.dayKey,uid).catch(()=>({status:'provider_error',candidates:[]})),
+      ]);
+      if(edits.status==='ready'&&edits.candidates.length)inspirationApifyReady=true;
       if(sessionUserId(req)!==uid)return sendJson(res,401,{error:'not logged in'});
-      return sendJson(res,200,result);
+      return sendJson(res,200,{...result,editStatus:edits.status,editCandidates:edits.candidates});
     }catch{return sendJson(res,503,{error:'supply_unavailable'});}
   }
 
@@ -7663,6 +7678,20 @@ const server = http.createServer(async (req, res) => {
 partyRewards.migrateLegacy(loadParties(), (uid) => loadUsers().some((user) => user.id === uid));
 server.listen(PORT, HOST, () => {
   if(inspirationLicensedProvider.configured)inspirationLicensedSupply.probe().then(result=>{inspirationPexelsReady=result.ready;console.info('[inspiration-supply] public provider probe '+JSON.stringify(result));}).catch(()=>console.info('[inspiration-supply] provider probe unavailable'));
+  // Optional owner-selected public-topic warmup verifies the first capped run.
+  // No paid provider request merely because a key was added.
+  const editWarmup=(process.env.APIFY_WARMUP_TOPICS||'').split(',').filter(t=>Object.hasOwn(inspirationApifyModule.TOPICS,t)).slice(0,3);
+  if(inspirationEditInventory.configured&&editWarmup.length)(async()=>{
+    for(let i=0;i<24;i++){
+      const r=await inspirationEditInventory.get(editWarmup);
+      if(r.status!=='pending'){
+        inspirationApifyReady=r.status==='ready'&&r.items.length>0;
+        console.info('[inspiration-edits] public warmup '+JSON.stringify({status:r.status,accepted:r.items.length,samples:r.items.slice(0,2).map(row=>({id:row.id,sourceUrl:row.delivery.sourceUrl,publishedAt:row.publishedAt,caption:row.body.ru,durationSec:row.durationSec}))}));return;
+      }
+      await new Promise(resolve=>setTimeout(resolve,8000));
+    }
+    console.info('[inspiration-edits] public warmup pending; stored run will resume on demand');
+  })().catch(()=>console.info('[inspiration-edits] public warmup unavailable'));
   console.log(`\n  ⚔️  Satoru запущен:  http://${HOST === '0.0.0.0' ? 'localhost' : HOST}:${PORT}`);
   console.log(`  📁  Данные:            ${DATA_DIR}`);
   if (HOST === '0.0.0.0') console.log('  🌐  Многопользовательский режим — доступен по сети.');

@@ -40,6 +40,10 @@ function checkedAt(value) {
 // Client metadata is display material, never proof of playback, availability,
 // authorship, duration, rights to copy, or a path to fetch arbitrary resources.
 function cleanFind(raw, options = {}) {
+  if(raw?.personalRecommendation===true){
+    if(typeof options.verifyEdit!=='function'||!options.verifyEdit(raw))return null;
+    return require('./public/inspiration-edit-media-v1.js').normalize(raw);
+  }
   if(raw?.source==='pexels') {
     if(typeof options.verifyLicensed!=='function'||!options.verifyLicensed(raw))return null;
     const item=require('./public/inspiration-licensed-media-v1.js').normalize(raw);

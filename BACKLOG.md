@@ -1,3 +1,13 @@
+## Вдохновение v350 — ежедневные эдиты, 29.10
+
+- [x] Topic adapter, bounded durable run/budget/restart/uncertain, owner-entered key.
+- [x] Signed account private candidates/CAS, finite day/history/refs/feedback, saved Play.
+- [x] Pending client lifecycle, same B2.17 cards/player, five-locale privacy and cache350.
+- [ ] Actual Apify capped run/usage, native/browser flow, release deployment receipt.
+- [ ] Расширение покрытия интересов/субъективное качество; не обещать неизвестные темы
+  или полный анализ изображения/звука по одним метаданным.
+- Контракт INSPIRATION-APIFY-V350.md. Physical iPhone отдельно от Simulator.
+
 ## Вдохновение v349 — просмотр личных эдитов внутри, 29.10
 
 - [x] Personal-only official TikTok player, exact-ID CSP/sandbox, dialog/close/end.

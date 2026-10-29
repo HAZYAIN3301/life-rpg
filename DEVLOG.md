@@ -1,3 +1,19 @@
+## Codex 29.10 — ежедневные эдиты через Apify / v350
+
+По поручению владельца подключён server-only источник public topic metadata с
+дневным cache и durable reservation до POST:0.10/run,0.20/day,4.50/month free credits.
+Run ID resume, uncertain не повторяет платный запуск. Ключ введён владельцем;
+private account/text/history не отправляются. Signed uid-bound personal recommendations
+отдельно от licensed catalog, прежний selector/profile CAS/WAL и история45дней.
+Pending опрашивает тот же run, не сохраняет пустой успех; старый непустой день фиксирован.
+Saved URL сохраняет внутренний Play и после rolling expiry. B2.17/player349 сохранены,
+без копирования файлов/обложек/autoplay/XP. Five-locale copy/privacy, cache350/pins.
+3434 source+184 live, byte contracts PASS. QA UI→API→reload и настоящий player;
+XCUITest actual Simulator daily Play/time/source/end/relaunch/Saved Play PASS22:17CET,
+метаданные только fixture. Native product code не менялся. Проверки и границы:
+INSPIRATION-APIFY-V350.md; настоящий provider и release — по отдельной квитанции.
+Локальный provider fixture не выдавать за результат Apify.
+
 ## Codex 29.10 — личные эдиты внутри Satoru / v349
 
 После подтверждённого владельцем стенда личные TikTok references/saved links

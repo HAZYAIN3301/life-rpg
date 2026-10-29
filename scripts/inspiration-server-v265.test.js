@@ -21,6 +21,11 @@ async function runtime(t, initialEnv = {}) {
     globalThis.fetch = async (input, options = {}) => {
       const url = new URL(input);
       fs.appendFileSync(path.join(dir, 'provider-calls.jsonl'), JSON.stringify({ url: url.href }) + '\\n');
+      if(url.hostname==='api.apify.com') {
+        if(options.method==='POST')return new Response(JSON.stringify({data:{id:'runv350',status:'RUNNING',defaultDatasetId:'datav350'}}),{status:201});
+        if(url.pathname.includes('/actor-runs/'))return new Response(JSON.stringify({data:{id:'runv350',status:'SUCCEEDED',defaultDatasetId:'datav350',usageTotalUsd:0.015}}));
+        return new Response(JSON.stringify(['7111111111111111111','7222222222222222222','7333333333333333333'].map(id=>({id,text:'Anime motivation edit #animeedit',webVideoUrl:'https://www.tiktok.com/@sample/video/'+id,authorMeta:{name:'sample'},videoMeta:{duration:21},createTimeISO:'2026-10-28T08:00:00.000Z'}))));
+      }
       if (url.hostname === 'api.search.brave.com') return new Response(JSON.stringify(
         url.pathname.includes('/images/') ? { results: [{ url: 'https://www.pinterest.com/pin/123456789/', title: 'Blue mountain photograph' }] }
         : { web: { results: [{ url: 'https://www.tiktok.com/@sample/video/7111111111111111111', title: 'Quiet ocean edit' }] } }
@@ -208,6 +213,27 @@ test('discovery uses only stored opt-in, honestly reports configuration, and pro
     assert.equal(fs.readFileSync(r.file(a, 'inspiration-discovery'), 'utf8'), saved);
     assert.equal(r.calls().length, 0);
   }
+});
+
+test('real HTTP daily edit supply uses signed current-account CAS, replay and restart without a duplicate run', {timeout:30000},async t=>{
+ const r=await runtime(t,{APIFY_API_TOKEN:'synthetic-provider-key'}),a=await r.register('edit-a'),b=await r.register('edit-b');
+ const base=profile({formats:['edit'],visualTaste:'',videoReferences:[]}),day=new Date().toISOString().slice(0,10);
+ const stable={inventory:[{id:'owned'}],gold:42,commitmentsV1:Commitment.emptyState()};r.seed(a,{settings:stable,tasks:[]});
+ assert.equal((await r.api('/api/inspiration/profile',{cookie:a.cookie,method:'POST',body:payload(null,base)})).status,200);
+ assert.equal((await r.api('/api/inspiration/supply',{method:'POST',body:{dayKey:day}})).status,401);
+ const first=await r.api('/api/inspiration/supply',{cookie:a.cookie,method:'POST',body:{dayKey:day}});assert.equal(first.data.editStatus,'pending');
+ const second=await r.api('/api/inspiration/supply',{cookie:a.cookie,method:'POST',body:{dayKey:day}});assert.equal(second.data.editStatus,'ready');assert.equal(second.data.editCandidates.length,3);
+ const R=require('../public/inspiration-supply-runtime-v1.js'),P=require('../public/inspiration-profile-v1.js');
+ const selected=R.ensureDigest({profile:base,day,now:new Date().toISOString(),candidates:second.data.editCandidates,ctx:{maxSharePerSource:1}});
+ const next=P.recordShown(selected.profile,day),body=payload(base,next,{finds:second.data.editCandidates});
+ const save=await r.api('/api/inspiration/profile',{cookie:a.cookie,method:'POST',body});assert.equal(save.status,200,JSON.stringify(save.data));
+ assert.equal((await r.api('/api/inspiration/profile',{cookie:a.cookie,method:'POST',body})).data.replay,true);
+ assert.equal((await r.api('/api/inspiration/profile',{cookie:b.cookie,method:'POST',body:payload(null,next,{finds:second.data.editCandidates})})).status,400);
+ for(const key of ['inventory','gold','commitmentsV1'])assert.deepEqual(r.read(a,'settings')[key],stable[key]);
+ await r.stop();await r.start({APIFY_API_TOKEN:'synthetic-provider-key'});
+ const fixed=await r.api('/api/inspiration/supply',{cookie:a.cookie,method:'POST',body:{dayKey:day}});assert.equal(fixed.data.editStatus,'fixed');
+ assert.equal(r.calls().filter(c=>c.url.includes('/acts/clockworks~free-tiktok-scraper/runs')).length,1);
+ assert.equal(r.read(a,'settings').inspirationFinds.length,3);assert.deepEqual(r.read(a,'settings').inspiration.digest,next.digest);
 });
 
 test('metadata body/rate limits are account-scoped; disconnect aborts the official request', { timeout: 30000 }, async t => {

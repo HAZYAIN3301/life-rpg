@@ -9,10 +9,11 @@
     commonJS ? require('./inspiration-supply-ui-v1.js') : root.InspirationSupplyUIV1,
     commonJS ? require('./inspiration-media-v1.js') : root.InspirationMediaV1,
     commonJS ? require('./inspiration-visual-copy-v1.js') : root.InspirationVisualCopyV1,
-    commonJS ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1);
+    commonJS ? require('./inspiration-licensed-media-v1.js') : root.InspirationLicensedMediaV1,
+    commonJS ? require('./inspiration-tiktok-frame-v1.js') : root.InspirationTikTokFrameV1);
   if (typeof module === 'object' && module.exports) module.exports = api;
   if (root) root.ReturnShelfUIV1 = api;
-})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI(SupplyUI, Media, VisualCopy,Licensed) {
+})(typeof globalThis !== 'undefined' ? globalThis : this, function buildReturnShelfUI(SupplyUI, Media, VisualCopy,Licensed,TikTokFrame) {
   'use strict';
 
   const VERSION = '2.3.0';
@@ -218,7 +219,7 @@
 
   function mediaControl(item, t) {
     if(item.provider==='pexels'&&item.mediaPolicy==='stream'&&Licensed?.safeUrl(item.format==='video'?item.videoUrl:item.imageUrl,item.format==='video'?'video':'image'))return `<button type="button" class="inspiration-play" data-action="inspiration-play" data-id="${esc(item.id)}" aria-label="${tr(t,formatAction(item.format))}: ${esc(item.title)}"><span aria-hidden="true">${item.format==='video'?'▶':'↗'}</span>${tr(t,formatAction(item.format))}</button>`;
-    if (Media?.externalOnly(item)) return `<button type="button" class="inspiration-play" data-action="inspiration-open-source" data-id="${esc(item.id)}">${tr(t, 'Открыть источник')}</button>`;
+    if (Media?.externalOnly(item)&&!TikTokFrame?.personalSource(item)) return `<button type="button" class="inspiration-play" data-action="inspiration-open-source" data-id="${esc(item.id)}">${tr(t, 'Открыть источник')}</button>`;
     const source = mediaSource(item);
     if (source && item.mediaPolicy === 'iframe' && Media.isAllowedEmbed(item.embedUrl, source.url)) {
       const action = source.provider === 'tiktok' ? 'Смотреть эдит' : 'Рассмотреть';
@@ -235,8 +236,8 @@
     const imageUrl = Media?.externalOnly(item) ? '' : local || safeImage(item.imageUrl, item.provider==='pexels'?'pexels':source && source.provider);
     const image = imageUrl ? `<img class="inspiration-visual-image" src="${esc(imageUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
     if (source || image) {
-      return `<div class="inspiration-media-card"><div class="inspiration-visual is-media${source ? ` is-${source.provider}` : ''}${image ? ' has-image' : ' has-no-image'}" data-inspiration-media="${esc(item.id)}">${image}${image ? '' : `<p class="inspiration-media-unavailable">${tr(t, Media?.externalOnly(item) ? 'TikTok открывается вне Satoru.' : 'Предпросмотр недоступен. Открой материал из источника.')}</p>`}${mediaControl(item, t)}</div>
-      <div class="inspiration-media-caption"><span class="inspiration-media-provider" data-noi18n>${esc(providerLabel(item))}</span><h3 id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</h3>${item.body ? `<p data-noi18n>${esc(item.body)}</p>` : ''}</div></div>`;
+      return `<div class="inspiration-media-card"><div class="inspiration-visual is-media${source ? ` is-${source.provider}` : ''}${image ? ' has-image' : ' has-no-image'}" data-inspiration-media="${esc(item.id)}">${image}${image ? '' : `<p class="inspiration-media-unavailable">${tr(t, TikTokFrame?.personalSource(item)?'Видео загрузится здесь по нажатию.':Media?.externalOnly(item) ? 'TikTok открывается вне Satoru.' : 'Предпросмотр недоступен. Открой материал из источника.')}</p>`}${mediaControl(item, t)}</div>
+      <div class="inspiration-media-caption"><span class="inspiration-media-provider" data-noi18n>${esc(providerLabel(item))}</span><h3 id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</h3>${item.body&&!item.personalRecommendation ? `<p data-noi18n>${esc(item.body)}</p>` : ''}</div></div>`;
     }
     const quote = item.format === 'quote' ? `<blockquote id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</blockquote>` : '';
     const body = item.format === 'quote' ? `<p class="inspiration-attribution" data-noi18n>${esc(item.body)}</p>` : `<div class="inspiration-visual-copy"><h3 id="inspiration-item-${esc(item.id)}" data-noi18n>${esc(item.title)}</h3><p data-noi18n>${esc(item.body)}</p></div>`;
@@ -273,14 +274,16 @@
 
   function renderDiscoveryStatus(vm, t) {
     const licensedMessage=({unconfigured:'Новые фото и видео ещё не подключены. Сохранённые материалы доступны.',ready:'Новые фото и короткие видео каждый день · Pexels',partial:'Часть новых материалов не загрузилась. Доступное сохранено.',empty:'Новых материалов по этим темам сегодня не нашлось.',unsupported:'Для этих интересов или форматов пока нет источника новых материалов.',provider_error:'Новые материалы пока не загрузились. Повтори попытку.'})[vm.licensedStatus]||'';
-    const licensed=licensedMessage?`<p class="inspiration-discovery-status" role="status">${tr(t,licensedMessage)}</p>`:'';
+    const editMessage=({ready:'Новые эдиты по твоим интересам · просмотр внутри Satoru',pending:'Готовим новые эдиты. Можно вернуться позже.',unconfigured:'Новые эдиты ещё не подключены. Твои ссылки доступны.',budget_limited:'Обновление эдитов на паузе до следующего лимита. Сохранённое доступно.',provider_error:'Эдиты сейчас не обновились. Попробуй позже.'})[vm.editStatus]||'';
+    const licensed=licensedMessage&&!(vm.licensedStatus==='unsupported'&&['ready','pending','empty','budget_limited'].includes(vm.editStatus))?`<p class="inspiration-discovery-status" role="status">${tr(t,licensedMessage)}</p>`:'';
+    const edit=editMessage?`<p class="inspiration-discovery-status" role="status">${tr(t,editMessage)}</p>`:'';
     const unavailable = vm.discoveryAvailable === false;
     const failed = ['error', 'failed', 'timeout', 'rate_limited', 'unavailable', 'provider_error', 'provider_auth', 'provider_rate_limited', 'storage_error'].includes(vm.discoveryStatus);
     const message = unavailable ? 'Поиск новых находок сейчас не подключён. Доступна подборка из каталога.'
       : failed ? 'Новые находки пока не загрузились. Сохранённая подборка остаётся на месте.'
       : vm.discoveryStatus === 'needs_taste' ? 'Добавь описание вкуса или референсы, чтобы поиск стал точнее.'
       : vm.discoveryStatus === 'daily_limit' ? 'На сегодня поиск завершён. Новые находки появятся в другой день.' : '';
-    return licensed+(message ? `<p class="inspiration-discovery-status" role="status">${tr(t, message)}</p>` : '');
+    return licensed+edit+(message ? `<p class="inspiration-discovery-status" role="status">${tr(t, message)}</p>` : '');
   }
 
   function renderDaily(vm, t) {
