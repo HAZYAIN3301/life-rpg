@@ -36854,7 +36854,7 @@ async function requestInstall() {
   } catch { toast(t('Не удалось открыть установку. Попробуй из меню браузера.')); }
   finally { _deferredInstall = null; _pwaInstallBusy = false; render(); }
 }
-const PWA_CACHE_VERSION = 'satoru-v350';
+const PWA_CACHE_VERSION = 'satoru-v351';
 let _pwaLifecycle = window.PwaLifecycleV1
   ? window.PwaLifecycleV1.create({ currentVersion: PWA_CACHE_VERSION, online: navigator.onLine !== false })
   : null;
@@ -37710,6 +37710,19 @@ return saved;}
 
 // B2.10 additions to the existing five-language interface dictionary.
 for(const [key,...values] of [
+ ['Текст','Text','Text','Текст','Texto'],
+ ['Аудио','Audio','Audio','Аудіо','Audio'],
+ ['Видео','Video','Video','Відео','Vídeo'],
+ ['Поиск заметок','Search notes','Notizen durchsuchen','Пошук нотаток','Buscar notas'],
+ ['Найти заметку…','Find a note…','Notiz finden…','Знайти нотатку…','Encontrar una nota…'],
+ ['Очистить поиск','Clear search','Suche löschen','Очистити пошук','Borrar búsqueda'],
+ ['Формат заметок','Note format','Notizformat','Формат нотаток','Formato de notas'],
+ ['Найдено заметок','Notes found','Gefundene Notizen','Знайдено нотаток','Notas encontradas'],
+ ['Пока нет заметок','No notes yet','Noch keine Notizen','Поки немає нотаток','Todavía no hay notas'],
+ ['Запиши мысль текстом, голосом или на видео.','Capture a thought with text, audio or video.','Halte einen Gedanken als Text, Audio oder Video fest.','Запиши думку текстом, голосом або на відео.','Guarda una idea con texto, audio o vídeo.'],
+ ['Попробуй другой запрос или формат.','Try another search or format.','Versuche einen anderen Suchbegriff oder ein anderes Format.','Спробуй інший запит або формат.','Prueba otra búsqueda o formato.'],
+ ['Сбросить фильтры','Reset filters','Filter zurücksetzen','Скинути фільтри','Restablecer filtros'],
+ ['Записать первую мысль','Capture your first thought','Ersten Gedanken festhalten','Записати першу думку','Guardar tu primera idea'],
  ['Мир','World','Welt','Світ','Mundo'],
  ['Все настройки','All settings','Alle Einstellungen','Усі налаштування','Todos los ajustes'],
  ['Сферы, навыки и планирование','Life areas, skills and planning','Lebensbereiche, Fähigkeiten und Planung','Сфери, навички та планування','Áreas, habilidades y planificación'],
@@ -38360,7 +38373,63 @@ for(const event of ['click','change'])document.addEventListener(event,async e=>{
  if(result.ok&&a.startsWith('pick-'))showFortuneEditor(el.dataset.id,part);
 },true);
 
+/* Local presentation only. Existing inbox owners retain every write and media action. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.SatoruNotesBrowser=api;})(typeof window==='undefined'?globalThis:window,function(){
+ 'use strict';
+ const kinds=['all','text','voice','video'];
+ const fold=s=>String(s||'').normalize('NFKD').replace(/\p{M}/gu,'').toLowerCase();
+ function select(notes,{query='',kind='all'}={}){
+  const list=(Array.isArray(notes)?notes:[]).filter(n=>n&&typeof n.id==='string'),terms=fold(query).trim().split(/\s+/).filter(Boolean),counts={all:list.length,text:0,voice:0,video:0};
+  const type=n=>['voice','video'].includes(n.kind)?n.kind:'text';for(const n of list)counts[type(n)]++;
+  return {counts,ids:list.filter(n=>(!kinds.includes(kind)||kind==='all'||type(n)===kind)&&terms.every(w=>fold(n.text).includes(w))).map(n=>n.id)};
+ }
+ function prepare(host,notes,state,t,searchIcon){
+  const screen=host.querySelector('.notes-screen'),list=screen?.querySelector('.notes-list');if(!list)return;
+  let tools=screen.querySelector('.b218-notes-tools');
+  if(!tools){tools=host.ownerDocument.createElement('div');tools.className='b218-notes-tools';
+   tools.innerHTML='<div class="b218-notes-search"><span class="notes-search-icon" aria-hidden="true"></span><label class="sr-only" for="b218-notes-query"></label><input id="b218-notes-query" type="search" autocomplete="off"><button type="button" data-notes-clear></button></div><div class="b218-notes-filter-row"><div class="b218-notes-kinds" role="group"></div><output data-notes-count aria-live="polite" aria-atomic="true"></output></div>';
+   list.before(tools);
+   const empty=host.ownerDocument.createElement('div');empty.className='b218-notes-empty';empty.dataset.notesEmpty='';empty.innerHTML='<h3></h3><p></p><button type="button" data-notes-reset></button><button type="button" data-notes-new></button>';list.after(empty);
+  }
+  tools.querySelector('.notes-search-icon').innerHTML=searchIcon;
+  tools.querySelector('label').textContent=t('Поиск заметок');
+  const input=tools.querySelector('input');input.value=String(state.query||'');input.placeholder=t('Найти заметку…');
+  tools.querySelector('[data-notes-clear]').textContent=t('Очистить');
+  tools.querySelector('[data-notes-clear]').setAttribute('aria-label',t('Очистить поиск'));
+  const group=tools.querySelector('[role=group]');group.setAttribute('aria-label',t('Формат заметок'));
+  if(!group.children.length)for(const [kind,title] of [['all','Все'],['text','Текст'],['voice','Аудио'],['video','Видео']]){const button=host.ownerDocument.createElement('button');button.type='button';button.dataset.notesKind=kind;button.dataset.title=title;group.append(button);}
+  for(const button of group.children)button.dataset.label=t(button.dataset.title);
+  list.querySelector('.notes-empty')?.remove();
+ }
+ function bind(host,notes,state,t){
+  const tools=host.querySelector('.b218-notes-tools'),empty=host.querySelector('[data-notes-empty]');if(!tools||!empty)return;
+  if(!kinds.includes(state.kind))state.kind='all';
+  const input=tools.querySelector('input');if(input.value!==String(state.query||''))input.value=String(state.query||'');
+  function apply(){
+   const result=select(typeof notes==='function'?notes():notes,state),visible=new Set(result.ids),total=result.counts.all;
+   for(const card of host.querySelectorAll('.note-card')){card.hidden=!visible.has(card.dataset.id);if(card.hidden)for(const media of card.querySelectorAll('audio,video'))if(!media.paused)media.pause();}
+   tools.hidden=!total;tools.querySelector('[data-notes-clear]').hidden=!state.query;
+   for(const button of tools.querySelectorAll('[data-notes-kind]')){button.textContent=button.dataset.label+' '+result.counts[button.dataset.notesKind];button.setAttribute('aria-pressed',String(state.kind===button.dataset.notesKind));}
+   tools.querySelector('output').textContent=t('Найдено заметок')+': '+result.ids.length+' / '+total;
+   empty.hidden=!!result.ids.length;empty.querySelector('h3').textContent=t(total?'Ничего не найдено':'Пока нет заметок');
+   empty.querySelector('p').textContent=t(total?'Попробуй другой запрос или формат.':'Запиши мысль текстом, голосом или на видео.');
+   empty.querySelector('[data-notes-reset]').hidden=!total;empty.querySelector('[data-notes-reset]').textContent=t('Сбросить фильтры');
+   empty.querySelector('[data-notes-new]').hidden=!!total;empty.querySelector('[data-notes-new]').textContent=t('Записать первую мысль');
+  }
+  const click=e=>{const button=e.target.closest('button');if(!button)return;
+   if(button.hasAttribute('data-notes-kind'))state.kind=button.dataset.notesKind;
+   else if(button.hasAttribute('data-notes-reset')){state.kind='all';state.query='';input.value='';}
+   else if(button.hasAttribute('data-notes-clear')){state.query='';input.value='';}
+   else if(button.hasAttribute('data-notes-new')){host.querySelector('#capture-text')?.focus();return;}else return;
+   apply();if(!button.hasAttribute('data-notes-kind'))input.focus();
+  };
+  tools.oninput=e=>{if(e.target===input){state.query=input.value;apply();}};tools.onclick=click;empty.onclick=click;apply();
+ }
+ return {select,prepare,bind};
+});
+
 window.SatoruTodayBridge=(()=>{
+ let notesAccount='',notesPresentation={query:'',kind:'all'};
  const navigation=()=>({view:State.view,settingsGroup:State.settingsSection||'',calendarDate:State.calDate,calendarMode:State.calMode,goalId:State._goalOpenId||'',todayTab:State._todayTab||'day',entryFocus:State._liveEntryFocus||''});
  function mode(value){State.view=value==='Заметки'?'notes':'today';State._todayTab=value==='Доска'?'board':'day';if(value==='День')ensureSenkuDay();}
  function calendar(date,scale){State.calDate=date;State.calMode=({День:'day',Неделя:'week',Месяц:'month'})[scale]||'week';State.weekStart=weekStart(date);}
@@ -38373,21 +38442,30 @@ window.SatoruTodayBridge=(()=>{
  }
  function mount(host,part){
   const draftAccount=String(State.me?.id||''),draftDay=todayStr();
+  const sameNotesAccount=notesAccount===draftAccount;
+  const search=part==='notes'&&sameNotesAccount?host.querySelector('#b218-notes-query'):null;
+  const searchFocused=search&&document.activeElement===search;
   const draftKey=id=>'satoru.b213.draft:'+draftAccount+':'+(id==='capture'?'capture':draftDay+':'+id);
   const readDraft=id=>{try{return JSON.parse(sessionStorage.getItem(draftKey(id))||'null');}catch{return null;}};
   const forget=id=>{try{sessionStorage.removeItem(draftKey(id));}catch{}};
   const captureSaved=host.querySelector('#capture-form')?.dataset.persisted==='true';
   if(captureSaved)forget('capture');
+  if(notesAccount!==draftAccount){notesAccount=draftAccount;notesPresentation={query:'',kind:'all'};}
+  if(captureSaved&&part==='notes')notesPresentation={query:'',kind:'all'};
   const staging=document.createElement('div');let view='today';
   if(part==='board')staging.innerHTML=boardScreenHTML();
-  else if(part==='notes'){staging.innerHTML=renderNotes();staging.querySelector('.notes-header')?.remove();view='notes';}
+  else if(part==='notes'){staging.innerHTML=renderNotes();staging.querySelector('.notes-header')?.remove();staging.querySelector('.notes-recovery h2')?.removeAttribute('id');view='notes';}
   else if(part==='capture')staging.innerHTML=captureBar({expanded:true});
   else if(part==='review'){staging.innerHTML=renderToday();const review=staging.querySelector('.shutdown');staging.replaceChildren(...(review?[review]:[]));if(review)review.open=true;}
   else if(part==='tribe'){view=['party','leaderboard'].includes(State.view)?State.view:'party';staging.innerHTML=safeViewMarkup(view);}
   staging.querySelectorAll('.th-kicker,.route-kicker').forEach(e=>e.remove());
+  if(part==='notes')window.SatoruNotesBrowser.prepare(staging,State.inbox||[],notesPresentation,t,satoruIconHTML('system.search','notes-search-glyph',''));
+  if(search&&!captureSaved)staging.querySelector('#b218-notes-query')?.replaceWith(search);
   // Only unsent drafts live here. Existing handlers still own every confirmed write.
   const savedFields={};for(const id of ['reflection','first-line']){const field=staging.querySelector('#'+id);if(field)savedFields[id]=field.value;}
   if(lang()!=='ru')translateDOM(staging);window.SatoruPlanBridge.commitOwned(host,staging,view);
+  if(part==='notes')window.SatoruNotesBrowser.bind(host,()=>State.inbox||[],notesPresentation,t);
+  if(searchFocused&&!captureSaved)requestAnimationFrame(()=>search.isConnected&&search.focus({preventScroll:true}));
   for(const id of ['reflection','first-line','capture-text']){
    const field=host.querySelector('#'+id);if(!field)continue;const key=id==='capture-text'?'capture':id,base=savedFields[id]||'',draft=readDraft(key);
    if(draft&&(key==='capture'||draft.base===base))field.value=draft.value;else if(draft)forget(key);

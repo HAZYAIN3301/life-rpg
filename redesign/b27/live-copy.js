@@ -1,5 +1,18 @@
 // B2.10 additions to the existing five-language interface dictionary.
 for(const [key,...values] of [
+ ['Текст','Text','Text','Текст','Texto'],
+ ['Аудио','Audio','Audio','Аудіо','Audio'],
+ ['Видео','Video','Video','Відео','Vídeo'],
+ ['Поиск заметок','Search notes','Notizen durchsuchen','Пошук нотаток','Buscar notas'],
+ ['Найти заметку…','Find a note…','Notiz finden…','Знайти нотатку…','Encontrar una nota…'],
+ ['Очистить поиск','Clear search','Suche löschen','Очистити пошук','Borrar búsqueda'],
+ ['Формат заметок','Note format','Notizformat','Формат нотаток','Formato de notas'],
+ ['Найдено заметок','Notes found','Gefundene Notizen','Знайдено нотаток','Notas encontradas'],
+ ['Пока нет заметок','No notes yet','Noch keine Notizen','Поки немає нотаток','Todavía no hay notas'],
+ ['Запиши мысль текстом, голосом или на видео.','Capture a thought with text, audio or video.','Halte einen Gedanken als Text, Audio oder Video fest.','Запиши думку текстом, голосом або на відео.','Guarda una idea con texto, audio o vídeo.'],
+ ['Попробуй другой запрос или формат.','Try another search or format.','Versuche einen anderen Suchbegriff oder ein anderes Format.','Спробуй інший запит або формат.','Prueba otra búsqueda o formato.'],
+ ['Сбросить фильтры','Reset filters','Filter zurücksetzen','Скинути фільтри','Restablecer filtros'],
+ ['Записать первую мысль','Capture your first thought','Ersten Gedanken festhalten','Записати першу думку','Guardar tu primera idea'],
  ['Мир','World','Welt','Світ','Mundo'],
  ['Все настройки','All settings','Alle Einstellungen','Усі налаштування','Todos los ajustes'],
  ['Сферы, навыки и планирование','Life areas, skills and planning','Lebensbereiche, Fähigkeiten und Planung','Сфери, навички та планування','Áreas, habilidades y planificación'],

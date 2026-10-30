@@ -482,7 +482,7 @@ test('интеграция подключает профиль и каталог
   const catalogAt = index.indexOf('inspiration-catalog-v1.js');
   const domainAt = index.indexOf('return-shelf-v1.js');
   const uiAt = index.indexOf('return-shelf-ui-v1.js');
-  const appAt = index.indexOf('app.js?v=20261029-b25-app-v350-1');
+  const appAt = index.indexOf('app.js?v=20261030-b25-app-v351-1');
   assert.ok(importAt >= 0 && profileAt > importAt && catalogAt > profileAt && domainAt > catalogAt && uiAt > domainAt && appAt > uiAt,
     'import → profile → catalog → saved domain → UI → app');
   for (const asset of ['inspiration-import-v1.js', 'return-shelf-v1.js']) {
@@ -504,8 +504,8 @@ test('интеграция подключает профиль и каталог
   assert.match(index, /return-shelf-ui-v1\.js\?v=20261029-edits-v350-1/);
   assert.match(sw, /return-shelf-ui-v1\.js/);
   assert.match(index, /styles\.css\?v=20261016-world-v342-1/);
-  assert.match(sw, /satoru-v350/);
-  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v350'/);
+  assert.match(sw, /satoru-v351/);
+  assert.match(app, /PWA_CACHE_VERSION = 'satoru-v351'/);
 });
 
 test('ключевой copy Вдохновения имеет RU/EN/DE/UK/ES gate', () => {

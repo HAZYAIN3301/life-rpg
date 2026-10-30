@@ -1,3 +1,14 @@
+## Codex 30.10 — B2.18: завершение рабочего сценария заметок
+
+По поручению продолжить редизайн в принятом B2.17: один заголовок Notes, поиск по
+полному тексту, формат/счётчики и разные empty/no-match. Превью3строки/дата,
+истинные source capture/edit/media/goal/quest/delete owners. Локальный DOM filter
+не пересоздаёт редактор/плеер, пауза скрытого медиа без autoplay. Search identity
+survives receipts, current-source getter видит подтверждённые правки, account/
+capture reset не скрывает новую запись.189 live PASS, scoped UI→API→reload.
+Пять языков/cache351; исходные handlers/данные/экономика/Apify не менялись.
+QA и границы: redesign/b27/B218-QA.md. Production подтверждает отдельный receipt.
+
 ## Codex 29.10 — реальный provider pilot / v350
 
 Scrapeforge WAiLlE83kT51bzfsK:23реальных результата за19с, UI charge$0.007.

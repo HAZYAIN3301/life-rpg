@@ -1,3 +1,12 @@
+## B2.18 — рабочий сценарий заметок, 30.10
+
+- [x] Поиск полного текста, форматы/счётчики, empty/no-match без изменения inbox.
+- [x] Единый заголовок, компактные превью/даты, прежние media/edit/quest/goal owners.
+- [x]189 live и isolated UI→API→reload: create/edit/quest/capture draft; no paid AI.
+- [x]3438 source,189 live, native contracts; browser375/1280 light/dark, detector[].
+- [ ] Production release receipt; mic/camera и physical iPhone отдельно.
+- Логово/арт/мультиплеер/Apify платный тариф не входят в этот срез.
+
 ## Вдохновение v350 — ежедневные эдиты, 29.10
 
 - [x] Topic adapter, bounded durable run/budget/restart/uncertain, owner-entered key.
